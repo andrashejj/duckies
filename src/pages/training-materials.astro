@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+
+const title = `Training Materials | ${site.name}`;
+const description =
+  "Starter training routines, drills, and surf learning structure for Duckies Surf Club families and young surfers.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image="/media/balance-training.jpg"
+  page="materials"
+>
+  <section class="mx-auto max-w-7xl px-6 pb-10 pt-10 lg:px-10">
+    <div class="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
+      <div class="surface-card p-6 md:p-8" data-float>
+        <p class="section-kicker">Training materials</p>
+        <h1 class="section-title mt-4 max-w-3xl">
+          A growing resource library for the hours between surf sessions.
+        </h1>
+        <p class="body-copy mt-4 max-w-2xl">
+          {site.materials.intro} This is the first public version: a clean structure, a starter
+          routine, and clear categories so families know where this is going.
+        </p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <span class="chip">Public page</span>
+          <span class="chip">Coach-approved direction</span>
+          <span class="chip">Built to expand over time</span>
+        </div>
+
+        <div class="mt-8">
+          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            Ask for the next resources on WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div class="media-frame min-h-[22rem]" data-float>
+        <img
+          src="/media/balance-training.jpg"
+          alt="Balance board exercise used for surf preparation."
+          loading="eager"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+    <div class="surface-card p-6 md:p-8" data-reveal>
+      <p class="section-kicker">Starter routine</p>
+      <h2 class="section-title mt-4">A simple home session families can repeat any week.</h2>
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        {site.materials.featuredRoutine.map((step, index) => (
+          <div class="rounded-[1.5rem] bg-[var(--color-sand-50)] p-5">
+            <p class="font-display text-lg text-[var(--color-ocean-950)]">
+              Step {index + 1}
+            </p>
+            <p class="mt-2 text-sm leading-7 text-slate-600">{step}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+    <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {site.materials.categories.map((category) => (
+        <article class="surface-card p-6" data-reveal>
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-display text-2xl text-[var(--color-ocean-950)]">{category.title}</p>
+              <p class="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-ocean-700)]">
+                {category.status}
+              </p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">{category.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="surface-card p-6 md:p-8" data-reveal>
+        <p class="section-kicker">How this page will grow</p>
+        <h2 class="section-title mt-4">One place for surf videos, drills, and prep.</h2>
+        <p class="body-copy mt-4">
+          The intention is to keep adding short, trustworthy resources instead of dumping families
+          into endless random content. Duckies can keep this practical and high quality by curating
+          only what fits the club's approach.
+        </p>
+      </div>
+
+      <div class="media-frame min-h-[24rem]" data-reveal>
+        <img
+          src="/media/hero-poster.jpg"
+          alt="Young surfer riding a small wave at sunset."
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Sora Variable", sans-serif;
+  --font-sans: "Manrope Variable", sans-serif;
+
+  --color-ocean-950: #082032;
+  --color-ocean-900: #10314d;
+  --color-ocean-700: #205b88;
+  --color-ocean-500: #4e95bf;
+  --color-seafoam-300: #8fd7d4;
+  --color-sand-50: #f7f3ee;
+  --color-sand-100: #f5efe8;
+  --color-sun-300: #ffd27c;
+  --color-sun-500: #f5a463;
+  --color-coral-400: #ef8e72;
+}
+
+:root {
+  color-scheme: light;
+  background:
+    radial-gradient(circle at top left, rgba(143, 215, 212, 0.35), transparent 34%),
+    radial-gradient(circle at top right, rgba(255, 210, 124, 0.22), transparent 32%),
+    linear-gradient(180deg, #fffdf8 0%, #f7f3ee 36%, #f2f7fb 100%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.page-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 16% 5%, rgba(143, 215, 212, 0.16), transparent 24%),
+    radial-gradient(circle at 80% 0%, rgba(245, 164, 99, 0.14), transparent 28%);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.glass-panel {
+  @apply rounded-[1.75rem] border border-white/55 bg-white/55 shadow-[0_24px_80px_-36px_rgba(8,32,50,0.45)] backdrop-blur-xl;
+}
+
+.surface-card {
+  @apply rounded-[1.75rem] border border-white/70 bg-white/90 shadow-[0_28px_80px_-42px_rgba(16,49,77,0.4)];
+}
+
+.section-kicker {
+  @apply font-display text-xs uppercase tracking-[0.32em] text-[var(--color-ocean-700)];
+}
+
+.section-title {
+  @apply font-display text-3xl leading-tight text-[var(--color-ocean-950)] md:text-4xl;
+}
+
+.body-copy {
+  @apply text-[1.04rem] leading-8 text-slate-600;
+}
+
+.chip {
+  @apply inline-flex items-center rounded-full border border-slate-200/80 bg-white/85 px-4 py-2 text-sm font-semibold text-slate-700;
+}
+
+.cta-primary {
+  @apply inline-flex items-center justify-center rounded-full bg-[var(--color-ocean-950)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--color-ocean-900)];
+}
+
+.cta-secondary {
+  @apply inline-flex items-center justify-center rounded-full border border-slate-200/80 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-[var(--color-ocean-700)] hover:text-[var(--color-ocean-700)];
+}
+
+.eyebrow-badge {
+  @apply inline-flex items-center gap-2 rounded-full border border-white/55 bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-[var(--color-ocean-700)] shadow-[0_20px_45px_-30px_rgba(8,32,50,0.7)] backdrop-blur-md;
+}
+
+.hero-grid {
+  @apply grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr];
+}
+
+.story-grid {
+  @apply grid gap-6 lg:grid-cols-2;
+}
+
+.media-frame {
+  @apply overflow-hidden rounded-[1.85rem] border border-white/60 bg-slate-200 shadow-[0_26px_90px_-38px_rgba(8,32,50,0.45)];
+}
+
+.media-frame img,
+.media-frame video {
+  @apply h-full w-full object-cover;
+}
+
+.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  filter: blur(10px);
+}
+
+.js [data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+.js [data-float] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
