@@ -8,13 +8,12 @@ export const site = {
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
   sponsorContactUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
-  sponsorContactNote:
-    "Sponsor conversations are temporarily handled directly by the founders in WhatsApp while the club inbox is being set up.",
   founders: [
     {
       name: "Andras Hejj",
       role: "Founder",
       href: "https://andrashejj.com",
+      image: "/media/andras-hejj.png",
       bio: "Builds the club around consistency, trust, and a safe path for kids to fall in love with surfing.",
     },
     {
@@ -27,12 +26,17 @@ export const site = {
     {
       name: "NBK Labs",
       href: "https://nbklabs.com",
+      logo: "/media/nbk-labs-logo.svg",
+      logoAlt: "NBK Labs live site wordmark",
       blurb:
         "Backing practical systems and community infrastructure that help the club stay reliable and free of charge.",
     },
     {
       name: "Motif",
       href: "https://chatwithmotif.com",
+      logo: "/media/motif-logo.svg",
+      logoAlt: "Motif logo",
+      image: "/media/motif-og.png",
       blurb:
         "Supporting the story, visibility, and momentum needed to grow a strong local surf community for kids.",
     },
@@ -79,32 +83,6 @@ export const site = {
     {
       title: "Progress with joy",
       text: "The tone is serious about safety and growth, but the feeling is light, inviting, and full of momentum.",
-    },
-  ],
-  gallery: [
-    {
-      title: "Sunset sessions",
-      image: "/media/sunset-training.jpg",
-      alt: "Kids and boards gathered on the sand during sunset training.",
-      caption: "Warm evenings, open sand, and the feeling of a club kids want to come back to.",
-    },
-    {
-      title: "Big shared moments",
-      image: "/media/board-lineup.jpg",
-      alt: "Young surfers standing with their boards at the shoreline.",
-      caption: "A visual identity that already feels iconic: colourful boards, sea air, and a crew growing together.",
-    },
-    {
-      title: "Tamarin energy",
-      image: "/media/tamarin-shore.jpg",
-      alt: "Children playing and surfing at Tamarin Bay beneath trees by the shore.",
-      caption: "The bay itself sets the tone: calm, expansive, and deeply local.",
-    },
-    {
-      title: "Small wins matter",
-      image: "/media/young-rider.jpg",
-      alt: "A young surfer catching a small wave in shallow water.",
-      caption: "Progress is made through many approachable rides, not one intimidating leap.",
     },
   ],
   materials: {

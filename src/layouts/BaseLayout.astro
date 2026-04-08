@@ -44,23 +44,23 @@ const {
   </head>
   <body class="min-h-screen bg-[var(--color-sand-50)] text-slate-900 antialiased">
     <div class="page-shell">
-      <header class="sticky top-0 z-50 border-b border-white/45 bg-white/70 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
+      <header class="sticky top-0 z-50 border-b border-white/45 bg-white/78 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10 lg:py-4">
           <a href="/" class="flex min-w-0 items-center gap-3">
-            <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-ocean-950)] text-lg font-semibold text-white shadow-[0_18px_50px_-26px_rgba(8,32,50,0.85)]">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-ocean-950)] text-lg font-semibold text-white shadow-[0_18px_50px_-26px_rgba(8,32,50,0.85)] sm:h-11 sm:w-11">
               D
             </span>
             <div class="min-w-0">
-              <p class="font-display text-sm uppercase tracking-[0.28em] text-[var(--color-ocean-700)]">
+              <p class="font-display text-[0.72rem] uppercase tracking-[0.24em] text-[var(--color-ocean-700)] sm:text-sm sm:tracking-[0.28em]">
                 Duckies
               </p>
-              <p class="truncate text-sm font-semibold text-slate-700">
+              <p class="truncate text-xs font-semibold text-slate-700 sm:text-sm">
                 Surf Club · Tamarin Bay
               </p>
             </div>
           </a>
 
-          <nav class="hidden items-center gap-7 text-sm font-semibold text-slate-700 lg:flex">
+          <nav class="hidden items-center gap-5 text-sm font-semibold text-slate-700 xl:flex">
             {site.navigation.map((item) => (
               <a class="transition hover:text-[var(--color-ocean-700)]" href={item.href}>
                 {item.label}
@@ -69,12 +69,13 @@ const {
           </nav>
 
           <a
-            class="cta-secondary hidden lg:inline-flex"
+            class="cta-secondary shrink-0 px-4 py-2.5 sm:px-6 sm:py-3"
             href={site.whatsappUrl}
             target="_blank"
             rel="noreferrer"
           >
-            Apply
+            <span class="hidden sm:inline">Apply via WhatsApp</span>
+            <span class="sm:hidden">Apply</span>
           </a>
         </div>
       </header>
@@ -125,9 +126,6 @@ const {
                 Sponsor conversations
               </a>
             </div>
-            {page === "home" && (
-              <p class="text-xs leading-6 text-slate-500">{site.sponsorContactNote}</p>
-            )}
           </div>
         </div>
       </footer>
@@ -143,10 +141,20 @@ const {
         });
       };
 
+      const heroVideo = document.querySelector("[data-hero-video]");
+      if (heroVideo instanceof HTMLVideoElement) {
+        const applyHeroVideoRate = () => {
+          heroVideo.playbackRate = 0.72;
+        };
+
+        applyHeroVideoRate();
+        heroVideo.addEventListener("loadedmetadata", applyHeroVideoRate);
+        heroVideo.addEventListener("play", applyHeroVideoRate);
+      }
+
       if (reducedMotion.matches) {
         revealAll();
 
-        const heroVideo = document.querySelector("[data-hero-video]");
         if (heroVideo instanceof HTMLVideoElement) {
           heroVideo.pause();
         }

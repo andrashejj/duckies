@@ -4,7 +4,136 @@ import { site } from "../data/site";
 
 const title = `Training Materials | ${site.name}`;
 const description =
-  "Starter training routines, drills, and surf learning structure for Duckies Surf Club families and young surfers.";
+  "A practical Duckies Surf Club training library built from the real Tamarin coaching framework: session structure, land drills, water drills, and video references.";
+
+const sessionStructure = [
+  "Welcome, rules, and today's plan",
+  "Theola's playful opener",
+  "Warmup and stretch",
+  "Theory on the sand",
+  "Water block with one focus",
+  "Debrief and goodbye",
+];
+
+const guidingIdeas = [
+  "Get the physical foundation right first: paddling strength, explosive pop-up, and enough fitness that one hour in the water does not destroy the kids.",
+  "Keep the session frame rigid and the content inside it flexible. Kids progress better when they know what comes next.",
+  "Focus on one water skill per session, not three. Repetition beats noise.",
+];
+
+const movementExercises = [
+  {
+    name: "Pop-Up Races",
+    tags: ["strength", "coordination", "pairs"],
+    description:
+      "Lie flat on the sand, pop up to surf stance on the whistle, and let a partner check foot placement and hand position.",
+    surfRelevance:
+      "Directly trains the chest-to-feet explosive movement for taking off on a wave.",
+  },
+  {
+    name: "Surf Stance Balance Duel",
+    tags: ["balance", "pairs"],
+    description:
+      "Both surfers hold a low surf stance and try to unbalance each other using gentle palm pushes on the shoulders only.",
+    surfRelevance:
+      "Builds the low-center-of-gravity balance needed for whitewater rides and early turns.",
+  },
+  {
+    name: "Paddle-Up Relay",
+    tags: ["strength", "cardio", "group"],
+    description:
+      "Teams lie on their bellies, paddle arms in the air with good form, then sprint to tag the next teammate.",
+    surfRelevance:
+      "Builds paddle endurance and arm speed for catching waves before they pass.",
+  },
+  {
+    name: "Wave Jump Drill",
+    tags: ["balance", "cardio", "group"],
+    description:
+      "Jump side to side over a line in the sand and land in surf stance every time.",
+    surfRelevance:
+      "Trains reactive balance when the board shifts under changing wave energy.",
+  },
+  {
+    name: "Turtle Roll Practice",
+    tags: ["coordination", "balance", "individual"],
+    description:
+      "Roll from back to belly while holding an imaginary board overhead, then start paddling immediately.",
+    surfRelevance:
+      "Introduces the body pattern for getting through whitewater without losing the board.",
+  },
+  {
+    name: "Sand Sprint Pop-Up",
+    tags: ["strength", "cardio", "coordination"],
+    description:
+      "Sprint 10 meters, drop to your belly, hit one clean pop-up, and sprint back.",
+    surfRelevance:
+      "Combines cardio and pop-up mechanics under fatigue, closer to real surf conditions.",
+  },
+];
+
+const waterDrills = [
+  {
+    name: "Paddle Sprint Relay",
+    category: "paddle",
+    description: "Teams of two paddle to a marker and back, then tag their partner.",
+  },
+  {
+    name: "Surf Statue",
+    category: "board control",
+    description: "Stand on the board in flat water and hold surf stance as long as possible.",
+  },
+  {
+    name: "Treasure Hunt",
+    category: "water confidence",
+    description: "Collect shells in waist-deep water and come back smiling.",
+  },
+  {
+    name: "Whitewash Push-Through",
+    category: "swimming",
+    description: "Walk or swim through small wash while keeping the board steady.",
+  },
+];
+
+const videoReferences = [
+  {
+    name: "Hip Circles / Mobility reference",
+    href: "https://www.facebook.com/Rapturecamps/videos/1439071064290953/",
+    image: "/media/video-thumb-facebook.jpg",
+  },
+  {
+    name: "Crocodile Twist",
+    href: "https://www.tiktok.com/@redbullsurfing/video/7529540352924060950",
+    image: "/media/young-rider.jpg",
+  },
+  {
+    name: "Pop-Up Push-Ups",
+    href: "https://www.instagram.com/reel/C0325b5yTKS/",
+    image: "/media/video-thumb-popup.jpg",
+  },
+  {
+    name: "Superhero Hold",
+    href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
+    image: "/media/video-thumb-superhero.jpg",
+  },
+];
+
+const featuredVideos = [
+  {
+    title: "Slow rolling wave reference",
+    description:
+      "Use this to talk through wave shape, timing, and what a calm, readable section looks like before kids paddle out.",
+    src: "/media/hero-stock.mp4",
+    poster: "/media/hero-stock-poster.jpg",
+  },
+  {
+    title: "Surf stance and whitewater feel",
+    description:
+      "A short surf clip to keep the visual connection between land drills and what the kids are trying to do in the water.",
+    src: "/media/hero-wave.mp4",
+    poster: "/media/hero-poster.jpg",
+  },
+];
 ---
 
 <BaseLayout
@@ -18,30 +147,27 @@ const description =
       <div class="surface-card p-6 md:p-8" data-float>
         <p class="section-kicker">Training materials</p>
         <h1 class="section-title mt-4 max-w-3xl">
-          A growing resource library for the hours between surf sessions.
+          Train the right habits between sessions.
         </h1>
-        <p class="body-copy mt-4 max-w-2xl">
-          {site.materials.intro} This is the first public version: a clean structure, a starter
-          routine, and clear categories so families know where this is going.
+        <p class="body-copy mt-4 max-w-3xl">
+          This is the Duckies training library for kids and families who want to keep progressing
+          outside the Wednesday and Friday sessions. It brings together the actual coaching
+          structure we use in Tamarin: mobility, pop-up mechanics, paddling strength, balance, and
+          simple water-confidence work that matches the level of the group right now.
         </p>
 
-        <div class="mt-6 flex flex-wrap gap-3">
-          <span class="chip">Public page</span>
-          <span class="chip">Coach-approved direction</span>
-          <span class="chip">Built to expand over time</span>
-        </div>
-
-        <div class="mt-8">
-          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Ask for the next resources on WhatsApp
-          </a>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <span class="chip">Beach session framework</span>
+          <span class="chip">Land-based drills</span>
+          <span class="chip">Water confidence work</span>
+          <span class="chip">Real video references</span>
         </div>
       </div>
 
       <div class="media-frame min-h-[22rem]" data-float>
         <img
-          src="/media/balance-training.jpg"
-          alt="Balance board exercise used for surf preparation."
+          src="/media/sunset-training.jpg"
+          alt="Kids gathering on the beach for Duckies surf training at sunset."
           loading="eager"
         />
       </div>
@@ -49,58 +175,139 @@ const description =
   </section>
 
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="surface-card p-6 md:p-8" data-reveal>
+        <p class="section-kicker">Guiding ideas</p>
+        <h2 class="section-title mt-4">Build the base first.</h2>
+        <div class="mt-6 grid gap-4">
+          {guidingIdeas.map((idea) => (
+            <div class="rounded-[1.4rem] bg-[var(--color-sand-50)] p-5">
+              <p class="text-sm leading-7 text-slate-600">{idea}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="surface-card p-6 md:p-8" data-reveal>
+        <p class="section-kicker">Session structure</p>
+        <h2 class="section-title mt-4">The same frame every time.</h2>
+        <div class="mt-6 grid gap-3">
+          {sessionStructure.map((step, index) => (
+            <div class="flex items-start gap-4 rounded-[1.3rem] border border-slate-200/70 bg-white/80 p-4">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-ocean-950)] text-sm font-semibold text-white">
+                {index + 1}
+              </div>
+              <p class="pt-1 text-sm leading-7 text-slate-700">{step}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
     <div class="surface-card p-6 md:p-8" data-reveal>
-      <p class="section-kicker">Starter routine</p>
-      <h2 class="section-title mt-4">A simple home session families can repeat any week.</h2>
-      <div class="mt-8 grid gap-4 md:grid-cols-2">
-        {site.materials.featuredRoutine.map((step, index) => (
-          <div class="rounded-[1.5rem] bg-[var(--color-sand-50)] p-5">
-            <p class="font-display text-lg text-[var(--color-ocean-950)]">
-              Step {index + 1}
+      <p class="section-kicker">Land drills</p>
+      <h2 class="section-title mt-4">Exercises already in the surf coaching library.</h2>
+      <div class="mt-8 grid gap-5 md:grid-cols-2">
+        {movementExercises.map((exercise) => (
+          <article class="rounded-[1.6rem] border border-slate-200/70 bg-white/80 p-5">
+            <div class="flex flex-wrap gap-2">
+              {exercise.tags.map((tag) => (
+                <span class="rounded-full bg-[var(--color-sand-50)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-ocean-700)]">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p class="mt-4 font-display text-2xl text-[var(--color-ocean-950)]">{exercise.name}</p>
+            <p class="mt-3 text-sm leading-7 text-slate-600">{exercise.description}</p>
+            <p class="mt-4 text-sm leading-7 text-[var(--color-ocean-700)]">
+              {exercise.surfRelevance}
             </p>
-            <p class="mt-2 text-sm leading-7 text-slate-600">{step}</p>
-          </div>
+          </article>
         ))}
       </div>
     </div>
   </section>
 
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-      {site.materials.categories.map((category) => (
-        <article class="surface-card p-6" data-reveal>
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="font-display text-2xl text-[var(--color-ocean-950)]">{category.title}</p>
-              <p class="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-ocean-700)]">
-                {category.status}
+    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
+      <div class="surface-card p-6 md:p-8" data-reveal>
+        <p class="section-kicker">Water drills</p>
+        <h2 class="section-title mt-4">One clean water focus per session.</h2>
+        <div class="mt-6 grid gap-4">
+          {waterDrills.map((drill) => (
+            <div class="rounded-[1.4rem] bg-[var(--color-sand-50)] p-5">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ocean-700)]">
+                {drill.category}
               </p>
+              <p class="mt-3 font-display text-xl text-[var(--color-ocean-950)]">{drill.name}</p>
+              <p class="mt-2 text-sm leading-7 text-slate-600">{drill.description}</p>
             </div>
-          </div>
-          <p class="mt-4 text-sm leading-7 text-slate-600">{category.description}</p>
-        </article>
-      ))}
+          ))}
+        </div>
+      </div>
+
+      <div class="surface-card p-6 md:p-8" data-reveal>
+        <p class="section-kicker">Video references</p>
+        <h2 class="section-title mt-4">A few links already in the coaching notes.</h2>
+        <div class="mt-6 grid gap-4">
+          {videoReferences.map((video) => (
+            <a
+              href={video.href}
+              target="_blank"
+              rel="noreferrer"
+              class="rounded-[1.4rem] border border-slate-200/70 bg-white/80 p-4 transition hover:border-[var(--color-ocean-500)] hover:bg-white"
+            >
+              <div class="flex items-center gap-4">
+                <div class="relative h-18 w-24 shrink-0 overflow-hidden rounded-2xl bg-slate-200">
+                  <img
+                    src={video.image}
+                    alt={video.name}
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(8,32,50,0.28))]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/88 text-[var(--color-ocean-950)] shadow-[0_12px_24px_-12px_rgba(8,32,50,0.55)]">
+                      <span class="ml-0.5 text-sm">▶</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <p class="font-display text-xl text-[var(--color-ocean-950)]">{video.name}</p>
+                  <p class="mt-1 line-clamp-2 text-sm leading-6 text-slate-600">{video.href}</p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <div class="surface-card p-6 md:p-8" data-reveal>
-        <p class="section-kicker">How this page will grow</p>
-        <h2 class="section-title mt-4">One place for surf videos, drills, and prep.</h2>
-        <p class="body-copy mt-4">
-          The intention is to keep adding short, trustworthy resources instead of dumping families
-          into endless random content. Duckies can keep this practical and high quality by curating
-          only what fits the club's approach.
-        </p>
-      </div>
-
-      <div class="media-frame min-h-[24rem]" data-reveal>
-        <img
-          src="/media/hero-poster.jpg"
-          alt="Young surfer riding a small wave at sunset."
-          loading="lazy"
-        />
+    <div class="surface-card p-6 md:p-8" data-reveal>
+      <p class="section-kicker">Wave and surf video</p>
+      <h2 class="section-title mt-4">A couple of clips worth watching with the kids.</h2>
+      <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        {featuredVideos.map((video) => (
+          <article class="overflow-hidden rounded-[1.6rem] border border-slate-200/70 bg-white/80">
+            <video
+              controls
+              playsinline
+              preload="metadata"
+              poster={video.poster}
+              class="aspect-video w-full bg-[var(--color-ocean-950)] object-cover"
+            >
+              <source src={video.src} type="video/mp4" />
+            </video>
+            <div class="p-5">
+              <p class="font-display text-2xl text-[var(--color-ocean-950)]">{video.title}</p>
+              <p class="mt-3 text-sm leading-7 text-slate-600">{video.description}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
