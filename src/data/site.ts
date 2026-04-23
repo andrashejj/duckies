@@ -5,12 +5,12 @@ export const site = {
   location: "Tamarin Bay, Mauritius",
   locale: "en_MU",
   description:
-    "A member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other.",
+    "A kids' surf club in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding into the sunset week after week.",
   ogImage: {
-    path: "/media/board-lineup.jpg",
+    path: "/media/sunset-training.jpg",
     width: 1600,
     height: 1200,
-    alt: "Young surfers standing with their boards at the shoreline in Tamarin Bay.",
+    alt: "Young Sunset Duckies training on the beach as the sun drops over Tamarin Bay.",
   },
   membership: {
     annualFeeMur: 5000,
@@ -19,7 +19,7 @@ export const site = {
     feeLabelLong: "Rs 5,000 / year (~$100 USD)",
     bringYourOwn: ["surfboard", "wetsuit"],
     fundingNote:
-      "Dues fund comps, club lycras, safety gear, and the moments that make the club hit different.",
+      "Dues cover comps, club lycras, and safety gear so the focus stays on surfing.",
   },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
@@ -41,7 +41,7 @@ export const site = {
       logo: "/media/nbk-labs-logo.svg",
       logoAlt: "NBK Labs live site wordmark",
       blurb:
-        "Backing practical systems and community infrastructure that help the club stay reliable, member-funded, and zero-overhead.",
+        "Backing practical systems and community infrastructure that help the club stay reliable, low-overhead, and focused on the kids in the water.",
     },
     {
       name: "Motif",
@@ -63,7 +63,7 @@ export const site = {
     { value: "100%", label: "kids in the lineup" },
     { value: "2x", label: "training sessions a week" },
     { value: "4x", label: "club comps each year" },
-    { value: "Rs 5K", label: "annual dues, all-in" },
+    { value: "Sunset", label: "every session, every time" },
   ],
   schedule: [
     {
@@ -85,16 +85,16 @@ export const site = {
   },
   pillars: [
     {
-      title: "Real water confidence",
-      text: "Sessions are built so the ocean stops feeling scary and starts feeling like home — for first-timers and groms alike.",
+      title: "Actually get amazing at surfing",
+      text: "Two sessions a week, proper coaching, and the reps that turn first-wave wobbles into paddle-outs the kids chase on their own.",
     },
     {
-      title: "Community first, fr",
-      text: "Sunset Duckies isn't a transactional surf school. It's a consistent local club where kids, families, and supporters keep showing up.",
+      title: "Sunset hour, every time",
+      text: "Sessions land at golden hour in Tamarin Bay. Warm light, clean lineups, and that last wave home as the sky goes pink.",
     },
     {
-      title: "Progress with joy",
-      text: "Dead serious about safety and growth, but the vibe stays light, inviting, and full of momentum.",
+      title: "A lineup that shows up",
+      text: "Sunset Duckies isn't a surf school drop-off. It's a consistent local crew of kids, families, and coaches who keep coming back.",
     },
   ],
   materials: {
