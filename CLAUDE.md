@@ -1,6 +1,8 @@
-# Duckies Surf Club — Claude notes
+# Sunset Surfers — Claude notes
 
-Landing site for a free surf club for kids in Tamarin, Mauritius. Astro + Tailwind v4 (via `@tailwindcss/vite`) + Motion.
+(Formerly "Duckies Surf Club" — repo dir, package name, and `andrashejj/duckies` GitHub slug still use the old name.)
+
+Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, Mauritius. Astro + Tailwind v4 (via `@tailwindcss/vite`) + Motion.
 
 ## Routes
 - `/` — home

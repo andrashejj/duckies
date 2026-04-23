@@ -1,9 +1,16 @@
 export const site = {
-  name: "Duckies Surf Club",
-  shortName: "Duckies",
+  name: "Sunset Surfers",
+  shortName: "Sunset Surfers",
   location: "Tamarin Bay, Mauritius",
   description:
-    "A free, community-led surf club helping kids in Tamarin build confidence in the water, on the beach, and with each other.",
+    "A volunteer-run, member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other. No salaries — every dollar back to the club.",
+  membership: {
+    annualFeeUsd: 5000,
+    feeLabel: "$5,000 USD / year",
+    bringYourOwn: ["surfboard", "wetsuit"],
+    fundingNote:
+      "100% volunteer-run. Dues fund comps, club lycras, safety gear, and the moments that make the club hit different — not coaches or organizers.",
+  },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
   sponsorContactUrl:
@@ -11,15 +18,15 @@ export const site = {
   founders: [
     {
       name: "Andras Hejj",
-      role: "Founder",
+      role: "Volunteer · Co-founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.png",
-      bio: "Builds the club around consistency, trust, and a safe path for kids to fall in love with surfing.",
+      bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing. Unpaid — by design.",
     },
     {
       name: "Theola Vlok",
-      role: "Founder",
-      bio: "Helps shape the club culture so every session feels welcoming, calm, and confidence-building.",
+      role: "Volunteer · Co-founder",
+      bio: "Shapes the club culture so every session feels welcoming, calm, and quietly confidence-building. Volunteer crew, fr.",
     },
   ],
   sponsors: [
@@ -29,7 +36,7 @@ export const site = {
       logo: "/media/nbk-labs-logo.svg",
       logoAlt: "NBK Labs live site wordmark",
       blurb:
-        "Backing practical systems and community infrastructure that help the club stay reliable and free of charge.",
+        "Backing practical systems and community infrastructure that help the club stay reliable, member-funded, and zero-overhead.",
     },
     {
       name: "Motif",
@@ -38,56 +45,56 @@ export const site = {
       logoAlt: "Motif logo",
       image: "/media/motif-og.png",
       blurb:
-        "Supporting the story, visibility, and momentum needed to grow a strong local surf community for kids.",
+        "Backing the story, visibility, and momentum needed to grow a strong local surf community for kids — no gatekeeping.",
     },
   ],
   navigation: [
-    { label: "Why Duckies", href: "/#why-duckies" },
+    { label: "Why Sunset Surfers", href: "/#why-sunset-surfers" },
     { label: "Schedule", href: "/#schedule" },
     { label: "Sponsors", href: "/#sponsors" },
     { label: "Training Materials", href: "/training-materials" },
   ],
   stats: [
-    { value: "100%", label: "free of charge" },
+    { value: "100%", label: "volunteer-run, no cap" },
     { value: "2x", label: "sessions each week" },
-    { value: "4x", label: "club competitions each year" },
-    { value: "Local", label: "founder-led in Tamarin" },
+    { value: "4x", label: "club comps each year" },
+    { value: "$0", label: "to organizers — every cent reinvested" },
   ],
   schedule: [
     {
       day: "Wednesday",
       time: "4:00-6:00pm",
-      focus: "Technique, confidence, and whitewater repetition.",
+      focus: "Technique, confidence, and whitewater reps that actually hit.",
     },
     {
       day: "Friday",
       time: "4:00-6:00pm",
-      focus: "Playful progression, community, and wave time.",
+      focus: "Playful progression, real community, big wave time.",
     },
   ],
   competition: {
     label: "Quarterly beach comp",
-    title: "Four moments a year that the whole club trains toward.",
+    title: "Four moments a year the whole club trains toward.",
     description:
-      "Each competition is designed to feel exciting, supportive, and memorable. Kids get a real milestone to prepare for, families get a reason to gather, and sponsors get to be visible in the best possible setting: a thriving local community.",
+      "Each comp is built to feel hype, supportive, and unforgettable. Kids get a real milestone to lock in for, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
   },
   pillars: [
     {
       title: "Real water confidence",
-      text: "Sessions are built to make the ocean feel familiar, exciting, and manageable for young surfers.",
+      text: "Sessions are built so the ocean stops feeling scary and starts feeling like home — for first-timers and groms alike.",
     },
     {
-      title: "Community first",
-      text: "Duckies is not a transactional surf school. It is a consistent local club where kids, families, and supporters keep showing up.",
+      title: "Community first, fr",
+      text: "Sunset Surfers isn't a transactional surf school. It's a consistent local club where kids, families, and supporters keep showing up.",
     },
     {
       title: "Progress with joy",
-      text: "The tone is serious about safety and growth, but the feeling is light, inviting, and full of momentum.",
+      text: "Dead serious about safety and growth, but the vibe stays light, inviting, and full of momentum.",
     },
   ],
   materials: {
     intro:
-      "A public starter library for families and young surfers to keep momentum between sessions.",
+      "A public starter library so families and young surfers can keep the streak alive between sessions.",
     featuredRoutine: [
       "5 slow pop-ups with perfect hand placement.",
       "2 rounds of 45-second balance holds on a cushion, board, or line.",

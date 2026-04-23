@@ -1,6 +1,6 @@
-# Duckies Surf Club
+# Sunset Surfers
 
-Landing site for a free surf club for kids in Tamarin, Mauritius.
+Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, Mauritius. (Previously "Duckies Surf Club".)
 
 ## Stack
 
