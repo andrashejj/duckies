@@ -1,6 +1,6 @@
-# Sunset Surfers — Claude notes
+# Sunset Duckies — Claude notes
 
-(Formerly "Duckies Surf Club" — repo dir, package name, and `andrashejj/duckies` GitHub slug still use the old name.)
+(Formerly "Duckies Surf Club", then "Sunset Surfers" — repo dir, package name, and `andrashejj/duckies` GitHub slug still use the old name.)
 
 Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, Mauritius. Astro + Tailwind v4 (via `@tailwindcss/vite`) + Motion.
 
