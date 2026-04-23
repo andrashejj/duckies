@@ -13,9 +13,9 @@ const qrCode = await QRCode.toDataURL(site.whatsappUrl, {
   },
 });
 
-const title = `${site.name} | Volunteer-run surf club for kids in Tamarin`;
+const title = `${site.name} | Member-funded surf club for kids in Tamarin`;
 const description =
-  "A volunteer-run, member-funded surf club in Tamarin Bay helping kids build confidence, community, and comp-ready momentum through weekly sessions.";
+  "A member-funded surf club in Tamarin Bay helping kids build confidence, community, and comp-ready momentum through weekly sessions.";
 
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
@@ -82,10 +82,10 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
-            {site.name} is a volunteer-run surf club for kids in Tamarin. Weekly sessions that
+            {site.name} is a surf club for kids in Tamarin. Weekly sessions that
             <em class="font-accent italic text-[var(--color-sun-500)]">lowkey hit different</em> —
             member-funded, kid-first, and built around showing up. Dues go to comps, club lycras, and
-            safety gear. Coaches and organizers? Unpaid, on purpose.
+            safety gear.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             Become a sponsor
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
-            Volunteer-run · Member-funded · {site.membership.feeLabelLong}
+            Member-funded · Wed + Fri · {site.membership.feeLabelLong}
           </p>
         </div>
       </div>
@@ -138,7 +138,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           and lowkey iconic.
         </h2>
         <p class="body-copy max-w-2xl">
-          The aim isn't a busy website — it's making the club itself legible: a volunteer-run rhythm
+          The aim isn't a busy website — it's making the club itself legible: a steady weekly rhythm
           in Tamarin where kids build confidence, lock in reps, and feel part of something real. No
           fluff, no growth hacks, just the bay.
         </p>
@@ -234,8 +234,8 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           </h2>
           <p class="body-copy max-w-xl">
             We say the quiet part loud — Sunset Surfers isn't a freebie, it's a club. Families chip in,
-            volunteers run it, and every dollar gets reinvested into the kids' experience. No
-            salaries, no markup, no shady math.
+            the crew shows up, and every rupee gets reinvested into the kids' experience. No markup,
+            no shady math.
           </p>
         </div>
 
@@ -276,8 +276,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             <ul class="mt-3 grid gap-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/80">
               <li>→ Comp days, prizes, and event logistics</li>
               <li>→ Club lycras so the crew shows up looking like a crew</li>
-              <li>→ Safety gear, first aid, water-side essentials</li>
-              <li>→ $0 to coaches and organizers — fully volunteer, no cap</li>
+              <li>→ Safety gear, first aid, and water-side essentials</li>
             </ul>
           </div>
         </div>
@@ -339,15 +338,15 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
   <section class="mx-auto max-w-7xl px-6 py-18 lg:px-10">
     <div class="space-y-10" data-reveal>
       <div class="max-w-3xl">
-        <p class="section-kicker">Founders</p>
+        <p class="section-kicker">Founder</p>
         <h2 class="section-title mt-4">
-          Built by volunteers who play the
+          Built by someone who plays the
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">long</span>
           game.
         </h2>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2">
+      <div class="mx-auto grid w-full max-w-3xl gap-6">
         {site.founders.map((founder, i) => (
           <article class:list={[
             "surface-card overflow-hidden",

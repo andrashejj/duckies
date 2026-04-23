@@ -3,7 +3,7 @@ export const site = {
   shortName: "Sunset Surfers",
   location: "Tamarin Bay, Mauritius",
   description:
-    "A volunteer-run, member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other. No salaries — every dollar back to the club.",
+    "A member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other.",
   membership: {
     annualFeeMur: 5000,
     annualFeeUsdApprox: 100,
@@ -11,7 +11,7 @@ export const site = {
     feeLabelLong: "Rs 5,000 / year (~$100 USD)",
     bringYourOwn: ["surfboard", "wetsuit"],
     fundingNote:
-      "100% volunteer-run. Dues fund comps, club lycras, safety gear, and the moments that make the club hit different — not coaches or organizers.",
+      "Dues fund comps, club lycras, safety gear, and the moments that make the club hit different.",
   },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
@@ -20,15 +20,10 @@ export const site = {
   founders: [
     {
       name: "Andras Hejj",
-      role: "Volunteer · Co-founder",
+      role: "Founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.png",
-      bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing. Unpaid — by design.",
-    },
-    {
-      name: "Theola Vlok",
-      role: "Volunteer · Co-founder",
-      bio: "Shapes the club culture so every session feels welcoming, calm, and quietly confidence-building. Volunteer crew, fr.",
+      bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing.",
     },
   ],
   sponsors: [
@@ -57,7 +52,7 @@ export const site = {
     { label: "Training Materials", href: "/training-materials" },
   ],
   stats: [
-    { value: "100%", label: "volunteer-run, no cap" },
+    { value: "100%", label: "reinvested in the kids" },
     { value: "2x", label: "sessions each week" },
     { value: "4x", label: "club comps each year" },
     { value: "Rs 5K", label: "annual dues — every cent reinvested" },
