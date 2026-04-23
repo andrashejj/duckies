@@ -1,9 +1,17 @@
 export const site = {
   name: "Sunset Duckies",
   shortName: "Sunset Duckies",
+  url: "https://sunsetduckies.com",
   location: "Tamarin Bay, Mauritius",
+  locale: "en_MU",
   description:
     "A member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other.",
+  ogImage: {
+    path: "/media/board-lineup.jpg",
+    width: 1600,
+    height: 1200,
+    alt: "Young surfers standing with their boards at the shoreline in Tamarin Bay.",
+  },
   membership: {
     annualFeeMur: 5000,
     annualFeeUsdApprox: 100,
