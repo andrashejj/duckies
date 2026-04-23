@@ -5,8 +5,10 @@ export const site = {
   description:
     "A volunteer-run, member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other. No salaries — every dollar back to the club.",
   membership: {
-    annualFeeUsd: 5000,
-    feeLabel: "$5,000 USD / year",
+    annualFeeMur: 5000,
+    annualFeeUsdApprox: 100,
+    feeLabel: "Rs 5,000 / year",
+    feeLabelLong: "Rs 5,000 / year (~$100 USD)",
     bringYourOwn: ["surfboard", "wetsuit"],
     fundingNote:
       "100% volunteer-run. Dues fund comps, club lycras, safety gear, and the moments that make the club hit different — not coaches or organizers.",
@@ -58,7 +60,7 @@ export const site = {
     { value: "100%", label: "volunteer-run, no cap" },
     { value: "2x", label: "sessions each week" },
     { value: "4x", label: "club comps each year" },
-    { value: "$0", label: "to organizers — every cent reinvested" },
+    { value: "Rs 5K", label: "annual dues — every cent reinvested" },
   ],
   schedule: [
     {
