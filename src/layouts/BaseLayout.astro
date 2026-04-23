@@ -1,6 +1,4 @@
 ---
-import "@fontsource-variable/manrope";
-import "@fontsource-variable/sora";
 import "../styles/global.css";
 
 import { site } from "../data/site";
@@ -37,96 +35,129 @@ const {
     <meta name="twitter:image" content={image} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..125,400..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1;1,9..144,400..800,0..100,0..1&family=Outfit:wght@300..800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
     <title>{title}</title>
     <script is:inline>
       document.documentElement.classList.add("js");
     </script>
   </head>
-  <body class="min-h-screen bg-[var(--color-sand-50)] text-slate-900 antialiased">
+  <body class="min-h-screen antialiased">
     <div class="page-shell">
-      <header class="sticky top-0 z-50 border-b border-white/45 bg-white/78 backdrop-blur-xl">
+      <header class="sticky top-0 z-50 border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]/92 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10 lg:py-4">
-          <a href="/" class="flex min-w-0 items-center gap-3">
-            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-ocean-950)] text-lg font-semibold text-white shadow-[0_18px_50px_-26px_rgba(8,32,50,0.85)] sm:h-11 sm:w-11">
-              D
+          <a href="/" class="group flex min-w-0 items-center gap-3">
+            <span class="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-lg font-black text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform group-hover:rotate-[-6deg] sm:h-12 sm:w-12">
+              <span class="font-display" style="font-variation-settings: 'wdth' 120; font-weight: 800;">D</span>
+              <span aria-hidden="true" class="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-[var(--color-sun-500)] ring-2 ring-[var(--color-ink-950)]"></span>
             </span>
             <div class="min-w-0">
-              <p class="font-display text-[0.72rem] uppercase tracking-[0.24em] text-[var(--color-ocean-700)] sm:text-sm sm:tracking-[0.28em]">
-                Duckies
+              <p class="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[var(--color-coral-500)] sm:text-xs">
+                Duckies ★ Club
               </p>
-              <p class="truncate text-xs font-semibold text-slate-700 sm:text-sm">
-                Surf Club · Tamarin Bay
+              <p class="truncate text-sm font-bold text-[var(--color-ink-950)] sm:text-base" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+                Surf the Bay · Tamarin
               </p>
             </div>
           </a>
 
-          <nav class="hidden items-center gap-5 text-sm font-semibold text-slate-700 xl:flex">
+          <nav class="hidden items-center gap-1 xl:flex">
             {site.navigation.map((item) => (
-              <a class="transition hover:text-[var(--color-ocean-700)]" href={item.href}>
+              <a
+                class="rounded-full px-3 py-2 text-sm font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg]"
+                style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;"
+                href={item.href}
+              >
                 {item.label}
               </a>
             ))}
           </nav>
 
           <a
-            class="cta-secondary shrink-0 px-4 py-2.5 sm:px-6 sm:py-3"
+            class="cta-primary shrink-0 px-4 py-2.5 text-[0.8rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
             href={site.whatsappUrl}
             target="_blank"
             rel="noreferrer"
           >
-            <span class="hidden sm:inline">Apply via WhatsApp</span>
+            <span class="hidden sm:inline">Apply ✿ WhatsApp</span>
             <span class="sm:hidden">Apply</span>
           </a>
         </div>
       </header>
 
-      <main>
+      <main class="relative">
         <slot />
       </main>
 
-      <footer class="mt-24 border-t border-slate-200/80 bg-white/75">
-        <div class="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
-          <div class="space-y-4">
-            <p class="font-display text-xl text-[var(--color-ocean-950)]">
+      <div class="marquee mt-20">
+        <div class="marquee-track">
+          <span>
+            Free · Tamarin Bay <span class="star">✦</span>
+            <em>Wednesday + Friday</em> <span class="star">✦</span>
+            4 competitions a year <span class="star">✦</span>
+            <em>Kids only</em> <span class="star">✦</span>
+            Confidence in the water <span class="star">✦</span>
+            <em>Community on the beach</em> <span class="star">✦</span>
+          </span>
+          <span aria-hidden="true">
+            Free · Tamarin Bay <span class="star">✦</span>
+            <em>Wednesday + Friday</em> <span class="star">✦</span>
+            4 competitions a year <span class="star">✦</span>
+            <em>Kids only</em> <span class="star">✦</span>
+            Confidence in the water <span class="star">✦</span>
+            <em>Community on the beach</em> <span class="star">✦</span>
+          </span>
+        </div>
+      </div>
+
+      <footer class="border-t-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]">
+        <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
+          <div class="space-y-5">
+            <p class="section-title" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">
               {site.name}
             </p>
-            <p class="max-w-2xl text-sm leading-7 text-slate-600">
+            <p class="body-copy max-w-2xl">
               Free-of-charge surf sessions for kids in Tamarin, built around confidence,
               community, and the joy of being in the water together.
             </p>
-            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
-              <span class="chip">Wednesday · Friday</span>
+            <div class="flex flex-wrap gap-3">
+              <span class="chip">Wednesday + Friday</span>
               <span class="chip">4:00-6:00pm</span>
               <span class="chip">{site.location}</span>
             </div>
           </div>
 
-          <div class="space-y-4 text-sm text-slate-600">
-            <p class="font-semibold uppercase tracking-[0.24em] text-[var(--color-ocean-700)]">
-              Quick links
-            </p>
+          <div class="space-y-4 text-sm">
+            <p class="section-kicker">Quick links</p>
             <div class="grid gap-3">
-              <a href="/training-materials" class="transition hover:text-[var(--color-ocean-700)]">
-                Training materials
+              <a href="/training-materials" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
+                → Training library
               </a>
               <a
                 href={site.whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                class="transition hover:text-[var(--color-ocean-700)]"
+                class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]"
               >
-                Apply via WhatsApp
+                → Apply via WhatsApp
               </a>
               <a
                 href={site.sponsorContactUrl}
                 target="_blank"
                 rel="noreferrer"
-                class="transition hover:text-[var(--color-ocean-700)]"
+                class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]"
               >
-                Sponsor conversations
+                → Sponsor conversations
               </a>
             </div>
           </div>
+        </div>
+        <div class="border-t border-[var(--color-ink-950)]/20 bg-[var(--color-cream)]/70 px-6 py-4 text-center font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
+          © {new Date().getFullYear()} · Made with salt water & sunshine in Mauritius
         </div>
       </footer>
     </div>
@@ -161,8 +192,8 @@ const {
       } else {
         animate(
           "[data-float]",
-          { opacity: [0, 1], y: [28, 0] },
-          { delay: stagger(0.12), duration: 0.82, easing: [0.22, 1, 0.36, 1] },
+          { opacity: [0, 1], y: [32, 0] },
+          { delay: stagger(0.1), duration: 0.85, easing: [0.22, 1, 0.36, 1] },
         );
 
         inView("[data-reveal]", (element) => {
@@ -170,8 +201,8 @@ const {
 
           animate(
             element,
-            { opacity: [0, 1], y: [26, 0], filter: ["blur(10px)", "blur(0px)"] },
-            { duration: 0.72, easing: [0.22, 1, 0.36, 1] },
+            { opacity: [0, 1], y: [28, 0], filter: ["blur(10px)", "blur(0px)"] },
+            { duration: 0.7, easing: [0.22, 1, 0.36, 1] },
           );
         });
       }
