@@ -20,15 +20,10 @@ export const site = {
   founders: [
     {
       name: "Andras Hejj",
-      role: "Co-founder",
+      role: "Founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.png",
       bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing.",
-    },
-    {
-      name: "Theola Vlok",
-      role: "Co-founder",
-      bio: "Shapes the club culture so every session feels welcoming, calm, and quietly confidence-building.",
     },
   ],
   sponsors: [
