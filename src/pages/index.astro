@@ -13,9 +13,9 @@ const qrCode = await QRCode.toDataURL(site.whatsappUrl, {
   },
 });
 
-const title = `${site.name} | Free surf club for kids in Tamarin`;
+const title = `${site.name} | Volunteer-run surf club for kids in Tamarin`;
 const description =
-  "A free surf club in Tamarin Bay helping kids build confidence, community, and competition-ready momentum through weekly sessions.";
+  "A volunteer-run, member-funded surf club in Tamarin Bay helping kids build confidence, community, and comp-ready momentum through weekly sessions.";
 
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
@@ -52,7 +52,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
                 <path id="circle-text" d="M 50,50 m -36,0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" />
               </defs>
               <text font-size="12" fill="#0b1620" letter-spacing="2">
-                <textPath href="#circle-text">★ free · free · free · free · </textPath>
+                <textPath href="#circle-text">★ no cap · no cap · no cap · </textPath>
               </text>
             </svg>
           </div>
@@ -76,27 +76,28 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           >
             <span class="block">Salty hair,</span>
             <span class="block">
-              <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">big</span>
-              confidence.
+              <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">real</span>
+              grit.
             </span>
-            <span class="block">Zero <span class="ink-underline text-[var(--color-ink-950)]">fees</span>.</span>
+            <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
-            {site.name} is a founder-led surf club for kids in Tamarin. Weekly sessions
-            designed to feel <em class="font-accent italic text-[var(--color-sun-500)]">high quality</em>,
-            inviting, and completely free for families.
+            {site.name} is a volunteer-run surf club for kids in Tamarin. Weekly sessions that
+            <em class="font-accent italic text-[var(--color-sun-500)]">lowkey hit different</em> —
+            member-funded, kid-first, and built around showing up. Dues go to comps, club lycras, and
+            safety gear. Coaches and organizers? Unpaid, on purpose.
           </p>
         </div>
 
         <div data-float class="flex flex-col gap-3">
           <a class="cta-primary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Apply via WhatsApp
+            Slide in via WhatsApp
           </a>
           <a class="cta-secondary w-full" href="#sponsors">
             Become a sponsor
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
-            No fees · No catch · Just the ocean
+            Volunteer-run · Member-funded · {site.membership.feeLabelLong}
           </p>
         </div>
       </div>
@@ -122,24 +123,24 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
     </div>
   </section>
 
-  <!-- ===================== WHY DUCKIES ===================== -->
-  <section id="why-duckies" class="relative mx-auto max-w-7xl px-6 pb-14 pt-20 lg:px-10">
+  <!-- ===================== WHY SUNSET SURFERS ===================== -->
+  <section id="why-sunset-surfers" class="relative mx-auto max-w-7xl px-6 pb-14 pt-20 lg:px-10">
     <div class="blob-teal absolute -left-32 top-20 -z-0"></div>
     <div class="blob-coral absolute -right-20 bottom-0 -z-0"></div>
 
     <div class="relative grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
       <div class="space-y-6" data-reveal>
-        <p class="section-kicker">Why Duckies</p>
+        <p class="section-kicker">Why Sunset Surfers</p>
         <h2 class="section-title max-w-2xl">
           A club that feels
           <span class="ink-underline">calm</span>,
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">credible</span>,
-          and easy to say yes to.
+          and lowkey iconic.
         </h2>
         <p class="body-copy max-w-2xl">
-          The aim is not to create a busy website. It is to make the club itself legible: a free,
-          consistent rhythm in Tamarin where kids build confidence, improve through repetition, and
-          feel part of something real.
+          The aim isn't a busy website — it's making the club itself legible: a volunteer-run rhythm
+          in Tamarin where kids build confidence, lock in reps, and feel part of something real. No
+          fluff, no growth hacks, just the bay.
         </p>
 
         <div class="grid gap-4 sm:gap-5">
@@ -212,9 +213,73 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           {site.competition.description}
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <span class="chip">Milestones kids train toward</span>
+          <span class="chip">Milestones to lock in for</span>
           <span class="chip">Family beach energy</span>
           <span class="chip">Founding sponsor visibility</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS / FUNDING ===================== -->
+  <section id="how-it-works" class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
+    <div class="surface-card sticker-lilac p-8 md:p-10" data-reveal>
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div class="space-y-5">
+          <p class="section-kicker">How it actually works</p>
+          <h2 class="section-title">
+            Member-funded.
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Volunteer</span>-run.
+            <span class="ink-underline">Receipts</span> on the table.
+          </h2>
+          <p class="body-copy max-w-xl">
+            We say the quiet part loud — Sunset Surfers isn't a freebie, it's a club. Families chip in,
+            volunteers run it, and every dollar gets reinvested into the kids' experience. No
+            salaries, no markup, no shady math.
+          </p>
+        </div>
+
+        <div class="grid gap-4">
+          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <div class="flex items-baseline justify-between gap-3">
+              <p class="font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 116; font-weight: 800;">
+                {site.membership.feeLabel}
+              </p>
+              <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+                Annual member dues
+              </p>
+            </div>
+            <p class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+              ≈ ${site.membership.annualFeeUsdApprox} USD
+            </p>
+            <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+              One flat number per family per year. No upsells, no tier cosplay.
+            </p>
+          </div>
+
+          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+              Bring your own kit
+            </p>
+            <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+              Surfboard + wetsuit, on the family.
+            </p>
+            <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+              Buy or borrow — we'll point you to the right shape and size, no guesswork.
+            </p>
+          </div>
+
+          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+              Where the dues actually go
+            </p>
+            <ul class="mt-3 grid gap-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/80">
+              <li>→ Comp days, prizes, and event logistics</li>
+              <li>→ Club lycras so the crew shows up looking like a crew</li>
+              <li>→ Safety gear, first aid, water-side essentials</li>
+              <li>→ $0 to coaches and organizers — fully volunteer, no cap</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -229,8 +294,9 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           A whole <span class="ink-underline">library</span> for home practice.
         </h2>
         <p class="body-copy mt-4 max-w-2xl">
-          The training materials page is where Duckies steadily builds a public resource library:
-          pop-up practice, balance work, ocean knowledge, and useful surf videos in one place.
+          The training materials page is where the club drops a public resource library: pop-up
+          practice, balance work, ocean knowledge, and surf videos worth the watch — all in one
+          spot.
         </p>
         <div class="mt-8">
           <a class="cta-primary" href="/training-materials">
@@ -242,17 +308,17 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
       <div class="surface-card sticker-lilac p-8" data-reveal>
         <p class="section-kicker">WhatsApp community</p>
         <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Application stays simple.
+          Sliding in stays simple.
         </h2>
         <p class="body-copy mt-4">
-          Join through WhatsApp, get updates quickly, and stay close to the club's weekly rhythm.
-          For launch, this is the fastest and clearest path for families.
+          Hit the WhatsApp, catch the drops in real time, and stay locked into the club's weekly
+          rhythm. For launch, this is the cleanest path for families — iykyk.
         </p>
         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
           <div class="rounded-[1.5rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[4px_4px_0_0_var(--color-ink-950)]">
             <img
               src={qrCode}
-              alt="QR code linking to the Duckies Surf Club WhatsApp group."
+              alt="QR code linking to the Sunset Surfers WhatsApp group."
               class="h-40 w-40 rounded-xl"
             />
           </div>
@@ -275,7 +341,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
       <div class="max-w-3xl">
         <p class="section-kicker">Founders</p>
         <h2 class="section-title mt-4">
-          Built by people who care about the
+          Built by volunteers who play the
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">long</span>
           game.
         </h2>
@@ -335,9 +401,10 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             Become a <span class="ink-underline">founding</span> sponsor.
           </h2>
           <p class="body-copy max-w-2xl">
-            Duckies is still early, which is exactly what makes support meaningful. A founding
-            sponsor helps keep the club free while becoming part of a story families in Tamarin
-            will actually remember.
+            Sunset Surfers is still early — which is exactly the vibe. Member dues cover the basics; a
+            founding sponsor unlocks the extras: bigger comp days, club-wide lycras, scholarships
+            for families who can't swing the fee, and the consistency that makes this club hit
+            different for Tamarin kids.
           </p>
           <a
             class="cta-primary"
