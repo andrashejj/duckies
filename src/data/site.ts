@@ -5,12 +5,12 @@ export const site = {
   location: "Tamarin Bay, Mauritius",
   locale: "en_MU",
   description:
-    "A kids' surf club in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding into the sunset week after week.",
+    "Kids' surf club in Tamarin Bay, fr. Young duckies paddling out, locking in on surfing, and chasing the sunset every sesh — lowkey the best crew on the island.",
   ogImage: {
-    path: "/media/sunset-training.jpg",
-    width: 1600,
-    height: 1200,
-    alt: "Young Sunset Duckies training on the beach as the sun drops over Tamarin Bay.",
+    path: "/media/andras-hejj.jpg",
+    width: 1504,
+    height: 1600,
+    alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky — big sesh energy.",
   },
   membership: {
     annualFeeMur: 5000,
@@ -30,7 +30,7 @@ export const site = {
       name: "Andras Hejj",
       role: "Founder",
       href: "https://andrashejj.com",
-      image: "/media/andras-hejj.png",
+      image: "/media/andras-hejj.jpg",
       bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing.",
     },
   ],
