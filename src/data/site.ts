@@ -52,10 +52,10 @@ export const site = {
     { label: "Training Materials", href: "/training-materials" },
   ],
   stats: [
-    { value: "100%", label: "reinvested in the kids" },
-    { value: "2x", label: "sessions each week" },
+    { value: "100%", label: "kids in the lineup" },
+    { value: "2x", label: "training sessions a week" },
     { value: "4x", label: "club comps each year" },
-    { value: "Rs 5K", label: "annual dues — every cent reinvested" },
+    { value: "Rs 5K", label: "annual dues, all-in" },
   ],
   schedule: [
     {
