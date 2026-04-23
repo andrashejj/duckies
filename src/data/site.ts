@@ -1,6 +1,6 @@
 export const site = {
-  name: "Sunset Surfers",
-  shortName: "Sunset Surfers",
+  name: "Sunset Duckies",
+  shortName: "Sunset Duckies",
   location: "Tamarin Bay, Mauritius",
   description:
     "A member-funded surf club helping kids in Tamarin build real confidence in the water, on the beach, and with each other.",
@@ -46,7 +46,7 @@ export const site = {
     },
   ],
   navigation: [
-    { label: "Why Sunset Surfers", href: "/#why-sunset-surfers" },
+    { label: "Why Sunset Duckies", href: "/#why-sunset-duckies" },
     { label: "Schedule", href: "/#schedule" },
     { label: "Sponsors", href: "/#sponsors" },
     { label: "Training Materials", href: "/training-materials" },
@@ -82,7 +82,7 @@ export const site = {
     },
     {
       title: "Community first, fr",
-      text: "Sunset Surfers isn't a transactional surf school. It's a consistent local club where kids, families, and supporters keep showing up.",
+      text: "Sunset Duckies isn't a transactional surf school. It's a consistent local club where kids, families, and supporters keep showing up.",
     },
     {
       title: "Progress with joy",
