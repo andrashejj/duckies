@@ -126,6 +126,16 @@ const videoReferences = [
     href: "https://youtu.be/-UD25_kIpRY?si=zCRQN5QS4CEnP5X0",
     image: "https://img.youtube.com/vi/-UD25_kIpRY/hqdefault.jpg",
   },
+  {
+    name: "Exercise Reference 7",
+    href: "https://www.youtube.com/shorts/9A9I1PbtS8U",
+    image: "https://img.youtube.com/vi/9A9I1PbtS8U/hqdefault.jpg",
+  },
+  {
+    name: "Exercise Reference 8",
+    href: "https://www.youtube.com/shorts/6oMIfHxKlZQ",
+    image: "https://img.youtube.com/vi/6oMIfHxKlZQ/hqdefault.jpg",
+  },
 ];
 
 const featuredVideos = [
@@ -144,6 +154,17 @@ const featuredVideos = [
     poster: "/media/hero-poster.jpg",
   },
 ];
+
+const exerciseAccents = [
+  "sticker-coral",
+  "sticker-teal",
+  "sticker-sun",
+  "sticker-pink",
+  "sticker-lilac",
+  "sticker-teal",
+];
+
+const tagPillColors = ["", "pink", "sun", "lilac"];
 ---
 
 <BaseLayout
@@ -152,15 +173,18 @@ const featuredVideos = [
   image="/media/balance-training.jpg"
   page="materials"
 >
-  <section class="mx-auto max-w-7xl px-6 pb-10 pt-10 lg:px-10">
-    <div class="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-      <div class="surface-card p-6 md:p-8" data-float>
-        <p class="section-kicker">Training materials</p>
-        <h1 class="section-title mt-4 max-w-3xl">
-          Train the right habits between sessions.
+  <!-- ===================== HERO ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
+    <div class="grid gap-8 lg:grid-cols-[1fr_0.85fr]">
+      <div class="surface-card p-8 md:p-10" data-float>
+        <p class="section-kicker">Training library</p>
+        <h1 class="section-title mt-5 max-w-3xl" style="font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height: 0.95;">
+          Train the <span class="ink-underline">right</span> habits
+          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">between</span>
+          sessions.
         </h1>
-        <p class="body-copy mt-4 max-w-3xl">
-          This is the Duckies training library for kids and families who want to keep progressing
+        <p class="body-copy mt-6 max-w-3xl">
+          The Duckies library for kids and families who want to keep progressing
           outside the Wednesday and Friday sessions. It brings together the actual coaching
           structure we use in Tamarin: mobility, pop-up mechanics, paddling strength, balance, and
           simple water-confidence work that matches the level of the group right now.
@@ -174,40 +198,55 @@ const featuredVideos = [
         </div>
       </div>
 
-      <div class="media-frame min-h-[22rem]" data-float>
-        <img
-          src="/media/sunset-training.jpg"
-          alt="Kids gathering on the beach for Duckies surf training at sunset."
-          loading="eager"
-        />
+      <div class="relative" data-float>
+        <div class="media-frame min-h-[22rem] tilt-right transition-transform duration-500">
+          <img
+            src="/media/sunset-training.jpg"
+            alt="Kids gathering on the beach for Duckies surf training at sunset."
+            loading="eager"
+          />
+        </div>
+        <div class="wobble absolute -bottom-5 -right-4 hidden md:block">
+          <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-4 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+            <p class="font-display text-sm font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
+              ✦ drill. repeat. send it.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ===================== GUIDING IDEAS + SESSION STRUCTURE ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <div class="surface-card p-6 md:p-8" data-reveal>
+    <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <div class="surface-card sticker-teal p-8" data-reveal>
         <p class="section-kicker">Guiding ideas</p>
-        <h2 class="section-title mt-4">Build the base first.</h2>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+          Build the <span class="ink-underline">base</span> first.
+        </h2>
         <div class="mt-6 grid gap-4">
-          {guidingIdeas.map((idea) => (
-            <div class="rounded-[1.4rem] bg-[var(--color-sand-50)] p-5">
-              <p class="text-sm leading-7 text-slate-600">{idea}</p>
+          {guidingIdeas.map((idea, i) => (
+            <div class="rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <div class="flex items-start gap-3">
+                <span class="font-mono text-xs font-semibold text-[var(--color-coral-500)]">{String(i + 1).padStart(2, "0")}</span>
+                <p class="text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">{idea}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div class="surface-card p-6 md:p-8" data-reveal>
+      <div class="surface-card sticker-coral p-8" data-reveal>
         <p class="section-kicker">Session structure</p>
-        <h2 class="section-title mt-4">The same frame every time.</h2>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+          Same <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">frame</span>, every time.
+        </h2>
         <div class="mt-6 grid gap-3">
           {sessionStructure.map((step, index) => (
-            <div class="flex items-start gap-4 rounded-[1.3rem] border border-slate-200/70 bg-white/80 p-4">
-              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-ocean-950)] text-sm font-semibold text-white">
-                {index + 1}
-              </div>
-              <p class="pt-1 text-sm leading-7 text-slate-700">{step}</p>
+            <div class="flex items-start gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <span class="step-bubble">{index + 1}</span>
+              <p class="pt-1.5 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/80">{step}</p>
             </div>
           ))}
         </div>
@@ -215,79 +254,103 @@ const featuredVideos = [
     </div>
   </section>
 
+  <!-- ===================== LAND DRILLS ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card p-6 md:p-8" data-reveal>
-      <p class="section-kicker">Land drills</p>
-      <h2 class="section-title mt-4">Exercises already in the surf coaching library.</h2>
+    <div class="surface-card p-8 md:p-10" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="section-kicker">Land drills</p>
+          <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+            The actual exercises from the coaching book.
+          </h2>
+        </div>
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+          {movementExercises.length} drills ✦ all on the sand
+        </p>
+      </div>
+
       <div class="mt-8 grid gap-5 md:grid-cols-2">
-        {movementExercises.map((exercise) => (
-          <article class="rounded-[1.6rem] border border-slate-200/70 bg-white/80 p-5">
+        {movementExercises.map((exercise, i) => (
+          <article class:list={[
+            "relative rounded-[1.6rem] border-2 border-[var(--color-ink-950)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)] transition-transform duration-300 hover:-translate-y-1",
+            exerciseAccents[i % exerciseAccents.length],
+          ]}>
             <div class="flex flex-wrap gap-2">
-              {exercise.tags.map((tag) => (
-                <span class="rounded-full bg-[var(--color-sand-50)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-ocean-700)]">
-                  {tag}
-                </span>
+              {exercise.tags.map((tag, ti) => (
+                <span class:list={["tag-pill", tagPillColors[ti % tagPillColors.length]]}>{tag}</span>
               ))}
             </div>
-            <p class="mt-4 font-display text-2xl text-[var(--color-ocean-950)]">{exercise.name}</p>
-            <p class="mt-3 text-sm leading-7 text-slate-600">{exercise.description}</p>
-            <p class="mt-4 text-sm leading-7 text-[var(--color-ocean-700)]">
-              {exercise.surfRelevance}
+            <p class="mt-5 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+              {exercise.name}
             </p>
+            <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{exercise.description}</p>
+            <div class="mt-4 border-t border-dashed border-[var(--color-ink-950)]/30 pt-4">
+              <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">Why it matters</p>
+              <p class="mt-2 text-[0.9rem] leading-6 text-[var(--color-ink-950)]/80">{exercise.surfRelevance}</p>
+            </div>
           </article>
         ))}
       </div>
     </div>
   </section>
 
+  <!-- ===================== WATER DRILLS + VIDEO REFS ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
     <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <div class="surface-card p-6 md:p-8" data-reveal>
+      <div class="surface-card sticker-teal p-8" data-reveal>
         <p class="section-kicker">Water drills</p>
-        <h2 class="section-title mt-4">One clean water focus per session.</h2>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+          One clean <span class="ink-underline">focus</span> per session.
+        </h2>
         <div class="mt-6 grid gap-4">
           {waterDrills.map((drill) => (
-            <div class="rounded-[1.4rem] bg-[var(--color-sand-50)] p-5">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ocean-700)]">
+            <div class="rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
                 {drill.category}
               </p>
-              <p class="mt-3 font-display text-xl text-[var(--color-ocean-950)]">{drill.name}</p>
-              <p class="mt-2 text-sm leading-7 text-slate-600">{drill.description}</p>
+              <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                {drill.name}
+              </p>
+              <p class="mt-2 text-[0.92rem] leading-7 text-[var(--color-ink-950)]/75">{drill.description}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div class="surface-card p-6 md:p-8" data-reveal>
+      <div class="surface-card sticker-sun p-8" data-reveal>
         <p class="section-kicker">Video references</p>
-        <h2 class="section-title mt-4">A few links already in the coaching notes.</h2>
-        <div class="mt-6 grid gap-4">
+        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+          Links straight from the coaching notes.
+        </h2>
+        <div class="mt-6 grid gap-3">
           {videoReferences.map((video) => (
             <a
               href={video.href}
               target="_blank"
               rel="noreferrer"
-              class="rounded-[1.4rem] border border-slate-200/70 bg-white/80 p-4 transition hover:border-[var(--color-ocean-500)] hover:bg-white"
+              class="group flex items-center gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
             >
-              <div class="flex items-center gap-4">
-                <div class="relative h-18 w-24 shrink-0 overflow-hidden rounded-2xl bg-slate-200">
-                  <img
-                    src={video.image}
-                    alt={video.name}
-                    class="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                  <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(8,32,50,0.28))]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/88 text-[var(--color-ocean-950)] shadow-[0_12px_24px_-12px_rgba(8,32,50,0.55)]">
-                      <span class="ml-0.5 text-sm">▶</span>
-                    </div>
+              <div class="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
+                <img
+                  src={video.image}
+                  alt={video.name}
+                  class="h-full w-full object-cover"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(11,22,32,0.55))]"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
+                    <span class="ml-0.5 text-[0.7rem]">▶</span>
                   </div>
                 </div>
-                <div class="min-w-0">
-                  <p class="font-display text-xl text-[var(--color-ocean-950)]">{video.name}</p>
-                  <p class="mt-1 line-clamp-2 text-sm leading-6 text-slate-600">{video.href}</p>
-                </div>
+              </div>
+              <div class="min-w-0">
+                <p class="font-display text-lg leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {video.name}
+                </p>
+                <p class="mt-1 truncate font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                  {new URL(video.href).hostname.replace("www.", "")}
+                </p>
               </div>
             </a>
           ))}
@@ -296,25 +359,36 @@ const featuredVideos = [
     </div>
   </section>
 
+  <!-- ===================== FEATURED VIDEOS ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card p-6 md:p-8" data-reveal>
-      <p class="section-kicker">Wave and surf video</p>
-      <h2 class="section-title mt-4">A couple of clips worth watching with the kids.</h2>
+    <div class="surface-card p-8 md:p-10" data-reveal>
+      <p class="section-kicker">Wave + surf video</p>
+      <h2 class="section-title mt-4">
+        A couple of clips worth watching
+        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">with</span>
+        the kids.
+      </h2>
       <div class="mt-8 grid gap-6 lg:grid-cols-2">
-        {featuredVideos.map((video) => (
-          <article class="overflow-hidden rounded-[1.6rem] border border-slate-200/70 bg-white/80">
+        {featuredVideos.map((video, i) => (
+          <article class:list={[
+            "overflow-hidden rounded-[1.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] shadow-[5px_5px_0_0_var(--color-ink-950)]",
+            i % 2 === 0 ? "tilt-left" : "tilt-right",
+            "transition-transform duration-500",
+          ]}>
             <video
               controls
               playsinline
               preload="metadata"
               poster={video.poster}
-              class="aspect-video w-full bg-[var(--color-ocean-950)] object-cover"
+              class="aspect-video w-full bg-[var(--color-ink-900)] object-cover"
             >
               <source src={video.src} type="video/mp4" />
             </video>
-            <div class="p-5">
-              <p class="font-display text-2xl text-[var(--color-ocean-950)]">{video.title}</p>
-              <p class="mt-3 text-sm leading-7 text-slate-600">{video.description}</p>
+            <div class="p-6">
+              <p class="font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                {video.title}
+              </p>
+              <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{video.description}</p>
             </div>
           </article>
         ))}
