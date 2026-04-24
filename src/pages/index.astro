@@ -332,6 +332,78 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
     </div>
   </section>
 
+  <!-- ===================== SHOP TEASER ===================== -->
+  <section id="shop-teaser" class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
+    <div class="surface-card overflow-hidden p-0" data-reveal>
+      <div class="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+        <div class="space-y-6 p-8 md:p-10">
+          <p class="section-kicker">{site.shop.dropLabel}</p>
+          <h2 class="section-title">
+            Duckies <span class="ink-underline">swag</span>,
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">teased.</span>
+          </h2>
+          <p class="body-copy max-w-xl">
+            {site.shop.intro}
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a class="cta-primary" href="/shop">
+              Open the shop
+            </a>
+            <a class="cta-secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+              Ask on WhatsApp
+            </a>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="chip">JUICE by MCB</span>
+            <span class="chip">Cash at sesh</span>
+            <span class="chip">Pickup in Tamarin</span>
+          </div>
+        </div>
+
+        <div class="relative min-h-[280px] overflow-hidden border-t-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] p-8 text-[var(--color-cream-soft)] lg:border-l-2 lg:border-t-0">
+          <div class="absolute inset-0 -z-0 opacity-80"
+            style="background-image:
+              radial-gradient(circle at 20% 20%, rgba(255,210,63,0.35), transparent 50%),
+              radial-gradient(circle at 85% 80%, rgba(255,82,60,0.35), transparent 55%),
+              radial-gradient(circle at 50% 50%, rgba(7,201,182,0.2), transparent 60%);">
+          </div>
+          <div class="relative grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {site.shop.products.slice(0, 6).map((product, i) => {
+              const palette = [
+                { bg: "var(--color-sun-500)", ink: "var(--color-ink-950)" },
+                { bg: "var(--color-coral-500)", ink: "var(--color-cream-soft)" },
+                { bg: "var(--color-teal-500)", ink: "var(--color-ink-950)" },
+                { bg: "var(--color-lilac-400)", ink: "var(--color-ink-950)" },
+                { bg: "var(--color-cream-deep)", ink: "var(--color-ink-950)" },
+                { bg: "var(--color-ink-900)", ink: "var(--color-sun-500)" },
+              ][i % 6];
+              return (
+                <a
+                  href="/shop"
+                  class="teaser-tile relative flex aspect-square flex-col justify-between rounded-[1.1rem] border-2 border-[var(--color-ink-950)] p-3 shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform hover:-translate-y-0.5"
+                  style={`background:${palette.bg};color:${palette.ink};`}
+                >
+                  <span class="font-mono text-[0.58rem] uppercase tracking-[0.18em] opacity-80">
+                    {product.kind}
+                  </span>
+                  <span class="font-display text-[1.05rem] leading-[0.95]" style="font-variation-settings: 'wdth' 115; font-weight: 800; letter-spacing: -0.03em;">
+                    {product.name}
+                  </span>
+                  <span class="font-mono text-[0.6rem] font-semibold uppercase tracking-[0.12em]">
+                    {product.priceLabel}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+          <p class="relative mt-5 font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-cream)]/75">
+            + {site.shop.products.length - 6} more pieces in the drop →
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== FOUNDERS ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-18 lg:px-10">
     <div class="space-y-10" data-reveal>
