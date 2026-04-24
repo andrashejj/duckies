@@ -12,7 +12,9 @@ export default function SignOutButton({
   return (
     <button
       type="button"
-      onClick={() => signOut({ callbackUrl: "/" })}
+      onClick={() =>
+        signOut({ callbackUrl: "/" } as Parameters<typeof signOut>[0])
+      }
       className={className}
     >
       {label}

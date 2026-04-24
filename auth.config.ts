@@ -14,9 +14,7 @@ export default defineConfig({
   callbacks: {
     async session({ session, user }) {
       if (session.user && user) {
-        // @ts-expect-error — extended on Session type in src/types/auth.d.ts
         session.user.id = user.id;
-        // @ts-expect-error — extended on Session type in src/types/auth.d.ts
         session.user.role = (user as { role?: "CUSTOMER" | "ADMIN" }).role ?? "CUSTOMER";
       }
       return session;

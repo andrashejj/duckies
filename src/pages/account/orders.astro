@@ -1,4 +1,6 @@
 ---
+import type { Order, OrderItem } from "@prisma/client";
+
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatPrice, shortOrderId } from "../../lib/format";
@@ -7,7 +9,9 @@ import { prisma } from "../../lib/prisma";
 const session = Astro.locals.session;
 const user = session!.user;
 
-let orders: Awaited<ReturnType<typeof prisma.order.findMany>> = [];
+type OrderWithItems = Order & { items: OrderItem[] };
+
+let orders: OrderWithItems[] = [];
 let loadError: string | null = null;
 
 try {

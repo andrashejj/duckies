@@ -15,7 +15,6 @@ interface Props {
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
-  page?: "home" | "materials";
 }
 
 const {
@@ -25,7 +24,6 @@ const {
   imageAlt = site.ogImage.alt,
   imageWidth = site.ogImage.width,
   imageHeight = site.ogImage.height,
-  page = "home",
 } = Astro.props;
 
 const siteOrigin = Astro.site ?? new URL(site.url);
@@ -253,7 +251,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         animate(
           "[data-float]",
           { opacity: [0, 1], y: [32, 0] },
-          { delay: stagger(0.1), duration: 0.85, easing: [0.22, 1, 0.36, 1] },
+          { delay: stagger(0.1), duration: 0.85, ease: [0.22, 1, 0.36, 1] },
         );
 
         inView("[data-reveal]", (element) => {
@@ -262,7 +260,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           animate(
             element,
             { opacity: [0, 1], y: [28, 0], filter: ["blur(10px)", "blur(0px)"] },
-            { duration: 0.7, easing: [0.22, 1, 0.36, 1] },
+            { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
           );
         });
       }

@@ -1,4 +1,6 @@
 ---
+import type { Order, OrderItem, Product } from "@prisma/client";
+
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { STATUS_COLOR, STATUS_LABEL } from "../../lib/admin-orders";
 import { formatPrice, shortOrderId } from "../../lib/format";
@@ -10,8 +12,8 @@ type DashboardData = {
   revenue30d: number;
   openOrdersCount: number;
   totalOrdersCount: number;
-  recentOrders: Awaited<ReturnType<typeof prisma.order.findMany>>;
-  lowStock: Awaited<ReturnType<typeof prisma.product.findMany>>;
+  recentOrders: (Order & { items: OrderItem[] })[];
+  lowStock: Product[];
   statusBreakdown: Record<OrderStatus, number>;
 };
 

@@ -58,7 +58,11 @@ export const POST: APIRoute = async ({ locals, request }) => {
   ]);
 
   for (const result of emailResults) {
-    if (result.status === "fulfilled" && result.value.ok) {
+    if (result.status !== "fulfilled") {
+      console.warn("[checkout] email send threw:", result.reason);
+      continue;
+    }
+    if (result.value.ok) {
       await prisma.orderEvent.create({
         data: {
           orderId: order.id,
@@ -66,10 +70,8 @@ export const POST: APIRoute = async ({ locals, request }) => {
           message: `Email dispatched (${result.value.id}).`,
         },
       });
-    } else if (result.status === "fulfilled") {
-      console.warn("[checkout] email send failed:", result.value.error);
     } else {
-      console.warn("[checkout] email send threw:", result.reason);
+      console.warn("[checkout] email send failed:", result.value.error);
     }
   }
 

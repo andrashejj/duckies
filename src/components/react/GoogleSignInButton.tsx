@@ -10,7 +10,13 @@ export default function GoogleSignInButton({
   label = "Sign in with Google",
 }: Props) {
   function handleClick() {
-    signIn("google", next ? { callbackUrl: next } : undefined);
+    // auth-astro client types re-export next-auth's which isn't installed,
+    // so the options bag falls back to an over-strict shape. Runtime path
+    // consumes `callbackUrl` — cast through.
+    signIn(
+      "google",
+      (next ? { callbackUrl: next } : undefined) as Parameters<typeof signIn>[1],
+    );
   }
 
   return (
