@@ -14,7 +14,10 @@ import { OrderEventType } from "@prisma/client";
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ locals, request }) => {
+  const session = locals.session;
+  const userId = session?.user?.id ?? null;
+
   let payload: unknown;
   try {
     payload = await request.json();
@@ -36,7 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   let order;
   try {
-    order = await createOrder(parsed.data);
+    order = await createOrder(parsed.data, { userId });
   } catch (err) {
     if (err instanceof CheckoutError) {
       return Response.json({ ok: false, error: err.message }, { status: 400 });

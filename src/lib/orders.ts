@@ -31,7 +31,10 @@ export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
 export type OrderWithItems = Order & { items: OrderItem[] };
 
-export async function createOrder(input: CheckoutInput): Promise<OrderWithItems> {
+export async function createOrder(
+  input: CheckoutInput,
+  opts: { userId?: string | null } = {},
+): Promise<OrderWithItems> {
   const productIds = input.lines.map((l) => l.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: productIds }, active: true },
@@ -74,6 +77,7 @@ export async function createOrder(input: CheckoutInput): Promise<OrderWithItems>
     const created = await tx.order.create({
       data: {
         guestToken,
+        userId: opts.userId ?? null,
         email: input.customer.email.toLowerCase(),
         name: input.customer.name,
         phone: input.customer.phone,
@@ -86,7 +90,10 @@ export async function createOrder(input: CheckoutInput): Promise<OrderWithItems>
         events: {
           create: {
             type: OrderEventType.CREATED,
-            message: "Order placed via checkout.",
+            actorId: opts.userId ?? null,
+            message: opts.userId
+              ? "Order placed via checkout (signed-in customer)."
+              : "Order placed via checkout (guest).",
           },
         },
       },

@@ -1,0 +1,51 @@
+---
+import GoogleSignInButton from "../components/react/GoogleSignInButton";
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const session = Astro.locals.session;
+const next = Astro.url.searchParams.get("next") ?? undefined;
+const reason = Astro.url.searchParams.get("reason");
+
+if (session?.user) {
+  const target =
+    next && next.startsWith("/") && !next.startsWith("//") ? next : "/account";
+  return Astro.redirect(target);
+}
+
+const title = `Sign in | ${site.name}`;
+const description = "Sign in to track orders, access members content, and manage the club.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto flex min-h-[60vh] max-w-xl flex-col justify-center px-6 py-16 lg:px-10">
+    <div class="surface-card space-y-6 p-8 sm:p-10" data-float>
+      <div class="space-y-3">
+        <p class="section-kicker">Sign in</p>
+        <h1
+          class="font-display text-[var(--color-ink-950)]"
+          style="font-size: clamp(2rem, 4.5vw, 3.25rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+        >
+          Paddle in.
+        </h1>
+        <p class="body-copy">
+          One button. Sign in with Google and your orders, pickup slots, and
+          (soon) members-only content come with you. Admin crew uses the same
+          button — we just recognise your <span class="font-mono">@sunsetduckies.com</span> address.
+        </p>
+      </div>
+
+      {reason === "admin" && (
+        <div class="rounded-[1rem] border-2 border-[var(--color-coral-500)] bg-[var(--color-coral-500)]/10 p-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-coral-500)]">
+          Admin area — sign in with your club Google account to continue.
+        </div>
+      )}
+
+      <GoogleSignInButton client:load next={next} />
+
+      <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+        ✦ New to Duckies? Sign-in creates your account — no separate signup.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

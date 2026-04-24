@@ -86,16 +86,42 @@ Templates live in `src/emails/*.tsx` as React Email components. Preview with:
 # npx email dev
 ```
 
+## Auth.js + Google OAuth
+
+1. In **Google Cloud Console**, create a project (or reuse one) and configure
+   the OAuth consent screen for `sunsetduckies.com`. Keep the scope list to
+   `openid email profile`.
+2. Create an **OAuth 2.0 Client ID** of type "Web application". Authorised
+   redirect URIs:
+   - `https://sunsetduckies.com/api/auth/callback/google` (prod)
+   - `https://<your-vercel-preview>.vercel.app/api/auth/callback/google`
+     (optional — preview deploys)
+   - `http://localhost:4321/api/auth/callback/google` (dev)
+3. Copy the client ID and secret into `.env` and Vercel as `AUTH_GOOGLE_ID`
+   and `AUTH_GOOGLE_SECRET`.
+4. Generate `AUTH_SECRET` with `openssl rand -base64 32` and set it in both
+   environments.
+5. Set `AUTH_TRUST_HOST="true"` in Vercel (required for non-localhost hosts).
+
+### Role assignment
+
+- Anyone signing in with an `@sunsetduckies.com` Google account is promoted to
+  `role=ADMIN` (enforced in `auth.config.ts` via the `createUser` + `signIn`
+  events — idempotent, runs on every sign-in).
+- Everyone else is `CUSTOMER`. Orders placed while signed-in are linked to the
+  user; orders placed before a user signs up are matched back by email.
+
+### Middleware gating
+
+`src/middleware.ts` protects:
+
+- `/admin/**` — requires `role=ADMIN`, else redirects to `/login?next=…&reason=admin`.
+- `/account/**` and `/members/**` — require an authenticated session, else
+  redirect to `/login?next=…`.
+
 ## What lands in later PRs
 
-- **PR 3** — Auth.js + Google. Adds `AUTH_SECRET`, `AUTH_GOOGLE_ID`,
-  `AUTH_GOOGLE_SECRET`, `AUTH_TRUST_HOST`. Google Cloud OAuth client needs
-  these redirect URIs:
-  - `https://sunsetduckies.com/api/auth/callback/google`
-  - `https://<vercel-preview>/api/auth/callback/google` (optional, for previews)
-  - `http://localhost:4321/api/auth/callback/google` (dev)
-- **PR 4** — Admin panel at `/admin`, gated to `role=ADMIN` (anyone signing in
-  with an `@sunsetduckies.com` Google account). Status transitions, payment
-  confirmation, and additional templates (PaymentConfirmed, Ready, Fulfilled,
-  Cancelled) land here.
-- **PR 5** — Members section + polish.
+- **PR 4** — Admin panel at `/admin` (orders, products, customers, dashboard).
+  Status transitions, payment confirmation, and additional templates
+  (PaymentConfirmed, Ready, Fulfilled, Cancelled) land here.
+- **PR 5** — Members section content + polish.

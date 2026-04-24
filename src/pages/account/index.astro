@@ -1,0 +1,111 @@
+---
+import SignOutButton from "../../components/react/SignOutButton";
+import { site } from "../../data/site";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { prisma } from "../../lib/prisma";
+
+const session = Astro.locals.session;
+const user = session!.user;
+
+let recentOrderCount = 0;
+try {
+  recentOrderCount = await prisma.order.count({
+    where: { OR: [{ userId: user.id }, { email: user.email ?? "" }] },
+  });
+} catch (err) {
+  console.error("[account] order count failed:", err);
+}
+
+const title = `Your account | ${site.name}`;
+const description = "Your Sunset Duckies account dashboard.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-4" data-float>
+      <div class="space-y-3">
+        <p class="section-kicker">✦ Your account</p>
+        <h1
+          class="font-display text-[var(--color-ink-950)]"
+          style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+        >
+          Welcome back, {user.name?.split(" ")[0] ?? "Duckie"}.
+        </h1>
+        <p class="body-copy max-w-xl">
+          Your orders, pickup schedule, and (soon) members-only content live
+          here.
+        </p>
+      </div>
+      <SignOutButton client:load />
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+      <a href="/account/orders" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <p class="section-kicker">Orders</p>
+        <p
+          class="font-display text-3xl text-[var(--color-ink-950)]"
+          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+        >
+          {recentOrderCount}
+        </p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+          All orders linked to {user.email}
+        </p>
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+          View history →
+        </p>
+      </a>
+
+      <a href="/shop" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <p class="section-kicker">Shop</p>
+        <p
+          class="font-display text-2xl text-[var(--color-ink-950)]"
+          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+        >
+          Drop 001 — live
+        </p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+          Pickup Wed/Fri at Tamarin.
+        </p>
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+          Browse →
+        </p>
+      </a>
+
+      <a href="/members" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <p class="section-kicker">Members</p>
+        <p
+          class="font-display text-2xl text-[var(--color-ink-950)]"
+          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+        >
+          Coming online
+        </p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+          Session replays, comp intel, training logs.
+        </p>
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+          Peek inside →
+        </p>
+      </a>
+    </div>
+
+    {Astro.locals.isAdmin && (
+      <div class="mt-10">
+        <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/80">
+            ✦ Admin crew
+          </p>
+          <p
+            class="mt-1 font-display text-2xl text-[var(--color-ink-950)]"
+            style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+          >
+            Jump to the club backstage.
+          </p>
+          <a class="cta-primary mt-4 inline-flex" href="/admin">
+            Open admin →
+          </a>
+        </div>
+      </div>
+    )}
+  </section>
+</BaseLayout>
