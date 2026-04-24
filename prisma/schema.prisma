@@ -1,6 +1,4 @@
 // Sunset Duckies — Prisma schema
-// PR 1 scope: Product catalog only.
-// Auth, Order, OrderItem, OrderEvent land in later PRs.
 
 generator client {
   provider = "prisma-client-js"
@@ -11,6 +9,8 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+// ---------- Catalogue ----------
 
 enum ProductCategory {
   APPAREL
@@ -39,6 +39,7 @@ model Product {
   stock       Int?
   sortOrder   Int             @default(0)
   images      ProductImage[]
+  orderItems  OrderItem[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -55,4 +56,113 @@ model ProductImage {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId, sortOrder])
+}
+
+// ---------- Users (stub; Auth.js extends this in PR 3) ----------
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  phone     String?
+  role      UserRole @default(CUSTOMER)
+  orders    Order[]
+  orderEvents OrderEvent[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Orders ----------
+
+enum OrderStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  READY
+  FULFILLED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  JUICE
+  CASH
+  BANK
+}
+
+enum PickupMethod {
+  SESH
+  ARRANGE
+}
+
+enum OrderEventType {
+  CREATED
+  PAYMENT_CONFIRMED
+  READY
+  FULFILLED
+  CANCELLED
+  NOTE
+  EMAIL_SENT
+}
+
+model Order {
+  id             String         @id @default(cuid())
+  guestToken     String         @unique
+  userId         String?
+  user           User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email          String
+  name           String
+  phone          String?
+  status         OrderStatus    @default(PENDING)
+  paymentMethod  PaymentMethod
+  pickupMethod   PickupMethod
+  pickupNote     String?
+  customerNote   String?
+  internalNotes  String?
+  subtotalCents  Int
+  totalCents     Int
+  currency       String         @default("MUR")
+  items          OrderItem[]
+  events         OrderEvent[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([userId])
+}
+
+model OrderItem {
+  id                String  @id @default(cuid())
+  orderId           String
+  order             Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId         String
+  product           Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  sku               String
+  nameSnapshot      String
+  priceCentsSnapshot Int
+  quantity          Int
+  size              String?
+  lineTotalCents    Int
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderEvent {
+  id        String         @id @default(cuid())
+  orderId   String
+  order     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type      OrderEventType
+  message   String?
+  actorId   String?
+  actor     User?          @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt DateTime       @default(now())
+
+  @@index([orderId, createdAt])
 }

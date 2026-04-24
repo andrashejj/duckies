@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 
+import CartBadge from "../components/react/CartBadge";
 import { site } from "../data/site";
 
 interface Props {
@@ -98,15 +99,18 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             ))}
           </nav>
 
-          <a
-            class="cta-primary shrink-0 px-4 py-2.5 text-[0.8rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
-            href={site.whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span class="hidden sm:inline">Slide in ✿ WhatsApp</span>
-            <span class="sm:hidden">Slide in</span>
-          </a>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <CartBadge client:load />
+            <a
+              class="cta-primary shrink-0 px-4 py-2.5 text-[0.8rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="hidden sm:inline">Slide in ✿ WhatsApp</span>
+              <span class="sm:hidden">WA</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -159,7 +163,10 @@ const absoluteImage = new URL(image, siteOrigin).toString();
                 → Training library
               </a>
               <a href="/shop" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
-                → Duckies shop (teaser)
+                → Duckies shop
+              </a>
+              <a href="/cart" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
+                → Your cart
               </a>
               <a
                 href={site.whatsappUrl}

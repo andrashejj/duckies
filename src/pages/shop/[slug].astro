@@ -1,4 +1,5 @@
 ---
+import AddToCartButton from "../../components/react/AddToCartButton";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
@@ -37,19 +38,6 @@ const { shop } = site;
 const theme = product ? themeFor(product.colorway) : null;
 const priceLabel = product ? formatPrice(product.priceCents, product.currency) : "";
 const sizesLabel = product && product.sizes.length ? product.sizes.join(" · ") : "One size";
-
-const buildOrderUrl = (name: string, label: string) => {
-  const message = [
-    shop.orderPreamble,
-    "",
-    `• ${name} — ${label}`,
-    "",
-    shop.orderOutro,
-  ].join("\n");
-  return `https://wa.me/?text=${encodeURIComponent(message)}`;
-};
-
-const orderUrl = product ? buildOrderUrl(product.name, priceLabel) : "";
 
 const title = product
   ? `${product.name} | ${site.name} Shop`
@@ -177,19 +165,35 @@ const description = product
               </div>
             </dl>
 
-            <div class="flex flex-wrap gap-3">
-              <a
-                class="cta-primary"
-                href={orderUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Order ${product.name} via WhatsApp`}
-              >
-                Order via WhatsApp
-              </a>
-              <a class="cta-secondary" href="/shop">
-                Back to the drop
-              </a>
+            <div class="space-y-4">
+              <AddToCartButton
+                client:load
+                product={{
+                  productId: product.id,
+                  slug: product.slug,
+                  sku: product.sku,
+                  name: product.name,
+                  kind: product.kind,
+                  priceCents: product.priceCents,
+                  currency: product.currency,
+                  colorway: product.colorway,
+                }}
+                sizes={product.sizes}
+                variant="block"
+              />
+              <div class="flex flex-wrap gap-3">
+                <a class="cta-secondary" href="/shop">
+                  Back to the drop
+                </a>
+                <a
+                  class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/70 underline-offset-4 hover:text-[var(--color-coral-500)] hover:underline self-center"
+                  href={site.whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Sizing questions? →
+                </a>
+              </div>
             </div>
 
             <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">

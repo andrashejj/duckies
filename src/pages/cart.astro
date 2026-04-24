@@ -1,0 +1,37 @@
+---
+import CartView from "../components/react/CartView";
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = `Your cart | ${site.name}`;
+const description =
+  "Review your Sunset Duckies cart — size swaps, quantity tweaks, and checkout.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-4">
+      <div class="max-w-2xl space-y-3" data-float>
+        <p class="section-kicker">Your bag</p>
+        <h1
+          class="font-display text-[var(--color-ink-950)]"
+          style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+        >
+          The lineup so far.
+        </h1>
+        <p class="body-copy max-w-xl">
+          Tweak sizes and quantities, then slide through to checkout. No
+          payment until we confirm your order by email.
+        </p>
+      </div>
+      <a
+        class="cta-secondary"
+        href="/shop"
+      >
+        ← Keep shopping
+      </a>
+    </div>
+
+    <CartView client:load />
+  </section>
+</BaseLayout>

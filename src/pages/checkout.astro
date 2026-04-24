@@ -1,0 +1,29 @@
+---
+import CheckoutForm from "../components/react/CheckoutForm";
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = `Checkout | ${site.name}`;
+const description =
+  "Place your Sunset Duckies order. Pay with Juice, cash at sesh, or bank transfer once we confirm.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
+    <div class="mb-10 max-w-2xl space-y-3" data-float>
+      <p class="section-kicker">Checkout</p>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      >
+        Lock it in.
+      </h1>
+      <p class="body-copy max-w-xl">
+        Drop your details, pick how you want to pay and pick up. We'll email
+        you a confirmation with payment instructions — no card charged yet.
+      </p>
+    </div>
+
+    <CheckoutForm client:load />
+  </section>
+</BaseLayout>

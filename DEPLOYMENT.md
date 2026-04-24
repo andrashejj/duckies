@@ -69,10 +69,25 @@ npm run dev
 Without `DATABASE_URL`, `/shop` renders a graceful fallback ("Kit temporarily
 off the rack") — but you should just wire up a Neon dev branch, it takes 2min.
 
+## Resend (transactional email)
+
+1. Create a Resend account and verify `sunsetduckies.com` as a sending domain
+   (adds SPF, DKIM, and DMARC DNS records).
+2. Create an API key with **Send access** (not full admin).
+3. Set `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_ADMIN_NOTIFY` in `.env` and Vercel.
+4. Without these values the checkout API still persists orders and returns
+   success — it just logs a warning and skips the email. Safe to deploy before
+   DNS finishes propagating.
+
+Templates live in `src/emails/*.tsx` as React Email components. Preview with:
+
+```bash
+# Add later if you want live previews:
+# npx email dev
+```
+
 ## What lands in later PRs
 
-- **PR 2** — Cart, checkout, Resend transactional emails. Adds `RESEND_API_KEY`,
-  `EMAIL_FROM`, `EMAIL_ADMIN_NOTIFY`.
 - **PR 3** — Auth.js + Google. Adds `AUTH_SECRET`, `AUTH_GOOGLE_ID`,
   `AUTH_GOOGLE_SECRET`, `AUTH_TRUST_HOST`. Google Cloud OAuth client needs
   these redirect URIs:
@@ -80,5 +95,7 @@ off the rack") — but you should just wire up a Neon dev branch, it takes 2min.
   - `https://<vercel-preview>/api/auth/callback/google` (optional, for previews)
   - `http://localhost:4321/api/auth/callback/google` (dev)
 - **PR 4** — Admin panel at `/admin`, gated to `role=ADMIN` (anyone signing in
-  with an `@sunsetduckies.com` Google account).
+  with an `@sunsetduckies.com` Google account). Status transitions, payment
+  confirmation, and additional templates (PaymentConfirmed, Ready, Fulfilled,
+  Cancelled) land here.
 - **PR 5** — Members section + polish.

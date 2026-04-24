@@ -2,6 +2,8 @@ import type { Product } from "@prisma/client";
 
 import { prisma } from "./prisma";
 
+export { formatPrice } from "./format";
+
 export type Colorway = "cream" | "teal" | "sun" | "coral" | "lilac" | "ink";
 
 export type ColorTheme = {
@@ -59,12 +61,6 @@ export const colorThemes: Record<Colorway, ColorTheme> = {
 
 export function themeFor(colorway: string): ColorTheme {
   return colorThemes[colorway as Colorway] ?? colorThemes.ink;
-}
-
-export function formatPrice(priceCents: number, currency = "MUR"): string {
-  const whole = Math.round(priceCents / 100);
-  const prefix = currency === "MUR" ? "Rs" : currency;
-  return `${prefix} ${whole.toLocaleString("en-GB")}`;
 }
 
 export async function listActiveProducts(): Promise<Product[]> {
