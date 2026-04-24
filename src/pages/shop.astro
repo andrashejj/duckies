@@ -10,13 +10,16 @@ const { shop } = site;
 
 type ProductColor = "cream" | "teal" | "sun" | "coral" | "lilac" | "ink";
 
-const colorTheme: Record<ProductColor, { bg: string; ink: string; waveStroke: string; badgeBg: string; badgeInk: string }> = {
-  cream: { bg: "var(--color-cream-deep)", ink: "var(--color-ink-950)", waveStroke: "var(--color-coral-500)", badgeBg: "var(--color-coral-500)", badgeInk: "var(--color-cream-soft)" },
-  teal:  { bg: "var(--color-teal-500)",   ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
-  sun:   { bg: "var(--color-sun-500)",    ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-coral-500)", badgeInk: "var(--color-cream-soft)" },
-  coral: { bg: "var(--color-coral-500)",  ink: "var(--color-cream-soft)", waveStroke: "var(--color-sun-500)", badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
-  lilac: { bg: "var(--color-lilac-400)",  ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-ink-950)",   badgeInk: "var(--color-cream-soft)" },
-  ink:   { bg: "var(--color-ink-950)",    ink: "var(--color-cream-soft)", waveStroke: "var(--color-sun-500)", badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
+// Surface colour sits beneath each product photo as a brand-tinted
+// letterbox if the image is ever slow to decode, and keeps the card's
+// bottom border in the expected theme while the image loads.
+const colorTheme: Record<ProductColor, { surface: string }> = {
+  cream: { surface: "bg-cream-deep" },
+  teal:  { surface: "bg-teal-500" },
+  sun:   { surface: "bg-sun-500" },
+  coral: { surface: "bg-coral-500" },
+  lilac: { surface: "bg-lilac-400" },
+  ink:   { surface: "bg-ink-950" },
 };
 
 const buildOrderUrl = (productName: string, productPrice: string) => {
@@ -137,50 +140,24 @@ const buildOrderUrl = (productName: string, productPrice: string) => {
             data-reveal
           >
             <div
-              class="product-visual relative flex aspect-[4/3] flex-col justify-between border-b-2 border-[var(--color-ink-950)] p-5"
-              style={`background:${theme.bg};color:${theme.ink};`}
+              class:list={[
+                "product-visual group/visual relative aspect-[4/3] overflow-hidden border-b-2 border-ink-950",
+                theme.surface,
+              ]}
             >
-              <div class="flex items-start justify-between gap-3">
-                <span class="font-mono text-[0.66rem] uppercase tracking-[0.22em] opacity-80">
-                  {product.kind}
-                </span>
-                <span
-                  class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-                  style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
-                >
-                  {product.priceLabel}
-                </span>
-              </div>
-
-              <div class="relative flex flex-1 items-center justify-center">
-                <span
-                  class="font-display text-center leading-[0.82] tracking-[-0.05em]"
-                  style={`font-size:clamp(2.2rem,5.5vw,3.8rem);font-variation-settings:'wdth' 118;font-weight:800;color:${theme.ink};`}
-                >
-                  {product.name.split(" ").map((word) => (
-                    <span class="block">{word}</span>
-                  ))}
-                </span>
-              </div>
-
-              <svg
-                class="pointer-events-none absolute inset-x-0 bottom-3 h-6 w-full opacity-90"
-                viewBox="0 0 320 24"
-                aria-hidden="true"
-              >
-                <path
-                  d="M 0 12 Q 20 0 40 12 T 80 12 T 120 12 T 160 12 T 200 12 T 240 12 T 280 12 T 320 12"
-                  fill="none"
-                  stroke={theme.waveStroke}
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-
+              <img
+                src={product.image}
+                alt={product.imageAlt ?? product.name}
+                width="1020"
+                height="780"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover/visual:scale-[1.035]"
+              />
               <span
-                class="pointer-events-none absolute left-3 bottom-3 font-mono text-[0.58rem] uppercase tracking-[0.22em] opacity-70"
+                class="pointer-events-none absolute left-3 top-3 rounded-full border-2 border-ink-950 bg-[var(--color-cream-soft)] px-2.5 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)]"
               >
-                ✦ Sunset Duckies · MU
+                {product.kind}
               </span>
             </div>
 
@@ -288,9 +265,16 @@ const buildOrderUrl = (productName: string, productPrice: string) => {
 </BaseLayout>
 
 <style>
-  .product-visual {
-    background-image:
-      radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.18), transparent 45%),
-      radial-gradient(circle at 10% 90%, rgba(0, 0, 0, 0.14), transparent 50%);
+  /* Give the photo a tiny cinematic vignette that tightens focus
+     on the product without interfering with the baked-in price chip. */
+  .product-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 50% 100%, rgba(13, 24, 42, 0.12), transparent 55%),
+      linear-gradient(180deg, rgba(13, 24, 42, 0) 70%, rgba(13, 24, 42, 0.08) 100%);
+    mix-blend-mode: multiply;
   }
 </style>

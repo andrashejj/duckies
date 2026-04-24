@@ -19,6 +19,9 @@ const description =
 
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
+const teaserProducts = site.shop.teaserProductIds
+  .map((id) => site.shop.products.find((product) => product.id === id))
+  .filter(Boolean);
 ---
 
 <BaseLayout title={title} description={description} page="home">
@@ -367,8 +370,8 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
               radial-gradient(circle at 85% 80%, rgba(255,82,60,0.35), transparent 55%),
               radial-gradient(circle at 50% 50%, rgba(7,201,182,0.2), transparent 60%);">
           </div>
-          <div class="relative grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {site.shop.products.slice(0, 6).map((product, i) => {
+          <div class="relative grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {teaserProducts.map((product, i) => {
               const palette = [
                 { bg: "var(--color-sun-500)", ink: "var(--color-ink-950)" },
                 { bg: "var(--color-coral-500)", ink: "var(--color-cream-soft)" },
@@ -397,7 +400,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             })}
           </div>
           <p class="relative mt-5 font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-cream)]/75">
-            + {site.shop.products.length - 6} more pieces in the drop →
+            + {site.shop.products.length - teaserProducts.length} more pieces in the drop →
           </p>
         </div>
       </div>
