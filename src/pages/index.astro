@@ -18,13 +18,13 @@ const description =
   "A kids' surf club in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding into the sunset week after week.";
 
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
-const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
-const teaserProducts = site.shop.teaserProductIds
-  .map((id) => site.shop.products.find((product) => product.id === id))
-  .filter(Boolean);
+const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
+  const product = site.shop.products.find((p) => p.id === id);
+  return product ? [product] : [];
+});
 ---
 
-<BaseLayout title={title} description={description} page="home">
+<BaseLayout title={title} description={description}>
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
     <div class="absolute inset-0 -z-10">
