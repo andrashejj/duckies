@@ -18,48 +18,54 @@ const categoryBySourceKind: Record<string, ProductCategory> = {
   Board: ProductCategory.BOARD_CARE,
 };
 
+type SourceProduct = (typeof site.shop.products)[number] & {
+  image?: string;
+  imageAlt?: string;
+};
+
 async function main() {
-  const products = site.shop.products;
+  const products = site.shop.products as SourceProduct[];
+  const sourceSlugs = new Set(products.map((p) => p.id));
 
   for (let i = 0; i < products.length; i++) {
     const p = products[i];
     const category = categoryBySourceKind[p.kind] ?? ProductCategory.ACCESSORIES;
     const priceCents = p.price * 100;
+    const data = {
+      sku: p.id.toUpperCase(),
+      name: p.name,
+      kind: p.kind,
+      tagline: p.tagline,
+      description: p.description,
+      priceCents,
+      currency: "MUR",
+      category,
+      sizes: [p.sizes],
+      colorway: p.color,
+      imageUrl: p.image ?? null,
+      imageAlt: p.imageAlt ?? null,
+      active: true,
+      featured: Boolean(p.featured),
+      sortOrder: i,
+    };
 
     await prisma.product.upsert({
       where: { slug: p.id },
-      update: {
-        sku: p.id.toUpperCase(),
-        name: p.name,
-        kind: p.kind,
-        tagline: p.tagline,
-        description: p.description,
-        priceCents,
-        currency: "MUR",
-        category,
-        sizes: [p.sizes],
-        colorway: p.color,
-        active: true,
-        featured: Boolean(p.featured),
-        sortOrder: i,
-      },
-      create: {
-        sku: p.id.toUpperCase(),
-        slug: p.id,
-        name: p.name,
-        kind: p.kind,
-        tagline: p.tagline,
-        description: p.description,
-        priceCents,
-        currency: "MUR",
-        category,
-        sizes: [p.sizes],
-        colorway: p.color,
-        active: true,
-        featured: Boolean(p.featured),
-        sortOrder: i,
-      },
+      update: data,
+      create: { ...data, slug: p.id },
     });
+  }
+
+  // Soft-archive any DB rows that aren't in the source any more, so dev DBs
+  // stay aligned with the brand kit. Production catalog is managed via /admin.
+  if (sourceSlugs.size > 0) {
+    const archived = await prisma.product.updateMany({
+      where: { slug: { notIn: Array.from(sourceSlugs) }, active: true },
+      data: { active: false },
+    });
+    if (archived.count > 0) {
+      console.log(`Archived ${archived.count} products no longer in site.ts.`);
+    }
   }
 
   console.log(`Seeded ${products.length} products.`);

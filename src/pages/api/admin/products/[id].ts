@@ -41,6 +41,8 @@ export const PATCH: APIRoute = async ({ params, request }) => {
         ...(parsed.data.category !== undefined ? { category: parsed.data.category } : {}),
         ...(parsed.data.sizes !== undefined ? { sizes: parsed.data.sizes } : {}),
         ...(parsed.data.colorway !== undefined ? { colorway: parsed.data.colorway } : {}),
+        ...(parsed.data.imageUrl !== undefined ? { imageUrl: parsed.data.imageUrl ?? null } : {}),
+        ...(parsed.data.imageAlt !== undefined ? { imageAlt: parsed.data.imageAlt ?? null } : {}),
         ...(parsed.data.active !== undefined ? { active: parsed.data.active } : {}),
         ...(parsed.data.featured !== undefined ? { featured: parsed.data.featured } : {}),
         ...(parsed.data.stock !== undefined ? { stock: parsed.data.stock ?? null } : {}),

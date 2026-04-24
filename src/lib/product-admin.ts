@@ -37,6 +37,8 @@ export const productSchema = z.object({
   category: z.enum(CATEGORY_VALUES),
   sizes: z.array(z.string().trim().min(1).max(120)).max(20).default([]),
   colorway: z.enum(COLORWAY_OPTIONS).default("ink"),
+  imageUrl: z.string().trim().max(500).optional().nullable(),
+  imageAlt: z.string().trim().max(300).optional().nullable(),
   active: z.boolean().default(true),
   featured: z.boolean().default(false),
   stock: z.number().int().min(0).max(10_000).nullable().optional(),

@@ -36,6 +36,8 @@ export const POST: APIRoute = async ({ request }) => {
         category: parsed.data.category,
         sizes: parsed.data.sizes,
         colorway: parsed.data.colorway,
+        imageUrl: parsed.data.imageUrl ?? null,
+        imageAlt: parsed.data.imageAlt ?? null,
         active: parsed.data.active,
         featured: parsed.data.featured,
         stock: parsed.data.stock ?? null,

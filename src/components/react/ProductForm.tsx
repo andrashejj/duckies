@@ -21,6 +21,8 @@ type ProductFormValues = {
     | "BUNDLE";
   sizes: string; // comma-separated
   colorway: (typeof COLORWAY_OPTIONS)[number];
+  imageUrl: string;
+  imageAlt: string;
   active: boolean;
   featured: boolean;
   stock: string; // empty string = untracked
@@ -53,6 +55,8 @@ const EMPTY: ProductFormValues = {
   category: "APPAREL",
   sizes: "",
   colorway: "ink",
+  imageUrl: "",
+  imageAlt: "",
   active: true,
   featured: false,
   stock: "",
@@ -112,6 +116,8 @@ export default function ProductForm({ mode, initial }: Props) {
           .map((s) => s.trim())
           .filter(Boolean),
         colorway: values.colorway,
+        imageUrl: values.imageUrl.trim() || null,
+        imageAlt: values.imageAlt.trim() || null,
         active: values.active,
         featured: values.featured,
         stock,
@@ -200,6 +206,32 @@ export default function ProductForm({ mode, initial }: Props) {
               inputMode="numeric"
             />
           </div>
+        </fieldset>
+
+        <fieldset className="surface-card space-y-4 p-5">
+          <legend className="section-kicker">Image</legend>
+          <Field
+            label="Image URL (drop into /public/media/shop/ first)"
+            value={values.imageUrl}
+            onChange={(v) => update("imageUrl", v)}
+            placeholder="/media/shop/duckies-tee.png"
+          />
+          <TextArea
+            label="Alt text (one good sentence describing the photo)"
+            value={values.imageAlt}
+            onChange={(v) => update("imageAlt", v)}
+            placeholder="Cream cotton tee on a duck-yellow background, sunset duck-in-cap badge on the chest."
+            rows={2}
+          />
+          {values.imageUrl && (
+            <div className="overflow-hidden rounded-[1rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-deep)] shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <img
+                src={values.imageUrl}
+                alt={values.imageAlt || "Preview"}
+                className="block aspect-[4/3] w-full object-cover"
+              />
+            </div>
+          )}
         </fieldset>
 
         <fieldset className="surface-card space-y-4 p-5">

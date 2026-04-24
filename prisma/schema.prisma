@@ -34,6 +34,8 @@ model Product {
   category    ProductCategory
   sizes       String[]        @default([])
   colorway    String          @default("ink")
+  imageUrl    String?
+  imageAlt    String?
   active      Boolean         @default(true)
   featured    Boolean         @default(false)
   stock       Int?
