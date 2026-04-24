@@ -9,13 +9,28 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@astrojs/vercel": "^10.0.5",
+    "@prisma/client": "^6.19.3",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.4",
     "motion": "^12.38.0",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "prisma": "^6.19.3",
+    "tsx": "^4.21.0"
   }
 }

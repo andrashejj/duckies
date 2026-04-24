@@ -1,6 +1,11 @@
 ---
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  formatPrice,
+  listActiveProducts,
+  themeFor,
+} from "../lib/products";
 
 const title = `${site.name} Shop | Drop 001 · Order via WhatsApp`;
 const description =
@@ -8,22 +13,22 @@ const description =
 
 const { shop } = site;
 
-type ProductColor = "cream" | "teal" | "sun" | "coral" | "lilac" | "ink";
+let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
+let loadError: string | null = null;
 
-const colorTheme: Record<ProductColor, { bg: string; ink: string; waveStroke: string; badgeBg: string; badgeInk: string }> = {
-  cream: { bg: "var(--color-cream-deep)", ink: "var(--color-ink-950)", waveStroke: "var(--color-coral-500)", badgeBg: "var(--color-coral-500)", badgeInk: "var(--color-cream-soft)" },
-  teal:  { bg: "var(--color-teal-500)",   ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
-  sun:   { bg: "var(--color-sun-500)",    ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-coral-500)", badgeInk: "var(--color-cream-soft)" },
-  coral: { bg: "var(--color-coral-500)",  ink: "var(--color-cream-soft)", waveStroke: "var(--color-sun-500)", badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
-  lilac: { bg: "var(--color-lilac-400)",  ink: "var(--color-ink-950)", waveStroke: "var(--color-ink-950)",   badgeBg: "var(--color-ink-950)",   badgeInk: "var(--color-cream-soft)" },
-  ink:   { bg: "var(--color-ink-950)",    ink: "var(--color-cream-soft)", waveStroke: "var(--color-sun-500)", badgeBg: "var(--color-sun-500)",   badgeInk: "var(--color-ink-950)" },
-};
+try {
+  products = await listActiveProducts();
+} catch (err) {
+  loadError =
+    err instanceof Error ? err.message : "Could not load products.";
+  console.error("[shop] product load failed:", err);
+}
 
-const buildOrderUrl = (productName: string, productPrice: string) => {
+const buildOrderUrl = (productName: string, priceLabel: string) => {
   const message = [
     shop.orderPreamble,
     "",
-    `• ${productName} — ${productPrice}`,
+    `• ${productName} — ${priceLabel}`,
     "",
     shop.orderOutro,
   ].join("\n");
@@ -58,7 +63,7 @@ const buildOrderUrl = (productName: string, productPrice: string) => {
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
           {shop.dropLabel}
         </span>
-        <span class="chip">Pre-order only · {shop.products.length} pieces</span>
+        <span class="chip">Pre-order only · {products.length} pieces</span>
       </div>
 
       <div data-float class="mt-8 grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
@@ -124,95 +129,130 @@ const buildOrderUrl = (productName: string, productPrice: string) => {
       </p>
     </div>
 
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {shop.products.map((product) => {
-        const theme = colorTheme[product.color as ProductColor];
-        const orderUrl = buildOrderUrl(product.name, product.priceLabel);
-        return (
-          <article
-            class:list={[
-              "surface-card flex flex-col overflow-hidden",
-              product.featured ? "sticker-lilac lg:col-span-2" : "",
-            ]}
-            data-reveal
-          >
-            <div
-              class="product-visual relative flex aspect-[4/3] flex-col justify-between border-b-2 border-[var(--color-ink-950)] p-5"
-              style={`background:${theme.bg};color:${theme.ink};`}
+    {loadError ? (
+      <div class="surface-card p-8 text-center">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+          Drop not loaded
+        </p>
+        <p class="mt-3 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+          Kit temporarily off the rack.
+        </p>
+        <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/70">
+          The product catalogue couldn't be loaded right now. Ping us on WhatsApp and we'll lock your order in by hand.
+        </p>
+        <a class="cta-primary mt-6 inline-flex" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+          Ask on WhatsApp
+        </a>
+      </div>
+    ) : (
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {products.map((product) => {
+          const theme = themeFor(product.colorway);
+          const priceLabel = formatPrice(product.priceCents, product.currency);
+          const sizesLabel = product.sizes.length ? product.sizes.join(" · ") : "One size";
+          const orderUrl = buildOrderUrl(product.name, priceLabel);
+          return (
+            <article
+              class:list={[
+                "surface-card flex flex-col overflow-hidden",
+                product.featured ? "sticker-lilac lg:col-span-2" : "",
+              ]}
+              data-reveal
             >
-              <div class="flex items-start justify-between gap-3">
-                <span class="font-mono text-[0.66rem] uppercase tracking-[0.22em] opacity-80">
-                  {product.kind}
-                </span>
-                <span
-                  class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-                  style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
-                >
-                  {product.priceLabel}
-                </span>
-              </div>
-
-              <div class="relative flex flex-1 items-center justify-center">
-                <span
-                  class="font-display text-center leading-[0.82] tracking-[-0.05em]"
-                  style={`font-size:clamp(2.2rem,5.5vw,3.8rem);font-variation-settings:'wdth' 118;font-weight:800;color:${theme.ink};`}
-                >
-                  {product.name.split(" ").map((word) => (
-                    <span class="block">{word}</span>
-                  ))}
-                </span>
-              </div>
-
-              <svg
-                class="pointer-events-none absolute inset-x-0 bottom-3 h-6 w-full opacity-90"
-                viewBox="0 0 320 24"
-                aria-hidden="true"
-              >
-                <path
-                  d="M 0 12 Q 20 0 40 12 T 80 12 T 120 12 T 160 12 T 200 12 T 240 12 T 280 12 T 320 12"
-                  fill="none"
-                  stroke={theme.waveStroke}
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-
-              <span
-                class="pointer-events-none absolute left-3 bottom-3 font-mono text-[0.58rem] uppercase tracking-[0.22em] opacity-70"
-              >
-                ✦ Sunset Duckies · MU
-              </span>
-            </div>
-
-            <div class="flex flex-1 flex-col gap-4 p-6">
-              <div class="space-y-1">
-                <p class="font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
-                  {product.name}
-                </p>
-                <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
-                  {product.tagline}
-                </p>
-              </div>
-              <p class="text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
-                {product.description}
-              </p>
-              <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
-                Sizes: {product.sizes}
-              </p>
               <a
-                class="cta-primary mt-auto w-full"
-                href={orderUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Order ${product.name} via WhatsApp`}
+                href={`/shop/${product.slug}`}
+                class="product-visual relative flex aspect-[4/3] flex-col justify-between border-b-2 border-[var(--color-ink-950)] p-5 outline-none transition-transform duration-300 hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-[var(--color-sun-500)]"
+                style={`background:${theme.bg};color:${theme.ink};`}
+                aria-label={`${product.name} details`}
               >
-                Order via WhatsApp
+                <div class="flex items-start justify-between gap-3">
+                  <span class="font-mono text-[0.66rem] uppercase tracking-[0.22em] opacity-80">
+                    {product.kind}
+                  </span>
+                  <span
+                    class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
+                    style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
+                  >
+                    {priceLabel}
+                  </span>
+                </div>
+
+                <div class="relative flex flex-1 items-center justify-center">
+                  <span
+                    class="font-display text-center leading-[0.82] tracking-[-0.05em]"
+                    style={`font-size:clamp(2.2rem,5.5vw,3.8rem);font-variation-settings:'wdth' 118;font-weight:800;color:${theme.ink};`}
+                  >
+                    {product.name.split(" ").map((word) => (
+                      <span class="block">{word}</span>
+                    ))}
+                  </span>
+                </div>
+
+                <svg
+                  class="pointer-events-none absolute inset-x-0 bottom-3 h-6 w-full opacity-90"
+                  viewBox="0 0 320 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M 0 12 Q 20 0 40 12 T 80 12 T 120 12 T 160 12 T 200 12 T 240 12 T 280 12 T 320 12"
+                    fill="none"
+                    stroke={theme.waveStroke}
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+                <span
+                  class="pointer-events-none absolute left-3 bottom-3 font-mono text-[0.58rem] uppercase tracking-[0.22em] opacity-70"
+                >
+                  ✦ Sunset Duckies · MU
+                </span>
               </a>
-            </div>
-          </article>
-        );
-      })}
-    </div>
+
+              <div class="flex flex-1 flex-col gap-4 p-6">
+                <div class="space-y-1">
+                  <a
+                    href={`/shop/${product.slug}`}
+                    class="font-display text-xl text-[var(--color-ink-950)] hover:text-[var(--color-coral-500)]"
+                    style="font-variation-settings:'wdth' 110;font-weight:700;"
+                  >
+                    {product.name}
+                  </a>
+                  {product.tagline && (
+                    <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+                      {product.tagline}
+                    </p>
+                  )}
+                </div>
+                <p class="text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+                  {product.description}
+                </p>
+                <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
+                  Sizes: {sizesLabel}
+                </p>
+                <div class="mt-auto flex flex-col gap-2">
+                  <a
+                    class="cta-primary w-full"
+                    href={orderUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Order ${product.name} via WhatsApp`}
+                  >
+                    Order via WhatsApp
+                  </a>
+                  <a
+                    class="cta-secondary w-full"
+                    href={`/shop/${product.slug}`}
+                  >
+                    View details
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
 
     <ul class="mt-10 grid gap-3 sm:grid-cols-3" data-reveal>
       {shop.notes.map((note) => (

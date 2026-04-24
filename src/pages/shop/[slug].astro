@@ -1,0 +1,271 @@
+---
+import { site } from "../../data/site";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  formatPrice,
+  getProductBySlug,
+  listActiveProducts,
+  themeFor,
+} from "../../lib/products";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/shop");
+}
+
+let product: Awaited<ReturnType<typeof getProductBySlug>> = null;
+let others: Awaited<ReturnType<typeof listActiveProducts>> = [];
+let loadError: string | null = null;
+
+try {
+  product = await getProductBySlug(slug);
+  if (product) {
+    const all = await listActiveProducts();
+    others = all.filter((p) => p.slug !== slug).slice(0, 3);
+  }
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Could not load product.";
+  console.error("[shop/[slug]] load failed:", err);
+}
+
+if (!product && !loadError) {
+  return new Response(null, { status: 404, statusText: "Product not found" });
+}
+
+const { shop } = site;
+const theme = product ? themeFor(product.colorway) : null;
+const priceLabel = product ? formatPrice(product.priceCents, product.currency) : "";
+const sizesLabel = product && product.sizes.length ? product.sizes.join(" · ") : "One size";
+
+const buildOrderUrl = (name: string, label: string) => {
+  const message = [
+    shop.orderPreamble,
+    "",
+    `• ${name} — ${label}`,
+    "",
+    shop.orderOutro,
+  ].join("\n");
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
+};
+
+const orderUrl = product ? buildOrderUrl(product.name, priceLabel) : "";
+
+const title = product
+  ? `${product.name} | ${site.name} Shop`
+  : `${site.name} Shop`;
+const description = product
+  ? `${product.name} — ${priceLabel}. ${product.description}`
+  : "Sunset Duckies drop 001 — swag printed in small runs, ordered on WhatsApp.";
+---
+
+<BaseLayout title={title} description={description}>
+  {loadError || !product || !theme ? (
+    <section class="mx-auto max-w-3xl px-6 py-32 text-center">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+        Off the rack
+      </p>
+      <h1 class="mt-4 font-display text-4xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+        Couldn't load this piece.
+      </h1>
+      <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">
+        Either it's sold out, retired, or the shop isn't responding right now. Head back to the drop or ping us on WhatsApp.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a class="cta-primary" href="/shop">Back to the drop</a>
+        <a class="cta-secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+          Ask on WhatsApp
+        </a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <!-- ============ BREADCRUMB ============ -->
+      <div class="mx-auto max-w-7xl px-6 pt-10 lg:px-10">
+        <nav class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+          <a href="/shop" class="hover:text-[var(--color-coral-500)]">✦ Drop 001</a>
+          <span class="mx-2">/</span>
+          <span>{product.name}</span>
+        </nav>
+      </div>
+
+      <!-- ============ PRODUCT HERO ============ -->
+      <section class="mx-auto max-w-7xl px-6 pb-16 pt-8 lg:px-10">
+        <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+          <div
+            class="sticker product-visual relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-[1.6rem] border-2 border-[var(--color-ink-950)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)]"
+            style={`background:${theme.bg};color:${theme.ink};`}
+          >
+            <div class="flex items-start justify-between gap-3">
+              <span class="font-mono text-[0.68rem] uppercase tracking-[0.22em] opacity-85">
+                {product.kind}
+              </span>
+              <span
+                class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
+                style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
+              >
+                {priceLabel}
+              </span>
+            </div>
+
+            <div class="relative flex flex-1 items-center justify-center">
+              <span
+                class="font-display text-center leading-[0.82] tracking-[-0.05em]"
+                style={`font-size:clamp(3rem,7vw,5.5rem);font-variation-settings:'wdth' 118;font-weight:800;color:${theme.ink};`}
+              >
+                {product.name.split(" ").map((word) => (
+                  <span class="block">{word}</span>
+                ))}
+              </span>
+            </div>
+
+            <svg
+              class="pointer-events-none absolute inset-x-0 bottom-4 h-8 w-full opacity-90"
+              viewBox="0 0 320 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M 0 12 Q 20 0 40 12 T 80 12 T 120 12 T 160 12 T 200 12 T 240 12 T 280 12 T 320 12"
+                fill="none"
+                stroke={theme.waveStroke}
+                stroke-width="2.5"
+                stroke-linecap="round"
+              />
+            </svg>
+
+            <span
+              class="pointer-events-none absolute left-4 bottom-4 font-mono text-[0.58rem] uppercase tracking-[0.22em] opacity-70"
+            >
+              ✦ Sunset Duckies · MU
+            </span>
+          </div>
+
+          <div class="space-y-6">
+            <div class="space-y-3">
+              <span class="eyebrow-badge">{shop.dropLabel}</span>
+              <h1
+                class="font-display text-[var(--color-ink-950)]"
+                style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 112; font-weight: 700;"
+              >
+                {product.name}
+              </h1>
+              {product.tagline && (
+                <p class="font-mono text-[0.78rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+                  {product.tagline}
+                </p>
+              )}
+            </div>
+
+            <p class="body-copy max-w-xl">{product.description}</p>
+
+            <dl class="grid grid-cols-2 gap-4 border-y-2 border-[var(--color-ink-950)] py-5">
+              <div>
+                <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
+                  Price
+                </dt>
+                <dd class="mt-1 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+                  {priceLabel}
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
+                  Sizes
+                </dt>
+                <dd class="mt-1 text-sm leading-6 text-[var(--color-ink-950)]/85">
+                  {sizesLabel}
+                </dd>
+              </div>
+            </dl>
+
+            <div class="flex flex-wrap gap-3">
+              <a
+                class="cta-primary"
+                href={orderUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Order ${product.name} via WhatsApp`}
+              >
+                Order via WhatsApp
+              </a>
+              <a class="cta-secondary" href="/shop">
+                Back to the drop
+              </a>
+            </div>
+
+            <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
+              ✦ Pre-order — small-run printing. Pickup at sesh in Tamarin or arrange by chat.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {others.length > 0 && (
+        <section class="mx-auto max-w-7xl px-6 pb-24 lg:px-10">
+          <div class="mb-6 flex items-end justify-between gap-4">
+            <h2 class="section-title">Keep stacking</h2>
+            <a class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/70 hover:text-[var(--color-coral-500)]" href="/shop">
+              See full drop →
+            </a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {others.map((p) => {
+              const t = themeFor(p.colorway);
+              const pLabel = formatPrice(p.priceCents, p.currency);
+              return (
+                <a
+                  href={`/shop/${p.slug}`}
+                  class="surface-card block overflow-hidden transition-transform duration-300 hover:-translate-y-0.5"
+                >
+                  <div
+                    class="product-visual relative flex aspect-[4/3] flex-col justify-between border-b-2 border-[var(--color-ink-950)] p-5"
+                    style={`background:${t.bg};color:${t.ink};`}
+                  >
+                    <div class="flex items-start justify-between gap-3">
+                      <span class="font-mono text-[0.64rem] uppercase tracking-[0.22em] opacity-80">
+                        {p.kind}
+                      </span>
+                      <span
+                        class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
+                        style={`background:${t.badgeBg};color:${t.badgeInk};`}
+                      >
+                        {pLabel}
+                      </span>
+                    </div>
+                    <div class="relative flex flex-1 items-center justify-center">
+                      <span
+                        class="font-display text-center leading-[0.82] tracking-[-0.05em]"
+                        style={`font-size:clamp(1.8rem,4.5vw,3rem);font-variation-settings:'wdth' 118;font-weight:800;color:${t.ink};`}
+                      >
+                        {p.name.split(" ").map((w) => (
+                          <span class="block">{w}</span>
+                        ))}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="p-5">
+                    <p class="font-display text-lg text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+                      {p.name}
+                    </p>
+                    {p.tagline && (
+                      <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+                        {p.tagline}
+                      </p>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  .product-visual {
+    background-image:
+      radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.18), transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(0, 0, 0, 0.14), transparent 50%);
+  }
+</style>
