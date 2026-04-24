@@ -33,7 +33,10 @@ function isPublicPath(pathname: string): boolean {
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
 
-  const needsAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
+  const needsAdmin =
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname.startsWith("/api/admin/");
   const needsAuth =
     pathname === "/account" ||
     pathname.startsWith("/account/") ||
@@ -53,6 +56,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.isAdmin = isAdmin(session);
 
   if (needsAdmin && !isAdmin(session)) {
+    if (pathname.startsWith("/api/")) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Admin access required." }),
+        { status: 403, headers: { "Content-Type": "application/json" } },
+      );
+    }
     const loginUrl = new URL("/login", context.url);
     loginUrl.searchParams.set("next", pathname);
     loginUrl.searchParams.set("reason", "admin");

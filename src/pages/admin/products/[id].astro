@@ -1,0 +1,62 @@
+---
+import ProductForm from "../../../components/react/ProductForm";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { prisma } from "../../../lib/prisma";
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect("/admin/products");
+
+let product: Awaited<ReturnType<typeof prisma.product.findUnique>> = null;
+try {
+  product = await prisma.product.findUnique({ where: { id } });
+} catch (err) {
+  console.error("[admin/products/[id]] load failed:", err);
+}
+
+if (!product) {
+  return new Response(null, { status: 404, statusText: "Product not found" });
+}
+
+const initial = {
+  id: product.id,
+  sku: product.sku,
+  slug: product.slug,
+  name: product.name,
+  kind: product.kind,
+  tagline: product.tagline ?? "",
+  description: product.description,
+  price: String(Math.round(product.priceCents / 100)),
+  currency: product.currency,
+  category: product.category,
+  sizes: product.sizes.join(", "),
+  colorway: product.colorway as
+    | "cream"
+    | "teal"
+    | "sun"
+    | "coral"
+    | "lilac"
+    | "ink",
+  active: product.active,
+  featured: product.featured,
+  stock: product.stock === null ? "" : String(product.stock),
+  sortOrder: String(product.sortOrder),
+};
+---
+
+<AdminLayout title={`Edit ${product.name} · Admin`} section="products">
+  <div class="mb-6 space-y-2">
+    <a href="/admin/products" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+      ← Products
+    </a>
+    <h1
+      class="font-display text-[var(--color-ink-950)]"
+      style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+    >
+      {product.name}
+    </h1>
+    <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+      SKU {product.sku} · Slug /{product.slug}
+    </p>
+  </div>
+  <ProductForm client:load mode="edit" initial={initial} />
+</AdminLayout>

@@ -2,6 +2,9 @@ import { render } from "@react-email/render";
 
 import NewOrderAdmin from "../../emails/NewOrderAdmin";
 import OrderConfirmation from "../../emails/OrderConfirmation";
+import OrderStatusEmail, {
+  type OrderStatusVariant,
+} from "../../emails/OrderStatus";
 import type { OrderWithItems } from "../orders";
 import {
   getAdminNotifyAddress,
@@ -60,6 +63,41 @@ export async function sendOrderConfirmation(order: OrderWithItems) {
       paymentMethod: order.paymentMethod,
       pickupMethod: order.pickupMethod,
       customerNote: order.customerNote,
+      siteUrl: getSiteUrl(),
+    }),
+  });
+}
+
+export async function sendOrderStatusEmail(
+  order: OrderWithItems,
+  variant: OrderStatusVariant,
+  adminNote?: string | null,
+) {
+  const subjectByVariant: Record<OrderStatusVariant, string> = {
+    PAID: `Payment received — Order ${order.id.slice(-6).toUpperCase()}`,
+    READY: `Ready for pickup — Order ${order.id.slice(-6).toUpperCase()}`,
+    FULFILLED: `Thanks for riding — Order ${order.id.slice(-6).toUpperCase()}`,
+    CANCELLED: `Order cancelled — ${order.id.slice(-6).toUpperCase()}`,
+  };
+  return send({
+    to: order.email,
+    subject: subjectByVariant[variant],
+    react: OrderStatusEmail({
+      variant,
+      orderId: order.id,
+      guestToken: order.guestToken,
+      customerName: order.name,
+      items: order.items.map((i) => ({
+        nameSnapshot: i.nameSnapshot,
+        sku: i.sku,
+        size: i.size,
+        quantity: i.quantity,
+        priceCentsSnapshot: i.priceCentsSnapshot,
+        lineTotalCents: i.lineTotalCents,
+      })),
+      totalCents: order.totalCents,
+      currency: order.currency,
+      adminNote,
       siteUrl: getSiteUrl(),
     }),
   });
