@@ -4,7 +4,7 @@ import {
   type OrderEvent,
   type OrderItem,
   type Order,
-} from "@prisma/client";
+} from "../generated/prisma/client";
 
 import { sendOrderStatusEmail } from "./email/send";
 import type { OrderStatusVariant } from "../emails/OrderStatus";

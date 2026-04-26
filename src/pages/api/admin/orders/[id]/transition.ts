@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
-import { OrderStatus } from "@prisma/client";
 import { z } from "zod";
 
+import { OrderStatus } from "../../../../../generated/prisma/client";
 import { transitionOrder } from "../../../../../lib/admin-orders";
 
 export const prerender = false;

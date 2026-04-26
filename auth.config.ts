@@ -5,7 +5,7 @@ import { defineConfig } from "auth-astro";
 import { prisma } from "./src/lib/prisma";
 
 export default defineConfig({
-  adapter: PrismaAdapter(prisma) as unknown as ReturnType<typeof PrismaAdapter>,
+  adapter: PrismaAdapter(prisma),
   providers: [Google({})],
   session: { strategy: "database" },
   pages: {

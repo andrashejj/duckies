@@ -11,8 +11,8 @@ import {
   createReservation,
   reserveSchema,
 } from "../../lib/orders";
+import { OrderEventType } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { OrderEventType } from "@prisma/client";
 
 export const prerender = false;
 

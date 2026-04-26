@@ -1,8 +1,10 @@
-import { DropStatus, PrismaClient, ProductCategory } from "@prisma/client";
+import "dotenv/config";
 
 import { site } from "../src/data/site";
+import { DropStatus, ProductCategory } from "../src/generated/prisma/client";
+import { createPrismaClient } from "../src/lib/prisma-factory";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 const categoryBySourceKind: Record<string, ProductCategory> = {
   "Founding bundle": ProductCategory.BUNDLE,

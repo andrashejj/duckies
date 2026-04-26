@@ -1,11 +1,10 @@
 ---
-import type { Order, OrderItem, Product } from "@prisma/client";
-
+import type { Order, OrderItem, Product } from "../../generated/prisma/client";
+import { OrderStatus } from "../../generated/prisma/client";
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { STATUS_COLOR, STATUS_LABEL } from "../../lib/admin-orders";
 import { formatPrice, shortOrderId } from "../../lib/format";
 import { prisma } from "../../lib/prisma";
-import { OrderStatus } from "@prisma/client";
 
 type DashboardData = {
   revenue7d: number;

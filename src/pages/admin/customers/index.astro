@@ -1,8 +1,8 @@
 ---
+import { OrderStatus } from "../../../generated/prisma/client";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { formatPrice } from "../../../lib/format";
 import { prisma } from "../../../lib/prisma";
-import { OrderStatus } from "@prisma/client";
 
 type CustomerRow = {
   email: string;

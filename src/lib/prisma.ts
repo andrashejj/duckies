@@ -1,13 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { type AppPrismaClient, createPrismaClient } from "./prisma-factory";
 
 declare global {
   // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined;
+  var __prisma: AppPrismaClient | undefined;
 }
 
 export const prisma =
   globalThis.__prisma ??
-  new PrismaClient({
+  createPrismaClient({
     log: import.meta.env.DEV ? ["warn", "error"] : ["error"],
   });
 

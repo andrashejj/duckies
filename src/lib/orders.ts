@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
 
-import type { Order, OrderItem, Prisma } from "@prisma/client";
-import { OrderEventType } from "@prisma/client";
 import { z } from "zod";
 
+import type { Order, OrderItem, Prisma } from "../generated/prisma/client";
+import { OrderEventType } from "../generated/prisma/client";
 import { prisma } from "./prisma";
 
 export const reserveSchema = z.object({

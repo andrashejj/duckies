@@ -25,6 +25,7 @@ pnpm-debug.log*
 # prisma
 prisma/*.db
 prisma/*.db-journal
+src/generated/
 
 # macOS-specific files
 .DS_Store

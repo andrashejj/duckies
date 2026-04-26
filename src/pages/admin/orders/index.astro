@@ -1,9 +1,9 @@
 ---
+import { OrderStatus } from "../../../generated/prisma/client";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { STATUS_COLOR, STATUS_LABEL } from "../../../lib/admin-orders";
 import { formatPrice, shortOrderId } from "../../../lib/format";
 import { prisma } from "../../../lib/prisma";
-import { OrderStatus } from "@prisma/client";
 
 const statusParam = Astro.url.searchParams.get("status");
 const qParam = Astro.url.searchParams.get("q")?.trim() ?? "";

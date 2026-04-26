@@ -1,5 +1,5 @@
-import type { Drop } from "@prisma/client";
-import { DropStatus } from "@prisma/client";
+import type { Drop } from "../generated/prisma/client";
+import { DropStatus } from "../generated/prisma/client";
 
 import { prisma } from "./prisma";
 
