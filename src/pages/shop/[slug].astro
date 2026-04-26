@@ -1,9 +1,8 @@
 ---
-import AddToCartButton from "../../components/react/AddToCartButton";
+import ReserveForm from "../../components/react/ReserveForm";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
-  formatPrice,
   getProductBySlug,
   listActiveProducts,
   themeFor,
@@ -36,15 +35,14 @@ if (!product && !loadError) {
 
 const { shop } = site;
 const theme = product ? themeFor(product.colorway) : null;
-const priceLabel = product ? formatPrice(product.priceCents, product.currency) : "";
 const sizesLabel = product && product.sizes.length ? product.sizes.join(" · ") : "One size";
 
 const title = product
   ? `${product.name} | ${site.name} Shop`
   : `${site.name} Shop`;
 const description = product
-  ? `${product.name} — ${priceLabel}. ${product.description}`
-  : "Sunset Duckies drop 001 — swag printed in small runs, ordered on WhatsApp.";
+  ? `${product.name}. ${product.description}`
+  : "Sunset Duckies drop 001 — kit printed in small runs in Tamarin, reserved at sesh.";
 ---
 
 <BaseLayout title={title} description={description}>
@@ -57,7 +55,7 @@ const description = product
         Couldn't load this piece.
       </h1>
       <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">
-        Either it's sold out, retired, or the shop isn't responding right now. Head back to the drop or ping us on WhatsApp.
+        Either it's retired, or the shop isn't responding right now. Head back to the drop or ping us on WhatsApp.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a class="cta-primary" href="/shop">Back to the drop</a>
@@ -71,7 +69,7 @@ const description = product
       <!-- ============ BREADCRUMB ============ -->
       <div class="mx-auto max-w-7xl px-6 pt-10 lg:px-10">
         <nav class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
-          <a href="/shop" class="hover:text-[var(--color-coral-500)]">✦ Drop 001</a>
+          <a href="/shop" class="hover:text-[var(--color-coral-500)]">✦ {shop.dropLabel}</a>
           <span class="mx-2">/</span>
           <span>{product.name}</span>
         </nav>
@@ -124,12 +122,6 @@ const description = product
             >
               {product.kind}
             </span>
-            <span
-              class="pointer-events-none absolute right-4 top-4 rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-              style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
-            >
-              {priceLabel}
-            </span>
           </div>
 
           <div class="space-y-6">
@@ -153,56 +145,40 @@ const description = product
             <dl class="grid grid-cols-2 gap-4 border-y-2 border-[var(--color-ink-950)] py-5">
               <div>
                 <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
-                  Price
-                </dt>
-                <dd class="mt-1 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-                  {priceLabel}
-                </dd>
-              </div>
-              <div>
-                <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
                   Sizes
                 </dt>
                 <dd class="mt-1 text-sm leading-6 text-[var(--color-ink-950)]/85">
                   {sizesLabel}
                 </dd>
               </div>
+              <div>
+                <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/60">
+                  Pickup
+                </dt>
+                <dd class="mt-1 text-sm leading-6 text-[var(--color-ink-950)]/85">
+                  Wed/Fri sesh, Tamarin Bay
+                </dd>
+              </div>
             </dl>
 
-            <div class="space-y-4">
-              <AddToCartButton
+            <div class="surface-card space-y-4 p-6">
+              <p class="section-kicker">Reserve your kit</p>
+              <ReserveForm
                 client:load
                 product={{
                   productId: product.id,
-                  slug: product.slug,
-                  sku: product.sku,
                   name: product.name,
-                  kind: product.kind,
-                  priceCents: product.priceCents,
-                  currency: product.currency,
-                  colorway: product.colorway,
                 }}
                 sizes={product.sizes}
-                variant="block"
+                whatsappUrl={site.whatsappUrl}
               />
-              <div class="flex flex-wrap gap-3">
-                <a class="cta-secondary" href="/shop">
-                  Back to the drop
-                </a>
-                <a
-                  class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/70 underline-offset-4 hover:text-[var(--color-coral-500)] hover:underline self-center"
-                  href={site.whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Sizing questions? →
-                </a>
-              </div>
             </div>
 
-            <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
-              ✦ Pre-order — small-run printing. Pickup at sesh in Tamarin or arrange by chat.
-            </p>
+            <div class="flex flex-wrap gap-3">
+              <a class="cta-secondary" href="/shop">
+                Back to the drop
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -218,7 +194,6 @@ const description = product
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((p) => {
               const t = themeFor(p.colorway);
-              const pLabel = formatPrice(p.priceCents, p.currency);
               return (
                 <a
                   href={`/shop/${p.slug}`}
@@ -252,12 +227,6 @@ const description = product
                       class="pointer-events-none absolute left-3 top-3 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-2.5 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)]"
                     >
                       {p.kind}
-                    </span>
-                    <span
-                      class="pointer-events-none absolute right-3 top-3 rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-                      style={`background:${t.badgeBg};color:${t.badgeInk};`}
-                    >
-                      {pLabel}
                     </span>
                   </div>
                   <div class="p-5">

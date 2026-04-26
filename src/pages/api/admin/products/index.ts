@@ -42,6 +42,7 @@ export const POST: APIRoute = async ({ request }) => {
         featured: parsed.data.featured,
         stock: parsed.data.stock ?? null,
         sortOrder: parsed.data.sortOrder,
+        dropId: parsed.data.dropId ?? null,
       },
     });
     return Response.json({ ok: true, id: created.id });

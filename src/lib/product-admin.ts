@@ -43,6 +43,7 @@ export const productSchema = z.object({
   featured: z.boolean().default(false),
   stock: z.number().int().min(0).max(10_000).nullable().optional(),
   sortOrder: z.number().int().min(0).max(10_000).default(0),
+  dropId: z.string().trim().min(1).max(64).optional().nullable(),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;

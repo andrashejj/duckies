@@ -27,6 +27,7 @@ type ProductFormValues = {
   featured: boolean;
   stock: string; // empty string = untracked
   sortOrder: string;
+  dropId: string; // empty string = none
 };
 
 const CATEGORIES: ProductFormValues["category"][] = [
@@ -41,6 +42,7 @@ const CATEGORIES: ProductFormValues["category"][] = [
 type Props = {
   mode: "create" | "edit";
   initial?: ProductFormValues;
+  drops: { id: string; name: string }[];
 };
 
 const EMPTY: ProductFormValues = {
@@ -61,9 +63,10 @@ const EMPTY: ProductFormValues = {
   featured: false,
   stock: "",
   sortOrder: "0",
+  dropId: "",
 };
 
-export default function ProductForm({ mode, initial }: Props) {
+export default function ProductForm({ mode, initial, drops }: Props) {
   const [values, setValues] = useState<ProductFormValues>(initial ?? EMPTY);
   const [submitting, setSubmitting] = useState<"save" | "delete" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -122,6 +125,7 @@ export default function ProductForm({ mode, initial }: Props) {
         featured: values.featured,
         stock,
         sortOrder,
+        dropId: values.dropId.trim() || null,
       };
 
       const url =
@@ -258,6 +262,21 @@ export default function ProductForm({ mode, initial }: Props) {
             rows={2}
           />
           <Field label="Sort order" value={values.sortOrder} onChange={(v) => update("sortOrder", v)} inputMode="numeric" />
+          <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+            <span>Drop</span>
+            <select
+              value={values.dropId}
+              onChange={(e) => update("dropId", e.target.value)}
+              className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+            >
+              <option value="">— No drop (always-on) —</option>
+              {drops.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Active (visible in shop)" checked={values.active} onChange={(v) => update("active", v)} />
             <Checkbox label="Featured (highlighted)" checked={values.featured} onChange={(v) => update("featured", v)} />

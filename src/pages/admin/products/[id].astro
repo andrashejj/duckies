@@ -1,14 +1,19 @@
 ---
 import ProductForm from "../../../components/react/ProductForm";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listDropsForSelect } from "../../../lib/drops";
 import { prisma } from "../../../lib/prisma";
 
 const { id } = Astro.params;
 if (!id) return Astro.redirect("/admin/products");
 
 let product: Awaited<ReturnType<typeof prisma.product.findUnique>> = null;
+let drops: Awaited<ReturnType<typeof listDropsForSelect>> = [];
 try {
-  product = await prisma.product.findUnique({ where: { id } });
+  [product, drops] = await Promise.all([
+    prisma.product.findUnique({ where: { id } }),
+    listDropsForSelect(),
+  ]);
 } catch (err) {
   console.error("[admin/products/[id]] load failed:", err);
 }
@@ -42,6 +47,7 @@ const initial = {
   featured: product.featured,
   stock: product.stock === null ? "" : String(product.stock),
   sortOrder: String(product.sortOrder),
+  dropId: product.dropId ?? "",
 };
 ---
 
@@ -60,5 +66,5 @@ const initial = {
       SKU {product.sku} · Slug /{product.slug}
     </p>
   </div>
-  <ProductForm client:load mode="edit" initial={initial} />
+  <ProductForm client:load mode="edit" initial={initial} drops={drops} />
 </AdminLayout>

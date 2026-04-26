@@ -1,6 +1,9 @@
 ---
 import ProductForm from "../../../components/react/ProductForm";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listDropsForSelect } from "../../../lib/drops";
+
+const drops = await listDropsForSelect();
 ---
 
 <AdminLayout title="New product · Admin" section="products">
@@ -15,5 +18,5 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
       Add a new piece.
     </h1>
   </div>
-  <ProductForm client:load mode="create" />
+  <ProductForm client:load mode="create" drops={drops} />
 </AdminLayout>

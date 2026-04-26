@@ -11,18 +11,21 @@ import {
   Text,
 } from "@react-email/components";
 
-import { formatPrice, shortOrderId } from "../lib/format";
+import { shortOrderId } from "../lib/format";
 
 type OrderItemData = {
   nameSnapshot: string;
   sku: string;
   size?: string | null;
   quantity: number;
-  priceCentsSnapshot: number;
-  lineTotalCents: number;
+  kidName?: string | null;
 };
 
-export type OrderStatusVariant = "PAID" | "READY" | "FULFILLED" | "CANCELLED";
+export type OrderStatusVariant =
+  | "CONFIRMED"
+  | "READY"
+  | "FULFILLED"
+  | "CANCELLED";
 
 type Props = {
   variant: OrderStatusVariant;
@@ -30,8 +33,6 @@ type Props = {
   guestToken: string;
   customerName: string;
   items: OrderItemData[];
-  totalCents: number;
-  currency: string;
   adminNote?: string | null;
   siteUrl: string;
 };
@@ -40,11 +41,11 @@ const copyByVariant: Record<
   OrderStatusVariant,
   { preview: string; kicker: string; heading: string; body: string }
 > = {
-  PAID: {
-    preview: "Payment received. Your kit is locked in.",
-    kicker: "Payment received",
-    heading: "You're locked in.",
-    body: "Thanks — we got your payment. We'll prep your kit and message you when it's ready for pickup.",
+  CONFIRMED: {
+    preview: "Reservation locked in. We'll DM when it's ready.",
+    kicker: "Confirmed",
+    heading: "Locked in.",
+    body: "Andras has reviewed your reservation and added it to the next print run. We'll message you on WhatsApp once it's ready to grab at sesh.",
   },
   READY: {
     preview: "Your kit is ready for pickup.",
@@ -59,10 +60,10 @@ const copyByVariant: Record<
     body: "Kit's in your hands. Tag @sunsetduckies in your surf pics — we love seeing the lineup out on the water.",
   },
   CANCELLED: {
-    preview: "Order cancelled.",
+    preview: "Reservation cancelled.",
     kicker: "Cancelled",
     heading: "This one's off.",
-    body: "Your order has been cancelled. No payment was taken. If this is a surprise, hit reply and we'll sort it.",
+    body: "Your reservation has been cancelled. If this is a surprise, hit reply and we'll sort it.",
   },
 };
 
@@ -73,8 +74,6 @@ export default function OrderStatusEmail(props: Props) {
     guestToken,
     customerName,
     items,
-    totalCents,
-    currency,
     adminNote,
     siteUrl,
   } = props;
@@ -91,7 +90,7 @@ export default function OrderStatusEmail(props: Props) {
         <Container style={container}>
           <Section style={headerBar}>
             <Text style={kicker}>
-              Sunset Duckies · Order {shortId}
+              Sunset Duckies · Reservation {shortId}
             </Text>
             <Heading style={h1}>{copy.heading}</Heading>
             <Text style={lede}>
@@ -104,14 +103,11 @@ export default function OrderStatusEmail(props: Props) {
             {items.map((item, idx) => (
               <Text key={idx} style={line}>
                 {item.quantity} × {item.nameSnapshot}
-                {item.size ? ` · ${item.size}` : ""} —{" "}
-                {formatPrice(item.lineTotalCents, currency)}
+                {item.size ? ` · ${item.size}` : ""}
+                {item.kidName ? ` · for ${item.kidName}` : ""}
               </Text>
             ))}
             <Hr style={hr} />
-            <Text style={total}>
-              Total {formatPrice(totalCents, currency)}
-            </Text>
             {adminNote && (
               <Text style={note}>
                 <strong>Note from the club:</strong> {adminNote}
@@ -201,13 +197,6 @@ const line: React.CSSProperties = {
   fontSize: 14,
   color: "#0b1620",
   margin: "4px 0",
-};
-
-const total: React.CSSProperties = {
-  fontFamily: "'Bricolage Grotesque', sans-serif",
-  fontWeight: 700,
-  fontSize: 18,
-  margin: "6px 0 14px",
 };
 
 const note: React.CSSProperties = {

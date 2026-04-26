@@ -1,0 +1,98 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { DROP_STATUS_COLOR, DROP_STATUS_LABEL, listDropsWithCounts } from "../../../lib/drops";
+
+let drops: Awaited<ReturnType<typeof listDropsWithCounts>> = [];
+let loadError: string | null = null;
+
+try {
+  drops = await listDropsWithCounts();
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Could not load drops.";
+  console.error("[admin/drops] load failed:", err);
+}
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+---
+
+<AdminLayout title="Drops · Admin" section="drops">
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div class="space-y-2">
+      <p class="section-kicker">✦ Drops</p>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      >
+        The seasons.
+      </h1>
+    </div>
+    <a class="cta-primary" href="/admin/drops/new">+ New drop</a>
+  </div>
+
+  {loadError ? (
+    <div class="surface-card p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+        Could not load drops
+      </p>
+      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
+    </div>
+  ) : drops.length === 0 ? (
+    <div class="surface-card p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+        No drops yet.
+      </p>
+      <a class="cta-primary mt-5 inline-flex" href="/admin/drops/new">
+        Create the first drop →
+      </a>
+    </div>
+  ) : (
+    <div class="surface-card overflow-hidden">
+      <table class="w-full border-separate border-spacing-0 text-sm">
+        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+          <tr>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Drop</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Status</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Window</th>
+            <th class="px-4 py-3 text-right font-mono text-[0.66rem] uppercase tracking-[0.2em]">Products</th>
+          </tr>
+        </thead>
+        <tbody>
+          {drops.map((d) => (
+            <tr class="group border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+              <td class="px-4 py-3">
+                <a href={`/admin/drops/${d.id}`} class="block">
+                  <p class="font-display text-sm text-[var(--color-ink-950)] group-hover:text-[var(--color-coral-500)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                    {d.name}
+                  </p>
+                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                    /{d.slug}
+                  </p>
+                </a>
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="rounded-full border border-[var(--color-ink-950)] px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.14em]"
+                  style={`background:${DROP_STATUS_COLOR[d.status]};`}
+                >
+                  {DROP_STATUS_LABEL[d.status]}
+                </span>
+              </td>
+              <td class="px-4 py-3 font-mono text-[0.72rem] text-[var(--color-ink-950)]/70">
+                {d.opensAt ? dateFormatter.format(d.opensAt) : "—"}
+                {" → "}
+                {d.closesAt ? dateFormatter.format(d.closesAt) : "—"}
+              </td>
+              <td class="px-4 py-3 text-right font-mono text-[0.82rem]">
+                {d._count.products}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>

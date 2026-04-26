@@ -19,6 +19,7 @@ type OrderItemData = {
   quantity: number;
   priceCentsSnapshot: number;
   lineTotalCents: number;
+  kidName?: string | null;
 };
 
 type Props = {
@@ -29,7 +30,6 @@ type Props = {
   items: OrderItemData[];
   totalCents: number;
   currency: string;
-  paymentMethod: "JUICE" | "CASH" | "BANK";
   pickupMethod: "SESH" | "ARRANGE";
   customerNote?: string | null;
   adminUrl: string;
@@ -41,30 +41,31 @@ export default function NewOrderAdmin(props: Props) {
     <Html>
       <Head />
       <Preview>
-        New order {shortId} — {props.customerName} · {formatPrice(props.totalCents, props.currency)}
+        New reservation {shortId} — {props.customerName} ·{" "}
+        {formatPrice(props.totalCents, props.currency)}
       </Preview>
       <Body style={body}>
         <Container style={container}>
-          <Text style={kicker}>New order — follow up with payment</Text>
-          <Heading style={h1}>Order {shortId}</Heading>
+          <Text style={kicker}>New reservation — confirm + add to next batch</Text>
+          <Heading style={h1}>Reservation {shortId}</Heading>
           <Text style={meta}>
             {props.customerName} · {props.customerEmail}
             {props.customerPhone ? ` · ${props.customerPhone}` : ""}
           </Text>
-          <Text style={meta}>
-            Payment: {props.paymentMethod} · Pickup: {props.pickupMethod}
-          </Text>
+          <Text style={meta}>Pickup: {props.pickupMethod}</Text>
           <Hr style={hr} />
           {props.items.map((item, idx) => (
             <Text key={idx} style={line}>
               {item.quantity} × {item.nameSnapshot}
-              {item.size ? ` (${item.size})` : ""} —{" "}
+              {item.size ? ` (${item.size})` : ""}
+              {item.kidName ? ` · for ${item.kidName}` : ""} —{" "}
               {formatPrice(item.lineTotalCents, props.currency)}
             </Text>
           ))}
           <Hr style={hr} />
           <Text style={total}>
-            Total {formatPrice(props.totalCents, props.currency)}
+            Cash to collect on pickup ·{" "}
+            {formatPrice(props.totalCents, props.currency)}
           </Text>
           {props.customerNote && (
             <>
@@ -73,7 +74,7 @@ export default function NewOrderAdmin(props: Props) {
             </>
           )}
           <Link href={props.adminUrl} style={link}>
-            Open order in admin →
+            Open reservation in admin →
           </Link>
         </Container>
       </Body>
