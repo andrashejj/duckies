@@ -6,14 +6,13 @@ import { z } from "zod";
 
 import { prisma } from "./prisma";
 
-export const checkoutSchema = z.object({
+export const reserveSchema = z.object({
   customer: z.object({
     name: z.string().trim().min(1, "Name is required").max(120),
     email: z.string().trim().email("Valid email is required").max(200),
     phone: z.string().trim().max(40).optional(),
   }),
-  paymentMethod: z.enum(["JUICE", "CASH", "BANK"]),
-  pickupMethod: z.enum(["SESH", "ARRANGE"]),
+  pickupMethod: z.enum(["SESH", "ARRANGE"]).default("SESH"),
   customerNote: z.string().trim().max(1000).optional(),
   lines: z
     .array(
@@ -21,18 +20,19 @@ export const checkoutSchema = z.object({
         productId: z.string().min(1),
         quantity: z.number().int().min(1).max(20),
         size: z.string().trim().max(60).optional(),
+        kidName: z.string().trim().max(120).optional(),
       }),
     )
-    .min(1, "Cart is empty")
+    .min(1, "Reservation is empty")
     .max(40),
 });
 
-export type CheckoutInput = z.infer<typeof checkoutSchema>;
+export type ReserveInput = z.infer<typeof reserveSchema>;
 
 export type OrderWithItems = Order & { items: OrderItem[] };
 
-export async function createOrder(
-  input: CheckoutInput,
+export async function createReservation(
+  input: ReserveInput,
   opts: { userId?: string | null } = {},
 ): Promise<OrderWithItems> {
   const productIds = input.lines.map((l) => l.productId);
@@ -41,7 +41,7 @@ export async function createOrder(
   });
 
   if (products.length !== new Set(productIds).size) {
-    throw new CheckoutError("One or more items are no longer available.");
+    throw new ReservationError("One or more items are no longer available.");
   }
 
   const productMap = new Map(products.map((p) => [p.id, p]));
@@ -51,10 +51,10 @@ export async function createOrder(
     (line) => {
       const product = productMap.get(line.productId);
       if (!product) {
-        throw new CheckoutError(`Product ${line.productId} is unavailable.`);
+        throw new ReservationError(`Product ${line.productId} is unavailable.`);
       }
       if (product.stock !== null && product.stock < line.quantity) {
-        throw new CheckoutError(`${product.name} is low on stock.`);
+        throw new ReservationError(`${product.name} is low on stock.`);
       }
       const lineTotalCents = product.priceCents * line.quantity;
       subtotalCents += lineTotalCents;
@@ -65,6 +65,7 @@ export async function createOrder(
         priceCentsSnapshot: product.priceCents,
         quantity: line.quantity,
         size: line.size,
+        kidName: line.kidName,
         lineTotalCents,
       };
     },
@@ -81,7 +82,6 @@ export async function createOrder(
         email: input.customer.email.toLowerCase(),
         name: input.customer.name,
         phone: input.customer.phone,
-        paymentMethod: input.paymentMethod,
         pickupMethod: input.pickupMethod,
         customerNote: input.customerNote,
         subtotalCents,
@@ -92,8 +92,8 @@ export async function createOrder(
             type: OrderEventType.CREATED,
             actorId: opts.userId ?? null,
             message: opts.userId
-              ? "Order placed via checkout (signed-in customer)."
-              : "Order placed via checkout (guest).",
+              ? "Reservation placed (signed-in member)."
+              : "Reservation placed (guest).",
           },
         },
       },
@@ -116,10 +116,10 @@ export async function createOrder(
   return order;
 }
 
-export class CheckoutError extends Error {
+export class ReservationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "CheckoutError";
+    this.name = "ReservationError";
   }
 }
 
@@ -132,4 +132,38 @@ export async function getOrderForGuest(
     include: { items: true },
   });
   return order;
+}
+
+export function buildReservationWhatsappUrl(
+  baseWhatsappUrl: string,
+  order: {
+    id: string;
+    items: {
+      quantity: number;
+      nameSnapshot: string;
+      size?: string | null;
+      kidName?: string | null;
+    }[];
+  },
+): string {
+  const lines = order.items
+    .map((i) => {
+      const sizePart = i.size ? ` (size ${i.size})` : "";
+      const kidPart = i.kidName ? ` for ${i.kidName}` : "";
+      return `· ${i.quantity} × ${i.nameSnapshot}${sizePart}${kidPart}`;
+    })
+    .join("\n");
+  const shortId = order.id.slice(-6).toUpperCase();
+  const message = [
+    `Yo Duckies — locking in reservation ${shortId}.`,
+    "",
+    lines,
+    "",
+    "Pickup at next sesh.",
+  ].join("\n");
+  const encoded = encodeURIComponent(message);
+  if (baseWhatsappUrl.includes("?")) {
+    return `${baseWhatsappUrl}&text=${encoded}`;
+  }
+  return `${baseWhatsappUrl}?text=${encoded}`;
 }

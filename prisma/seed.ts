@@ -1,4 +1,4 @@
-import { PrismaClient, ProductCategory } from "@prisma/client";
+import { DropStatus, PrismaClient, ProductCategory } from "@prisma/client";
 
 import { site } from "../src/data/site";
 
@@ -24,6 +24,27 @@ type SourceProduct = (typeof site.shop.products)[number] & {
 };
 
 async function main() {
+  const drop = await prisma.drop.upsert({
+    where: { slug: "drop-001" },
+    update: {
+      name: "Drop 001 — Founding kit",
+      description:
+        "First wave of Sunset Duckies kit: tees, hoodies, and the matte-black founding bundle. Made-to-order, picked up at sesh.",
+      status: DropStatus.LIVE,
+      pickupNote: "Pickup at next Wed/Fri sesh in Tamarin.",
+      sortOrder: 0,
+    },
+    create: {
+      slug: "drop-001",
+      name: "Drop 001 — Founding kit",
+      description:
+        "First wave of Sunset Duckies kit: tees, hoodies, and the matte-black founding bundle. Made-to-order, picked up at sesh.",
+      status: DropStatus.LIVE,
+      pickupNote: "Pickup at next Wed/Fri sesh in Tamarin.",
+      sortOrder: 0,
+    },
+  });
+
   const products = site.shop.products as SourceProduct[];
   const sourceSlugs = new Set(products.map((p) => p.id));
 
@@ -47,6 +68,7 @@ async function main() {
       active: true,
       featured: Boolean(p.featured),
       sortOrder: i,
+      dropId: drop.id,
     };
 
     await prisma.product.upsert({
@@ -56,8 +78,6 @@ async function main() {
     });
   }
 
-  // Soft-archive any DB rows that aren't in the source any more, so dev DBs
-  // stay aligned with the brand kit. Production catalog is managed via /admin.
   if (sourceSlugs.size > 0) {
     const archived = await prisma.product.updateMany({
       where: { slug: { notIn: Array.from(sourceSlugs) }, active: true },
@@ -68,7 +88,7 @@ async function main() {
     }
   }
 
-  console.log(`Seeded ${products.length} products.`);
+  console.log(`Seeded drop "${drop.name}" with ${products.length} products.`);
 }
 
 main()

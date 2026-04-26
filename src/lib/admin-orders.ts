@@ -16,13 +16,8 @@ export type OrderWithDetails = Order & {
 };
 
 export const STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  PENDING: [
-    OrderStatus.AWAITING_PAYMENT,
-    OrderStatus.PAID,
-    OrderStatus.CANCELLED,
-  ],
-  AWAITING_PAYMENT: [OrderStatus.PAID, OrderStatus.CANCELLED],
-  PAID: [OrderStatus.READY, OrderStatus.CANCELLED],
+  PENDING: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
+  CONFIRMED: [OrderStatus.READY, OrderStatus.CANCELLED],
   READY: [OrderStatus.FULFILLED, OrderStatus.CANCELLED],
   FULFILLED: [],
   CANCELLED: [],
@@ -30,8 +25,7 @@ export const STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "Pending",
-  AWAITING_PAYMENT: "Awaiting payment",
-  PAID: "Paid",
+  CONFIRMED: "Confirmed",
   READY: "Ready for pickup",
   FULFILLED: "Fulfilled",
   CANCELLED: "Cancelled",
@@ -39,15 +33,14 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
 
 export const STATUS_COLOR: Record<OrderStatus, string> = {
   PENDING: "var(--color-sun-500)",
-  AWAITING_PAYMENT: "var(--color-sun-500)",
-  PAID: "var(--color-teal-500)",
+  CONFIRMED: "var(--color-teal-500)",
   READY: "var(--color-teal-500)",
   FULFILLED: "var(--color-lilac-400)",
   CANCELLED: "var(--color-coral-500)",
 };
 
 const statusToEmailVariant: Partial<Record<OrderStatus, OrderStatusVariant>> = {
-  PAID: "PAID",
+  CONFIRMED: "CONFIRMED",
   READY: "READY",
   FULFILLED: "FULFILLED",
   CANCELLED: "CANCELLED",
@@ -55,8 +48,7 @@ const statusToEmailVariant: Partial<Record<OrderStatus, OrderStatusVariant>> = {
 
 const statusToEventType: Record<OrderStatus, OrderEventType> = {
   PENDING: OrderEventType.NOTE,
-  AWAITING_PAYMENT: OrderEventType.NOTE,
-  PAID: OrderEventType.PAYMENT_CONFIRMED,
+  CONFIRMED: OrderEventType.CONFIRMED,
   READY: OrderEventType.READY,
   FULFILLED: OrderEventType.FULFILLED,
   CANCELLED: OrderEventType.CANCELLED,
@@ -125,6 +117,40 @@ export async function transitionOrder(opts: {
   }
 
   return updated;
+}
+
+export async function markOrderPaid(opts: {
+  orderId: string;
+  actorId: string;
+  note?: string | null;
+}): Promise<OrderWithDetails> {
+  const { orderId, actorId, note } = opts;
+  const existing = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!existing) {
+    throw new Error("Order not found.");
+  }
+  if (existing.paidAt) {
+    throw new Error("Reservation is already marked paid.");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: { id: orderId },
+      data: { paidAt: new Date() },
+    });
+    await tx.orderEvent.create({
+      data: {
+        orderId,
+        type: OrderEventType.PAID,
+        actorId,
+        message: note ? `Marked paid (cash) — ${note}` : "Marked paid (cash).",
+      },
+    });
+    return tx.order.findUnique({
+      where: { id: orderId },
+      include: { items: true, events: { orderBy: { createdAt: "desc" } } },
+    }) as Promise<OrderWithDetails>;
+  });
 }
 
 export async function addInternalNote(opts: {

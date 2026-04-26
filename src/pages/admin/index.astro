@@ -10,8 +10,10 @@ import { OrderStatus } from "@prisma/client";
 type DashboardData = {
   revenue7d: number;
   revenue30d: number;
-  openOrdersCount: number;
-  totalOrdersCount: number;
+  openCount: number;
+  cashToCollectCents: number;
+  cashToCollectCount: number;
+  totalCount: number;
   recentOrders: (Order & { items: OrderItem[] })[];
   lowStock: Product[];
   statusBreakdown: Record<OrderStatus, number>;
@@ -27,8 +29,9 @@ try {
   const [
     revenue7dAgg,
     revenue30dAgg,
-    openOrdersCount,
-    totalOrdersCount,
+    openCount,
+    cashToCollectAgg,
+    totalCount,
     recentOrders,
     lowStock,
     statusGroups,
@@ -50,13 +53,16 @@ try {
     prisma.order.count({
       where: {
         status: {
-          in: [
-            OrderStatus.PENDING,
-            OrderStatus.AWAITING_PAYMENT,
-            OrderStatus.PAID,
-            OrderStatus.READY,
-          ],
+          in: [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.READY],
         },
+      },
+    }),
+    prisma.order.aggregate({
+      _sum: { totalCents: true },
+      _count: { _all: true },
+      where: {
+        status: OrderStatus.FULFILLED,
+        paidAt: null,
       },
     }),
     prisma.order.count(),
@@ -78,8 +84,7 @@ try {
 
   const statusBreakdown: Record<OrderStatus, number> = {
     PENDING: 0,
-    AWAITING_PAYMENT: 0,
-    PAID: 0,
+    CONFIRMED: 0,
     READY: 0,
     FULFILLED: 0,
     CANCELLED: 0,
@@ -91,8 +96,10 @@ try {
   data = {
     revenue7d: revenue7dAgg._sum.totalCents ?? 0,
     revenue30d: revenue30dAgg._sum.totalCents ?? 0,
-    openOrdersCount,
-    totalOrdersCount,
+    openCount,
+    cashToCollectCents: cashToCollectAgg._sum.totalCents ?? 0,
+    cashToCollectCount: cashToCollectAgg._count._all,
+    totalCount,
     recentOrders,
     lowStock,
     statusBreakdown,
@@ -125,33 +132,36 @@ try {
     <>
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div class="surface-card p-5">
-          <p class="section-kicker">Revenue · 7d</p>
+          <p class="section-kicker">Booked · 7d</p>
           <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
             {formatPrice(data.revenue7d)}
           </p>
           <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
-            Excludes cancelled
+            Reserved value · excludes cancelled
           </p>
         </div>
         <div class="surface-card p-5">
-          <p class="section-kicker">Revenue · 30d</p>
+          <p class="section-kicker">Booked · 30d</p>
           <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
             {formatPrice(data.revenue30d)}
           </p>
         </div>
         <div class="surface-card p-5">
-          <p class="section-kicker">Open orders</p>
+          <p class="section-kicker">Open reservations</p>
           <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            {data.openOrdersCount}
+            {data.openCount}
           </p>
           <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
-            Pending · paid · ready
+            Pending · confirmed · ready
           </p>
         </div>
-        <div class="surface-card p-5">
-          <p class="section-kicker">Orders · lifetime</p>
+        <div class="surface-card p-5" style="background:var(--color-sun-500);">
+          <p class="section-kicker">Cash to collect</p>
           <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            {data.totalOrdersCount}
+            {formatPrice(data.cashToCollectCents)}
+          </p>
+          <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+            {data.cashToCollectCount} fulfilled, unpaid
           </p>
         </div>
       </div>
@@ -159,14 +169,14 @@ try {
       <div class="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
         <section class="surface-card p-5">
           <div class="mb-4 flex items-end justify-between">
-            <p class="section-kicker">Recent orders</p>
+            <p class="section-kicker">Recent reservations</p>
             <a href="/admin/orders" class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)] hover:underline">
-              All orders →
+              All reservations →
             </a>
           </div>
           {data.recentOrders.length === 0 ? (
             <p class="py-10 text-center font-mono text-[0.76rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
-              No orders yet — the first one will appear here.
+              No reservations yet — the first one will appear here.
             </p>
           ) : (
             <ul class="divide-y divide-dashed divide-[var(--color-ink-950)]/15">

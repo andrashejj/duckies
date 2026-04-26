@@ -1,29 +1,39 @@
 ---
-import AddToCartButton from "../components/react/AddToCartButton";
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import {
-  formatPrice,
-  listActiveProducts,
-  themeFor,
-} from "../lib/products";
+import { listActiveProducts, themeFor } from "../lib/products";
+import { getActiveDrop } from "../lib/drops";
 
 const title = `${site.name} Shop | Drop 001`;
 const description =
-  "Sunset Duckies Drop 001 — small-run swag from Tamarin Bay, Mauritius. Pay with Juice, cash, or bank transfer. Pickup at Wednesday/Friday sesh.";
+  "Sunset Duckies Drop 001 — small-run kit from Tamarin Bay, Mauritius. Reserve at sesh, pickup at sesh.";
 
 const { shop } = site;
 
 let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
 let loadError: string | null = null;
+let activeDrop: Awaited<ReturnType<typeof getActiveDrop>> = null;
 
 try {
-  products = await listActiveProducts();
+  [products, activeDrop] = await Promise.all([
+    listActiveProducts(),
+    getActiveDrop(),
+  ]);
 } catch (err) {
   loadError =
     err instanceof Error ? err.message : "Could not load products.";
   console.error("[shop] product load failed:", err);
 }
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+});
+const closesLabel = activeDrop?.closesAt
+  ? `Closes ${dateFormatter.format(activeDrop.closesAt)}`
+  : null;
+const dropHeading = activeDrop?.name ?? shop.dropLabel;
+const dropDescription = activeDrop?.description ?? shop.intro;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -41,7 +51,7 @@ try {
       <div class="floating">
         <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] px-5 py-3 shadow-[4px_4px_0_0_var(--color-ink-950)]">
           <p class="font-display text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-cream-soft)]">
-            ✦ Tamarin Bay · Drop 001
+            ✦ Tamarin Bay · {dropHeading}
           </p>
         </div>
       </div>
@@ -51,9 +61,10 @@ try {
       <div data-float class="flex flex-wrap items-center gap-3">
         <span class="eyebrow-badge !bg-[var(--color-ink-950)] !border-[var(--color-ink-950)] !text-[var(--color-sun-500)]">
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
-          {shop.dropLabel}
+          {dropHeading}
         </span>
-        <span class="chip">Pre-order only · {products.length} pieces</span>
+        <span class="chip">{products.length} pieces in the lineup</span>
+        {closesLabel && <span class="chip">{closesLabel}</span>}
       </div>
 
       <div data-float class="mt-8 grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
@@ -64,12 +75,12 @@ try {
           <span class="block">Duckies</span>
           <span class="block">
             <span class="ink-underline">swag</span>,
-            <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">teased.</span>
+            <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">on the rack.</span>
           </span>
         </h1>
         <div class="space-y-5">
           <p class="body-copy max-w-xl">
-            {shop.intro}
+            {dropDescription}
           </p>
           <div class="flex flex-wrap gap-3">
             <a class="cta-primary" href="#drop">
@@ -111,11 +122,11 @@ try {
       <div class="max-w-2xl space-y-3">
         <p class="section-kicker">The drop</p>
         <h2 class="section-title">
-          Pick a piece, <span class="ink-underline">DM</span> the club.
+          Pick a piece, <span class="ink-underline">reserve</span> at sesh.
         </h2>
       </div>
       <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65 max-w-xs">
-        Add to cart, check out, pay on confirmation — or ping us on WhatsApp with sizing questions.
+        Tap a card, fill the reservation, we'll DM on WhatsApp to lock it in.
       </p>
     </div>
 
@@ -128,7 +139,7 @@ try {
           Kit temporarily off the rack.
         </p>
         <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/70">
-          The product catalogue couldn't be loaded right now. Ping us on WhatsApp and we'll lock your order in by hand.
+          The product catalogue couldn't be loaded right now. Ping us on WhatsApp and we'll lock your reservation in by hand.
         </p>
         <a class="cta-primary mt-6 inline-flex" href={site.whatsappUrl} target="_blank" rel="noreferrer">
           Ask on WhatsApp
@@ -138,7 +149,6 @@ try {
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => {
           const theme = themeFor(product.colorway);
-          const priceLabel = formatPrice(product.priceCents, product.currency);
           const sizesLabel = product.sizes.length ? product.sizes.join(" · ") : "One size";
           return (
             <article
@@ -194,12 +204,6 @@ try {
                 >
                   {product.kind}
                 </span>
-                <span
-                  class="pointer-events-none absolute right-3 top-3 rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-                  style={`background:${theme.badgeBg};color:${theme.badgeInk};`}
-                >
-                  {priceLabel}
-                </span>
               </a>
 
               <div class="flex flex-1 flex-col gap-4 p-6">
@@ -224,25 +228,8 @@ try {
                   Sizes: {sizesLabel}
                 </p>
                 <div class="mt-auto flex flex-col gap-2">
-                  <AddToCartButton
-                    client:load
-                    product={{
-                      productId: product.id,
-                      slug: product.slug,
-                      sku: product.sku,
-                      name: product.name,
-                      kind: product.kind,
-                      priceCents: product.priceCents,
-                      currency: product.currency,
-                      colorway: product.colorway,
-                    }}
-                    sizes={product.sizes}
-                  />
-                  <a
-                    class="cta-secondary w-full"
-                    href={`/shop/${product.slug}`}
-                  >
-                    View details
+                  <a class="cta-primary w-full text-center" href={`/shop/${product.slug}`}>
+                    Reserve at sesh
                   </a>
                 </div>
               </div>
@@ -261,57 +248,17 @@ try {
     </ul>
   </section>
 
-  <!-- ===================== PAYMENT METHODS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 pb-20 lg:px-10">
-    <div class="surface-card p-8 md:p-10" data-reveal>
-      <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-        <div class="space-y-5">
-          <p class="section-kicker">Payment</p>
-          <h2 class="section-title">
-            Pay with
-            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Juice</span>,
-            cash, or <span class="ink-underline">bank</span>.
-          </h2>
-          <p class="body-copy max-w-xl">
-            We skip the card processors so more of your rupees land in the water. Local, human, low-overhead —
-            the same vibe as the club itself.
-          </p>
-          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Ask a question on WhatsApp
-          </a>
-        </div>
-
-        <div class="grid gap-4">
-          {shop.payment.map((method, i) => (
-            <div class:list={[
-              "rounded-[1.4rem] border-2 border-[var(--color-ink-950)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]",
-              i === 0 ? "bg-[var(--color-sun-500)]" : i === 1 ? "bg-[var(--color-teal-500)]/30" : "bg-[var(--color-cream-soft)]",
-            ]}>
-              <div class="flex items-start justify-between gap-4">
-                <p class="font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-                  {method.label}
-                </p>
-                <span class="tag-pill">{method.tag}</span>
-              </div>
-              <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">{method.detail}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===================== BOTTOM CTA ===================== -->
   <section class="mx-auto max-w-7xl px-6 pb-24 lg:px-10">
     <div class="glass-panel p-10 text-center" data-reveal>
       <p class="font-mono text-[0.7rem] uppercase tracking-[0.24em] text-[var(--color-sun-500)]">
-        ✦ Drop 001 closes when it closes
+        ✦ {dropHeading} closes when it closes
       </p>
       <h2 class="mt-4 font-display text-4xl sm:text-5xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
         Slide in. Stack your kit.
       </h2>
       <p class="mt-3 text-sm text-[var(--color-cream)]/80 sm:text-base">
-        Questions on sizing, bundling, or delivery — all handled in the club WhatsApp.
+        Questions on sizing, kid measurements, or delivery — all handled in the club WhatsApp.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">

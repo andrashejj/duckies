@@ -254,49 +254,25 @@ export const site = {
   ],
   shop: {
     dropLabel: "Drop 001 · Founding kit",
-    tagline: "Pre-order via WhatsApp. Pick up at sesh.",
+    tagline: "Reserve at sesh. Pickup at sesh.",
     intro:
-      "The first wave of Sunset Duckies swag — tested on salty kids, printed in small runs. This is a teaser drop: pick a piece, DM us, pay in Rs via Juice or cash at Wednesday/Friday sesh. No carts, no checkout, no shipping stress.",
-    orderPreamble:
-      "Yo Duckies — I'd like to lock in the drop:",
-    orderOutro:
-      "Can you confirm size / pickup? I'll pay on confirm. ✦",
-    payment: [
-      {
-        label: "JUICE by MCB",
-        detail:
-          "Mauritius mobile payment. Send Rs, screenshot the receipt, drop it in chat. We'll share the Juice number when the order's locked.",
-        tag: "Mobile · MUR",
-      },
-      {
-        label: "Cash at sesh",
-        detail:
-          "Rock up Wednesday or Friday 4-6pm at Tamarin Bay. Pay the coach, walk away with the kit.",
-        tag: "In person",
-      },
-      {
-        label: "Bank transfer",
-        detail:
-          "For orders over Rs 2,000 or if you're off-island. We'll send account details in the WhatsApp thread.",
-        tag: "On request",
-      },
-    ],
+      "The first wave of Sunset Duckies kit — tested on salty kids, printed in small runs in Tamarin. Reserve a piece for your duckie, pick it up at the next Wed/Fri sesh.",
     steps: [
       {
-        title: "Tap a piece",
-        text: "Every card has an 'Order via WhatsApp' button. It opens WhatsApp with your order pre-written.",
+        title: "Pick a piece",
+        text: "Every card opens a quick reservation form: name, kid's name, size, qty. No checkout, no card.",
       },
       {
-        title: "Confirm in chat",
-        text: "Tell us size, qty, and whether it's pickup at sesh or delivery in Tamarin. We reply same-day.",
+        title: "Lock it in",
+        text: "We confirm on WhatsApp and add it to the next print batch with Gorgeia, our local printer.",
       },
       {
-        title: "Pay your way",
-        text: "Juice, cash at sesh, or bank transfer. Once it's paid, the kit is yours.",
+        title: "Grab at sesh",
+        text: "Pickup at Wed or Fri sesh, 4-6pm, Tamarin Bay. Andras hands it over on the beach.",
       },
     ],
     notes: [
-      "Small-run printing · expect 1-2 weeks from order to hand-over.",
+      "Small-run printing · expect 1-2 weeks from reservation to hand-over.",
       "Kids sizes 4-14 · adult sizes XS-XXL on most apparel.",
       "All proceeds circle back into comps, lycras, and scholarships.",
     ],

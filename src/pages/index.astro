@@ -359,9 +359,9 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
             </a>
           </div>
           <div class="flex flex-wrap gap-2">
-            <span class="chip">JUICE by MCB</span>
-            <span class="chip">Cash at sesh</span>
+            <span class="chip">Made-to-order</span>
             <span class="chip">Pickup in Tamarin</span>
+            <span class="chip">Wed + Fri sesh</span>
           </div>
         </div>
 
@@ -394,8 +394,8 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
                   <span class="font-display text-[1.05rem] leading-[0.95]" style="font-variation-settings: 'wdth' 115; font-weight: 800; letter-spacing: -0.03em;">
                     {product.name}
                   </span>
-                  <span class="font-mono text-[0.6rem] font-semibold uppercase tracking-[0.12em]">
-                    {product.priceLabel}
+                  <span class="font-mono text-[0.6rem] font-semibold uppercase tracking-[0.12em] opacity-80">
+                    {product.tagline}
                   </span>
                 </a>
               );

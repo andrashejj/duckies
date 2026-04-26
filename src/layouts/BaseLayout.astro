@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 
-import CartBadge from "../components/react/CartBadge";
 import { site } from "../data/site";
 
 const session = Astro.locals?.session ?? null;
@@ -102,7 +101,6 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           </nav>
 
           <div class="flex items-center gap-2 sm:gap-3">
-            <CartBadge client:load />
             {signedIn ? (
               <a
                 class="chip hidden sm:inline-flex !bg-[var(--color-cream-soft)] !text-[var(--color-ink-950)] hover:!bg-[var(--color-lilac-400)]"
@@ -182,9 +180,6 @@ const absoluteImage = new URL(image, siteOrigin).toString();
               </a>
               <a href="/shop" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
                 → Duckies shop
-              </a>
-              <a href="/cart" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
-                → Your cart
               </a>
               {signedIn ? (
                 <a href="/account" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">

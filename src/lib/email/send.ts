@@ -12,6 +12,7 @@ import {
   getResend,
   getSiteUrl,
 } from "./client";
+import { getActiveDrop } from "../drops";
 
 async function send(opts: {
   to: string | string[];
@@ -42,9 +43,10 @@ async function send(opts: {
 }
 
 export async function sendOrderConfirmation(order: OrderWithItems) {
+  const drop = await getActiveDrop();
   return send({
     to: order.email,
-    subject: `Order ${order.id.slice(-6).toUpperCase()} — Sunset Duckies`,
+    subject: `Reservation ${order.id.slice(-6).toUpperCase()} — Sunset Duckies`,
     react: OrderConfirmation({
       orderId: order.id,
       guestToken: order.guestToken,
@@ -54,14 +56,10 @@ export async function sendOrderConfirmation(order: OrderWithItems) {
         sku: i.sku,
         size: i.size,
         quantity: i.quantity,
-        priceCentsSnapshot: i.priceCentsSnapshot,
-        lineTotalCents: i.lineTotalCents,
+        kidName: i.kidName,
       })),
-      subtotalCents: order.subtotalCents,
-      totalCents: order.totalCents,
-      currency: order.currency,
-      paymentMethod: order.paymentMethod,
       pickupMethod: order.pickupMethod,
+      pickupNote: drop?.pickupNote ?? null,
       customerNote: order.customerNote,
       siteUrl: getSiteUrl(),
     }),
@@ -74,10 +72,10 @@ export async function sendOrderStatusEmail(
   adminNote?: string | null,
 ) {
   const subjectByVariant: Record<OrderStatusVariant, string> = {
-    PAID: `Payment received — Order ${order.id.slice(-6).toUpperCase()}`,
-    READY: `Ready for pickup — Order ${order.id.slice(-6).toUpperCase()}`,
-    FULFILLED: `Thanks for riding — Order ${order.id.slice(-6).toUpperCase()}`,
-    CANCELLED: `Order cancelled — ${order.id.slice(-6).toUpperCase()}`,
+    CONFIRMED: `Reservation locked in — ${order.id.slice(-6).toUpperCase()}`,
+    READY: `Ready for pickup — Reservation ${order.id.slice(-6).toUpperCase()}`,
+    FULFILLED: `Thanks for riding — Reservation ${order.id.slice(-6).toUpperCase()}`,
+    CANCELLED: `Reservation cancelled — ${order.id.slice(-6).toUpperCase()}`,
   };
   return send({
     to: order.email,
@@ -92,11 +90,8 @@ export async function sendOrderStatusEmail(
         sku: i.sku,
         size: i.size,
         quantity: i.quantity,
-        priceCentsSnapshot: i.priceCentsSnapshot,
-        lineTotalCents: i.lineTotalCents,
+        kidName: i.kidName,
       })),
-      totalCents: order.totalCents,
-      currency: order.currency,
       adminNote,
       siteUrl: getSiteUrl(),
     }),
@@ -107,7 +102,7 @@ export async function sendNewOrderAdminAlert(order: OrderWithItems) {
   const siteUrl = getSiteUrl();
   return send({
     to: getAdminNotifyAddress(),
-    subject: `[new order] ${order.name} — ${order.id.slice(-6).toUpperCase()}`,
+    subject: `[new reservation] ${order.name} — ${order.id.slice(-6).toUpperCase()}`,
     react: NewOrderAdmin({
       orderId: order.id,
       customerName: order.name,
@@ -120,10 +115,10 @@ export async function sendNewOrderAdminAlert(order: OrderWithItems) {
         quantity: i.quantity,
         priceCentsSnapshot: i.priceCentsSnapshot,
         lineTotalCents: i.lineTotalCents,
+        kidName: i.kidName,
       })),
       totalCents: order.totalCents,
       currency: order.currency,
-      paymentMethod: order.paymentMethod,
       pickupMethod: order.pickupMethod,
       customerNote: order.customerNote,
       adminUrl: `${siteUrl}/admin/orders/${order.id}`,

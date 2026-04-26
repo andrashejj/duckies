@@ -47,6 +47,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
         ...(parsed.data.featured !== undefined ? { featured: parsed.data.featured } : {}),
         ...(parsed.data.stock !== undefined ? { stock: parsed.data.stock ?? null } : {}),
         ...(parsed.data.sortOrder !== undefined ? { sortOrder: parsed.data.sortOrder } : {}),
+        ...(parsed.data.dropId !== undefined ? { dropId: parsed.data.dropId ?? null } : {}),
       },
     });
     return Response.json({ ok: true });

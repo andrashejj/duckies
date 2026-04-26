@@ -1,13 +1,15 @@
 import type { APIRoute } from "astro";
 
+import { site } from "../../data/site";
 import {
   sendNewOrderAdminAlert,
   sendOrderConfirmation,
 } from "../../lib/email/send";
 import {
-  CheckoutError,
-  checkoutSchema,
-  createOrder,
+  ReservationError,
+  buildReservationWhatsappUrl,
+  createReservation,
+  reserveSchema,
 } from "../../lib/orders";
 import { prisma } from "../../lib/prisma";
 import { OrderEventType } from "@prisma/client";
@@ -28,30 +30,29 @@ export const POST: APIRoute = async ({ locals, request }) => {
     );
   }
 
-  const parsed = checkoutSchema.safeParse(payload);
+  const parsed = reserveSchema.safeParse(payload);
   if (!parsed.success) {
     const firstIssue = parsed.error.issues[0];
     return Response.json(
-      { ok: false, error: firstIssue?.message ?? "Invalid checkout payload." },
+      { ok: false, error: firstIssue?.message ?? "Invalid reservation payload." },
       { status: 400 },
     );
   }
 
   let order;
   try {
-    order = await createOrder(parsed.data, { userId });
+    order = await createReservation(parsed.data, { userId });
   } catch (err) {
-    if (err instanceof CheckoutError) {
+    if (err instanceof ReservationError) {
       return Response.json({ ok: false, error: err.message }, { status: 400 });
     }
-    console.error("[checkout] createOrder failed:", err);
+    console.error("[reserve] createReservation failed:", err);
     return Response.json(
-      { ok: false, error: "Could not create the order. Try again in a minute." },
+      { ok: false, error: "Could not save the reservation. Try again in a minute." },
       { status: 500 },
     );
   }
 
-  // Fire-and-forget emails — order is persisted even if mail fails.
   const emailResults = await Promise.allSettled([
     sendOrderConfirmation(order),
     sendNewOrderAdminAlert(order),
@@ -59,7 +60,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
   for (const result of emailResults) {
     if (result.status !== "fulfilled") {
-      console.warn("[checkout] email send threw:", result.reason);
+      console.warn("[reserve] email send threw:", result.reason);
       continue;
     }
     if (result.value.ok) {
@@ -71,7 +72,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
         },
       });
     } else {
-      console.warn("[checkout] email send failed:", result.value.error);
+      console.warn("[reserve] email send failed:", result.value.error);
     }
   }
 
@@ -79,5 +80,6 @@ export const POST: APIRoute = async ({ locals, request }) => {
     ok: true,
     orderId: order.id,
     guestToken: order.guestToken,
+    whatsappUrl: buildReservationWhatsappUrl(site.whatsappUrl, order),
   });
 };

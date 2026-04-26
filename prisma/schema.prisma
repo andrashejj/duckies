@@ -21,6 +21,29 @@ enum ProductCategory {
   BUNDLE
 }
 
+enum DropStatus {
+  DRAFT
+  LIVE
+  CLOSED
+}
+
+model Drop {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  name        String
+  description String?
+  status      DropStatus  @default(DRAFT)
+  opensAt     DateTime?
+  closesAt    DateTime?
+  pickupNote  String?
+  sortOrder   Int         @default(0)
+  products    Product[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status, sortOrder])
+}
+
 model Product {
   id          String          @id @default(cuid())
   sku         String          @unique
@@ -40,6 +63,8 @@ model Product {
   featured    Boolean         @default(false)
   stock       Int?
   sortOrder   Int             @default(0)
+  dropId      String?
+  drop        Drop?           @relation(fields: [dropId], references: [id], onDelete: SetNull)
   images      ProductImage[]
   orderItems  OrderItem[]
   createdAt   DateTime        @default(now())
@@ -47,6 +72,7 @@ model Product {
 
   @@index([active, sortOrder])
   @@index([category])
+  @@index([dropId])
 }
 
 model ProductImage {
@@ -124,17 +150,10 @@ model VerificationToken {
 
 enum OrderStatus {
   PENDING
-  AWAITING_PAYMENT
-  PAID
+  CONFIRMED
   READY
   FULFILLED
   CANCELLED
-}
-
-enum PaymentMethod {
-  JUICE
-  CASH
-  BANK
 }
 
 enum PickupMethod {
@@ -144,10 +163,11 @@ enum PickupMethod {
 
 enum OrderEventType {
   CREATED
-  PAYMENT_CONFIRMED
+  CONFIRMED
   READY
   FULFILLED
   CANCELLED
+  PAID
   NOTE
   EMAIL_SENT
 }
@@ -161,14 +181,14 @@ model Order {
   name           String
   phone          String?
   status         OrderStatus    @default(PENDING)
-  paymentMethod  PaymentMethod
-  pickupMethod   PickupMethod
+  pickupMethod   PickupMethod   @default(SESH)
   pickupNote     String?
   customerNote   String?
   internalNotes  String?
   subtotalCents  Int
   totalCents     Int
   currency       String         @default("MUR")
+  paidAt         DateTime?
   items          OrderItem[]
   events         OrderEvent[]
   createdAt      DateTime       @default(now())
@@ -177,6 +197,7 @@ model Order {
   @@index([status, createdAt])
   @@index([email])
   @@index([userId])
+  @@index([paidAt])
 }
 
 model OrderItem {
@@ -190,6 +211,7 @@ model OrderItem {
   priceCentsSnapshot Int
   quantity          Int
   size              String?
+  kidName           String?
   lineTotalCents    Int
 
   @@index([orderId])
