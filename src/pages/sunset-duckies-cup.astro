@@ -1,17 +1,11 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const cup = site.cup;
 const title = `${cup.name} — first ever, 30 May 2026 | ${site.name}`;
-const description = `The first ever ${cup.name} drops Saturday 30 May 2026 at Tamarin Bay. Heats of 4, two divisions, parent heat, BBQ, prizes for every duckling. Sign up + download templates.`;
+const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at Tamarin Bay. Heats of 4, two divisions, parent heat, BBQ, prizes for every duckling. Sign up + download templates.`;
 
-const rashieColors = [
-  { name: "Red", hex: "#ff4e2b" },
-  { name: "Yellow", hex: "#ffd23f" },
-  { name: "Blue", hex: "#5db1ff" },
-  { name: "Green", hex: "#5ddb9b" },
-];
 ---
 
 <BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup — Tamarin Bay">
@@ -86,7 +80,7 @@ const rashieColors = [
             ↓ Grab the templates
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
-            Heats of 4 ★ best 2 waves ★ parent heat at 5pm
+            Heats of 4 ★ best 2 waves ★ parent heat at half four
           </p>
         </div>
       </div>
@@ -101,7 +95,7 @@ const rashieColors = [
         <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">Saturday · 2026</p>
       </div>
       <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
-        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">14–18h</p>
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">13:00–17:30</p>
         <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">Tamarin Bay</p>
       </div>
       <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
@@ -129,9 +123,9 @@ const rashieColors = [
           get <span class="ink-underline">crowns</span>.
         </h2>
         <p class="body-copy max-w-xl">
-          Heats of 4 surfers, ten-minute clocks, color rashies on every wrist. Judges look for five
-          things — paddle &amp; commit, pop-up, stance, ride, stoke. Best 2 waves count. If you're not
-          sure which one you are, you're a Duckling. Both divisions get a King and a Queen 👑.
+          Heats of 4 surfers, ten-minute clocks, numbered heats (Heat 1, Heat 2, etc.). Judges look for
+          five things — paddle &amp; commit, pop-up, stance, ride, stoke. Best 2 waves count. If you're
+          not sure which one you are, you're a Duckling. Both divisions get a King and a Queen 👑.
         </p>
       </div>
 
@@ -152,17 +146,7 @@ const rashieColors = [
           </article>
         ))}
 
-        <div class="surface-card p-5">
-          <p class="section-kicker">Rashie colors</p>
-          <div class="mt-4 flex flex-wrap items-center gap-3">
-            {rashieColors.map((color) => (
-              <div class="flex items-center gap-2 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-1.5 shadow-[2px_2px_0_0_var(--color-ink-950)]">
-                <span class="inline-block h-5 w-5 rounded-full border-2 border-[var(--color-ink-950)]" style={`background:${color.hex};`}></span>
-                <span class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-ink-950)]">{color.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        
       </div>
     </div>
   </section>
@@ -174,7 +158,7 @@ const rashieColors = [
         <div>
           <p class="section-kicker">The day, hour by hour</p>
           <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
-            Four hours of <span class="ink-underline">stoke</span> on the sand.
+            An afternoon of <span class="ink-underline">stoke</span> on the sand.
           </h2>
         </div>
         <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
@@ -220,7 +204,7 @@ const rashieColors = [
         </div>
       </div>
 
-      <div class="grid gap-3 sm:grid-cols-2" data-reveal>
+      <div class="grid gap-3" data-reveal>
         {cup.judgingCriteria.map((criterion, i) => (
           <article class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
             <div class="flex items-start gap-3">
@@ -295,7 +279,7 @@ const rashieColors = [
     <div class="surface-card sticker-lilac p-8 md:p-10" data-reveal>
       <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p class="section-kicker">17:00 — the parent heat</p>
+          <p class="section-kicker">16:30 — the parent heat</p>
           <h2 class="section-title mt-4">
             Watch your <span class="ink-underline">parents</span> try
             <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">surfing</span>.
@@ -305,7 +289,7 @@ const rashieColors = [
           </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-3">
           {cup.parentHeat.awards.map((award) => (
             <div class="rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
               <p class="font-display text-lg text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
@@ -350,8 +334,43 @@ const rashieColors = [
           ))}
         </ul>
         <p class="mt-6 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
-          Entry · {cup.entryFeeLabel} per kid · NOT a drop-off
+          Entry · {cup.entryFeeLabel} per kid
         </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SIGN UP CTA ===================== -->
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
+    <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
+      <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <p class="section-kicker">Sign your duckling up</p>
+          <h2 class="section-title mt-4">
+            Drop us a message. Lock in your <span class="ink-underline">spot</span>.
+          </h2>
+          <p class="body-copy mt-4 max-w-2xl">
+            Spots are filled by WhatsApp — fastest way to get on the heat sheet. Send your duckling's
+            name, age, division (Duckling or Duck), and a head-and-shoulders photo for the heat
+            billboard. We'll send the registration form + waiver back. Entry locks in once the fee
+            lands.
+          </p>
+          <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+            Deadline: {cup.registerDeadlineLabel} · {cup.entryFeeLabel}
+          </p>
+        </div>
+        <div class="flex flex-col gap-3">
+          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            {cup.registerCtaLabel}
+          </a>
+          <a class="cta-secondary" href="/templates/registration-form.html" target="_blank" rel="noreferrer">
+            ↓ Open registration form
+          </a>
+          <a class="cta-secondary" href="/templates/parent-whatsapp-message.txt" target="_blank" rel="noreferrer">
+            Copy parent message
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -365,7 +384,7 @@ const rashieColors = [
           <h2 class="section-title mt-4">
             Run the day on
             <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">paper</span>
-            (or save as PDF, iykyk).
+            (or save as PDF).
           </h2>
           <p class="body-copy mt-4">
             Everything a parent volunteer needs to plug into the day. Open each one in a new tab —
@@ -410,37 +429,4 @@ const rashieColors = [
     </div>
   </section>
 
-  <!-- ===================== SIGN UP CTA ===================== -->
-  <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
-    <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
-      <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div>
-          <p class="section-kicker">Sign your duckling up</p>
-          <h2 class="section-title mt-4">
-            Drop us a message. Lock in your <span class="ink-underline">spot</span>.
-          </h2>
-          <p class="body-copy mt-4 max-w-2xl">
-            Spots are filled by WhatsApp — fastest way to get on the heat sheet. Send your duckling's
-            name, age, division (Duckling or Duck), and a head-and-shoulders photo for the heat
-            billboard. We'll send the registration form + waiver back. Entry locks in once the fee
-            lands.
-          </p>
-          <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
-            Deadline: {cup.registerDeadlineLabel} · {cup.entryFeeLabel}
-          </p>
-        </div>
-        <div class="flex flex-col gap-3">
-          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            {cup.registerCtaLabel}
-          </a>
-          <a class="cta-secondary" href="/templates/registration-form.html" target="_blank" rel="noreferrer">
-            ↓ Open registration form
-          </a>
-          <a class="cta-secondary" href="/templates/parent-whatsapp-message.txt" target="_blank" rel="noreferrer">
-            Copy parent message
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
 </BaseLayout>

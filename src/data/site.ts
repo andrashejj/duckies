@@ -5,12 +5,12 @@ export const site = {
   location: "Tamarin Bay, Mauritius",
   locale: "en_MU",
   description:
-    "Kids' surf club in Tamarin Bay, fr. Young duckies paddling out, locking in on surfing, and chasing the sunset every sesh — lowkey the best crew on the island.",
+    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week, getting really good at surfing, and chasing the sunset every session.",
   ogImage: {
     path: "/media/andras-hejj.jpg",
     width: 1504,
     height: 1600,
-    alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky — big sesh energy.",
+    alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky.",
   },
   membership: {
     annualFeeMur: 5000,
@@ -31,7 +31,7 @@ export const site = {
       role: "Founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.jpg",
-      bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing.",
+      bio: "Runs the club on consistency, trust, and a safe path for kids to fall in love with surfing.",
     },
   ],
   sponsors: [
@@ -82,21 +82,21 @@ export const site = {
     label: "Quarterly beach comp",
     title: "Four moments a year the whole club trains toward.",
     description:
-      "Each comp is built to feel hype, supportive, and unforgettable. Kids get a real milestone to lock in for, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
+      "Each comp is built to feel celebratory, supportive, and unforgettable. Kids get a real milestone to train towards, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
   },
   cup: {
     name: "Sunset Duckies Cup",
     edition: "Vol. 01 — first ever",
     dateLabel: "Saturday · 30 May 2026",
     dateISO: "2026-05-30",
-    timeLabel: "14:00 – 18:00",
+    timeLabel: "13:00 – 17:30",
     location: "Tamarin Bay, Mauritius",
-    entryFeeLabel: "20 USD / 1000 MUR",
+    entryFeeLabel: "1'000 MUR",
     registerDeadlineLabel: "Friday 22 May",
     registerCtaLabel: "Sign up via WhatsApp",
     tagline: "Heats of 4. Crowns for the kings + queens. BBQ on the sand.",
     blurb:
-      "The first ever Sunset Duckies Cup is dropping at Tamarin Bay. Two divisions, ten-minute heats, judges with checklists, a parent heat for the lols, and prizes for every single duckling. iykyk — this is THE day.",
+      "The first ever Sunset Duckies Cup, at Tamarin Bay. Two divisions, ten-minute heats, judges with checklists, a parent heat to close it out, and a prize for every single duckling.",
     divisions: [
       {
         emoji: "🐤",
@@ -108,18 +108,18 @@ export const site = {
         emoji: "🦆",
         name: "Duck",
         description:
-          "You paddle yourself into the wave. You stand. You start to turn. Lowkey actual surfers.",
+          "You paddle yourself into the wave. You stand. You start to turn. Actual surfers in the making.",
       },
     ],
     runOfShow: [
-      { time: "14:00", label: "Welcome + warm-up on the sand", emoji: "🌅" },
-      { time: "14:15", label: "Duckling heats start", emoji: "🐤" },
-      { time: "~15:00", label: "Duck heats start", emoji: "🦆" },
-      { time: "15:45", label: "Break — BBQ, hot choc, free surf", emoji: "🍔" },
-      { time: "16:30", label: "Final heats", emoji: "🌊" },
-      { time: "17:00", label: "Parent heat (watch the parents try)", emoji: "😂" },
-      { time: "17:30", label: "Awards ceremony — crowns + side awards", emoji: "🏆" },
-      { time: "18:00", label: "Wrap", emoji: "✨" },
+      { time: "13:00", label: "Arrival + warm-up on the sand", emoji: "🌅" },
+      { time: "14:00", label: "Duckling heats", emoji: "🐤" },
+      { time: "~14:45", label: "Duck heats", emoji: "🦆" },
+      { time: "15:30", label: "Break — BBQ + free surf", emoji: "🍔" },
+      { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
+      { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
+      { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
+      { time: "17:30", label: "Wrap", emoji: "✨" },
     ],
     judgingCriteria: [
       {
@@ -152,6 +152,7 @@ export const site = {
       crowns: [
         { emoji: "🐤", title: "Duckling King + Queen", text: "Top boy + top girl, Duckling division." },
         { emoji: "🦆", title: "Duck King + Queen", text: "Top boy + top girl, Duck division." },
+        { emoji: "🏄‍♀️", title: "Sunset Duckies King + Queen", text: "Top boy + top girl, overall." },
       ],
       sideAwards: [
         { emoji: "🌅", title: "Sunset Stoke", text: "Biggest celebration of the day." },
@@ -168,23 +169,20 @@ export const site = {
       blurb:
         "After the kids' finals, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
       awards: [
-        "Biggest Wipeout",
-        "Loudest Claim",
-        "Most Determined Paddle",
         "Best Dad Stance",
         "Best Mom Stance",
       ],
     },
     bring: [
-      "Your board (we have spares if you don't)",
-      "Your own rashie if you have one",
+      "Your board",
+      "Your rash guard or wetsuit",
       "Sunscreen, towel, warm layer for after",
-      "Your parents — this is NOT a drop-off",
+      "Lots of energy",
     ],
     included: [
       "Entry to the comp + heat scoring",
       "BBQ for the whole fam",
-      "Water for the kids + hot choc at the break",
+      "Water for the kids at the break",
       "Prizes + personalised finisher certificate",
     ],
     templates: [
