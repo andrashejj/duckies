@@ -69,12 +69,14 @@ body {
   color: var(--color-ink-950);
   letter-spacing: -0.005em;
   font-feature-settings: "ss01", "cv11";
+  overflow-x: clip;
 }
 
 .page-shell {
   position: relative;
   min-height: 100vh;
   z-index: 1;
+  overflow-x: clip;
 }
 
 .font-display {
