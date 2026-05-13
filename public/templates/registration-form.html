@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Registration Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root {
+      --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec;
+      --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      padding: 32px 24px 64px;
+      line-height: 1.5;
+    }
+    .sheet {
+      max-width: 780px; margin: 0 auto;
+      background: var(--cream-soft);
+      border: 2px solid var(--ink);
+      box-shadow: 6px 6px 0 0 var(--ink);
+      border-radius: 18px;
+      padding: 36px 36px 44px;
+    }
+    .kicker {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+      background: var(--sun); border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      box-shadow: 2px 2px 0 0 var(--ink);
+    }
+    h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em; line-height: 1; margin: 16px 0 8px;
+    }
+    h2 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; font-size: 1.15rem;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px dashed rgba(11,22,32,0.35);
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem; letter-spacing: 0.06em;
+      color: rgba(11,22,32,0.65); margin-bottom: 8px;
+    }
+    .field { margin: 10px 0; }
+    .field label {
+      display: block; font-weight: 600; font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .blank {
+      display: block;
+      border-bottom: 1.5px solid var(--ink);
+      min-height: 1.7rem;
+    }
+    .row {
+      display: grid; gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 540px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    .check {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin: 8px 0; font-size: 0.92rem;
+    }
+    .box {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--ink); border-radius: 4px;
+      background: var(--cream); flex-shrink: 0; margin-top: 2px;
+    }
+    .pills {
+      display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0;
+    }
+    .pill {
+      border: 1.5px solid var(--ink);
+      padding: 4px 10px; border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      background: var(--cream);
+    }
+    .signature {
+      margin-top: 28px;
+      display: grid; grid-template-columns: 2fr 1fr; gap: 24px;
+    }
+    .signature .blank { min-height: 2.6rem; }
+    .footer {
+      margin-top: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(11,22,32,0.6); text-align: center;
+    }
+    .print-btn {
+      position: fixed; top: 16px; right: 16px;
+      background: var(--coral); color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 0 var(--ink);
+      padding: 10px 18px; border-radius: 999px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; text-transform: uppercase;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .sheet { box-shadow: none; border: 2px solid #000; max-width: 100%; margin: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies Cup</span>
+    <h1>Registration form 🦆</h1>
+    <p class="meta">Saturday · 30 May 2026 · Tamarin Bay · 14:00–18:00</p>
+    <p style="margin-top: 14px; font-size: 0.95rem;">
+      Fill this in and drop it back via WhatsApp or hand it in at the registration desk on the day.
+      Entry is <strong>20 USD / 1000 MUR per kid</strong> — covers the comp, BBQ for the fam,
+      water for the kids, prizes, and a personalised certificate. Sign up by <strong>Friday 22 May</strong>.
+    </p>
+
+    <h2>1. The surfer 🐤</h2>
+    <div class="field"><label>Full name</label><span class="blank"></span></div>
+    <div class="row">
+      <div class="field"><label>Date of birth</label><span class="blank"></span></div>
+      <div class="field"><label>Age on 30 May</label><span class="blank"></span></div>
+    </div>
+    <div class="field">
+      <label>Division</label>
+      <div class="pills">
+        <span class="pill">☐ Duckling — coach pushes me in</span>
+        <span class="pill">☐ Duck — I paddle myself</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>T-shirt size</label>
+        <div class="pills">
+          <span class="pill">☐ XS (3–4)</span>
+          <span class="pill">☐ S (5–6)</span>
+          <span class="pill">☐ M (7–8)</span>
+          <span class="pill">☐ L (9–10)</span>
+          <span class="pill">☐ XL (11–12)</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Bringing own board?</label>
+        <div class="pills">
+          <span class="pill">☐ Yes</span>
+          <span class="pill">☐ Need a spare</span>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Any allergy or medical condition we should know about</label>
+      <span class="blank"></span>
+      <span class="blank" style="margin-top: 6px;"></span>
+    </div>
+    <div class="field">
+      <label>Photo on file? (head + shoulders for the heat billboard)</label>
+      <div class="pills">
+        <span class="pill">☐ Uploaded via WhatsApp</span>
+        <span class="pill">☐ Will send before 27 May</span>
+      </div>
+    </div>
+
+    <h2>2. The parent / guardian 🧑‍🤝‍🧑</h2>
+    <div class="field"><label>Parent name</label><span class="blank"></span></div>
+    <div class="row">
+      <div class="field"><label>Mobile (reachable on the day)</label><span class="blank"></span></div>
+      <div class="field"><label>Email</label><span class="blank"></span></div>
+    </div>
+    <div class="field"><label>Emergency contact (different person + phone)</label><span class="blank"></span></div>
+    <div class="field">
+      <label>Entering the Parent Heat 🦆?</label>
+      <div class="pills">
+        <span class="pill">☐ Yes, send me in</span>
+        <span class="pill">☐ Hard no</span>
+      </div>
+    </div>
+
+    <h2>3. Consents (tick all)</h2>
+    <div class="check"><span class="box"></span><span>I have signed the liability waiver.</span></div>
+    <div class="check"><span class="box"></span><span>I give photo + video consent for Sunset Duckies social.</span></div>
+    <div class="check"><span class="box"></span><span>My child can swim unassisted in waist-deep water.</span></div>
+    <div class="check"><span class="box"></span><span>I will stay on-site the entire event (not a drop-off).</span></div>
+    <div class="check"><span class="box"></span><span>Entry fee paid: 20 USD / 1000 MUR.</span></div>
+
+    <div class="signature">
+      <div class="field"><label>Parent signature</label><span class="blank"></span></div>
+      <div class="field"><label>Date</label><span class="blank"></span></div>
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

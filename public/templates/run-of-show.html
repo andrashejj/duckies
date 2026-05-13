@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Run of Show</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
+    .sheet { max-width: 880px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.4rem; margin: 16px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.2rem; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1.5px solid rgba(11,22,32,0.2); font-size: 0.95rem; vertical-align: top; }
+    th { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); border-bottom: 2px solid var(--ink); }
+    td.time { font-family: "JetBrains Mono", monospace; font-weight: 600; width: 90px; white-space: nowrap; }
+    td.lead { width: 160px; font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.75); }
+    .row-hi { background: rgba(255,210,63,0.4); }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies Cup</span>
+    <h1>Run of show 🌅</h1>
+    <p class="meta">Saturday · 30 May 2026 · Tamarin Bay · 14:00–18:00 · pin this at the desk</p>
+
+    <h2>Pre-event setup</h2>
+    <table>
+      <thead><tr><th>Time</th><th>What's happening</th><th>Lead</th></tr></thead>
+      <tbody>
+        <tr><td class="time">12:30</td><td>Setup crew on site — tents, banner, sound, BBQ lit</td><td class="lead">Setup lead</td></tr>
+        <tr><td class="time">13:30</td><td>Registration desk opens — rashies + body markers + waivers</td><td class="lead">Registration lead</td></tr>
+        <tr><td class="time">13:45</td><td>Judges' briefing — calibrate the tick system on a fake wave</td><td class="lead">Head judge</td></tr>
+      </tbody>
+    </table>
+
+    <h2>The event</h2>
+    <table>
+      <thead><tr><th>Time</th><th>What's happening</th><th>Lead</th></tr></thead>
+      <tbody>
+        <tr class="row-hi"><td class="time">14:00</td><td>🌅 Welcome — format, warm-up on the sand</td><td class="lead">Andras + MC</td></tr>
+        <tr><td class="time">14:15</td><td>🐤 Duckling heats begin (heats of 4 · 10 min · best 2 waves)</td><td class="lead">MC + judges</td></tr>
+        <tr><td class="time">~15:00</td><td>🦆 Duck heats begin</td><td class="lead">MC + judges</td></tr>
+        <tr class="row-hi"><td class="time">15:45</td><td>🍔 Break — BBQ peak, hot chocolate, free surf</td><td class="lead">Everyone</td></tr>
+        <tr><td class="time">16:30</td><td>🌊 Final heats</td><td class="lead">MC + judges</td></tr>
+        <tr><td class="time">17:00</td><td>😂 Parent Heat — kids vote side awards by cheer</td><td class="lead">MC + Andras</td></tr>
+        <tr><td class="time">17:20</td><td>Cool-down free surf</td><td class="lead">Coaches</td></tr>
+        <tr class="row-hi"><td class="time">17:30</td><td>🏆 Awards ceremony — crowns + side awards + certificates</td><td class="lead">MC + Andras + Dori</td></tr>
+        <tr><td class="time">17:45</td><td>Hangout, BBQ closes down</td><td class="lead">All hands</td></tr>
+        <tr><td class="time">18:00</td><td>✨ Wrap — lost &amp; found, trash, gear back to base</td><td class="lead">Teardown crew</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Notes for the day</h2>
+    <ul>
+      <li><strong>Surf check by 10:00</strong> — confirm go/no-go. If surf is too big, drop to Duckling-only and shorten heats.</li>
+      <li><strong>Mid-event break matters.</strong> 4 hours is long for little kids — food, dry layer, unstructured play, or the second half falls apart.</li>
+      <li><strong>Water marshals rotate every hour.</strong> Bench the burnt-out marshal during the break.</li>
+      <li><strong>Photographer covers every heat.</strong> One hero shot per kid is the goal.</li>
+    </ul>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

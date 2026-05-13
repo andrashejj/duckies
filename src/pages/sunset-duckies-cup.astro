@@ -1,0 +1,446 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+
+const cup = site.cup;
+const title = `${cup.name} — first ever, 30 May 2026 | ${site.name}`;
+const description = `The first ever ${cup.name} drops Saturday 30 May 2026 at Tamarin Bay. Heats of 4, two divisions, parent heat, BBQ, prizes for every duckling. Sign up + download templates.`;
+
+const rashieColors = [
+  { name: "Red", hex: "#ff4e2b" },
+  { name: "Yellow", hex: "#ffd23f" },
+  { name: "Blue", hex: "#5db1ff" },
+  { name: "Green", hex: "#5ddb9b" },
+];
+---
+
+<BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup — Tamarin Bay">
+  <!-- ===================== HERO ===================== -->
+  <section class="relative isolate overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute inset-0 bg-[var(--color-ink-950)]"></div>
+      <img
+        src="/media/tamarin-shore.jpg"
+        alt=""
+        class="h-full w-full object-cover opacity-55"
+        aria-hidden="true"
+      />
+      <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(11,22,32,0.85)_0%,rgba(255,78,43,0.45)_55%,rgba(255,210,63,0.55)_100%)]"></div>
+    </div>
+
+    <!-- Sticker flairs -->
+    <div class="pointer-events-none absolute -right-4 top-32 hidden lg:block" aria-hidden="true">
+      <div class="floating">
+        <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-5 py-3 shadow-[5px_5px_0_0_var(--color-ink-950)]" style="transform: rotate(-8deg);">
+          <p class="font-display text-lg font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
+            ✦ first ever · vol. 01
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="pointer-events-none absolute left-6 bottom-24 hidden lg:block" aria-hidden="true">
+      <div class="wobble">
+        <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] px-4 py-2 shadow-[4px_4px_0_0_var(--color-ink-950)]" style="transform: rotate(6deg);">
+          <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-ink-950)]">
+            🐤 → 🦆 → 🏆
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
+      <div data-float class="mb-5">
+        <span class="eyebrow-badge">
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
+          {cup.dateLabel} · {cup.timeLabel}
+        </span>
+      </div>
+
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
+        <div data-float class="max-w-4xl space-y-6">
+          <h1
+            class="font-display text-white"
+            style="font-size: clamp(2.6rem, 8vw, 6.4rem); line-height: 0.9; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 600;"
+          >
+            <span class="block">Sunset Duckies</span>
+            <span class="block">
+              <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Cup</span>
+              ·
+              <span class="font-accent italic text-[var(--color-coral-400)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Vol.&nbsp;01</span>
+            </span>
+            <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>, all heart.</span>
+          </h1>
+          <p class="max-w-3xl text-base leading-7 text-white/90 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
+            {cup.blurb}
+          </p>
+          <p class="font-mono text-[0.78rem] uppercase tracking-[0.22em] text-white/75">
+            📍 {cup.location}  ·  💸 {cup.entryFeeLabel} per kid  ·  ⏳ sign up by {cup.registerDeadlineLabel}
+          </p>
+        </div>
+
+        <div data-float class="flex flex-col gap-3">
+          <a class="cta-primary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            {cup.registerCtaLabel}
+          </a>
+          <a class="cta-secondary w-full" href="#templates">
+            ↓ Grab the templates
+          </a>
+          <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
+            Heats of 4 ★ best 2 waves ★ parent heat at 5pm
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TICKER STRIP ===================== -->
+  <section class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)]">
+    <div class="mx-auto grid max-w-7xl grid-cols-2 gap-0 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">30 May</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">Saturday · 2026</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">14–18h</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">Tamarin Bay</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">2 divs</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">Duckling 🐤 + Duck 🦆</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">10 prizes</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">+ a cert for every kid</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DIVISIONS ===================== -->
+  <section id="divisions" class="relative mx-auto max-w-7xl px-6 pb-12 pt-20 lg:px-10">
+    <div class="blob-coral absolute -left-20 top-12 -z-0"></div>
+    <div class="blob-teal absolute -right-20 bottom-0 -z-0"></div>
+
+    <div class="relative grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+      <div class="space-y-5" data-reveal>
+        <p class="section-kicker">Which duck are you?</p>
+        <h2 class="section-title max-w-2xl">
+          Two divisions.
+          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Both</span>
+          get <span class="ink-underline">crowns</span>.
+        </h2>
+        <p class="body-copy max-w-xl">
+          Heats of 4 surfers, ten-minute clocks, color rashies on every wrist. Judges look for five
+          things — paddle &amp; commit, pop-up, stance, ride, stoke. Best 2 waves count. If you're not
+          sure which one you are, you're a Duckling. Both divisions get a King and a Queen 👑.
+        </p>
+      </div>
+
+      <div class="grid gap-5" data-reveal>
+        {cup.divisions.map((division, i) => (
+          <article class:list={["surface-card p-7", i === 0 ? "sticker-sun tilt-left" : "sticker-teal tilt-right"]}>
+            <div class="flex items-start gap-5">
+              <span class="text-5xl">{division.emoji}</span>
+              <div>
+                <p class="font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+                  {division.name}
+                </p>
+                <p class="mt-3 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/78">
+                  {division.description}
+                </p>
+              </div>
+            </div>
+          </article>
+        ))}
+
+        <div class="surface-card p-5">
+          <p class="section-kicker">Rashie colors</p>
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            {rashieColors.map((color) => (
+              <div class="flex items-center gap-2 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-1.5 shadow-[2px_2px_0_0_var(--color-ink-950)]">
+                <span class="inline-block h-5 w-5 rounded-full border-2 border-[var(--color-ink-950)]" style={`background:${color.hex};`}></span>
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-ink-950)]">{color.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RUN OF SHOW ===================== -->
+  <section id="run-of-show" class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="surface-card p-8 md:p-10" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="section-kicker">The day, hour by hour</p>
+          <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+            Four hours of <span class="ink-underline">stoke</span> on the sand.
+          </h2>
+        </div>
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+          ✦ pin the printable version at the desk
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-3">
+        {cup.runOfShow.map((item, i) => (
+          <div class="flex items-center gap-4 rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <span class="text-3xl shrink-0">{item.emoji}</span>
+            <p class="font-mono text-sm font-semibold text-[var(--color-coral-500)] w-20 shrink-0">
+              {item.time}
+            </p>
+            <p class="text-[0.98rem] leading-6 text-[var(--color-ink-950)]/85" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108; font-weight: 600; font-size: 1.05rem;">
+              {item.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JUDGING ===================== -->
+  <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+      <div class="surface-card sticker-coral p-8" data-reveal>
+        <p class="section-kicker">How the judging works</p>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+          Five tick boxes.
+          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">No</span>
+          tricks needed.
+        </h2>
+        <p class="body-copy mt-4">
+          Three judges with clipboards. Per wave they tick the boxes that earned a yes — bias toward
+          yes when in doubt. Best 2 waves count. Max 10 ticks. Tiebreak by total waves, then a
+          "wave of the heat" shaka from the head judge.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-2">
+          <span class="chip">10 min heats</span>
+          <span class="chip">Best 2 waves</span>
+          <span class="chip">Bias toward YES</span>
+        </div>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2" data-reveal>
+        {cup.judgingCriteria.map((criterion, i) => (
+          <article class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <div class="flex items-start gap-3">
+              <span class="text-3xl">{criterion.emoji}</span>
+              <div>
+                <p class="font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {criterion.title}
+                </p>
+                <p class="mt-1 text-[0.9rem] leading-6 text-[var(--color-ink-950)]/75">{criterion.text}</p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PRIZES ===================== -->
+  <section id="prizes" class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="space-y-8">
+      <div class="max-w-3xl" data-reveal>
+        <p class="section-kicker">Prizes 🏆</p>
+        <h2 class="section-title mt-4">
+          Four crowns.
+          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Six</span>
+          side awards. <span class="ink-underline">Every</span> kid wins.
+        </h2>
+        <p class="body-copy mt-4 max-w-2xl">
+          {cup.prizes.everyone}
+        </p>
+      </div>
+
+      <div class="grid gap-5 lg:grid-cols-2" data-reveal>
+        <div class="surface-card sticker-sun p-7">
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+            ★ The crowns
+          </p>
+          <div class="mt-4 grid gap-3">
+            {cup.prizes.crowns.map((prize) => (
+              <div class="rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+                <p class="font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  <span class="mr-2">{prize.emoji}</span>{prize.title}
+                </p>
+                <p class="mt-1 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/75">{prize.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="surface-card sticker-pink p-7">
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+            ★ Side awards — every duckling has a shot
+          </p>
+          <div class="mt-4 grid gap-3">
+            {cup.prizes.sideAwards.map((prize) => (
+              <div class="rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 shadow-[2px_2px_0_0_var(--color-ink-950)]">
+                <p class="text-[0.95rem]">
+                  <span class="mr-2 text-lg">{prize.emoji}</span>
+                  <strong style="font-family: var(--font-display); font-variation-settings: 'wdth' 110;">{prize.title}</strong>
+                  <span class="text-[var(--color-ink-950)]/72"> — {prize.text}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PARENT HEAT ===================== -->
+  <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="surface-card sticker-lilac p-8 md:p-10" data-reveal>
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p class="section-kicker">17:00 — the parent heat</p>
+          <h2 class="section-title mt-4">
+            Watch your <span class="ink-underline">parents</span> try
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">surfing</span>.
+          </h2>
+          <p class="body-copy mt-4 max-w-xl">
+            {cup.parentHeat.blurb}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {cup.parentHeat.awards.map((award) => (
+            <div class="rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <p class="font-display text-lg text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                ✦ {award}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BRING + INCLUDED ===================== -->
+  <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="surface-card sticker-teal p-8" data-reveal>
+        <p class="section-kicker">What to bring</p>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.5rem, 2.5vw, 2.2rem);">
+          Pack light, pack the energy.
+        </h2>
+        <ul class="mt-6 grid gap-3">
+          {cup.bring.map((item) => (
+            <li class="flex items-start gap-3 rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <span class="font-mono text-sm font-bold text-[var(--color-coral-500)]">✦</span>
+              <span class="text-[0.95rem] leading-6 text-[var(--color-ink-950)]/85">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="surface-card sticker-sun p-8" data-reveal>
+        <p class="section-kicker">What we provide</p>
+        <h2 class="section-title mt-4" style="font-size: clamp(1.5rem, 2.5vw, 2.2rem);">
+          One fee. The whole afternoon.
+        </h2>
+        <ul class="mt-6 grid gap-3">
+          {cup.included.map((item) => (
+            <li class="flex items-start gap-3 rounded-[1.2rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+              <span class="font-mono text-sm font-bold text-[var(--color-teal-600)]">✓</span>
+              <span class="text-[0.95rem] leading-6 text-[var(--color-ink-950)]/85">{item}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-6 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+          Entry · {cup.entryFeeLabel} per kid · NOT a drop-off
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TEMPLATES ===================== -->
+  <section id="templates" class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
+    <div class="surface-card p-8 md:p-10" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="max-w-2xl">
+          <p class="section-kicker">↓ Downloadable templates</p>
+          <h2 class="section-title mt-4">
+            Run the day on
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">paper</span>
+            (or save as PDF, iykyk).
+          </h2>
+          <p class="body-copy mt-4">
+            Everything a parent volunteer needs to plug into the day. Open each one in a new tab —
+            hit <strong>print</strong> to grab a hard copy or <strong>save as PDF</strong> to keep
+            it on your phone.
+          </p>
+        </div>
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+          {cup.templates.length} files ✦ print-ready
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {cup.templates.map((template, i) => (
+          <a
+            href={template.file}
+            target="_blank"
+            rel="noreferrer"
+            class:list={[
+              "group relative flex flex-col gap-3 rounded-[1.6rem] border-2 border-[var(--color-ink-950)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-1 hover:shadow-[7px_7px_0_0_var(--color-ink-950)]",
+              template.accent,
+            ]}
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">{template.emoji}</span>
+              <span class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)]">
+                {template.file.endsWith(".txt") ? "TXT" : "HTML"}
+              </span>
+            </div>
+            <p class="font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+              {template.title}
+            </p>
+            <p class="text-[0.9rem] leading-6 text-[var(--color-ink-950)]/78">
+              {template.description}
+            </p>
+            <p class="mt-auto pt-2 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[var(--color-coral-500)] transition-transform group-hover:translate-x-1">
+              ↓ Open template
+            </p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SIGN UP CTA ===================== -->
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
+    <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
+      <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <p class="section-kicker">Sign your duckling up</p>
+          <h2 class="section-title mt-4">
+            Drop us a message. Lock in your <span class="ink-underline">spot</span>.
+          </h2>
+          <p class="body-copy mt-4 max-w-2xl">
+            Spots are filled by WhatsApp — fastest way to get on the heat sheet. Send your duckling's
+            name, age, division (Duckling or Duck), and a head-and-shoulders photo for the heat
+            billboard. We'll send the registration form + waiver back. Entry locks in once the fee
+            lands.
+          </p>
+          <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+            Deadline: {cup.registerDeadlineLabel} · {cup.entryFeeLabel}
+          </p>
+        </div>
+        <div class="flex flex-col gap-3">
+          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            {cup.registerCtaLabel}
+          </a>
+          <a class="cta-secondary" href="/templates/registration-form.html" target="_blank" rel="noreferrer">
+            ↓ Open registration form
+          </a>
+          <a class="cta-secondary" href="/templates/parent-whatsapp-message.txt" target="_blank" rel="noreferrer">
+            Copy parent message
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
