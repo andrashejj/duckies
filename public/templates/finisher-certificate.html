@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Finisher Certificate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff72a6; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 60% 45% at 5% 0%, rgba(255, 114, 166, 0.35), transparent 60%),
+        radial-gradient(ellipse 55% 45% at 95% 5%, rgba(255, 210, 63, 0.45), transparent 60%),
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(7, 201, 182, 0.3), transparent 65%),
+        var(--cream);
+      padding: 24px;
+    }
+    .cert {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--cream-soft);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 0 var(--ink);
+      border-radius: 24px;
+      padding: 56px 64px 48px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.414 / 1;
+    }
+    .corner {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      transform: rotate(-8deg);
+    }
+    .corner.tl { top: 20px; left: 20px; background: var(--coral); box-shadow: 4px 4px 0 0 var(--ink); }
+    .corner.tr { top: 20px; right: 20px; background: var(--teal); transform: rotate(8deg); box-shadow: -4px 4px 0 0 var(--ink); }
+    .corner.bl { bottom: 20px; left: 20px; background: var(--sun); transform: rotate(6deg); box-shadow: 4px -4px 0 0 var(--ink); }
+    .corner.br { bottom: 20px; right: 20px; background: var(--pink); transform: rotate(-6deg); box-shadow: -4px -4px 0 0 var(--ink); }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.4rem 0.9rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.6rem, 6vw, 4.6rem);
+      letter-spacing: -0.04em; line-height: 0.92;
+      margin: 18px 0 4px;
+      text-align: center;
+    }
+    .accent {
+      font-family: "Fraunces", serif;
+      font-style: italic;
+      color: var(--coral);
+      font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+    }
+    .subtitle { text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(11,22,32,0.7); margin-bottom: 36px; }
+    .awarded {
+      text-align: center;
+      font-family: "Outfit", sans-serif; font-size: 1rem;
+      text-transform: uppercase; letter-spacing: 0.2em; color: rgba(11,22,32,0.65);
+      margin-bottom: 14px;
+    }
+    .name {
+      text-align: center;
+      font-family: "Fraunces", serif;
+      font-weight: 600; font-style: italic;
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      letter-spacing: -0.02em;
+      border-bottom: 3px solid var(--ink);
+      margin: 0 auto 14px;
+      max-width: 70%;
+      padding-bottom: 8px;
+      min-height: 5rem;
+      font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+    }
+    .blurb {
+      text-align: center;
+      max-width: 640px; margin: 0 auto 28px;
+      font-size: 1.05rem; line-height: 1.6;
+    }
+    .award-line {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .award-tag {
+      display: inline-block;
+      font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+      font-size: 1.1rem;
+      background: var(--cream); border: 2px solid var(--ink);
+      border-radius: 999px;
+      box-shadow: 3px 3px 0 0 var(--ink);
+      padding: 8px 18px;
+      transform: rotate(-1.5deg);
+    }
+    .signoff {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-top: 36px; gap: 32px;
+    }
+    .sig {
+      flex: 1;
+      border-top: 2px solid var(--ink);
+      padding-top: 8px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(11,22,32,0.75);
+      text-align: center;
+    }
+    .sig strong {
+      display: block;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      text-transform: none;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    .hint { text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: rgba(11,22,32,0.5); margin-top: 18px; }
+    .hint .editable { background: rgba(7,201,182,0.25); padding: 2px 8px; border-radius: 6px; }
+    @media print { body { background: white; padding: 0; } .cert { box-shadow: none; max-width: 100%; margin: 0; aspect-ratio: auto; } .print-btn, .hint { display: none; } @page { size: A4 landscape; margin: 8mm; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="cert">
+    <div class="corner tl">🐤</div>
+    <div class="corner tr">🦆</div>
+    <div class="corner bl">🌅</div>
+    <div class="corner br">🏆</div>
+
+    <div style="text-align: center;"><span class="kicker">★ Sunset Duckies Cup · Vol. 01</span></div>
+    <h1>Certificate of <span class="accent">Stoke</span></h1>
+    <p class="subtitle">Saturday · 30 May 2026 · Tamarin Bay</p>
+
+    <p class="awarded">Awarded to</p>
+    <p class="name" contenteditable="true" spellcheck="false">[Duckling's name]</p>
+
+    <p class="blurb">
+      For paddling out, popping up, riding the wave home, and finishing every heat with a smile.
+      Officially part of the first ever Sunset Duckies Cup crew.
+    </p>
+
+    <div class="award-line">
+      <span class="award-tag" contenteditable="true" spellcheck="false">✦ Side award: [optional]</span>
+    </div>
+
+    <div class="signoff">
+      <div class="sig"><strong>Andras Hejj</strong>Founder &amp; head coach</div>
+      <div class="sig"><strong>The Judges</strong>Sunset Duckies Cup</div>
+    </div>
+  </main>
+  <p class="hint">Tip — the <span class="editable">name</span> and <span class="editable">side award</span> fields are editable in the browser before you print.</p>
+</body>
+</html>

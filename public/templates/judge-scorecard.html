@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Judge Scorecard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --red: #ff4e2b; --yellow: #ffd23f; --blue: #5db1ff; --green: #5ddb9b; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 24px 20px 60px; line-height: 1.4; }
+    .sheet { max-width: 880px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 28px 32px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 1.9rem; margin: 14px 0 4px; letter-spacing: -0.03em; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: rgba(11,22,32,0.65); }
+    .header-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 18px; }
+    .header-row .field { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; }
+    .header-row .blank { display: block; border-bottom: 1.5px solid var(--ink); min-height: 1.6rem; }
+    .legend { font-size: 0.85rem; background: rgba(7,201,182,0.18); border: 1.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; margin: 14px 0 18px; }
+    .legend strong { font-family: "Bricolage Grotesque", sans-serif; }
+    .surfer { border: 2px solid var(--ink); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+    .surfer-head { display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: var(--cream); border-bottom: 1.5px solid var(--ink); }
+    .swatch { width: 28px; height: 28px; border-radius: 999px; border: 2px solid var(--ink); flex-shrink: 0; }
+    .swatch.red { background: var(--red); }
+    .swatch.yellow { background: var(--yellow); }
+    .swatch.blue { background: var(--blue); }
+    .swatch.green { background: var(--green); }
+    .surfer-name { flex: 1; border-bottom: 1.5px solid var(--ink); min-height: 1.6rem; }
+    .name-label { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.55); white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 6px 8px; border-right: 1px solid rgba(11,22,32,0.2); border-bottom: 1px solid rgba(11,22,32,0.2); font-size: 0.82rem; text-align: center; }
+    th { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--coral); background: var(--cream); }
+    td.label { text-align: left; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; font-weight: 600; background: rgba(11,22,32,0.04); width: 140px; }
+    .tick-cell { height: 26px; }
+    .total-row td { font-weight: 700; background: rgba(255,210,63,0.35); }
+    .footer { margin-top: 20px; font-family: "JetBrains Mono", monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } @page { size: A4; margin: 12mm; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Judge scorecard</span>
+    <h1>Sunset Duckies Cup — heat sheet 🏁</h1>
+    <p class="meta">One card per heat × judge · 4 surfers · 10-minute heat · best 2 waves count · bias toward YES</p>
+
+    <div class="legend" style="background: rgba(255,210,63,0.35);">
+      <strong>How this sheet works</strong> — Heats are drawn the day before (Fri 29 May) and the
+      <strong>master heat sheet</strong> goes up at the registration desk: it lists every heat,
+      who's in it, and the start time. At the start of each heat, the head judge gives each judge a
+      fresh copy of this scorecard and calls out the 4 surfers and their rashie colours.
+      <strong>Write each surfer's name on the blank line in their colour row below</strong> before
+      the horn goes. Then tick boxes wave by wave.
+    </div>
+
+    <div class="header-row">
+      <div class="field">Heat #<span class="blank"></span></div>
+      <div class="field">Division<span class="blank"></span></div>
+      <div class="field">Judge name<span class="blank"></span></div>
+      <div class="field">Start time<span class="blank"></span></div>
+    </div>
+
+    <div class="legend">
+      <strong>5 tick boxes per wave</strong> — Paddle &amp; commit · Pop-up · Stance · Ride · Stoke.
+      Tick if YES, leave blank if no. <strong>Best 2 waves count.</strong> Max 10 ticks per surfer.
+      Tiebreak 1: total waves attempted. Tiebreak 2: head judge's "wave of the heat" shaka.
+    </div>
+
+    <!-- Surfer block (×4) -->
+    <!-- Repeat pattern -->
+    <div class="surfer">
+      <div class="surfer-head"><span class="swatch red"></span><strong>Red</strong><span class="name-label">Surfer →</span><span class="surfer-name"></span></div>
+      <table>
+        <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody>
+          <tr><td class="label">🏊 Paddle &amp; commit</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🚀 Pop-up</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🧘 Stance</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🌊 Ride</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🎉 Stoke</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr class="total-row"><td class="label">Wave total /5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="surfer">
+      <div class="surfer-head"><span class="swatch yellow"></span><strong>Yellow</strong><span class="name-label">Surfer →</span><span class="surfer-name"></span></div>
+      <table>
+        <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody>
+          <tr><td class="label">🏊 Paddle &amp; commit</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🚀 Pop-up</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🧘 Stance</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🌊 Ride</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🎉 Stoke</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr class="total-row"><td class="label">Wave total /5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="surfer">
+      <div class="surfer-head"><span class="swatch blue"></span><strong>Blue</strong><span class="name-label">Surfer →</span><span class="surfer-name"></span></div>
+      <table>
+        <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody>
+          <tr><td class="label">🏊 Paddle &amp; commit</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🚀 Pop-up</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🧘 Stance</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🌊 Ride</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🎉 Stoke</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr class="total-row"><td class="label">Wave total /5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="surfer">
+      <div class="surfer-head"><span class="swatch green"></span><strong>Green</strong><span class="name-label">Surfer →</span><span class="surfer-name"></span></div>
+      <table>
+        <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody>
+          <tr><td class="label">🏊 Paddle &amp; commit</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🚀 Pop-up</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🧘 Stance</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🌊 Ride</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr><td class="label">🎉 Stoke</td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td><td class="tick-cell"></td></tr>
+          <tr class="total-row"><td class="label">Wave total /5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footer">Best 2 waves count · Max 10 ticks · Tiebreak: total waves, then "wave of the heat" shaka · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

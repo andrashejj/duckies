@@ -5,12 +5,12 @@ export const site = {
   location: "Tamarin Bay, Mauritius",
   locale: "en_MU",
   description:
-    "Kids' surf club in Tamarin Bay, fr. Young duckies paddling out, locking in on surfing, and chasing the sunset every sesh — lowkey the best crew on the island.",
+    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week, getting really good at surfing, and chasing the sunset every session.",
   ogImage: {
     path: "/media/andras-hejj.jpg",
     width: 1504,
     height: 1600,
-    alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky — big sesh energy.",
+    alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky.",
   },
   membership: {
     annualFeeMur: 5000,
@@ -31,7 +31,7 @@ export const site = {
       role: "Founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.jpg",
-      bio: "Runs the club on consistency, trust, and a safe path for kids to lowkey fall in love with surfing.",
+      bio: "Runs the club on consistency, trust, and a safe path for kids to fall in love with surfing.",
     },
   ],
   sponsors: [
@@ -54,6 +54,7 @@ export const site = {
     },
   ],
   navigation: [
+    { label: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
     { label: "Why Sunset Duckies", href: "/#why-sunset-duckies" },
     { label: "Schedule", href: "/#schedule" },
     { label: "Sponsors", href: "/#sponsors" },
@@ -81,7 +82,174 @@ export const site = {
     label: "Quarterly beach comp",
     title: "Four moments a year the whole club trains toward.",
     description:
-      "Each comp is built to feel hype, supportive, and unforgettable. Kids get a real milestone to lock in for, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
+      "Each comp is built to feel celebratory, supportive, and unforgettable. Kids get a real milestone to train towards, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
+  },
+  cup: {
+    name: "Sunset Duckies Cup",
+    edition: "Vol. 01 — first ever",
+    dateLabel: "Saturday · 30 May 2026",
+    dateISO: "2026-05-30",
+    timeLabel: "13:00 – 17:30",
+    location: "Tamarin Bay, Mauritius",
+    entryFeeLabel: "1'000 MUR",
+    registerDeadlineLabel: "Friday 22 May",
+    registerCtaLabel: "Sign up via WhatsApp",
+    tagline: "Heats of 4. Crowns for the kings + queens. BBQ on the sand.",
+    blurb:
+      "The first ever Sunset Duckies Cup, at Tamarin Bay. Two divisions, ten-minute heats, judges with checklists, a parent heat to close it out, and a prize for every single duckling.",
+    divisions: [
+      {
+        emoji: "🐤",
+        name: "Duckling",
+        description:
+          "Coach pushes you in. You pop up. You ride. Whitewater champions in training.",
+      },
+      {
+        emoji: "🦆",
+        name: "Duck",
+        description:
+          "You paddle yourself into the wave. You stand. You start to turn. Actual surfers in the making.",
+      },
+    ],
+    runOfShow: [
+      { time: "13:00", label: "Arrival + warm-up on the sand", emoji: "🌅" },
+      { time: "14:00", label: "Duckling heats", emoji: "🐤" },
+      { time: "~14:45", label: "Duck heats", emoji: "🦆" },
+      { time: "15:30", label: "Break — BBQ + free surf", emoji: "🍔" },
+      { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
+      { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
+      { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
+      { time: "17:30", label: "Wrap", emoji: "✨" },
+    ],
+    judgingCriteria: [
+      {
+        emoji: "🏊",
+        title: "Paddle & commit",
+        text: "Go for the wave. Don't pull back.",
+      },
+      {
+        emoji: "🚀",
+        title: "Pop-up",
+        text: "Get to your feet. No knees, no cap.",
+      },
+      {
+        emoji: "🧘",
+        title: "Stance",
+        text: "Knees bent, eyes forward, hands chill.",
+      },
+      {
+        emoji: "🌊",
+        title: "Ride",
+        text: "Stay standing. Ride it in.",
+      },
+      {
+        emoji: "🎉",
+        title: "Stoke",
+        text: "Finish with a smile. Claim it.",
+      },
+    ],
+    prizes: {
+      crowns: [
+        { emoji: "🐤", title: "Duckling King + Queen", text: "Top boy + top girl, Duckling division." },
+        { emoji: "🦆", title: "Duck King + Queen", text: "Top boy + top girl, Duck division." },
+        { emoji: "🏄‍♀️", title: "Sunset Duckies King + Queen", text: "Top boy + top girl, overall." },
+      ],
+      sideAwards: [
+        { emoji: "🌅", title: "Sunset Stoke", text: "Biggest celebration of the day." },
+        { emoji: "💪", title: "Paddle Power", text: "Never stopped going for waves." },
+        { emoji: "💦", title: "Best Wipeout", text: "Fell hardest, smiled hardest." },
+        { emoji: "✨", title: "Style Duckling", text: "That one moment of perfect balance." },
+        { emoji: "🔄", title: "Best Comeback", text: "Fell off, jumped right back on." },
+        { emoji: "📣", title: "Best Cheer Squad", text: "Cheered loudest for everyone else." },
+      ],
+      everyone: "Every duckling gets a personalised finisher certificate with their name on it.",
+    },
+    parentHeat: {
+      title: "The Parent Heat 🦆",
+      blurb:
+        "After the kids' finals, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
+      awards: [
+        "Best Dad Stance",
+        "Best Mom Stance",
+      ],
+    },
+    bring: [
+      "Your board",
+      "Your rash guard or wetsuit",
+      "Sunscreen, towel, warm layer for after",
+      "Lots of energy",
+    ],
+    included: [
+      "Entry to the comp + heat scoring",
+      "BBQ for the whole fam",
+      "Water for the kids at the break",
+      "Prizes + personalised finisher certificate",
+    ],
+    templates: [
+      {
+        title: "Registration form",
+        file: "/templates/registration-form.html",
+        description: "Printable form for parents to fill in — surfer info, division, consents, fee receipt.",
+        emoji: "📝",
+        accent: "sticker-coral",
+      },
+      {
+        title: "Liability waiver",
+        file: "/templates/liability-waiver.html",
+        description: "Signed by parent/guardian on the day. Covers the consent stuff.",
+        emoji: "✍️",
+        accent: "sticker-sun",
+      },
+      {
+        title: "Run-of-show / timetable",
+        file: "/templates/run-of-show.html",
+        description: "The full minute-by-minute for the day — print and pin at the registration desk.",
+        emoji: "🕒",
+        accent: "sticker-teal",
+      },
+      {
+        title: "Judge scorecard",
+        file: "/templates/judge-scorecard.html",
+        description: "One card per heat × judge. 4 surfers, 5 tick boxes per wave, best 2 waves count.",
+        emoji: "🏁",
+        accent: "sticker-lilac",
+      },
+      {
+        title: "MC script & cheat sheet",
+        file: "/templates/mc-script.html",
+        description: "Opening, heat intros, live calls, awards script — the whole MC playbook.",
+        emoji: "🎤",
+        accent: "sticker-pink",
+      },
+      {
+        title: "Volunteer roles sheet",
+        file: "/templates/volunteer-roles.html",
+        description: "Who's doing what — fill in the parents as they commit.",
+        emoji: "🙌",
+        accent: "sticker-teal",
+      },
+      {
+        title: "Pre-event checklist",
+        file: "/templates/pre-event-checklist.html",
+        description: "Owners + due dates from now through Friday 29 May.",
+        emoji: "✅",
+        accent: "sticker-sun",
+      },
+      {
+        title: "Finisher certificate",
+        file: "/templates/finisher-certificate.html",
+        description: "Personalised certificate template — print one per duckling.",
+        emoji: "🏆",
+        accent: "sticker-coral",
+      },
+      {
+        title: "Parent WhatsApp message",
+        file: "/templates/parent-whatsapp-message.txt",
+        description: "Drop straight into the parents' group — copy, paste, send.",
+        emoji: "💬",
+        accent: "sticker-lilac",
+      },
+    ],
   },
   pillars: [
     {

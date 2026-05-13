@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Liability Waiver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.6; }
+    .sheet { max-width: 780px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 16px 0 8px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.1rem; margin: 24px 0 8px; }
+    p, li { font-size: 0.95rem; }
+    .blank { display: block; border-bottom: 1.5px solid var(--ink); min-height: 1.8rem; }
+    .row { display: grid; gap: 14px; grid-template-columns: 2fr 1fr; }
+    @media (max-width: 540px) { .row { grid-template-columns: 1fr; } }
+    .field { margin: 10px 0; }
+    .field label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+    .check { display: flex; align-items: flex-start; gap: 10px; margin: 8px 0; font-size: 0.92rem; }
+    .box { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; background: var(--cream); flex-shrink: 0; margin-top: 2px; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: rgba(11,22,32,0.65); }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies Cup</span>
+    <h1>Parent / guardian liability waiver</h1>
+    <p class="meta">Saturday · 30 May 2026 · Tamarin Bay, Mauritius</p>
+
+    <p>
+      I confirm that I am the parent or legal guardian of the child named below, and that I am voluntarily
+      registering them to participate in the Sunset Duckies Cup ("the event"), a kids' surf competition
+      organised by the Sunset Duckies surf club at Tamarin Bay on Saturday 30 May 2026, between 13:00 and 17:30.
+    </p>
+
+    <h2>I acknowledge that:</h2>
+    <ul>
+      <li>Surfing is a physical activity that carries an inherent risk of injury, including from waves, rocks, board contact, marine life, sun exposure, and other ocean conditions.</li>
+      <li>The event is run by volunteer coaches and parents. Reasonable safety measures are taken (water marshals, beach marshal, first-aid kit on site), but participation remains at our own risk.</li>
+      <li>My child has the basic ability to be safe in the water as agreed with the head coach, and can swim unassisted in waist-deep water.</li>
+      <li>I will remain on-site for the full duration of the event. This is not a drop-off.</li>
+      <li>The organisers may take reasonable medical decisions in an emergency if I cannot be reached immediately.</li>
+    </ul>
+
+    <h2>I agree to:</h2>
+    <ul>
+      <li>Release the volunteer organisers, coaches, judges, and Sunset Duckies from any claim arising from ordinary risks of the event.</li>
+      <li>Follow all instructions from the coaches, water marshals, and beach marshal on the day.</li>
+      <li>Inform the registration desk of any medical condition, allergy, or medication relevant to my child.</li>
+    </ul>
+
+    <h2>Photo &amp; video</h2>
+    <div class="check"><span class="box"></span><span>I consent to photos and short videos of my child being used on Sunset Duckies social channels and recap posts.</span></div>
+    <div class="check"><span class="box"></span><span>I do <strong>not</strong> consent — please blur or exclude my child from any posted media.</span></div>
+
+    <h2>Signature</h2>
+    <div class="field"><label>Child's full name</label><span class="blank"></span></div>
+    <div class="row">
+      <div class="field"><label>Parent / guardian name</label><span class="blank"></span></div>
+      <div class="field"><label>Relationship</label><span class="blank"></span></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Signature</label><span class="blank"></span></div>
+      <div class="field"><label>Date</label><span class="blank"></span></div>
+    </div>
+    <div class="field"><label>Emergency contact name + phone</label><span class="blank"></span></div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>
