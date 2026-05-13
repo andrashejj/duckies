@@ -92,7 +92,7 @@ export const site = {
     timeLabel: "13:00 – 17:30",
     location: "Tamarin Bay, Mauritius",
     entryFeeLabel: "1'000 MUR",
-    registerDeadlineLabel: "Friday 22 May",
+    registerDeadlineLabel: "Friday 15 May",
     registerCtaLabel: "Sign up via WhatsApp",
     tagline: "Heats of 4. Crowns for the kings + queens. BBQ on the sand.",
     blurb:
