@@ -236,6 +236,20 @@ export const site = {
         accent: "sticker-sun",
       },
       {
+        title: "Equipment checklist",
+        file: "/templates/equipment-checklist.html",
+        description: "Who's bringing the BBQ, sound system, drone, billboard, tent, cooler boxes, MC mic — claim a line.",
+        emoji: "🎪",
+        accent: "sticker-teal",
+      },
+      {
+        title: "Shopping list",
+        file: "/templates/shopping-list.html",
+        description: "Sausages, buns, sides, drinks, charcoal — quantities for ~25 mouths with rough MUR costs.",
+        emoji: "🛒",
+        accent: "sticker-pink",
+      },
+      {
         title: "Finisher certificate",
         file: "/templates/finisher-certificate.html",
         description: "Personalised certificate template — print one per duckling.",
