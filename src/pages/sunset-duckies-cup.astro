@@ -62,7 +62,6 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
               ·
               <span class="font-accent italic text-[var(--color-coral-400)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Vol.&nbsp;01</span>
             </span>
-            <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>, all heart.</span>
           </h1>
           <p class="max-w-3xl text-base leading-7 text-white/90 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
             {cup.blurb}
@@ -80,7 +79,7 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
             ↓ Grab the templates
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
-            Heats of 4 ★ best 2 waves ★ parent heat at half four
+            Heats of 4 ★ best 2 waves count
           </p>
         </div>
       </div>
@@ -116,16 +115,14 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
 
     <div class="relative grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
       <div class="space-y-5" data-reveal>
-        <p class="section-kicker">Which duck are you?</p>
+        <p class="section-kicker">Divisions</p>
         <h2 class="section-title max-w-2xl">
           Two divisions.
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Both</span>
           get <span class="ink-underline">crowns</span>.
         </h2>
         <p class="body-copy max-w-xl">
-          Heats of 4 surfers, ten-minute clocks, numbered heats (Heat 1, Heat 2, etc.). Judges look for
-          five things — paddle &amp; commit, pop-up, stance, ride, stoke. Best 2 waves count. If you're
-          not sure which one you are, you're a Duckling. Both divisions get a King and a Queen 👑.
+          Heats of 4 surfers, 10-minute clocks. Best 2 waves count. King and Queen in each division.
         </p>
       </div>
 
@@ -156,14 +153,11 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
     <div class="surface-card p-8 md:p-10" data-reveal>
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p class="section-kicker">The day, hour by hour</p>
+          <p class="section-kicker">Run of show</p>
           <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
-            An afternoon of <span class="ink-underline">stoke</span> on the sand.
+            13:00 to <span class="ink-underline">17:30</span>.
           </h2>
         </div>
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
-          ✦ pin the printable version at the desk
-        </p>
       </div>
 
       <div class="mt-8 grid gap-3">
@@ -186,16 +180,13 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
   <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
     <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
       <div class="surface-card sticker-coral p-8" data-reveal>
-        <p class="section-kicker">How the judging works</p>
+        <p class="section-kicker">Judging</p>
         <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Five tick boxes.
-          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">No</span>
-          tricks needed.
+          Five tick boxes per wave.
         </h2>
         <p class="body-copy mt-4">
-          Three judges with clipboards. Per wave they tick the boxes that earned a yes — bias toward
-          yes when in doubt. Best 2 waves count. Max 10 ticks. Tiebreak by total waves, then a
-          "wave of the heat" shaka from the head judge.
+          Three judges, one clipboard each. Per wave they tick the boxes that earned a yes — bias
+          toward yes when in doubt. Best 2 waves count, max 10 ticks. Tiebreak by total waves.
         </p>
         <div class="mt-6 flex flex-wrap gap-2">
           <span class="chip">10 min heats</span>
@@ -230,7 +221,7 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
         <h2 class="section-title mt-4">
           Four crowns.
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Six</span>
-          side awards. <span class="ink-underline">Every</span> kid wins.
+          side awards.
         </h2>
         <p class="body-copy mt-4 max-w-2xl">
           {cup.prizes.everyone}
@@ -256,7 +247,7 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
 
         <div class="surface-card sticker-pink p-7">
           <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
-            ★ Side awards — every duckling has a shot
+            ★ Side awards
           </p>
           <div class="mt-4 grid gap-3">
             {cup.prizes.sideAwards.map((prize) => (
@@ -279,10 +270,10 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
     <div class="surface-card sticker-lilac p-8 md:p-10" data-reveal>
       <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p class="section-kicker">16:30 — the parent heat</p>
+          <p class="section-kicker">Parent heat · 16:30</p>
           <h2 class="section-title mt-4">
-            Watch your <span class="ink-underline">parents</span> try
-            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">surfing</span>.
+            Watch the <span class="ink-underline">parents</span>
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">surf</span>.
           </h2>
           <p class="body-copy mt-4 max-w-xl">
             {cup.parentHeat.blurb}
@@ -306,9 +297,9 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
   <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
     <div class="grid gap-6 lg:grid-cols-2">
       <div class="surface-card sticker-teal p-8" data-reveal>
-        <p class="section-kicker">What to bring</p>
+        <p class="section-kicker">Bring</p>
         <h2 class="section-title mt-4" style="font-size: clamp(1.5rem, 2.5vw, 2.2rem);">
-          Pack light, pack the energy.
+          What to pack.
         </h2>
         <ul class="mt-6 grid gap-3">
           {cup.bring.map((item) => (
@@ -321,9 +312,9 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
       </div>
 
       <div class="surface-card sticker-sun p-8" data-reveal>
-        <p class="section-kicker">What we provide</p>
+        <p class="section-kicker">Included</p>
         <h2 class="section-title mt-4" style="font-size: clamp(1.5rem, 2.5vw, 2.2rem);">
-          One fee. The whole afternoon.
+          What's in the fee.
         </h2>
         <ul class="mt-6 grid gap-3">
           {cup.included.map((item) => (
@@ -346,15 +337,14 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
     <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
       <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
-          <p class="section-kicker">Sign your duckling up</p>
+          <p class="section-kicker">Sign up</p>
           <h2 class="section-title mt-4">
-            Drop us a message. Lock in your <span class="ink-underline">spot</span>.
+            Lock in your <span class="ink-underline">spot</span>.
           </h2>
           <p class="body-copy mt-4 max-w-2xl">
-            Open the registration form + waiver below, fill them in, and WhatsApp them back to Andras
-            with a head-and-shoulders photo of your duckling for the heat billboard. We need names +
-            t-shirt sizes locked in by the deadline so we can order shirts and print certificates in
-            time. Entry locks in once the fee lands.
+            Fill in the registration form + waiver below and WhatsApp them to Andras with a
+            head-and-shoulders photo of your duckling for the heat billboard. Entry locks in once
+            the fee lands.
           </p>
           <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
             Deadline: {cup.registerDeadlineLabel} · {cup.entryFeeLabel}
@@ -380,21 +370,16 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
     <div class="surface-card p-8 md:p-10" data-reveal>
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div class="max-w-2xl">
-          <p class="section-kicker">↓ Downloadable templates</p>
+          <p class="section-kicker">Templates</p>
           <h2 class="section-title mt-4">
-            Run the day on
-            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">paper</span>
-            (or save as PDF).
+            Print or
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">save</span>
+            as PDF.
           </h2>
           <p class="body-copy mt-4">
-            Everything a parent volunteer needs to plug into the day. Open each one in a new tab —
-            hit <strong>print</strong> to grab a hard copy or <strong>save as PDF</strong> to keep
-            it on your phone.
+            The forms, scorecards, scripts, and checklists for the day. Each opens in a new tab.
           </p>
         </div>
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
-          {cup.templates.length} files ✦ print-ready
-        </p>
       </div>
 
       <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
