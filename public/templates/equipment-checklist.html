@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Equipment Checklist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
+    .sheet { max-width: 920px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--teal); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.15rem; margin: 26px 0 8px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    h2 .pill { font-family: "JetBrains Mono", monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.15rem 0.55rem; border-radius: 999px; font-weight: 500; }
+    .lede { font-size: 1rem; margin: 6px 0 16px; max-width: 64ch; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.9rem; text-align: left; vertical-align: top; }
+    th { font-family: "JetBrains Mono", monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); border-bottom: 2px solid var(--ink); }
+    td.box { width: 28px; text-align: center; }
+    .check { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; background: var(--cream); }
+    td.item { width: 220px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.98rem; }
+    td.owner { width: 180px; }
+    .blank-inline { display: inline-block; min-width: 140px; border-bottom: 1.5px solid var(--ink); }
+    .note { margin-top: 22px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.92rem; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+    .legend span { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; border: 1.5px solid var(--ink); padding: 0.2rem 0.55rem; border-radius: 999px; }
+    .legend .core { background: var(--coral); color: var(--cream); }
+    .legend .vibe { background: var(--lilac); }
+    .legend .food { background: var(--sun); }
+    .legend .nice { background: var(--teal); color: var(--ink); }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Gear on the sand</span>
+    <h1>Equipment checklist 🎪</h1>
+    <p class="lede">Who's bringing what to Tamarin Bay on the day. Each item needs a name next to it — if it's blank by Wed 27 May, Andras hunts. Doubles welcome on the bigger items (two coolers &gt; one).</p>
+    <p class="meta">Saturday 30 May 2026 · Tamarin Bay · build-up from 11:30</p>
+
+    <div class="legend">
+      <span class="core">Core — must have</span>
+      <span class="food">Food + drink</span>
+      <span class="vibe">Vibe + media</span>
+      <span class="nice">Nice to have</span>
+    </div>
+
+    <h2>Shelter, tables, signage <span class="pill">core</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Tent / gazebo (3×3m)</td><td class="owner"><span class="blank-inline"></span></td><td>Shade for the judges + reg desk. Sandbags or stakes — Tamarin gets gusty.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">2nd tent / shade sail</td><td class="owner"><span class="blank-inline"></span></td><td>Over the BBQ / food area so the cook doesn't melt.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Trestle / folding tables (×2)</td><td class="owner"><span class="blank-inline"></span></td><td>One for reg desk + scorecards, one for the food spread.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Camp chairs (×6)</td><td class="owner"><span class="blank-inline"></span></td><td>Judges (3), MC, first-aid, reg desk.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Heat billboard</td><td class="owner"><span class="blank-inline"></span></td><td>Foam board / plywood ~80×120cm, drawn with the bracket. Surfer photo cards pinned per heat.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Sponsor banner + flags</td><td class="owner"><span class="blank-inline"></span></td><td>Club banner for the photo backdrop. Two flags either side of the reg desk.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Markers + tape + zip ties</td><td class="owner"><span class="blank-inline"></span></td><td>Permanent + washable markers for arms/billboard, masking tape, ~10 zip ties.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Sound + MC <span class="pill">vibe</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Portable PA / Bluetooth speaker</td><td class="owner"><span class="blank-inline"></span></td><td>Battery-powered, loud enough for the beach. JBL Partybox / similar. Bring the charger.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">MC microphone (wireless)</td><td class="owner"><span class="blank-inline"></span></td><td>Wireless handheld if possible — MC walks the beach. Spare batteries.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Mic ↔ speaker cable / adapter</td><td class="owner"><span class="blank-inline"></span></td><td>Whatever it takes for the mic to talk to the speaker. Test before the day.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Phone with charged playlist</td><td class="owner"><span class="blank-inline"></span></td><td>Pre-built playlist downloaded offline. Phone on airplane mode mid-show.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Power bank (×1–2)</td><td class="owner"><span class="blank-inline"></span></td><td>For phones, speaker, mic. 20,000 mAh+ ideal.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Media + photos <span class="pill">vibe</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Drone</td><td class="owner"><span class="blank-inline"></span></td><td>Top-down shots of heats + group shot at awards. Charged batteries (×3), SD card, ND filter.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">DSLR / mirrorless + telephoto</td><td class="owner"><span class="blank-inline"></span></td><td>200mm+ for in-water shots from the sand. Spare battery + SD card.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">GoPro + chest mount / pole</td><td class="owner"><span class="blank-inline"></span></td><td>For the water marshal — POV of the push-ins. Floaty handle in case.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Phone tripod / gimbal</td><td class="owner"><span class="blank-inline"></span></td><td>Stable verticals for stories + reels.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>BBQ + drinks <span class="pill">food</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">BBQ / braai (charcoal or gas)</td><td class="owner"><span class="blank-inline"></span></td><td>Big enough for ~25 people. Charcoal preferred — see the shopping list for fuel.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Cooler box — drinks (×1, big)</td><td class="owner"><span class="blank-inline"></span></td><td>50L+. Water bottles + juice for the kids.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Cooler box — food (×1)</td><td class="owner"><span class="blank-inline"></span></td><td>For raw meat + cold sides. Keep separate from the drinks cooler.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">BBQ tongs + spatula + knife</td><td class="owner"><span class="blank-inline"></span></td><td>Cook's tools. One sharp knife for slicing rolls / onions.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Cutting board + serving tray</td><td class="owner"><span class="blank-inline"></span></td><td>Wooden / plastic, both fine. Tray to walk food round the crew.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Lighter / matches + fire starter</td><td class="owner"><span class="blank-inline"></span></td><td>Long lighter ideal. Don't rely on the shop for fire starters on the day.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Bin bags (×6)</td><td class="owner"><span class="blank-inline"></span></td><td>Two for rubbish, two for recycling, two spare. Leave the beach cleaner than we found it.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Surf, judging, safety <span class="pill">core</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Coloured rashies / lycras (4 sets)</td><td class="owner"><span class="blank-inline"></span></td><td>Red / yellow / green / blue. One colour per surfer in a heat.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Spare soft-tops (×2)</td><td class="owner"><span class="blank-inline"></span></td><td>In case anyone's ding splits or a parent needs to borrow for the parent heat.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Whistle + air horn</td><td class="owner"><span class="blank-inline"></span></td><td>Heat start / end signal. Air horn is the backup if the wind kills the whistle.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Stopwatch (×2)</td><td class="owner"><span class="blank-inline"></span></td><td>One on the head judge, one on the MC as backup. Phone timers count.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Clipboards (×3)</td><td class="owner"><span class="blank-inline"></span></td><td>One per judge. Pens attached on string.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">First-aid kit</td><td class="owner"><span class="blank-inline"></span></td><td>Reef cuts, stings, sun rashes. Plus reef-safe sunscreen for top-ups.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Drinking water — jerry can</td><td class="owner"><span class="blank-inline"></span></td><td>10L+ for rinsing salt out of eyes + refills.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Prizes + ceremony <span class="pill">core</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Crowns (×6) + sashes</td><td class="owner"><span class="blank-inline"></span></td><td>Duckling King/Queen, Duck King/Queen, Sunset Duckies King/Queen.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Side-award trinkets (×6)</td><td class="owner"><span class="blank-inline"></span></td><td>Small + meaningful — wax combs, stickers, ribbons, etc.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Finisher certificates</td><td class="owner"><span class="blank-inline"></span></td><td>Pre-printed with each duckling's name. Pop them in a folder so they don't blow away.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Parent-heat prizes (×2)</td><td class="owner"><span class="blank-inline"></span></td><td>Best Dad Stance + Best Mom Stance. Joke trophy is the move.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Nice to haves <span class="pill">nice</span></h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Who's bringing</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Beach umbrellas (×2)</td><td class="owner"><span class="blank-inline"></span></td><td>Extra shade if the tents are full of judges + reg.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Picnic blankets / mats</td><td class="owner"><span class="blank-inline"></span></td><td>Watching spots for non-surfing siblings + grandparents.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Polaroid / instant camera</td><td class="owner"><span class="blank-inline"></span></td><td>One print per duckling, pinned to the billboard at the end. Hits hard.</td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Stickers / face paint</td><td class="owner"><span class="blank-inline"></span></td><td>Pre-heat hype paint. Watch the eyes.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>Heads up:</strong> the shopping list — sausages, rolls, drinks, charcoal — lives on a separate sheet. This one's only for gear you already own or can borrow. If you can lend something, message Andras and we'll fill in the name next to it.
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>
