@@ -5,7 +5,7 @@ export const site = {
   location: "Tamarin Bay, Mauritius",
   locale: "en_MU",
   description:
-    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week, getting really good at surfing, and chasing the sunset every session.",
+    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week.",
   ogImage: {
     path: "/media/andras-hejj.jpg",
     width: 1504,
@@ -41,7 +41,7 @@ export const site = {
       logo: "/media/nbk-labs-logo.svg",
       logoAlt: "NBK Labs live site wordmark",
       blurb:
-        "Backing practical systems and community infrastructure that help the club stay reliable, low-overhead, and focused on the kids in the water.",
+        "Backs the club's operations so we stay reliable, low-overhead, and focused on the kids in the water.",
     },
     {
       name: "Motif",
@@ -50,7 +50,7 @@ export const site = {
       logoAlt: "Motif logo",
       image: "/media/motif-og.png",
       blurb:
-        "Backing the story, visibility, and momentum needed to grow a strong local surf community for kids — no gatekeeping.",
+        "Backs the visibility and storytelling that help grow a local surf community for kids.",
     },
   ],
   navigation: [
@@ -64,25 +64,25 @@ export const site = {
     { value: "100%", label: "kids in the lineup" },
     { value: "2x", label: "training sessions a week" },
     { value: "4x", label: "club comps each year" },
-    { value: "Sunset", label: "every session, every time" },
+    { value: "Sunset", label: "every session" },
   ],
   schedule: [
     {
       day: "Wednesday",
       time: "4:00-6:00pm",
-      focus: "Technique, confidence, and whitewater reps that actually hit.",
+      focus: "Technique, confidence, whitewater reps.",
     },
     {
       day: "Friday",
       time: "4:00-6:00pm",
-      focus: "Playful progression, real community, big wave time.",
+      focus: "Progression, free surf, longer water time.",
     },
   ],
   competition: {
     label: "Quarterly beach comp",
-    title: "Four moments a year the whole club trains toward.",
+    title: "Four club comps a year.",
     description:
-      "Each comp is built to feel celebratory, supportive, and unforgettable. Kids get a real milestone to train towards, families get a reason to gather, and sponsors get visibility in the only setting that matters — a thriving local crew.",
+      "Kids get a milestone to train towards, families get a reason to gather on the beach.",
   },
   cup: {
     name: "Sunset Duckies Cup",
@@ -259,21 +259,21 @@ export const site = {
   },
   pillars: [
     {
-      title: "Actually get amazing at surfing",
-      text: "Two sessions a week, proper coaching, and the reps that turn first-wave wobbles into paddle-outs the kids chase on their own.",
+      title: "Get good at surfing",
+      text: "Two sessions a week, proper coaching, real reps in the water.",
     },
     {
-      title: "Sunset hour, every time",
-      text: "Sessions land at golden hour in Tamarin Bay. Warm light, clean lineups, and that last wave home as the sky goes pink.",
+      title: "Sunset sessions",
+      text: "Sessions land at golden hour in Tamarin Bay.",
     },
     {
-      title: "A lineup that shows up",
-      text: "Sunset Duckies isn't a surf school drop-off. It's a consistent local crew of kids, families, and coaches who keep coming back.",
+      title: "A local crew",
+      text: "Not a surf school drop-off — a club of kids, families, and coaches who keep coming back.",
     },
   ],
   materials: {
     intro:
-      "A public starter library so families and young surfers can keep the streak alive between sessions.",
+      "A starter library for families and young surfers to use between sessions.",
     featuredRoutine: [
       "5 slow pop-ups with perfect hand placement.",
       "2 rounds of 45-second balance holds on a cushion, board, or line.",
