@@ -86,14 +86,15 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             </div>
           </a>
 
-          <nav class="hidden items-center gap-1 xl:flex">
+          <nav class="flex items-center gap-1 sm:gap-2">
             {site.navigation.map((item) => (
               <a
-                class="rounded-full px-3 py-2 text-sm font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg]"
+                class="rounded-full px-2.5 py-1.5 text-[0.78rem] font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg] sm:px-3 sm:py-2 sm:text-sm"
                 style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;"
                 href={item.href}
               >
-                {item.label}
+                <span class="sm:hidden">{item.label}</span>
+                <span class="hidden sm:inline">{item.labelFull ?? item.label}</span>
               </a>
             ))}
           </nav>
