@@ -54,11 +54,8 @@ export const site = {
     },
   ],
   navigation: [
-    { label: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
-    { label: "Why Sunset Duckies", href: "/#why-sunset-duckies" },
-    { label: "Schedule", href: "/#schedule" },
-    { label: "Sponsors", href: "/#sponsors" },
-    { label: "Training Materials", href: "/training-materials" },
+    { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
+    { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
   ],
   stats: [
     { value: "100%", label: "kids in the lineup" },
