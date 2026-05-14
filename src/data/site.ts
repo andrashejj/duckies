@@ -224,7 +224,7 @@ export const site = {
       {
         title: "Volunteer roles sheet",
         file: "/templates/volunteer-roles.html",
-        description: "Who's doing what — fill in the parents as they commit.",
+        description: "Six roles to fill — water, build-up, clean-up, BBQ, media, first aid.",
         emoji: "🙌",
         accent: "sticker-teal",
       },
