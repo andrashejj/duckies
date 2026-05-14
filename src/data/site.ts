@@ -222,9 +222,9 @@ export const site = {
         accent: "sticker-pink",
       },
       {
-        title: "Volunteer roles & kit",
+        title: "Volunteer sheet",
         file: "/templates/volunteer-roles.html",
-        description: "Two lists: who's doing a role on the day, and who's bringing tents, chairs, tables, cooler, snacks.",
+        description: "Doing and bringing — claim a role or an item.",
         emoji: "🙌",
         accent: "sticker-teal",
       },
