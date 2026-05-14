@@ -96,19 +96,19 @@ export const site = {
     registerCtaLabel: "Sign up via WhatsApp",
     tagline: "Heats of 4. Crowns for the kings + queens. BBQ on the sand.",
     blurb:
-      "The first ever Sunset Duckies Cup, at Tamarin Bay. Two divisions, ten-minute heats, judges with checklists, a parent heat to close it out, and a prize for every single duckling.",
+      "The first ever Sunset Duckies Cup, at Tamarin Bay. Two divisions, 10-minute heats, a parent heat, and a certificate for every duckling.",
     divisions: [
       {
         emoji: "🐤",
         name: "Duckling",
         description:
-          "Coach pushes you in. You pop up. You ride. Whitewater champions in training.",
+          "Coach pushes you in. You pop up. You ride.",
       },
       {
         emoji: "🦆",
         name: "Duck",
         description:
-          "You paddle yourself into the wave. You stand. You start to turn. Actual surfers in the making.",
+          "You paddle in. You stand. You start to turn.",
       },
     ],
     runOfShow: [
@@ -175,9 +175,8 @@ export const site = {
     },
     bring: [
       "Your board",
-      "Your rash guard or wetsuit",
+      "Rash guard or wetsuit",
       "Sunscreen, towel, warm layer for after",
-      "Lots of energy",
     ],
     included: [
       "Entry to the comp + heat scoring",
