@@ -15,15 +15,16 @@
     .sheet { max-width: 900px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
     .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
     h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.25rem; margin: 28px 0 8px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    h2 .pill { font-family: "JetBrains Mono", monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; background: var(--teal); border: 1.5px solid var(--ink); padding: 0.15rem 0.55rem; border-radius: 999px; font-weight: 500; }
     .lede { font-size: 1rem; margin: 6px 0 18px; max-width: 60ch; }
     .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
     table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
     th, td { padding: 12px 12px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.95rem; vertical-align: top; text-align: left; }
     th { font-family: "JetBrains Mono", monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); border-bottom: 2px solid var(--ink); }
-    td.role { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; width: 220px; font-size: 1rem; }
+    td.role, td.item { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; width: 220px; font-size: 1rem; }
     td.owner { width: 200px; }
     .blank-inline { display: inline-block; min-width: 160px; border-bottom: 1.5px solid var(--ink); }
-    .perk { display: inline-block; background: var(--teal); color: var(--ink); border: 1.5px solid var(--ink); padding: 0.15rem 0.5rem; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; }
     .note { margin-top: 18px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.92rem; }
     .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
     .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
@@ -34,10 +35,11 @@
   <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
   <main class="sheet">
     <span class="kicker">★ Volunteer sheet</span>
-    <h1>Volunteer roles &amp; owners 🙌</h1>
-    <p class="lede">Seven roles to fill for the Sunset Duckies Cup. Pick one and message Andras to claim it.</p>
+    <h1>Volunteer roles &amp; kit 🙌</h1>
+    <p class="lede">Two lists: who's doing a role on the day, and who's bringing the gear. Pick a line and message Andras to claim it.</p>
     <p class="meta">Saturday 30 May 2026 · Tamarin Bay · 13:00 – 17:30</p>
 
+    <h2>Who's doing <span class="pill">roles</span></h2>
     <table>
       <thead><tr><th>Role</th><th>Who</th><th>What it covers</th></tr></thead>
       <tbody>
@@ -62,11 +64,6 @@
           <td>Owns the BBQ: coals lit by 14:30, grilling, food served at 15:30.</td>
         </tr>
         <tr>
-          <td class="role">Healthy snacks</td>
-          <td class="owner"><span class="blank-inline"></span></td>
-          <td>Fruit + light snacks platter ready alongside the BBQ at 15:30 — watermelon, bananas, a cut veg + dip board. Plates and a tray covered.</td>
-        </tr>
-        <tr>
           <td class="role">Media</td>
           <td class="owner"><span class="blank-inline"></span></td>
           <td>Music, MC on the mic, photos, videos. The vibes + the memories of the day.</td>
@@ -79,9 +76,63 @@
       </tbody>
     </table>
 
-    <div class="note">
-      <strong>What to bring:</strong> we'll discuss with each owner individually once roles are claimed. Don't worry about kit — just put your hand up for the role first.
-    </div>
+    <h2>Who's bringing <span class="pill">kit</span></h2>
+    <p class="meta">Not precise — what we get, we get. Doubles welcome on the bigger items.</p>
+    <table>
+      <thead><tr><th>Item</th><th>Who</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="item">Healthy snacks</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>Fruit + light snacks platter ready alongside the BBQ at 15:30 — watermelon, bananas, a cut veg + dip board.</td>
+        </tr>
+        <tr>
+          <td class="item">Tents</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>Shade for the judges, reg desk, and BBQ. Sandbags or stakes — Tamarin gets gusty.</td>
+        </tr>
+        <tr>
+          <td class="item">Chairs</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>For judges, MC, first-aid, reg desk.</td>
+        </tr>
+        <tr>
+          <td class="item">Tables</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>Reg desk + scorecards, food spread.</td>
+        </tr>
+        <tr>
+          <td class="item">Billboard</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>Foam board / plywood ~80×120cm for the bracket + surfer photo cards.</td>
+        </tr>
+        <tr>
+          <td class="item">Cooler box</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>Drinks and food together — don't worry about splitting.</td>
+        </tr>
+        <tr>
+          <td class="item">Bin bags</td>
+          <td class="owner">Andras</td>
+          <td>For the clean-up. Leave the beach cleaner than we found it.</td>
+        </tr>
+        <tr>
+          <td class="item">Air horn</td>
+          <td class="owner">Andras</td>
+          <td>Heat start / end signal.</td>
+        </tr>
+        <tr>
+          <td class="item">Clipboard</td>
+          <td class="owner"><span class="blank-inline"></span></td>
+          <td>One per judge. Pen on a string.</td>
+        </tr>
+        <tr>
+          <td class="item">Water</td>
+          <td class="owner">Andras</td>
+          <td>Jerry can for rinsing salt + refills.</td>
+        </tr>
+      </tbody>
+    </table>
 
     <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
   </main>
