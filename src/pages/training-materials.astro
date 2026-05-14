@@ -4,104 +4,98 @@ import { site } from "../data/site";
 
 const title = `Training Materials | ${site.name}`;
 const description =
-  "Simple mobility routine for young surfers to do at home between Sunset Duckies sessions.";
+  "At-home training videos for young Sunset Duckies surfers: mobility, strength, technique, and breathing.";
 
-const mobilityDrills = [
-  {
-    name: "Hip Circles",
-    focus: "hips",
-    reps: "10 slow circles each way",
-    description:
-      "Hands on hips, feet shoulder-width apart. Make the biggest circle you can — slow, smooth, both directions.",
-    why: "Opens the hips for low surf stance and clean pop-up rotation.",
-  },
-  {
-    name: "Deep Squat Hold",
-    focus: "hips + ankles",
-    reps: "Hold 45 seconds × 2",
-    description:
-      "Sit into a deep squat with heels flat on the floor. Push gently on your knees with your elbows and breathe.",
-    why: "Builds the bottom-of-the-stance position so balance feels easy on the board.",
-  },
-  {
-    name: "Cat-Cow",
-    focus: "spine",
-    reps: "10 slow rounds",
-    description:
-      "On hands and knees, slowly round your back to the ceiling, then drop your belly and look up. One breath per move.",
-    why: "Keeps the spine loose for paddling reach and arching up to look at the wave.",
-  },
-  {
-    name: "Crocodile Twist",
-    focus: "spine + hips",
-    reps: "8 reps each side",
-    description:
-      "Lie on your back, arms out wide. Drop both knees slowly to one side, turn your head the other way, then switch.",
-    why: "Wrings out the lower back and opens rotation for turning on the wave.",
-  },
-  {
-    name: "Superhero Hold",
-    focus: "back + shoulders",
-    reps: "Hold 20 seconds × 3",
-    description:
-      "Lie flat on your belly, arms reaching forward. Lift chest, arms, and legs off the ground and hold.",
-    why: "Trains the paddling position — chest up, arms long, strong back.",
-  },
-  {
-    name: "Shoulder Windmills",
-    focus: "shoulders",
-    reps: "10 each direction",
-    description:
-      "Stand tall, arms out to the sides like a T. Make slow, full circles — small, then big, then small again.",
-    why: "Keeps shoulders mobile and healthy for hundreds of paddle strokes.",
-  },
-];
+type Video = {
+  name: string;
+  href: string;
+  image: string;
+};
 
-const videoReferences = [
-  {
-    name: "Hip Circles / Mobility flow",
-    href: "https://www.facebook.com/Rapturecamps/videos/1439071064290953/",
-    image: "/media/video-thumb-facebook.jpg",
-  },
-  {
-    name: "Crocodile Twist",
-    href: "https://www.tiktok.com/@redbullsurfing/video/7529540352924060950",
-    image: "/media/young-rider.jpg",
-  },
-  {
-    name: "Superhero Hold",
-    href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
-    image: "/media/video-thumb-superhero.jpg",
-  },
-  {
-    name: "Mobility reference",
-    href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
-    image: "https://img.youtube.com/vi/0FjVJB-ZUw0/hqdefault.jpg",
-  },
-  {
-    name: "Mobility reference",
-    href: "https://youtu.be/-UD25_kIpRY?si=zCRQN5QS4CEnP5X0",
-    image: "https://img.youtube.com/vi/-UD25_kIpRY/hqdefault.jpg",
-  },
-  {
-    name: "Mobility reference",
-    href: "https://www.youtube.com/shorts/9A9I1PbtS8U",
-    image: "https://img.youtube.com/vi/9A9I1PbtS8U/hqdefault.jpg",
-  },
-  {
-    name: "Mobility reference",
-    href: "https://www.youtube.com/shorts/6oMIfHxKlZQ",
-    image: "https://img.youtube.com/vi/6oMIfHxKlZQ/hqdefault.jpg",
-  },
-];
+type Pillar = {
+  kicker: string;
+  title: string;
+  blurb: string;
+  accent: string;
+  videos: Video[];
+};
 
-const drillAccents = [
-  "sticker-coral",
-  "sticker-teal",
-  "sticker-sun",
-  "sticker-pink",
-  "sticker-lilac",
-  "sticker-teal",
+const kaiLennyImage = "/media/video-thumb-superhero.jpg";
+const ytThumb = (id: string) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+
+const pillars: Pillar[] = [
+  {
+    kicker: "Pillar 01",
+    title: "Mobility",
+    blurb: "Loose hips, open shoulders, springy spine — so paddling feels easy and the pop-up lands clean.",
+    accent: "sticker-teal",
+    videos: [
+      {
+        name: "Kai Lenny warm-up flow",
+        href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
+        image: kaiLennyImage,
+      },
+    ],
+  },
+  {
+    kicker: "Pillar 02",
+    title: "Strength",
+    blurb: "Bodyweight reps that build the paddle, the push-up, and the legs underneath the stance.",
+    accent: "sticker-coral",
+    videos: [
+      {
+        name: "Hydromind knee pop-ups",
+        href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
+        image: ytThumb("0FjVJB-ZUw0"),
+      },
+      {
+        name: "Surf strength session",
+        href: "https://www.youtube.com/watch?v=-UD25_kIpRY",
+        image: ytThumb("-UD25_kIpRY"),
+      },
+      {
+        name: "Surf-specific workout",
+        href: "https://youtu.be/0rAtw0MsFq4",
+        image: ytThumb("0rAtw0MsFq4"),
+      },
+    ],
+  },
+  {
+    kicker: "Pillar 03",
+    title: "Technique",
+    blurb: "Pop-up and paddle mechanics drilled on the rug. Slow reps, clean shape.",
+    accent: "sticker-sun",
+    videos: [
+      {
+        name: "Kai Lenny warm-up practice",
+        href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
+        image: kaiLennyImage,
+      },
+      {
+        name: "Hydromind knee pop-ups",
+        href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
+        image: ytThumb("0FjVJB-ZUw0"),
+      },
+    ],
+  },
+  {
+    kicker: "Pillar 04",
+    title: "Breathing & mind",
+    blurb: "Qigong and Wim Hof to start the day calm, energised, and ready for big sets.",
+    accent: "sticker-lilac",
+    videos: [
+      {
+        name: "Qigong morning practice",
+        href: "https://youtu.be/1mzttMHlr20",
+        image: ytThumb("1mzttMHlr20"),
+      },
+      {
+        name: "Wim Hof breathing",
+        href: "https://www.youtube.com/watch?v=avZ_5Cot0wY",
+        image: ytThumb("avZ_5Cot0wY"),
+      },
+    ],
+  },
 ];
 ---
 
@@ -109,7 +103,7 @@ const drillAccents = [
   title={title}
   description={description}
   image="/media/balance-training.jpg"
-  imageAlt="Mobility drills for young Sunset Duckies surfers."
+  imageAlt="Young Sunset Duckies surfers training between sessions."
   imageWidth={1920}
   imageHeight={1080}
   page="materials"
@@ -118,21 +112,19 @@ const drillAccents = [
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="grid gap-8 lg:grid-cols-[1fr_0.85fr]">
       <div class="surface-card p-8 md:p-10" data-float>
-        <p class="section-kicker">Mobility at home</p>
+        <p class="section-kicker">Train at home</p>
         <h1 class="section-title mt-5 max-w-3xl" style="font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height: 0.95;">
-          Stay <span class="ink-underline">loose</span>
+          Four pillars,
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">between</span>
-          sessions.
+          <span class="ink-underline">sessions</span>.
         </h1>
         <p class="body-copy mt-6 max-w-3xl">
-          A short mobility routine kids can do at home — on a rug, on a towel, no equipment.
-          Hips, spine, and shoulders, so paddling feels easier and the pop-up lands clean.
+          A short library of videos kids can press play on at home — mobility, strength,
+          pop-up and paddle technique, and a breathing practice to start the day right.
         </p>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          <span class="chip">No equipment</span>
-          <span class="chip">10–15 minutes</span>
-          <span class="chip">Hips · spine · shoulders</span>
+          {pillars.map((p) => <span class="chip">{p.title}</span>)}
         </div>
       </div>
 
@@ -147,7 +139,7 @@ const drillAccents = [
         <div class="wobble absolute -bottom-5 -right-4 hidden md:block">
           <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-4 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
             <p class="font-display text-sm font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
-              ✦ loose. ready.
+              ✦ press play.
             </p>
           </div>
         </div>
@@ -155,87 +147,57 @@ const drillAccents = [
     </div>
   </section>
 
-  <!-- ===================== MOBILITY DRILLS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card p-8 md:p-10" data-reveal>
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p class="section-kicker">The routine</p>
-          <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
-            Six moves, top to bottom.
-          </h2>
+  <!-- ===================== PILLARS ===================== -->
+  {pillars.map((pillar) => (
+    <section class="mx-auto max-w-7xl px-6 py-6 lg:px-10">
+      <div class:list={["surface-card p-8 md:p-10", pillar.accent]} data-reveal>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="max-w-2xl">
+            <p class="section-kicker">{pillar.kicker}</p>
+            <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+              {pillar.title}
+            </h2>
+            <p class="body-copy mt-4">{pillar.blurb}</p>
+          </div>
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+            {pillar.videos.length} {pillar.videos.length === 1 ? "video" : "videos"}
+          </p>
         </div>
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
-          {mobilityDrills.length} drills ✦ at home
-        </p>
-      </div>
 
-      <div class="mt-8 grid gap-5 md:grid-cols-2">
-        {mobilityDrills.map((drill, i) => (
-          <article class:list={[
-            "relative rounded-[1.6rem] border-2 border-[var(--color-ink-950)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)] transition-transform duration-300 hover:-translate-y-1",
-            drillAccents[i % drillAccents.length],
-          ]}>
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="tag-pill">{drill.focus}</span>
-              <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
-                {drill.reps}
-              </span>
-            </div>
-            <p class="mt-5 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-              {drill.name}
-            </p>
-            <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{drill.description}</p>
-            <div class="mt-4 border-t border-dashed border-[var(--color-ink-950)]/30 pt-4">
-              <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">Why it matters</p>
-              <p class="mt-2 text-[0.9rem] leading-6 text-[var(--color-ink-950)]/80">{drill.why}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== VIDEO REFS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card sticker-sun p-8 md:p-10" data-reveal>
-      <p class="section-kicker">Watch + copy</p>
-      <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-        Mobility video references.
-      </h2>
-      <div class="mt-8 grid gap-3 md:grid-cols-2">
-        {videoReferences.map((video) => (
-          <a
-            href={video.href}
-            target="_blank"
-            rel="noreferrer"
-            class="group flex items-center gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
-          >
-            <div class="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
-              <img
-                src={video.image}
-                alt={video.name}
-                class="h-full w-full object-cover"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(11,22,32,0.55))]"></div>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
-                  <span class="ml-0.5 text-[0.7rem]">▶</span>
+        <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {pillar.videos.map((video) => (
+            <a
+              href={video.href}
+              target="_blank"
+              rel="noreferrer"
+              class="group overflow-hidden rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] shadow-[4px_4px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--color-ink-950)]"
+            >
+              <div class="relative aspect-video w-full overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
+                <img
+                  src={video.image}
+                  alt={video.name}
+                  class="h-full w-full object-cover"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(11,22,32,0.6))]"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
+                    <span class="ml-0.5 text-sm">▶</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="min-w-0">
-              <p class="font-display text-lg leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-                {video.name}
-              </p>
-              <p class="mt-1 truncate font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
-                {new URL(video.href).hostname.replace("www.", "")}
-              </p>
-            </div>
-          </a>
-        ))}
+              <div class="p-4">
+                <p class="font-display text-lg leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {video.name}
+                </p>
+                <p class="mt-1 truncate font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                  {new URL(video.href).hostname.replace("www.", "")}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </BaseLayout>
