@@ -222,9 +222,9 @@ export const site = {
         accent: "sticker-pink",
       },
       {
-        title: "Volunteer roles sheet",
+        title: "Volunteer roles & kit",
         file: "/templates/volunteer-roles.html",
-        description: "Seven roles to fill — water, build-up, clean-up, BBQ, healthy snacks, media, first aid.",
+        description: "Two lists: who's doing a role on the day, and who's bringing tents, chairs, tables, cooler, snacks.",
         emoji: "🙌",
         accent: "sticker-teal",
       },
@@ -234,13 +234,6 @@ export const site = {
         description: "Owners + due dates from now through Friday 29 May.",
         emoji: "✅",
         accent: "sticker-sun",
-      },
-      {
-        title: "Equipment checklist",
-        file: "/templates/equipment-checklist.html",
-        description: "Who's bringing the BBQ, sound system, drone, billboard, tent, cooler boxes, MC mic — claim a line.",
-        emoji: "🎪",
-        accent: "sticker-teal",
       },
       {
         title: "Shopping list",
