@@ -190,6 +190,7 @@ export const site = {
   locale: "en_MU",
   description:
     "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week.",
+    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week.",
   ogImage: {
     path: "/media/andras-hejj.jpg",
     width: 1504,
