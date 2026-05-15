@@ -3,12 +3,12 @@ import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const cup = site.cup;
-const title = `${cup.name} — first ever, 30 May 2026 | ${site.name}`;
+const title = `${cup.name} · first ever, 30 May 2026 | ${site.name}`;
 const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at Tamarin Bay. Heats of 4, two divisions, parent heat, BBQ, prizes for every duckling. Sign up + download templates.`;
 
 ---
 
-<BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup — Tamarin Bay">
+<BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup at Tamarin Bay">
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
     <div class="absolute inset-0 -z-10">
@@ -185,8 +185,7 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
           Five tick boxes per wave.
         </h2>
         <p class="body-copy mt-4">
-          Three judges, one clipboard each. Per wave they tick the boxes that earned a yes — bias
-          toward yes when in doubt. Best 2 waves count, max 10 ticks. Tiebreak by total waves.
+          Three judges, one clipboard each. Per wave they tick the boxes that earned a yes. Bias toward yes when in doubt. Best 2 waves count, max 10 ticks. Tiebreak by total waves.
         </p>
         <div class="mt-6 flex flex-wrap gap-2">
           <span class="chip">10 min heats</span>
@@ -255,7 +254,7 @@ const description = `The first ever ${cup.name} happens Saturday 30 May 2026 at 
                 <p class="text-[0.95rem]">
                   <span class="mr-2 text-lg">{prize.emoji}</span>
                   <strong style="font-family: var(--font-display); font-variation-settings: 'wdth' 110;">{prize.title}</strong>
-                  <span class="text-[var(--color-ink-950)]/72"> — {prize.text}</span>
+                  <span class="text-[var(--color-ink-950)]/72">. {prize.text}</span>
                 </p>
               </div>
             ))}

@@ -190,7 +190,6 @@ export const site = {
   locale: "en_MU",
   description:
     "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week.",
-    "Kids' surf club in Tamarin Bay. A small crew of young surfers paddling out twice a week.",
   ogImage: {
     path: "/media/andras-hejj.jpg",
     width: 1504,
@@ -216,7 +215,7 @@ export const site = {
       role: "Founder",
       href: "https://andrashejj.com",
       image: "/media/andras-hejj.jpg",
-      bio: "Runs the club on consistency, trust, and a safe path for kids to fall in love with surfing.",
+      bio: "Runs the club on consistency and trust, giving kids a safe way into surfing.",
     },
   ],
   sponsors,
@@ -247,7 +246,7 @@ export const site = {
   },
   cup: {
     name: "Sunset Duckies Cup",
-    edition: "Vol. 01 — first ever",
+    edition: "Vol. 01 · first ever",
     dateLabel: "Saturday · 30 May 2026",
     dateISO: "2026-05-30",
     timeLabel: "13:00 – 17:30",
@@ -276,7 +275,7 @@ export const site = {
       { time: "13:00", label: "Arrival + warm-up on the sand", emoji: "🌅" },
       { time: "14:00", label: "Duckling heats", emoji: "🐤" },
       { time: "~14:45", label: "Duck heats", emoji: "🦆" },
-      { time: "15:30", label: "Break — BBQ + free surf", emoji: "🍔" },
+      { time: "15:30", label: "Break, BBQ, free surf", emoji: "🍔" },
       { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
       { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
       { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
@@ -328,7 +327,7 @@ export const site = {
     parentHeat: {
       title: "The Parent Heat 🦆",
       blurb:
-        "After the kids' finals, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
+        "After the kids' finals, four parents are going in the water. Same rules, same scoring. Kids vote for the side awards, loudest cheer wins.",
       awards: [
         "Best Dad Stance",
         "Best Mom Stance",
@@ -349,7 +348,7 @@ export const site = {
       {
         title: "Registration form",
         file: "/templates/registration-form.html",
-        description: "Printable form for parents to fill in — surfer info, division, consents, fee receipt.",
+        description: "Printable form for parents to fill in. Surfer info, division, consents, fee receipt.",
         emoji: "📝",
         accent: "sticker-coral",
       },
@@ -363,7 +362,7 @@ export const site = {
       {
         title: "Run-of-show / timetable",
         file: "/templates/run-of-show.html",
-        description: "The full minute-by-minute for the day — print and pin at the registration desk.",
+        description: "The full minute-by-minute for the day. Print and pin at the registration desk.",
         emoji: "🕒",
         accent: "sticker-teal",
       },
@@ -377,14 +376,14 @@ export const site = {
       {
         title: "MC script & cheat sheet",
         file: "/templates/mc-script.html",
-        description: "Opening, heat intros, live calls, awards script — the whole MC playbook.",
+        description: "Opening, heat intros, live calls, awards script. The whole MC playbook.",
         emoji: "🎤",
         accent: "sticker-pink",
       },
       {
         title: "Volunteer sheet",
         file: "/templates/volunteer-roles.html",
-        description: "Doing and bringing — claim a role or an item.",
+        description: "Doing and bringing. Claim a role or an item.",
         emoji: "🙌",
         accent: "sticker-teal",
       },
@@ -398,21 +397,21 @@ export const site = {
       {
         title: "Shopping list",
         file: "/templates/shopping-list.html",
-        description: "Sausages, buns, sides, drinks, charcoal — quantities for ~25 mouths with rough MUR costs.",
+        description: "Sausages, buns, sides, drinks, charcoal. Quantities for ~25 mouths with rough MUR costs.",
         emoji: "🛒",
         accent: "sticker-pink",
       },
       {
         title: "Finisher certificate",
         file: "/templates/finisher-certificate.html",
-        description: "Personalised certificate template — print one per duckling.",
+        description: "Personalised certificate template. Print one per duckling.",
         emoji: "🏆",
         accent: "sticker-coral",
       },
       {
         title: "Parent WhatsApp message",
         file: "/templates/parent-whatsapp-message.txt",
-        description: "Drop straight into the parents' group — copy, paste, send.",
+        description: "Drop straight into the parents' group. Copy, paste, send.",
         emoji: "💬",
         accent: "sticker-lilac",
       },
@@ -429,14 +428,14 @@ export const site = {
     },
     {
       title: "A local crew",
-      text: "Not a surf school drop-off — a club of kids, families, and coaches who keep coming back.",
+      text: "A club of kids, families, and coaches who keep coming back to the same lineup.",
     },
   ],
   shop: {
     dropLabel: "Drop 001 · Founding kit",
     tagline: "Reserve at sesh. Pickup at sesh.",
     intro:
-      "The first wave of Sunset Duckies kit — tested on salty kids, printed in small runs in Tamarin. Reserve a piece for your duckie, pick it up at the next Wed/Fri sesh.",
+      "The first wave of Sunset Duckies kit. Tested on salty kids, printed in small runs in Tamarin. Reserve a piece for your duckie and grab it at the next Wed or Fri sesh.",
     steps: [
       {
         title: "Pick a piece",
