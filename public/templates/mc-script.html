@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — MC Script</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff72a6; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.55; }
+    .sheet { max-width: 780px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.2rem; margin: 28px 0 8px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    .quote { background: var(--cream); border: 2px solid var(--ink); border-radius: 14px; padding: 16px 18px; margin: 12px 0; box-shadow: 3px 3px 0 0 var(--ink); font-style: italic; font-size: 1.02rem; }
+    .quote::before { content: "🎤 "; font-style: normal; }
+    .tip { background: rgba(7,201,182,0.18); border: 1.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; margin: 10px 0; font-size: 0.92rem; }
+    ul { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ MC playbook</span>
+    <h1>MC script &amp; cheat sheet 🎤</h1>
+    <p class="meta">Warm, loud, a little silly. The MC is the heartbeat of the event.</p>
+
+    <div class="tip"><strong>Tone:</strong> name every kid every chance you get. Cheer every paddle. Never call out a missed pop-up — celebrate the next one. Music between heats, mic on for every wave.</div>
+
+    <h2>Welcome &amp; warm-up — 13:00</h2>
+    <div class="quote">
+      "Welcome to the first ever Sunset Duckies Cup! Quick warm-up on the sand, heat numbers going
+      on arms, heat boards going up. We're surfing at two — every duckling please be checked in by
+      half past one. Parents, the registration desk is right there. Let's go."
+    </div>
+
+    <h2>Opening — 14:00 (first heat)</h2>
+    <div class="quote">
+      "Welcome to the first ever Sunset Duckies Cup! Today is about celebrating how far each of you
+      ducklings has come. Heats of 4, ten minutes. Our judges aren't looking for tricks — they're
+      looking for what your coaches taught you: paddle hard, pop up, stand tall, ride it in, finish
+      with a smile. Parents — cheer for every kid in the water, not just yours. Let's surf!"
+    </div>
+
+    <h2>Heat intro (every heat)</h2>
+    <div class="quote">
+      "Up next, Heat ___. In red, ___. In yellow, ___. In blue, ___. In green, ___.
+      Ducklings, paddle out — your ten minutes start NOW!"
+    </div>
+
+    <h2>Live calls (energy, not analysis)</h2>
+    <ul>
+      <li>"Big paddle from ___ — she's going for it! POP UP — and she's RIDING IT!"</li>
+      <li>"Three minutes left, still time for one more!"</li>
+      <li>"Beautiful kick-out, ___, that's a finish!"</li>
+      <li>"Look at that stance — knees bent, eyes up, locked in!"</li>
+      <li>"Wipeout but the smile is BIGGER — that's Best Wipeout energy!"</li>
+    </ul>
+
+    <h2>Break (15:30)</h2>
+    <div class="quote">
+      "Ducklings — BBQ is open! Grab food, dry off, get warm. Finals start at four sharp.
+      Parents — heads up, the parent heat is at half four and we have four spots. Talk to me."
+    </div>
+
+    <h2>Parent Heat (16:30)</h2>
+    <div class="quote">
+      "Alright ducklings — THIS is the moment. Four parents, ten minutes, same five tick boxes.
+      But YOU are the judges for the side awards. We're voting Biggest Wipeout, Loudest Claim,
+      Most Determined Paddle, Best Dad Stance, Best Mom Stance. Loudest cheer wins.
+      Let's see what they've got!"
+    </div>
+
+    <h2>Awards — 17:00</h2>
+    <p>Every side award gets a one-line story. Hand the mic to Andras or Dori for the crowns.</p>
+    <div class="quote">
+      "The Sunset Stoke Award goes to ___ — for the biggest claim we've ever seen on a knee-high wave!"
+    </div>
+    <div class="tip">
+      <strong>Order:</strong> 6 side awards (kids) → 4 crowns (Duckling K&amp;Q, Duck K&amp;Q) → parent side awards → certificates handed out as kids leave.
+    </div>
+
+    <h2>Closing</h2>
+    <div class="quote">
+      "First ever Sunset Duckies Cup — in the books. Massive thanks to the coaches, the parents who
+      showed up, our judges, our sponsors, and every single duckling who paddled out today.
+      See you Wednesday at the bay."
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

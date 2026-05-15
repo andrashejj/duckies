@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Shopping List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
+    .sheet { max-width: 920px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--pink); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.15rem; margin: 26px 0 8px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    h2 .emoji { font-size: 1.3rem; }
+    .lede { font-size: 1rem; margin: 6px 0 16px; max-width: 64ch; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    .servings { display: inline-block; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.7rem; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; margin: 8px 6px 8px 0; box-shadow: 2px 2px 0 0 var(--ink); }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 8px; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.9rem; text-align: left; vertical-align: top; }
+    th { font-family: "JetBrains Mono", monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); border-bottom: 2px solid var(--ink); }
+    td.box { width: 28px; text-align: center; }
+    .check { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; background: var(--cream); }
+    td.item { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.98rem; }
+    td.qty { width: 90px; font-family: "JetBrains Mono", monospace; font-size: 0.82rem; }
+    td.cost { width: 110px; font-family: "JetBrains Mono", monospace; font-size: 0.82rem; text-align: right; color: rgba(11,22,32,0.78); }
+    td.owner { width: 140px; }
+    .blank-inline { display: inline-block; min-width: 110px; border-bottom: 1.5px solid var(--ink); }
+    tfoot td { border-top: 2px solid var(--ink); border-bottom: none; padding-top: 12px; font-family: "JetBrains Mono", monospace; font-size: 0.82rem; }
+    tfoot td strong { font-weight: 700; }
+    .summary { margin-top: 10px; padding: 14px 16px; background: rgba(7,201,182,0.18); border: 1.5px solid var(--ink); border-radius: 12px; display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: baseline; }
+    .summary div { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; }
+    .summary strong { font-family: "Bricolage Grotesque", sans-serif; font-size: 1.05rem; }
+    .note { margin-top: 22px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.92rem; }
+    .stores { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+    .stores span { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; border: 1.5px solid var(--ink); padding: 0.2rem 0.55rem; border-radius: 999px; background: var(--cream); }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ BBQ shopping run</span>
+    <h1>Shopping list 🛒</h1>
+    <p class="lede">Everything to buy for the day. Quantities are sized for ~25 mouths (10 kids, 12 parents, 3 volunteers). Costs are rough MUR estimates from Winners / Super U / Spar Cascavelle — adjust as you go.</p>
+    <p class="meta">Buy by Thu 28 May · Tamarin or Cascavelle · keep receipts for the fee pot</p>
+
+    <div>
+      <span class="servings">🐤 ~25 servings</span>
+      <span class="servings">🌶️ Mild for the kids</span>
+      <span class="servings">💸 Budget Rs ~6,000</span>
+    </div>
+
+    <h2><span class="emoji">🌭</span> Mains — from the grill</h2>
+    <div class="stores"><span>Butcher (Tamarin)</span><span>Winners</span><span>Super U</span></div>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Sausages (merguez / chipolata mix)</td><td class="qty">30 pcs · ~2 kg</td><td class="cost">Rs 900</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Chicken thighs / drumsticks</td><td class="qty">2 kg</td><td class="cost">Rs 600</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Beef burger patties</td><td class="qty">15 pcs</td><td class="cost">Rs 750</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Veggie / halloumi option</td><td class="qty">4 portions</td><td class="cost">Rs 400</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~2,650</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🍞</span> Carbs — buns + bread</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Hot-dog rolls / pistolets</td><td class="qty">30</td><td class="cost">Rs 300</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Burger buns</td><td class="qty">15</td><td class="cost">Rs 200</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Baguettes (backup)</td><td class="qty">3</td><td class="cost">Rs 120</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~620</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🥗</span> Sides + salads</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Salad mix / lettuce</td><td class="qty">2 bags</td><td class="cost">Rs 150</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Tomatoes</td><td class="qty">1 kg</td><td class="cost">Rs 100</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Cucumber</td><td class="qty">3 pcs</td><td class="cost">Rs 60</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Red onions</td><td class="qty">4 pcs</td><td class="cost">Rs 50</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Coleslaw (ready-made)</td><td class="qty">1 tub</td><td class="cost">Rs 180</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Crisps / chips (variety)</td><td class="qty">4 bags</td><td class="cost">Rs 240</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~780</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🥫</span> Condiments + extras</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Ketchup</td><td class="qty">1 big bottle</td><td class="cost">Rs 120</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Mustard</td><td class="qty">1 bottle</td><td class="cost">Rs 90</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Mayo</td><td class="qty">1 jar</td><td class="cost">Rs 110</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Sweet chilli sauce</td><td class="qty">1 bottle</td><td class="cost">Rs 100</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Butter / margarine</td><td class="qty">250g</td><td class="cost">Rs 90</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Salt + pepper</td><td class="qty">1 each</td><td class="cost">Rs 60</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~570</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🧃</span> Drinks</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Water bottles (small, 500ml)</td><td class="qty">2 packs of 12</td><td class="cost">Rs 240</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Water (big, 5L)</td><td class="qty">2</td><td class="cost">Rs 150</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Juice cartons (kids)</td><td class="qty">15</td><td class="cost">Rs 300</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Phoenix beer / soda (parents)</td><td class="qty">1 case</td><td class="cost">Rs 700</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Ice (big bag)</td><td class="qty">2 bags</td><td class="cost">Rs 160</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~1,550</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🍉</span> Snacks + treats</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Bananas (post-surf energy)</td><td class="qty">2 dozen</td><td class="cost">Rs 150</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Watermelon</td><td class="qty">1 big</td><td class="cost">Rs 180</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Cookies / biscuits</td><td class="qty">2 packs</td><td class="cost">Rs 200</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Sweets for the prize bags</td><td class="qty">1 mixed pack</td><td class="cost">Rs 150</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~680</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <h2><span class="emoji">🔥</span> Fuel + disposables</h2>
+    <table>
+      <thead><tr><th></th><th>Item</th><th>Qty</th><th>Est. cost</th><th>Buyer</th></tr></thead>
+      <tbody>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Charcoal</td><td class="qty">5 kg</td><td class="cost">Rs 250</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Fire starters / firelighters</td><td class="qty">1 pack</td><td class="cost">Rs 80</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Aluminium foil + tongs (if missing)</td><td class="qty">1 roll</td><td class="cost">Rs 100</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Paper plates</td><td class="qty">40</td><td class="cost">Rs 120</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Paper cups</td><td class="qty">40</td><td class="cost">Rs 100</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Napkins / paper towels</td><td class="qty">2 packs</td><td class="cost">Rs 120</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Wooden cutlery</td><td class="qty">40</td><td class="cost">Rs 140</td><td class="owner"><span class="blank-inline"></span></td></tr>
+        <tr><td class="box"><span class="check"></span></td><td class="item">Hand sanitizer / wet wipes</td><td class="qty">1 each</td><td class="cost">Rs 150</td><td class="owner"><span class="blank-inline"></span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3"><strong>Section subtotal</strong></td><td class="cost"><strong>Rs ~1,060</strong></td><td></td></tr></tfoot>
+    </table>
+
+    <div class="summary">
+      <div>Mains <strong>Rs 2,650</strong></div>
+      <div>Carbs <strong>Rs 620</strong></div>
+      <div>Sides <strong>Rs 780</strong></div>
+      <div>Condiments <strong>Rs 570</strong></div>
+      <div>Drinks <strong>Rs 1,550</strong></div>
+      <div>Snacks <strong>Rs 680</strong></div>
+      <div>Fuel + disposables <strong>Rs 1,060</strong></div>
+      <div style="margin-left:auto;">Total <strong>≈ Rs 7,910</strong></div>
+    </div>
+
+    <div class="note">
+      <strong>Receipts → Andras.</strong> Keep every till slip, photograph it, drop it in the WhatsApp. Anything covered by a sponsor goes on a separate line so the books stay clean. Gear (BBQ, cooler, sound, tent) is on the volunteer sheet under "who's bringing" — don't buy it, just borrow.
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

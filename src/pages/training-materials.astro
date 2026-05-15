@@ -6,174 +6,97 @@ import { site } from "../data/site";
 
 const title = `Training Materials | ${site.name}`;
 const description =
-  "A practical Sunset Duckies training library built from the real Tamarin coaching framework: session structure, land drills, water drills, and video references.";
+  "At-home training videos for young Sunset Duckies surfers: body work and breathing practice.";
 
-const sessionStructure = [
-  "Welcome, rules, and today's plan",
-  "Playful opener to get loose",
-  "Warmup and stretch",
-  "Theory on the sand",
-  "Water block with one focus",
-  "Debrief and goodbye",
-];
+type Video = {
+  name: string;
+  href: string;
+  image: string;
+};
 
-const guidingIdeas = [
-  "Get the physical foundation right first: paddling strength, explosive pop-up, and enough fitness that one hour in the water does not destroy the kids.",
-  "Keep the session frame rigid and the content inside it flexible. Kids progress better when they know what comes next.",
-  "Focus on one water skill per session, not three. Repetition beats noise.",
-];
+type Pillar = {
+  kicker: string;
+  title: string;
+  blurb: string;
+  accent: string;
+  videos: Video[];
+  playlist?: { label: string; href: string };
+};
 
-const movementExercises = [
-  {
-    name: "Pop-Up Races",
-    tags: ["strength", "coordination", "pairs"],
-    description:
-      "Lie flat on the sand, pop up to surf stance on the whistle, and let a partner check foot placement and hand position.",
-    surfRelevance:
-      "Directly trains the chest-to-feet explosive movement for taking off on a wave.",
-  },
-  {
-    name: "Surf Stance Balance Duel",
-    tags: ["balance", "pairs"],
-    description:
-      "Both surfers hold a low surf stance and try to unbalance each other using gentle palm pushes on the shoulders only.",
-    surfRelevance:
-      "Builds the low-center-of-gravity balance needed for whitewater rides and early turns.",
-  },
-  {
-    name: "Paddle-Up Relay",
-    tags: ["strength", "cardio", "group"],
-    description:
-      "Teams lie on their bellies, paddle arms in the air with good form, then sprint to tag the next teammate.",
-    surfRelevance:
-      "Builds paddle endurance and arm speed for catching waves before they pass.",
-  },
-  {
-    name: "Wave Jump Drill",
-    tags: ["balance", "cardio", "group"],
-    description:
-      "Jump side to side over a line in the sand and land in surf stance every time.",
-    surfRelevance:
-      "Trains reactive balance when the board shifts under changing wave energy.",
-  },
-  {
-    name: "Turtle Roll Practice",
-    tags: ["coordination", "balance", "individual"],
-    description:
-      "Roll from back to belly while holding an imaginary board overhead, then start paddling immediately.",
-    surfRelevance:
-      "Introduces the body pattern for getting through whitewater without losing the board.",
-  },
-  {
-    name: "Sand Sprint Pop-Up",
-    tags: ["strength", "cardio", "coordination"],
-    description:
-      "Sprint 10 meters, drop to your belly, hit one clean pop-up, and sprint back.",
-    surfRelevance:
-      "Combines cardio and pop-up mechanics under fatigue, closer to real surf conditions.",
-  },
-];
+const kaiLennyImage = "/media/video-thumb-superhero.jpg";
+const ytThumb = (id: string) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
-const waterDrills = [
+const pillars: Pillar[] = [
   {
-    name: "Paddle Sprint Relay",
-    category: "paddle",
-    description: "Teams of two paddle to a marker and back, then tag their partner.",
+    kicker: "Pillar 01",
+    title: "Body",
+    blurb:
+      "Mobility, strength, and technique in one stack. Loose hips and open shoulders for a smoother paddle, bodyweight reps for the push-up and the legs underneath your stance, and pop-up mechanics drilled slow on a rug. Short sessions, clean shape, eyes forward — the way you move at home is the way you'll move on the wave.",
+    accent: "sticker-teal",
+    videos: [
+      {
+        name: "Kai Lenny warm-up flow",
+        href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
+        image: kaiLennyImage,
+      },
+      {
+        name: "Surf strength session",
+        href: "https://www.youtube.com/watch?v=-UD25_kIpRY",
+        image: ytThumb("-UD25_kIpRY"),
+      },
+      {
+        name: "Hydromind knee pop-ups",
+        href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
+        image: ytThumb("0FjVJB-ZUw0"),
+      },
+      {
+        name: "Mobility & stability short",
+        href: "https://www.youtube.com/shorts/7G-zkCXGdE0",
+        image: ytThumb("7G-zkCXGdE0"),
+      },
+      {
+        name: "Surf mobility session",
+        href: "https://www.youtube.com/watch?v=UXsuPzkXWdM",
+        image: ytThumb("UXsuPzkXWdM"),
+      },
+      {
+        name: "DIY paddle strength",
+        href: "https://www.youtube.com/watch?v=q4BuEP9iF1U",
+        image: ytThumb("q4BuEP9iF1U"),
+      },
+    ],
+    playlist: {
+      label: "Coach playlist on YouTube",
+      href: "https://www.youtube.com/playlist?list=PLi_pAxm43UQqNRuzrUkGTB9W24-IaB6He",
+    },
   },
   {
-    name: "Surf Statue",
-    category: "board control",
-    description: "Stand on the board in flat water and hold surf stance as long as possible.",
-  },
-  {
-    name: "Treasure Hunt",
-    category: "water confidence",
-    description: "Collect shells in waist-deep water and come back smiling.",
-  },
-  {
-    name: "Whitewash Push-Through",
-    category: "swimming",
-    description: "Walk or swim through small wash while keeping the board steady.",
+    kicker: "Pillar 02",
+    title: "Mind",
+    blurb:
+      "Start the day calm and energised. A few minutes of Qigong gets the body awake; a round of Wim Hof breathing teaches you to stay relaxed when sets roll through. This is the quiet pillar — it makes the body work better.",
+    accent: "sticker-lilac",
+    videos: [
+      {
+        name: "Qigong morning practice",
+        href: "https://youtu.be/1mzttMHlr20",
+        image: ytThumb("1mzttMHlr20"),
+      },
+      {
+        name: "Wim Hof breathing",
+        href: "https://www.youtube.com/watch?v=avZ_5Cot0wY",
+        image: ytThumb("avZ_5Cot0wY"),
+      },
+    ],
   },
 ];
-
-const videoReferences = [
-  {
-    name: "Hip Circles / Mobility reference",
-    href: "https://www.facebook.com/Rapturecamps/videos/1439071064290953/",
-    image: "/media/video-thumb-facebook.jpg",
-  },
-  {
-    name: "Crocodile Twist",
-    href: "https://www.tiktok.com/@redbullsurfing/video/7529540352924060950",
-    image: "/media/young-rider.jpg",
-  },
-  {
-    name: "Pop-Up Push-Ups",
-    href: "https://www.instagram.com/reel/C0325b5yTKS/",
-    image: "/media/video-thumb-popup.jpg",
-  },
-  {
-    name: "Superhero Hold",
-    href: "https://www.instagram.com/reel/DQcm4DsEhuA/",
-    image: "/media/video-thumb-superhero.jpg",
-  },
-  {
-    name: "Exercise Reference 5",
-    href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
-    image: "https://img.youtube.com/vi/0FjVJB-ZUw0/hqdefault.jpg",
-  },
-  {
-    name: "Exercise Reference 6",
-    href: "https://youtu.be/-UD25_kIpRY?si=zCRQN5QS4CEnP5X0",
-    image: "https://img.youtube.com/vi/-UD25_kIpRY/hqdefault.jpg",
-  },
-  {
-    name: "Exercise Reference 7",
-    href: "https://www.youtube.com/shorts/9A9I1PbtS8U",
-    image: "https://img.youtube.com/vi/9A9I1PbtS8U/hqdefault.jpg",
-  },
-  {
-    name: "Exercise Reference 8",
-    href: "https://www.youtube.com/shorts/6oMIfHxKlZQ",
-    image: "https://img.youtube.com/vi/6oMIfHxKlZQ/hqdefault.jpg",
-  },
-];
-
-const featuredVideos = [
-  {
-    title: "Slow rolling wave reference",
-    description:
-      "Use this to talk through wave shape, timing, and what a calm, readable section looks like before kids paddle out.",
-    src: "/media/hero-stock.mp4",
-    poster: "/media/hero-stock-poster.jpg",
-  },
-  {
-    title: "Surf stance and whitewater feel",
-    description:
-      "A short surf clip to keep the visual connection between land drills and what the kids are trying to do in the water.",
-    src: "/media/hero-wave.mp4",
-    poster: "/media/hero-poster.jpg",
-  },
-];
-
-const exerciseAccents = [
-  "sticker-coral",
-  "sticker-teal",
-  "sticker-sun",
-  "sticker-pink",
-  "sticker-lilac",
-  "sticker-teal",
-];
-
-const tagPillColors = ["", "pink", "sun", "lilac"];
 ---
 
 <BaseLayout
   title={title}
   description={description}
   image="/media/balance-training.jpg"
-  imageAlt="Balance training drills from the Sunset Duckies coaching framework."
+  imageAlt="Young Sunset Duckies surfers training between sessions."
   imageWidth={1920}
   imageHeight={1080}
 >
@@ -181,24 +104,21 @@ const tagPillColors = ["", "pink", "sun", "lilac"];
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="grid gap-8 lg:grid-cols-[1fr_0.85fr]">
       <div class="surface-card p-8 md:p-10" data-float>
-        <p class="section-kicker">Training library</p>
+        <p class="section-kicker">Train at home</p>
         <h1 class="section-title mt-5 max-w-3xl" style="font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height: 0.95;">
-          Train the <span class="ink-underline">right</span> habits
+          Body and mind,
           <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">between</span>
-          sessions.
+          <span class="ink-underline">sessions</span>.
         </h1>
         <p class="body-copy mt-6 max-w-3xl">
-          The Sunset Duckies library for kids and families who want to keep the streak alive outside the
-          Wednesday and Friday sessions. It pulls together the actual coaching structure we run in
-          Tamarin: mobility, pop-up mechanics, paddling strength, balance, and simple water-confidence
-          work that matches where the crew is at right now.
+          A small library of videos kids can press play on at home, between the Wednesday
+          and Friday sessions. Two pillars — body work (mobility, strength, technique) and a
+          breathing practice for the mind — each pointing to a handful of clips we actually use.
+          Short, repeatable, no equipment. Open the app, follow along, get back to the water.
         </p>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          <span class="chip">Beach session framework</span>
-          <span class="chip">Land-based drills</span>
-          <span class="chip">Water confidence work</span>
-          <span class="chip">Real video references</span>
+          {pillars.map((p) => <span class="chip">{p.title}</span>)}
         </div>
       </div>
 
@@ -206,14 +126,14 @@ const tagPillColors = ["", "pink", "sun", "lilac"];
         <div class="media-frame min-h-[22rem] tilt-right transition-transform duration-500">
           <img
             src="/media/sunset-training.jpg"
-            alt="Kids gathering on the beach for Sunset Duckies training at sunset."
+            alt="Young Sunset Duckies surfers on the beach at sunset."
             loading="eager"
           />
         </div>
         <div class="wobble absolute -bottom-5 -right-4 hidden md:block">
           <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-4 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
             <p class="font-display text-sm font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
-              ✦ drill. repeat. send it.
+              ✦ press play.
             </p>
           </div>
         </div>
@@ -221,134 +141,46 @@ const tagPillColors = ["", "pink", "sun", "lilac"];
     </div>
   </section>
 
-  <!-- ===================== GUIDING IDEAS + SESSION STRUCTURE ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-      <div class="surface-card sticker-teal p-8" data-reveal>
-        <p class="section-kicker">Guiding ideas</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Build the <span class="ink-underline">base</span> first.
-        </h2>
-        <div class="mt-6 grid gap-4">
-          {guidingIdeas.map((idea, i) => (
-            <div class="rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-              <div class="flex items-start gap-3">
-                <span class="font-mono text-xs font-semibold text-[var(--color-coral-500)]">{String(i + 1).padStart(2, "0")}</span>
-                <p class="text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">{idea}</p>
-              </div>
-            </div>
-          ))}
+  <!-- ===================== PILLARS ===================== -->
+  {pillars.map((pillar) => (
+    <section class="mx-auto max-w-7xl px-6 py-6 lg:px-10">
+      <div class:list={["surface-card p-8 md:p-10", pillar.accent]} data-reveal>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="max-w-2xl">
+            <p class="section-kicker">{pillar.kicker}</p>
+            <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+              {pillar.title}
+            </h2>
+            <p class="body-copy mt-4">{pillar.blurb}</p>
+          </div>
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+            {pillar.videos.length} {pillar.videos.length === 1 ? "video" : "videos"}
+          </p>
         </div>
-      </div>
 
-      <div class="surface-card sticker-coral p-8" data-reveal>
-        <p class="section-kicker">Session structure</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Same <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">frame</span>, every time.
-        </h2>
-        <div class="mt-6 grid gap-3">
-          {sessionStructure.map((step, index) => (
-            <div class="flex items-start gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-              <span class="step-bubble">{index + 1}</span>
-              <p class="pt-1.5 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/80">{step}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== LAND DRILLS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card p-8 md:p-10" data-reveal>
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p class="section-kicker">Land drills</p>
-          <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
-            The actual exercises from the coaching book.
-          </h2>
-        </div>
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
-          {movementExercises.length} drills ✦ all on the sand
-        </p>
-      </div>
-
-      <div class="mt-8 grid gap-5 md:grid-cols-2">
-        {movementExercises.map((exercise, i) => (
-          <article class:list={[
-            "relative rounded-[1.6rem] border-2 border-[var(--color-ink-950)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)] transition-transform duration-300 hover:-translate-y-1",
-            exerciseAccents[i % exerciseAccents.length],
-          ]}>
-            <div class="flex flex-wrap gap-2">
-              {exercise.tags.map((tag, ti) => (
-                <span class:list={["tag-pill", tagPillColors[ti % tagPillColors.length]]}>{tag}</span>
-              ))}
-            </div>
-            <p class="mt-5 font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-              {exercise.name}
-            </p>
-            <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{exercise.description}</p>
-            <div class="mt-4 border-t border-dashed border-[var(--color-ink-950)]/30 pt-4">
-              <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">Why it matters</p>
-              <p class="mt-2 text-[0.9rem] leading-6 text-[var(--color-ink-950)]/80">{exercise.surfRelevance}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== WATER DRILLS + VIDEO REFS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <div class="surface-card sticker-teal p-8" data-reveal>
-        <p class="section-kicker">Water drills</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          One clean <span class="ink-underline">focus</span> per session.
-        </h2>
-        <div class="mt-6 grid gap-4">
-          {waterDrills.map((drill) => (
-            <div class="rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-              <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
-                {drill.category}
-              </p>
-              <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-                {drill.name}
-              </p>
-              <p class="mt-2 text-[0.92rem] leading-7 text-[var(--color-ink-950)]/75">{drill.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div class="surface-card sticker-sun p-8" data-reveal>
-        <p class="section-kicker">Video references</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Links straight from the coaching notes.
-        </h2>
-        <div class="mt-6 grid gap-3">
-          {videoReferences.map((video) => (
+        <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {pillar.videos.map((video) => (
             <a
               href={video.href}
               target="_blank"
               rel="noreferrer"
-              class="group flex items-center gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
+              class="group overflow-hidden rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] shadow-[4px_4px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--color-ink-950)]"
             >
-              <div class="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
+              <div class="relative aspect-video w-full overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
                 <img
                   src={video.image}
                   alt={video.name}
                   class="h-full w-full object-cover"
                   loading="lazy"
                 />
-                <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(11,22,32,0.55))]"></div>
+                <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(11,22,32,0.6))]"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
-                    <span class="ml-0.5 text-[0.7rem]">▶</span>
+                  <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
+                    <span class="ml-0.5 text-sm">▶</span>
                   </div>
                 </div>
               </div>
-              <div class="min-w-0">
+              <div class="p-4">
                 <p class="font-display text-lg leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
                   {video.name}
                 </p>
@@ -359,44 +191,21 @@ const tagPillColors = ["", "pink", "sun", "lilac"];
             </a>
           ))}
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== FEATURED VIDEOS ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-    <div class="surface-card p-8 md:p-10" data-reveal>
-      <p class="section-kicker">Wave + surf video</p>
-      <h2 class="section-title mt-4">
-        A couple of clips worth watching
-        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">with</span>
-        the kids.
-      </h2>
-      <div class="mt-8 grid gap-6 lg:grid-cols-2">
-        {featuredVideos.map((video, i) => (
-          <article class:list={[
-            "overflow-hidden rounded-[1.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] shadow-[5px_5px_0_0_var(--color-ink-950)]",
-            i % 2 === 0 ? "tilt-left" : "tilt-right",
-            "transition-transform duration-500",
-          ]}>
-            <video
-              controls
-              playsinline
-              preload="metadata"
-              poster={video.poster}
-              class="aspect-video w-full bg-[var(--color-ink-900)] object-cover"
+        {pillar.playlist && (
+          <div class="mt-6 flex justify-end">
+            <a
+              href={pillar.playlist.href}
+              target="_blank"
+              rel="noreferrer"
+              class="group inline-flex items-center gap-2 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-4 py-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
             >
-              <source src={video.src} type="video/mp4" />
-            </video>
-            <div class="p-6">
-              <p class="font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-                {video.title}
-              </p>
-              <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{video.description}</p>
-            </div>
-          </article>
-        ))}
+              <span>{pillar.playlist.label}</span>
+              <span class="transition-transform group-hover:translate-x-0.5">→</span>
+            </a>
+          </div>
+        )}
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </BaseLayout>
