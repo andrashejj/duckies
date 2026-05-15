@@ -18,6 +18,7 @@ type Pillar = {
   blurb: string;
   accent: string;
   videos: Video[];
+  playlist?: { label: string; href: string };
 };
 
 const kaiLennyImage = "/media/video-thumb-superhero.jpg";
@@ -46,7 +47,26 @@ const pillars: Pillar[] = [
         href: "https://www.youtube.com/shorts/0FjVJB-ZUw0",
         image: ytThumb("0FjVJB-ZUw0"),
       },
+      {
+        name: "Mobility & stability short",
+        href: "https://www.youtube.com/shorts/7G-zkCXGdE0",
+        image: ytThumb("7G-zkCXGdE0"),
+      },
+      {
+        name: "Surf mobility session",
+        href: "https://www.youtube.com/watch?v=UXsuPzkXWdM",
+        image: ytThumb("UXsuPzkXWdM"),
+      },
+      {
+        name: "DIY paddle strength",
+        href: "https://www.youtube.com/watch?v=q4BuEP9iF1U",
+        image: ytThumb("q4BuEP9iF1U"),
+      },
     ],
+    playlist: {
+      label: "Coach playlist on YouTube",
+      href: "https://www.youtube.com/playlist?list=PLi_pAxm43UQqNRuzrUkGTB9W24-IaB6He",
+    },
   },
   {
     kicker: "Pillar 02",
@@ -170,6 +190,20 @@ const pillars: Pillar[] = [
             </a>
           ))}
         </div>
+
+        {pillar.playlist && (
+          <div class="mt-6 flex justify-end">
+            <a
+              href={pillar.playlist.href}
+              target="_blank"
+              rel="noreferrer"
+              class="group inline-flex items-center gap-2 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-4 py-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
+            >
+              <span>{pillar.playlist.label}</span>
+              <span class="transition-transform group-hover:translate-x-0.5">→</span>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   ))}
