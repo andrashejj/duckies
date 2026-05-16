@@ -257,7 +257,7 @@ export const site = {
   pillars: [
     {
       title: "Get good at surfing",
-      text: "Two sessions a week, proper coaching, real reps in the water.",
+      text: "Two sessions a week, kids training together, real reps in the water — not a lesson.",
     },
     {
       title: "Sunset sessions",
