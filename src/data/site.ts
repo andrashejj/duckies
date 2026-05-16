@@ -254,10 +254,30 @@ export const site = {
       },
     ],
   },
+  clubRules: {
+    kicker: "★ Before you join — read this once",
+    headline: "It's a club. Not a lesson.",
+    intro:
+      "Sunset Duckies is a volunteer-run club, not a surf school. Nobody is on the payroll, nobody is in the water with your kid. Three things every family needs to be clear on before joining:",
+    rules: [
+      {
+        title: "BYO surfboard + wetsuit",
+        text: "Every kid brings their own board and wetsuit, every session. We don't rent, lend, or store gear. No board, no surf.",
+      },
+      {
+        title: "Parents stay responsible",
+        text: "Your child, your call. A parent or guardian stays on the beach or in the water with their kid for the whole session. The club does not take legal responsibility for what happens in the ocean.",
+      },
+      {
+        title: "Coach trains, doesn't babysit",
+        text: "The coach is on the beach to run drills, spot, encourage, and nudge. Not a lesson. Not a lifeguard. Not a child-minder.",
+      },
+    ],
+  },
   pillars: [
     {
       title: "Get good at surfing",
-      text: "Two sessions a week, proper coaching, real reps in the water.",
+      text: "Two sessions a week, kids training together, real reps in the water — not a lesson.",
     },
     {
       title: "Sunset sessions",

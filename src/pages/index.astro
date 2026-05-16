@@ -82,8 +82,8 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
-            {site.name} is a surf club for kids in Tamarin. Two sessions a week, proper coaching,
-            paddling out together and riding home into the sunset.
+            {site.name} is a surf club for kids in Tamarin. Two sessions a week, kids training
+            together, paddling out and riding home into the sunset.
           </p>
         </div>
 
@@ -118,6 +118,50 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           </p>
         </div>
       ))}
+    </div>
+  </section>
+
+  <!-- ===================== HOW THE CLUB WORKS ===================== -->
+  <section id="how-it-works" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-60" aria-hidden="true" style="background-image: radial-gradient(circle at 12% 25%, #ffe1d4, transparent 55%), radial-gradient(circle at 88% 75%, #fff0b3, transparent 55%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-14">
+        <div class="space-y-5" data-reveal>
+          <p class="section-kicker">{site.clubRules.kicker}</p>
+          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+            It's a <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club</span>.
+            <span class="block">Not a <span class="ink-underline">lesson</span>.</span>
+          </h2>
+          <p class="body-copy max-w-md">
+            {site.clubRules.intro}
+          </p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="chip">BYO surfboard</span>
+            <span class="chip">BYO wetsuit</span>
+            <span class="chip">Parents responsible</span>
+            <span class="chip">No drop-off</span>
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:gap-5" data-reveal>
+          {site.clubRules.rules.map((rule, i) => (
+            <div class:list={["surface-card p-6 sm:p-7", pillarAccents[i % pillarAccents.length]]}>
+              <div class="flex items-start gap-4">
+                <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                    {rule.title}
+                  </p>
+                  <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                    {rule.text}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -242,24 +286,9 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           ))}
         </div>
 
-        <div class="mt-6 rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] p-5 text-[var(--color-cream-soft)] shadow-[4px_4px_0_0_var(--color-coral-500)]">
-          <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--color-sun-500)]">
-            ★ Read this once
-          </p>
-          <p class="mt-2 font-display text-xl leading-tight sm:text-2xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            This is a <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club</span>, not a lesson.
-          </p>
-          <p class="mt-2 text-[0.92rem] leading-6 text-[var(--color-cream-soft)]/85">
-            Kids train together. The coach is on the beach to spot, encourage, and nudge — not to
-            run a lesson, and not to assume liability for your child in the water. Parents stay
-            responsible. Everyone brings their own surfboard and wetsuit.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="chip">BYO surfboard</span>
-            <span class="chip">BYO wetsuit</span>
-            <span class="chip">Parents responsible</span>
-          </div>
-        </div>
+        <p class="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
+          ↑ <a href="#how-it-works" class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">How the club works</a> — BYO board + wetsuit, parents responsible.
+        </p>
       </div>
 
       <div class="surface-card sticker-coral p-8" data-reveal>
