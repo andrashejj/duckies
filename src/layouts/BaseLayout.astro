@@ -69,27 +69,27 @@ const absoluteImage = new URL(image, siteOrigin).toString();
   <body class="min-h-screen antialiased">
     <div class="page-shell">
       <header class="sticky top-0 z-50 border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]/92 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10 lg:py-4">
-          <a href="/" class="group flex min-w-0 items-center gap-3">
-            <span class="relative inline-flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-lg font-black text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform group-hover:rotate-[-6deg] sm:h-12 sm:w-12" aria-hidden="true">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
+          <a href="/" class="group flex min-w-0 items-center gap-2 sm:gap-3">
+            <span class="relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-lg font-black text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform group-hover:rotate-[-6deg] sm:h-12 sm:w-12" aria-hidden="true">
               <span class="absolute inset-x-0 bottom-0 h-1/2 bg-[var(--color-sun-500)]"></span>
-              <span class="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-cream-soft)] ring-2 ring-[var(--color-ink-950)] sm:h-6 sm:w-6"></span>
+              <span class="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-cream-soft)] ring-2 ring-[var(--color-ink-950)] sm:h-6 sm:w-6"></span>
               <span class="absolute inset-x-0 bottom-0 h-[3px] bg-[var(--color-ink-950)]"></span>
             </span>
             <div class="min-w-0">
-              <p class="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[var(--color-coral-500)] sm:text-xs">
+              <p class="whitespace-nowrap font-mono text-[0.62rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)] sm:text-xs sm:tracking-[0.28em]">
                 Sunset ★ Duckies
               </p>
-              <p class="truncate text-sm font-bold text-[var(--color-ink-950)] sm:text-base" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+              <p class="hidden truncate text-sm font-bold text-[var(--color-ink-950)] sm:block sm:text-base" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
                 Surf the Bay · Tamarin
               </p>
             </div>
           </a>
 
-          <nav class="flex items-center gap-1 sm:gap-2">
+          <nav class="flex shrink-0 items-center gap-0.5 sm:gap-2">
             {site.navigation.map((item) => (
               <a
-                class="rounded-full px-2.5 py-1.5 text-[0.78rem] font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg] sm:px-3 sm:py-2 sm:text-sm"
+                class="rounded-full px-2 py-1.5 text-[0.72rem] font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg] sm:px-3 sm:py-2 sm:text-sm"
                 style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;"
                 href={item.href}
               >
@@ -100,7 +100,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           </nav>
 
           <a
-            class="cta-primary shrink-0 px-4 py-2.5 text-[0.8rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
+            class="cta-primary shrink-0 px-3 py-2 text-[0.72rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
             href={site.whatsappUrl}
             target="_blank"
             rel="noreferrer"
@@ -119,7 +119,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         <div class="marquee-track">
           <span>
             Tamarin Bay · Kid-first <span class="star">✦</span>
-            <em>Wednesday + Friday</em> <span class="star">✦</span>
+            <em>Monday + Friday</em> <span class="star">✦</span>
             4 comps a year <span class="star">✦</span>
             <em>Kids only · No cap</em> <span class="star">✦</span>
             Confidence in the water <span class="star">✦</span>
@@ -127,7 +127,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           </span>
           <span aria-hidden="true">
             Tamarin Bay · Kid-first <span class="star">✦</span>
-            <em>Wednesday + Friday</em> <span class="star">✦</span>
+            <em>Monday + Friday</em> <span class="star">✦</span>
             4 comps a year <span class="star">✦</span>
             <em>Kids only · No cap</em> <span class="star">✦</span>
             Confidence in the water <span class="star">✦</span>
@@ -147,7 +147,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
               surfing, and riding home into the sunset together.
             </p>
             <div class="flex flex-wrap gap-3">
-              <span class="chip">Wednesday + Friday</span>
+              <span class="chip">Monday + Friday</span>
               <span class="chip">4:00-6:00pm</span>
               <span class="chip">{site.location}</span>
             </div>
