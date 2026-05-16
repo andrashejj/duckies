@@ -65,7 +65,7 @@ export const site = {
   ],
   schedule: [
     {
-      day: "Wednesday",
+      day: "Monday",
       time: "4:00-6:00pm",
       focus: "Technique, confidence, whitewater reps.",
     },
