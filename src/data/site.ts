@@ -274,6 +274,118 @@ export const site = {
       },
     ],
   },
+  contact: {
+    coordinatorEmail: "andras@sunsetduckies.com",
+    coordinatorName: "Andras",
+  },
+  howToJoin: {
+    kicker: "★ How to join · 4 steps",
+    headline: "How to join the club, in four steps.",
+    intro:
+      "We're volunteer-run, no online portal. The path is short: meet the crew on WhatsApp, sign the waiver, try a couple of sessions, then make it official. Email anything signed straight to Andras.",
+    steps: [
+      {
+        id: "whatsapp",
+        accent: "sticker-teal",
+        tag: "Step 01 · meet the crew",
+        title: "Join the WhatsApp group.",
+        body:
+          "This is where Andras posts session updates, surf calls, and answers questions. Lurk for a week, say hi when you're ready.",
+        actions: [
+          {
+            label: "Open WhatsApp group",
+            href: "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
+            variant: "primary",
+            external: true,
+          },
+        ],
+        footnote: "It's the club's only group — no spam.",
+      },
+      {
+        id: "waiver",
+        accent: "sticker-sun",
+        tag: "Step 02 · sign the waiver",
+        title: "Sign the liability waiver.",
+        body:
+          "Open the waiver, print or save it, fill it in, sign, then email a photo or scan back to Andras. Standard ocean-sports release — the short version below covers the gist.",
+        actions: [
+          {
+            label: "Open the waiver",
+            href: "/templates/liability-waiver.html",
+            variant: "secondary",
+            external: true,
+          },
+          {
+            label: "Email signed waiver",
+            href:
+              "mailto:andras@sunsetduckies.com?subject=" +
+              encodeURIComponent("Sunset Duckies · signed liability waiver") +
+              "&body=" +
+              encodeURIComponent(
+                "Hi Andras,\n\nAttached is the signed liability waiver for my child to join Sunset Duckies.\n\nChild's name:\nParent / guardian name:\nPhone:\n\nThanks!\n",
+              ),
+            variant: "primary",
+            external: false,
+          },
+        ],
+        footnote: "Attach the photo/scan in your email client.",
+      },
+      {
+        id: "try",
+        accent: "sticker-lilac",
+        tag: "Step 03 · come paddle",
+        title: "Try a few training sessions.",
+        body:
+          "Monday and Friday, 4-6pm in Tamarin Bay. Bring your own board + wetsuit, a parent stays on the beach. Come for two or three sessions to see if it clicks — no commitment yet.",
+        actions: [
+          {
+            label: "See the weekly rhythm",
+            href: "#schedule",
+            variant: "secondary",
+            external: false,
+          },
+        ],
+        footnote: "First time? Message on WhatsApp before you come so we can spot you.",
+      },
+      {
+        id: "register",
+        accent: "sticker-coral",
+        tag: "Step 04 · make it official",
+        title: "Join the club.",
+        body:
+          "Once you know you're in, fill the registration form and email it to Andras. Annual dues are Rs 5,000 — covers comps, club lycras, and safety gear.",
+        actions: [
+          {
+            label: "Open registration form",
+            href: "/templates/registration-form.html",
+            variant: "secondary",
+            external: true,
+          },
+          {
+            label: "Email registration",
+            href:
+              "mailto:andras@sunsetduckies.com?subject=" +
+              encodeURIComponent("Sunset Duckies · club registration") +
+              "&body=" +
+              encodeURIComponent(
+                "Hi Andras,\n\nAttached is our completed Sunset Duckies registration form.\n\nChild's name:\nAge:\nParent / guardian name:\nPhone:\n\nWe've also signed the liability waiver (sent separately / attached).\n\nThanks!\n",
+              ),
+            variant: "primary",
+            external: false,
+          },
+        ],
+        footnote: "We'll confirm by WhatsApp once you're in.",
+      },
+    ],
+    waiverSummary: [
+      "Surfing carries inherent risk — waves, rocks, board contact, marine life, sun.",
+      "The club is volunteer-run. Safety measures are in place, but participation is at your own risk.",
+      "Your kid can swim unassisted in waist-deep water, agreed with the head coach.",
+      "A parent or guardian stays on-site for every session — never a drop-off.",
+      "Coaches may make reasonable medical decisions in an emergency if you can't be reached.",
+      "Photo / video opt-in is your choice, ticked on the form.",
+    ],
+  },
   pillars: [
     {
       title: "Get good at surfing",

@@ -64,7 +64,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
       <div data-float class="mb-6">
         <span class="eyebrow-badge">
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
-          Tamarin Bay · Mauritius
+          Registration open · 2026 season
         </span>
       </div>
 
@@ -88,11 +88,11 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
         </div>
 
         <div data-float class="flex flex-col gap-3">
-          <a class="cta-primary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Join via WhatsApp
+          <a class="cta-primary w-full" href="#how-to-join">
+            Start here · how to join
           </a>
-          <a class="cta-secondary w-full" href="#sponsors">
-            Become a sponsor
+          <a class="cta-secondary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            Slide into WhatsApp
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
             Mon + Fri · 4-6pm · Tamarin Bay
@@ -118,6 +118,76 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           </p>
         </div>
       ))}
+    </div>
+  </section>
+
+  <!-- ===================== HOW TO JOIN ===================== -->
+  <section id="how-to-join" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 90% 10%, #cdf7f0, transparent 55%), radial-gradient(circle at 10% 90%, #ffe1d4, transparent 55%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="max-w-3xl space-y-5" data-reveal>
+        <p class="section-kicker">{site.howToJoin.kicker}</p>
+        <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+          How to <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">join</span>
+          the club, in <span class="ink-underline">four</span> steps.
+        </h2>
+        <p class="body-copy">{site.howToJoin.intro}</p>
+      </div>
+
+      <ol class="mt-10 grid gap-5 sm:gap-6 lg:mt-14 lg:grid-cols-2">
+        {site.howToJoin.steps.map((step, i) => (
+          <li class:list={["surface-card p-6 sm:p-7", step.accent]} data-reveal>
+            <div class="flex items-start gap-4">
+              <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+              <div class="min-w-0 flex-1 space-y-3">
+                <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
+                  {step.tag}
+                </p>
+                <p class="font-display text-2xl leading-tight text-[var(--color-ink-950)] sm:text-[1.65rem]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {step.title}
+                </p>
+                <p class="text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                  {step.body}
+                </p>
+
+                {step.id === "waiver" && (
+                  <details class="join-details mt-2">
+                    <summary>What the waiver says (1-min read)</summary>
+                    <ul class="mt-3 space-y-2 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/80">
+                      {site.howToJoin.waiverSummary.map((bullet) => (
+                        <li class="flex gap-2"><span aria-hidden="true">✦</span><span>{bullet}</span></li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+
+                <div class="flex flex-wrap gap-2 pt-1">
+                  {step.actions.map((action) => (
+                    <a
+                      class:list={[action.variant === "primary" ? "cta-primary" : "cta-secondary"]}
+                      href={action.href}
+                      {...(action.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                    >
+                      {action.label}
+                    </a>
+                  ))}
+                </div>
+
+                {step.footnote && (
+                  <p class="pt-1 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+                    {step.footnote}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="mt-10 text-center font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
+        Stuck? → <a href={`mailto:${site.contact.coordinatorEmail}`} class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">{site.contact.coordinatorEmail}</a>
+      </p>
     </div>
   </section>
 
