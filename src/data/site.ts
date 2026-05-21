@@ -336,7 +336,7 @@ export const site = {
         tag: "Step 03 · come paddle",
         title: "Try a few training sessions.",
         body:
-          "Monday and Friday, 4-6pm in Tamarin Bay. Bring your own board + wetsuit, a parent stays on the beach. Come for two or three sessions to see if it clicks — no commitment yet.",
+          "Monday and Friday, 4–6pm in Tamarin Bay. A parent stays on-site (beach or water). One or two trial sessions without a board are fine — after that we want kids on their own surfboard (rentable across the road) and in a wetsuit for the winter months.",
         actions: [
           {
             label: "See the weekly rhythm",
@@ -353,11 +353,11 @@ export const site = {
         tag: "Step 04 · make it official",
         title: "Join the club.",
         body:
-          "Once you know you're in, fill the registration form and email it to Andras. Annual dues are Rs 5,000 — covers comps, club lycras, and safety gear.",
+          "Once you know you're in, fill the club registration form and email it to Andras. Annual dues are Rs 5,000 — covers a custom club rashie with your kid's name, two coached sessions a week, safety cover at trainings, the club WhatsApp, and end-of-season certificates. Competitions like the Cup are ticketed separately.",
         actions: [
           {
-            label: "Open registration form",
-            href: "/templates/registration-form.html",
+            label: "Open club registration form",
+            href: "/templates/club-registration-form.html",
             variant: "secondary",
             external: true,
           },
@@ -365,23 +365,24 @@ export const site = {
             label: "Email registration",
             href:
               "mailto:andras@sunsetduckies.com?subject=" +
-              encodeURIComponent("Sunset Duckies · club registration") +
+              encodeURIComponent("Sunset Duckies · club membership registration") +
               "&body=" +
               encodeURIComponent(
-                "Hi Andras,\n\nAttached is our completed Sunset Duckies registration form.\n\nChild's name:\nAge:\nParent / guardian name:\nPhone:\n\nWe've also signed the liability waiver (sent separately / attached).\n\nThanks!\n",
+                "Hi Andras,\n\nAttached is our completed Sunset Duckies club membership registration form.\n\nChild's name:\nAge:\nRashie size + name to print:\nParent / guardian name:\nPhone:\n\nWe've also signed the liability waiver (sent separately / attached).\n\nThanks!\n",
               ),
             variant: "primary",
             external: false,
           },
         ],
-        footnote: "We'll confirm by WhatsApp once you're in.",
+        footnote: "We'll confirm by WhatsApp once you're in. Cup-only? That's a separate form on the cup page.",
       },
     ],
     waiverSummary: [
+      "Covers everything ducky — weekly trainings, the cup, and any other club events.",
       "Surfing carries inherent risk — waves, rocks, board contact, marine life, sun.",
       "The club is volunteer-run. Safety measures are in place, but participation is at your own risk.",
-      "Your kid can swim unassisted in waist-deep water, agreed with the head coach.",
-      "A parent or guardian stays on-site for every session — never a drop-off.",
+      "Your kid can swim confidently in open water — waves up to ~2 m and currents, agreed with the head coach.",
+      "A parent or guardian stays on-site every session, watching from the beach or joining in the water — never a drop-off.",
       "Coaches may make reasonable medical decisions in an emergency if you can't be reached.",
       "Photo / video opt-in is your choice, ticked on the form.",
     ],
