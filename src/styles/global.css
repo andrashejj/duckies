@@ -87,12 +87,20 @@ body {
 
 /* On phones, drop backdrop-blur and use an opaque background — the
    translucent glass effect is what makes mobile browsers flicker as the
-   address bar resizes. */
+   address bar resizes. Also pin the header to its own compositor layer
+   so iOS Safari doesn't desync the sticky layer from the visual viewport
+   during scroll / address-bar transitions (the coral stats strip behind
+   the header would flash above it). Safe on mobile only because
+   backdrop-filter is disabled here. */
 @media (max-width: 640px) {
   .site-header {
     background: var(--color-cream-soft) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 }
 
