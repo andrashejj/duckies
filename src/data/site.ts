@@ -86,7 +86,7 @@ export const site = {
     edition: "Vol. 01 — first ever",
     dateLabel: "Saturday · 30 May 2026",
     dateISO: "2026-05-30",
-    timeLabel: "13:00 – 17:30",
+    timeLabel: "13:00 – late (bonfire from 18:00)",
     location: "Tamarin Bay, Mauritius",
     entryFeeLabel: "1'000 MUR",
     registerDeadlineLabel: "Friday 15 May",
@@ -116,7 +116,8 @@ export const site = {
       { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
       { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
       { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
-      { time: "17:30", label: "Wrap", emoji: "✨" },
+      { time: "17:30", label: "Wind-down + teardown", emoji: "✨" },
+      { time: "18:00", label: "Bonfire on the sand", emoji: "🔥" },
     ],
     judgingCriteria: [
       {
@@ -180,6 +181,7 @@ export const site = {
       "BBQ for the whole fam",
       "Water for the kids at the break",
       "Prizes + personalised finisher certificate",
+      "Bonfire on the sand to close the day 🔥",
     ],
     templates: [
       {
@@ -202,6 +204,13 @@ export const site = {
         description: "The full minute-by-minute for the day — print and pin at the registration desk.",
         emoji: "🕒",
         accent: "sticker-teal",
+      },
+      {
+        title: "Heat schedule & draw",
+        file: "/templates/heat-schedule.html",
+        description: "The running order + blank draw sheet — 2 duckling heats, 2 duck heats, finals, parent heat. Write in arm numbers on the day.",
+        emoji: "🏁",
+        accent: "sticker-lilac",
       },
       {
         title: "Judge scorecard",
@@ -234,7 +243,7 @@ export const site = {
       {
         title: "Shopping list",
         file: "/templates/shopping-list.html",
-        description: "Sausages, buns, sides, drinks, charcoal — quantities for ~25 mouths with rough MUR costs.",
+        description: "Sausages (pork + Halal), baguettes, fruit, charcoal, paper goods — quantities for ~26 plates, with the two special diets flagged.",
         emoji: "🛒",
         accent: "sticker-pink",
       },
