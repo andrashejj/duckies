@@ -1,0 +1,152 @@
+/* Sunset Duckies Cup — shared certificate styles.
+   Used by every prize certificate. Set <body class="crown"> or <body class="award">. */
+
+:root {
+  --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec;
+  --coral: #ff4e2b; --sun: #ffd23f; --gold: #f0a818;
+  --teal: #07c9b6; --pink: #ff72a6; --lilac: #c8b6ff;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Outfit", system-ui, sans-serif;
+  color: var(--ink);
+  padding: 24px;
+}
+
+/* ---- shared card ---- */
+.cert {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--cream-soft);
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 0 var(--ink);
+  border-radius: 24px;
+  padding: 52px 64px 44px;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.414 / 1;
+}
+.corner {
+  position: absolute;
+  width: 94px; height: 94px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+.corner.tl { top: 22px; left: 22px; box-shadow: 4px 4px 0 0 var(--ink); transform: rotate(-8deg); }
+.corner.tr { top: 22px; right: 22px; box-shadow: -4px 4px 0 0 var(--ink); transform: rotate(8deg); }
+.corner.bl { bottom: 22px; left: 22px; box-shadow: 4px -4px 0 0 var(--ink); transform: rotate(6deg); }
+.corner.br { bottom: 22px; right: 22px; box-shadow: -4px -4px 0 0 var(--ink); transform: rotate(-6deg); }
+
+.inner { position: relative; z-index: 1; text-align: center; }
+.kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; border: 1.5px solid var(--ink); padding: 0.4rem 0.9rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+.emblem { font-size: 3.2rem; line-height: 1; margin: 14px 0 2px; filter: drop-shadow(2px 3px 0 rgba(11,22,32,0.22)); }
+.eyebrow { font-family: "JetBrains Mono", monospace; font-size: 0.8rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(11,22,32,0.6); margin: 14px 0 2px; }
+h1 {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.3rem, 5.5vw, 4.1rem);
+  letter-spacing: -0.04em; line-height: 0.95;
+  margin: 4px 0 6px;
+}
+h1 .title {
+  font-family: "Fraunces", serif; font-style: italic; color: var(--coral);
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+}
+.subtitle { font-family: "JetBrains Mono", monospace; font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(11,22,32,0.65); margin-bottom: 24px; }
+.awarded { font-family: "Outfit", sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(11,22,32,0.65); margin-bottom: 12px; }
+.name {
+  font-family: "Fraunces", serif; font-weight: 600; font-style: italic;
+  font-size: clamp(2.3rem, 5.4vw, 3.8rem); letter-spacing: -0.02em;
+  border-bottom: 3px solid var(--ink); margin: 0 auto 18px; max-width: 72%;
+  padding-bottom: 8px; min-height: 4.5rem;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+}
+.blurb { max-width: 620px; margin: 0 auto 22px; font-size: 1.04rem; line-height: 1.6; }
+[contenteditable]:focus { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: 6px; }
+
+.signoff { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; gap: 32px; }
+.sig { flex: 1; border-top: 2px solid var(--ink); padding-top: 8px; font-family: "JetBrains Mono", monospace; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(11,22,32,0.75); text-align: center; }
+.sig strong { display: block; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; text-transform: none; color: var(--ink); margin-bottom: 4px; }
+
+.print-btn { position: fixed; top: 16px; right: 16px; color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+.hint { text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: rgba(11,22,32,0.5); margin-top: 18px; line-height: 1.7; }
+.hint .editable { background: rgba(7,201,182,0.25); padding: 2px 8px; border-radius: 6px; }
+
+/* ---- crown theme (the four crowns) ---- */
+body.crown {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -5%, rgba(240, 168, 24, 0.55), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 5% 100%, rgba(255, 114, 166, 0.3), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 95% 100%, rgba(7, 201, 182, 0.3), transparent 60%),
+    var(--cream);
+}
+body.crown .cert { background: radial-gradient(circle at 50% 0%, rgba(255, 210, 63, 0.35), transparent 55%), var(--cream-soft); }
+body.crown .kicker { background: var(--sun); }
+body.crown .print-btn { background: var(--gold); }
+body.crown .corner.tl { background: var(--sun); }
+body.crown .corner.tr { background: var(--gold); }
+body.crown .corner.bl { background: var(--coral); }
+body.crown .corner.br { background: var(--teal); }
+.rays {
+  position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+  width: 520px; height: 520px; pointer-events: none; opacity: 0.5; z-index: 0;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(240,168,24,0.5) 0deg 8deg, transparent 8deg 16deg);
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(circle, transparent 28%, #000 30%, transparent 62%);
+  mask-image: radial-gradient(circle, transparent 28%, #000 30%, transparent 62%);
+}
+
+/* ---- award theme (the fun side awards) ---- */
+body.award {
+  background:
+    radial-gradient(ellipse 55% 45% at 8% 8%, rgba(7, 201, 182, 0.38), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 92% 10%, rgba(255, 114, 166, 0.4), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(200, 182, 255, 0.4), transparent 65%),
+    var(--cream);
+}
+body.award .cert::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5; z-index: 0;
+  background-image:
+    radial-gradient(circle, var(--pink) 22%, transparent 24%),
+    radial-gradient(circle, var(--teal) 22%, transparent 24%);
+  background-size: 46px 46px, 46px 46px;
+  background-position: 0 0, 23px 23px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%);
+}
+body.award .kicker { background: var(--pink); }
+body.award .print-btn { background: var(--coral); }
+body.award .corner.tl { background: var(--coral); }
+body.award .corner.tr { background: var(--teal); }
+body.award .corner.bl { background: var(--sun); }
+body.award .corner.br { background: var(--lilac); }
+.rosette { width: 128px; height: 128px; margin: 16px auto 6px; position: relative; }
+.rosette .burst { position: absolute; inset: 0; background: var(--sun); border: 3px solid var(--ink); border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; box-shadow: 4px 4px 0 0 var(--ink); animation: wobble 6s ease-in-out infinite; }
+.rosette .disc { position: absolute; inset: 26px; background: var(--cream); border: 2.5px solid var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.1rem; }
+.rosette .tail { position: absolute; bottom: -22px; left: 50%; width: 22px; height: 36px; background: var(--coral); border: 2.5px solid var(--ink); }
+.rosette .tail.l { transform: translateX(-115%) rotate(-12deg); }
+.rosette .tail.r { transform: translateX(15%) rotate(12deg); }
+@keyframes wobble { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  html, body { height: 100%; background: white; padding: 0; margin: 0; }
+  /* fill exactly one A4 sheet and clip anything over — never spills to page 2 */
+  .cert {
+    width: 100%; height: 100%;
+    max-width: none; margin: 0;
+    box-shadow: none;
+    aspect-ratio: auto;
+    overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    page-break-inside: avoid; break-inside: avoid; page-break-after: avoid;
+  }
+  body.award .cert::before { opacity: 0.4; }
+  .rosette .burst { animation: none; }
+  .print-btn, .hint { display: none; }
+  [contenteditable]:focus { outline: none; }
+}

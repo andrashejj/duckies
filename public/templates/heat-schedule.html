@@ -8,8 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
   <style>
-    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff;
-            --red: #ff4e2b; --yellow: #ffd23f; --blue: #4cc9f0; --green: #57cc99; }
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
@@ -28,15 +27,13 @@
     .heat-head .title { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.95rem; }
     .heat-head .time { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; opacity: 0.85; }
     table { width: 100%; border-collapse: collapse; }
-    .heat td { padding: 8px 10px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.88rem; }
+    .heat td { padding: 9px 12px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.9rem; }
     .heat tr:last-child td { border-bottom: none; }
-    .jersey { width: 70px; font-family: "JetBrains Mono", monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
-    .swatch { display: inline-block; width: 12px; height: 12px; border: 1.5px solid var(--ink); border-radius: 3px; vertical-align: middle; margin-right: 5px; }
-    .s-red { background: var(--red); } .s-yellow { background: var(--yellow); } .s-blue { background: var(--blue); } .s-green { background: var(--green); }
-    .fill { border-bottom: 1.5px solid var(--ink); min-height: 1.1em; }
-    .num-box { width: 46px; text-align: center; font-family: "JetBrains Mono", monospace; }
-    .num-box .fill { display: inline-block; min-width: 34px; }
-    .adv { width: 90px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.66rem; text-transform: uppercase; color: rgba(11,22,32,0.6); }
+    .seed { width: 26px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.45); }
+    .name { font-weight: 600; }
+    .name .age { font-family: "JetBrains Mono", monospace; font-size: 0.64rem; color: rgba(11,22,32,0.55); margin-left: 5px; }
+    .fill { border-bottom: 1.5px solid var(--ink); min-height: 1.1em; display: block; }
+    .adv { width: 90px; text-align: right; font-family: "JetBrains Mono", monospace; font-size: 0.66rem; text-transform: uppercase; color: rgba(11,22,32,0.6); }
     .note { margin-top: 22px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.92rem; }
     .note ul { margin: 6px 0 0; padding-left: 20px; }
     .note li { margin: 4px 0; }
@@ -52,12 +49,12 @@
   <main class="sheet">
     <span class="kicker">★ Heat draw &amp; running order</span>
     <h1>Heat schedule 🏁</h1>
-    <p class="meta">Saturday · 30 May 2026 · Tamarin Bay · fill in the body-marker numbers on the morning, pin next to the run-of-show</p>
-    <p class="lede">The field is <strong>16 surfers — 8 ducklings + 8 ducks</strong>, plus 1 cheerleader (cheer division, not surfing). That's <strong>2 qualifying heats per division</strong>, a final each, and the parent heat to close. Heats of 4, 10 minutes, best 2 waves. Write each surfer's arm number in their jersey row — no names needed on the board.</p>
+    <p class="meta">Sunday · 31 May 2026 · Tamarin Bay · pin next to the run-of-show</p>
+    <p class="lede">The field is <strong>20 surfers — 11 ducklings + 9 ducks</strong>, plus 1 cheerleader (cheer division, not surfing). That's <strong>2 qualifying heats per division</strong>, a final each, and the parent heat to close. Heats of 4–6, 10 minutes, best 2 waves. Surfers are pre-drawn below — siblings split, ages kept even.</p>
 
     <div class="chips">
-      <span class="chip">🐤 8 ducklings → 2 heats</span>
-      <span class="chip">🦆 8 ducks → 2 heats</span>
+      <span class="chip">🐤 11 ducklings → 2 heats</span>
+      <span class="chip">🦆 9 ducks → 2 heats</span>
       <span class="chip">🏁 7 heats total</span>
       <span class="chip">⏱️ 10 min each</span>
     </div>
@@ -67,19 +64,22 @@
       <div class="heat">
         <div class="heat-head"><span class="title">Duckling Heat 1</span><span class="time">14:00 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">1</td><td class="name">Alysia Klein <span class="age">10</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Leonie Basu <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Marc-Emmanuel Vlok <span class="age">7</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Robyn Raye <span class="age">4</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Lara Hejj <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">6</td><td class="name">Mats <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
         </table>
       </div>
       <div class="heat">
         <div class="heat-head"><span class="title">Duckling Heat 2</span><span class="time">~14:12 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">1</td><td class="name">Shanay Basu <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Ella Klein <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Ezrah Wild Tyler <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Taylor Raye <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Maud <span class="age">7</span></td><td class="adv">advances ☐</td></tr>
         </table>
       </div>
     </div>
@@ -89,42 +89,43 @@
       <div class="heat">
         <div class="heat-head"><span class="title">Duck Heat 1</span><span class="time">~14:45 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">1</td><td class="name">Karia Nel <span class="age">14</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Holly St Guillaume <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Elijah Bear Tyler <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Jaxon Webb <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
         </table>
       </div>
       <div class="heat">
         <div class="heat-head"><span class="title">Duck Heat 2</span><span class="time">~14:57 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">1</td><td class="name">Josua Nel <span class="age">12</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Skye Bax De Keating <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Emma-Jayne Vlok <span class="age">10</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Teo Niescierowicz <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Noah Hejj <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
         </table>
       </div>
     </div>
 
     <h2><span>🌊</span> Finals — 16:00</h2>
-    <p class="meta">Top 2 from each qualifying heat. Crown the King + Queen (top boy + top girl) per division, then the overall Sunset Duckies King + Queen across both finals.</p>
+    <p class="meta">Top boy + top girl advance from each qualifying heat — so each final is 2 boys + 2 girls and you can always crown both. King = top boy, Queen = top girl in each division's final.</p>
     <div class="heat-grid">
       <div class="heat">
         <div class="heat-head"><span class="title">🐤 Duckling Final</span><span class="time">16:00 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♂ from H1</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♂ from H2</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♀ from H1</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♀ from H2</td></tr>
         </table>
       </div>
       <div class="heat">
         <div class="heat-head"><span class="title">🦆 Duck Final</span><span class="time">~16:12 · 10 min</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">from H__</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♂ from H1</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♂ from H2</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♀ from H1</td></tr>
+          <tr><td class="seed">👑</td><td class="name"><span class="fill"></span></td><td class="adv">♀ from H2</td></tr>
         </table>
       </div>
     </div>
@@ -134,10 +135,10 @@
       <div class="heat full">
         <div class="heat-head"><span class="title">Grey Goose Heat</span><span class="time">16:30 · 10 min · kids judge by cheer</span></div>
         <table>
-          <tr><td class="jersey"><span class="swatch s-red"></span>Red</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">side award ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-yellow"></span>Yellow</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">side award ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-blue"></span>Blue</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">side award ☐</td></tr>
-          <tr><td class="jersey"><span class="swatch s-green"></span>Green</td><td class="num-box"><span class="fill"></span></td><td class="fill"></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">1</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
         </table>
       </div>
     </div>
@@ -145,10 +146,9 @@
     <div class="note">
       <strong>Running the draw:</strong>
       <ul>
-        <li><strong>Jerseys = arm colours.</strong> Write each surfer's body-marker number in the Red / Yellow / Blue / Green row so judges score by colour, not name.</li>
-        <li><strong>Seeding:</strong> split each division so siblings / similar ages aren't stacked in one heat. Keep the youngest ducklings together.</li>
-        <li><strong>Top 2 advance</strong> from each qualifying heat into that division's final (4 per final).</li>
-        <li><strong>If surf is too big:</strong> drop to Duckling-only and shorten heats — same draw, fewer rounds. Sunday is the backup day.</li>
+        <li><strong>Seeding:</strong> siblings are already split across heats and ages kept even — check it still holds if anyone scratches or swaps division.</li>
+        <li><strong>Top boy + top girl advance</strong> from each qualifying heat into that division's final (4 per final = 2 boys + 2 girls). The head judge marks each heat's top boy and top girl on the scorecards. This is what makes both crowns — King (top boy) and Queen (top girl) — always fillable in the final. <em>Fallback:</em> if a heat has no boys or no girls, advance the next-best surfer so the final still has 4.</li>
+        <li><strong>If surf is too big:</strong> drop to Duckling-only and shorten heats — same draw, fewer rounds.</li>
         <li><strong>One card per heat × judge</strong> — pair this sheet with the judge scorecards (3 judges + 1 instructing).</li>
       </ul>
     </div>

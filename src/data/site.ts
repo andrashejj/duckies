@@ -84,8 +84,8 @@ export const site = {
   cup: {
     name: "Sunset Duckies Cup",
     edition: "Vol. 01 — first ever",
-    dateLabel: "Saturday · 30 May 2026",
-    dateISO: "2026-05-30",
+    dateLabel: "Sunday · 31 May 2026",
+    dateISO: "2026-05-31",
     timeLabel: "13:00 – late (bonfire from 18:00)",
     location: "Tamarin Bay, Mauritius",
     entryFeeLabel: "1'000 MUR",
@@ -148,19 +148,19 @@ export const site = {
     ],
     prizes: {
       crowns: [
-        { emoji: "🐤", title: "Duckling King + Queen", text: "Top boy + top girl, Duckling division." },
-        { emoji: "🦆", title: "Duck King + Queen", text: "Top boy + top girl, Duck division." },
-        { emoji: "🏄‍♀️", title: "Sunset Duckies King + Queen", text: "Top boy + top girl, overall." },
+        { emoji: "🐤", title: "Sunset Duckling King + Queen", text: "Top boy + top girl of the Duckling final." },
+        { emoji: "🦆", title: "Sunset Duckie King + Queen", text: "Top boy + top girl of the Duck final." },
       ],
       sideAwards: [
-        { emoji: "🌅", title: "Sunset Stoke", text: "Biggest celebration of the day." },
-        { emoji: "💪", title: "Paddle Power", text: "Never stopped going for waves." },
-        { emoji: "💦", title: "Best Wipeout", text: "Fell hardest, smiled hardest." },
-        { emoji: "✨", title: "Style Duckling", text: "That one moment of perfect balance." },
-        { emoji: "🔄", title: "Best Comeback", text: "Fell off, jumped right back on." },
-        { emoji: "📣", title: "Best Cheer Squad", text: "Cheered loudest for everyone else." },
+        { emoji: "💪", title: "Tried Hardest", text: "Never gave up — got back on every time." },
+        { emoji: "💥", title: "Fell Hardest", text: "The most spectacular wipeout of the day." },
+        { emoji: "😁", title: "Biggest Smile", text: "Lit up the whole beach, first wave to last." },
+        { emoji: "📣", title: "Loudest Claim", text: "Celebrated that wave like a world title." },
+        { emoji: "📈", title: "Most Improved", text: "Biggest leap from first paddle to final wave." },
+        { emoji: "🎉", title: "Best Cheer Squad", text: "Powered the loudest cheer on the sand." },
+        { emoji: "🌅", title: "Sunset Stoke", text: "The biggest claim on a knee-high wave." },
       ],
-      everyone: "Every duckling gets a personalised finisher certificate with their name on it.",
+      everyone: "Every surfer gets a personalised Certificate of Stoke with their name on it.",
     },
     parentHeat: {
       title: "The Parent Heat 🦆",
@@ -236,7 +236,7 @@ export const site = {
       {
         title: "Pre-event checklist",
         file: "/templates/pre-event-checklist.html",
-        description: "Owners + due dates from now through Friday 29 May.",
+        description: "Owners + due dates from now through Saturday 30 May.",
         emoji: "✅",
         accent: "sticker-sun",
       },
@@ -250,9 +250,16 @@ export const site = {
       {
         title: "Finisher certificate",
         file: "/templates/finisher-certificate.html",
-        description: "Personalised certificate template — print one per duckling.",
+        description: "Certificate of Stoke — print one per surfer. Everyone who paddles out gets one.",
         emoji: "🏆",
         accent: "sticker-coral",
+      },
+      {
+        title: "Certificates & prizes",
+        file: "/templates/certificates.html",
+        description: "One printable certificate per prize — the 4 crowns (Duckling/Duckie King & Queen) plus the fun awards (Tried Hardest, Fell Hardest, Biggest Smile, and more). Type the winner's name and print.",
+        emoji: "👑",
+        accent: "sticker-sun",
       },
       {
         title: "Parent WhatsApp message",

@@ -30,6 +30,9 @@
     .swatch.green { background: var(--green); }
     .surfer-name { flex: 1; border-bottom: 1.5px solid var(--ink); min-height: 1.6rem; }
     .name-label { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.55); white-space: nowrap; }
+    .advmark { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(11,22,32,0.7); white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+    .advmark .opt { border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 7px; font-size: 0.72rem; }
+    .advmark .adv-box { font-size: 0.7rem; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 6px 8px; border-right: 1px solid rgba(11,22,32,0.2); border-bottom: 1px solid rgba(11,22,32,0.2); font-size: 0.82rem; text-align: center; }
     th { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--coral); background: var(--cream); }
@@ -49,7 +52,7 @@
     <p class="meta">One card per heat × judge · up to 4 surfers · 10-minute heat · best 2 waves count · bias toward YES</p>
 
     <div class="legend" style="background: rgba(255,210,63,0.35);">
-      <strong>How this sheet works</strong> — Heats are drawn the day before (Fri 29 May) and the
+      <strong>How this sheet works</strong> — Heats are drawn the day before (Sat 30 May) and the
       <strong>master heat sheet</strong> goes up at the registration desk: it lists every heat,
       who's in it, and the start time. At the start of each heat, the head judge gives each judge a
       fresh copy of this scorecard and calls out the surfers by name.
@@ -70,10 +73,14 @@
       Tiebreak 1: total waves attempted. Tiebreak 2: head judge's "wave of the heat" shaka.
     </div>
 
+    <div class="legend" style="background: rgba(255,114,166,0.22);">
+      <strong>Advancing to the final 👑</strong> — In qualifying heats, ring each surfer's <strong>♂ / ♀</strong> below, then the head judge advances the <strong>top boy AND the top girl</strong> from this heat (2 boys + 2 girls per final). That's what lets us crown both a King (top boy) and a Queen (top girl) in each division. <em>If a heat has no boys or no girls, advance the next-best surfer instead.</em>
+    </div>
+
     <!-- Surfer block (×4) -->
     <!-- Repeat pattern -->
     <div class="surfer">
-      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span></div>
+      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span><span class="advmark"><span class="opt">♂</span><span class="opt">♀</span><span class="adv-box">adv ☐</span></span></div>
       <table>
         <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
         <tbody>
@@ -88,7 +95,7 @@
     </div>
 
     <div class="surfer">
-      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span></div>
+      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span><span class="advmark"><span class="opt">♂</span><span class="opt">♀</span><span class="adv-box">adv ☐</span></span></div>
       <table>
         <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
         <tbody>
@@ -103,7 +110,7 @@
     </div>
 
     <div class="surfer">
-      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span></div>
+      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span><span class="advmark"><span class="opt">♂</span><span class="opt">♀</span><span class="adv-box">adv ☐</span></span></div>
       <table>
         <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
         <tbody>
@@ -118,7 +125,7 @@
     </div>
 
     <div class="surfer">
-      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span></div>
+      <div class="surfer-head"><span class="name-label">Surfer name →</span><span class="surfer-name"></span><span class="advmark"><span class="opt">♂</span><span class="opt">♀</span><span class="adv-box">adv ☐</span></span></div>
       <table>
         <thead><tr><th class="label" style="text-align:left;">Wave →</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
         <tbody>
