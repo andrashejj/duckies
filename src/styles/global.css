@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Sunset Anton";
+  src: url("/brand/anton-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sunset La Belle";
+  src: url("/brand/la-belle-aurore-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Distinctive type: variable Bricolage Grotesque for display (weird + playful),
      Fraunces Wonky for accents, Outfit for body, JetBrains Mono for tags. */
+  --font-brand: "Sunset Anton", "Arial Black", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Sunset La Belle", "Fraunces", cursive;
   --font-display: "Bricolage Grotesque", "Fraunces", ui-serif, serif;
   --font-accent: "Fraunces", "Iowan Old Style", serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
@@ -118,6 +136,16 @@ body {
 
 .font-mono {
   font-family: var(--font-mono);
+}
+
+.font-brand {
+  font-family: var(--font-brand);
+  letter-spacing: 0.01em;
+}
+
+.font-script {
+  font-family: var(--font-script);
+  letter-spacing: 0.02em;
 }
 
 /* ==== BRUTALIST STICKER CARDS ==== */
