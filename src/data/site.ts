@@ -262,13 +262,6 @@ export const site = {
         accent: "sticker-pink",
       },
       {
-        title: "Finisher certificate",
-        file: "/templates/finisher-certificate.html",
-        description: "Certificate of Stoke — print one per surfer. Everyone who paddles out gets one.",
-        emoji: "🏆",
-        accent: "sticker-coral",
-      },
-      {
         title: "Certificates & prizes",
         file: "/templates/certificates.html",
         description: "One printable certificate per prize — the 4 crowns (Duckling/Duckie King & Queen) plus the fun awards (Tried Hardest, Fell Hardest, Biggest Smile, and more). Type the winner's name and print.",
