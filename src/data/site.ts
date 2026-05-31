@@ -113,7 +113,7 @@ export const site = {
       { time: "14:00", label: "Duckling heats", emoji: "🐤" },
       { time: "~14:45", label: "Duck heats", emoji: "🦆" },
       { time: "15:30", label: "Break — BBQ + free surf", emoji: "🍔" },
-      { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
+      { time: "16:00", label: "The Final — top ducklings + top ducks, one heat", emoji: "🌊" },
       { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
       { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
       { time: "17:30", label: "Wind-down + teardown", emoji: "✨" },
@@ -148,8 +148,8 @@ export const site = {
     ],
     prizes: {
       crowns: [
-        { emoji: "🐤", title: "Sunset Duckling King + Queen", text: "Top boy + top girl of the Duckling final." },
-        { emoji: "🦆", title: "Sunset Duckie King + Queen", text: "Top boy + top girl of the Duck final." },
+        { emoji: "🐤", title: "Sunset Duckling King + Queen", text: "Top duckling boy + top duckling girl in the Final." },
+        { emoji: "🦆", title: "Sunset Duckie King + Queen", text: "Top duck boy + top duck girl in the Final." },
       ],
       sideAwards: [
         { emoji: "💪", title: "Tried Hardest", text: "Never gave up — got back on every time." },
@@ -165,7 +165,7 @@ export const site = {
     parentHeat: {
       title: "The Parent Heat 🦆",
       blurb:
-        "After the kids' finals, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
+        "After the kids' Final, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
       awards: [
         "Best Dad Stance",
         "Best Mom Stance",
@@ -208,7 +208,7 @@ export const site = {
       {
         title: "Heat schedule & draw",
         file: "/templates/heat-schedule.html",
-        description: "The running order + blank draw sheet — 2 duckling heats, 2 duck heats, finals, parent heat. Write in arm numbers on the day.",
+        description: "The running order + blank draw sheet — 2 duckling heats, 2 duck heats, one combined Final (up to 8), parent heat. Write in arm numbers on the day.",
         emoji: "🏁",
         accent: "sticker-lilac",
       },
