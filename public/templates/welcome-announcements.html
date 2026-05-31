@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Welcome &amp; Important Announcements</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; --mint: #d8f5e3; --danger: rgba(255,78,43,0.18); }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.55; }
+    .sheet { max-width: 820px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.4rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.25rem; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    h3 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1rem; margin: 14px 0 6px; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    .lede { font-size: 1.04rem; margin: 6px 0 14px; max-width: 64ch; }
+    .quote { background: var(--cream); border: 2px solid var(--ink); border-radius: 14px; padding: 16px 18px; margin: 12px 0; box-shadow: 3px 3px 0 0 var(--ink); font-style: italic; font-size: 1.02rem; }
+    .quote::before { content: "🎤 "; font-style: normal; }
+    .card { border: 2px solid var(--ink); border-radius: 14px; padding: 14px 16px; margin: 10px 0; box-shadow: 3px 3px 0 0 var(--ink); background: var(--cream); }
+    .card.warm { background: rgba(255,210,63,0.45); }
+    .card.calm { background: var(--mint); }
+    .card.danger { background: var(--danger); border-color: var(--coral); }
+    .card.danger h3 { color: var(--coral); }
+    .card .label { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(11,22,32,0.7); display: block; margin-bottom: 4px; }
+    .danger-stripe { background: repeating-linear-gradient(45deg, var(--coral) 0 10px, var(--ink) 10px 14px); height: 10px; border-radius: 4px; margin: 6px 0 12px; }
+    ul { padding-left: 22px; margin: 6px 0; }
+    li { margin: 5px 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--cream); border: 1.5px solid var(--ink); padding: 0.35rem 0.75rem; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 2px 2px 0 0 var(--ink); }
+    .pill.coral { background: var(--coral); color: var(--cream); }
+    .pill.teal { background: var(--teal); }
+    .pill.sun { background: var(--sun); }
+    .pill.pink { background: var(--pink); }
+    .pill.lilac { background: var(--lilac); }
+    .pill.mint { background: var(--mint); }
+    .num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--cream); font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 0.8rem; margin-right: 8px; vertical-align: middle; }
+    .rule { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px dashed rgba(11,22,32,0.25); }
+    .rule:last-child { border-bottom: none; }
+    .rule .big { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; }
+    .rule .why { font-size: 0.9rem; color: rgba(11,22,32,0.78); }
+    .timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+    .timer .step { border: 1.5px solid var(--ink); border-radius: 10px; padding: 9px 10px; background: var(--cream-soft); box-shadow: 2px 2px 0 0 var(--ink); }
+    .timer .step .when { font-family: "JetBrains Mono", monospace; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(11,22,32,0.7); }
+    .timer .step .what { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.95rem; margin-top: 4px; }
+    .timer .step.go { background: var(--mint); }
+    .timer .step.warn { background: var(--sun); }
+    .timer .step.stop { background: var(--danger); }
+    .criteria { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .crit { border: 1.5px solid var(--ink); border-radius: 12px; padding: 10px 12px; background: var(--cream-soft); box-shadow: 2px 2px 0 0 var(--ink); }
+    .crit .name { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.98rem; }
+    .crit .desc { font-size: 0.86rem; color: rgba(11,22,32,0.8); margin-top: 2px; }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media (max-width: 640px) {
+      .grid-2, .criteria { grid-template-columns: 1fr; }
+      .timer { grid-template-columns: 1fr 1fr; }
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      body { background: white; padding: 0; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .sheet { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border-radius: 0; border: none; background: white; }
+      .print-btn { display: none; }
+      .card, .quote, .pill, .timer .step, .crit { box-shadow: none; }
+      h1 { font-size: 1.7rem; }
+      h2 { font-size: 1.05rem; margin: 14px 0 6px; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Welcome &amp; safety brief</span>
+    <h1>Welcome to the Sunset Duckies Cup! 🦆🌅</h1>
+    <p class="meta">Read aloud at 13:30 — gather everyone on the sand · ~3 minutes · loud, warm, no rushing the safety bits.</p>
+
+    <div class="quote">
+      "Ducklings, parents, friends — welcome to the very first Sunset Duckies Cup! Before we paddle out,
+      gather in, listen up — a few important things, then we surf."
+    </div>
+
+    <h2><span>🎉</span> First competition we've ever run</h2>
+    <div class="card warm">
+      <p style="margin:0;">
+        This is the <strong>first comp the club has ever organised</strong> — bear with us if the running
+        order wobbles a little. The waves call the shots, not the schedule. Be patient, be loud for every
+        kid, and we'll all have a great afternoon.
+      </p>
+    </div>
+
+    <h2><span>🧭</span> Where to find things</h2>
+    <div class="grid-2">
+      <div class="card">
+        <span class="label">🍔 Food &amp; water</span>
+        <p style="margin:4px 0 0;">On the tables — help yourselves any time. The <strong>BBQ is going all afternoon</strong>: sausages, baguettes, fruit. Drink water, it's a long day in the sun.</p>
+      </div>
+      <div class="card">
+        <span class="label">🕒 Timetable</span>
+        <p style="margin:4px 0 0;">Pinned at the registration desk and on the heat board. If you're not sure when your kid is up — check the board first, then ask a helper.</p>
+      </div>
+      <div class="card">
+        <span class="label">🦆 Helpers in Duckies shirts</span>
+        <p style="margin:4px 0 0;">Anyone in a <strong>Sunset Duckies shirt</strong> is a helper. Lost? Confused? Need a leash, a snack, a band-aid? Stop one and ask.</p>
+      </div>
+      <div class="card">
+        <span class="label">🩹 First aid</span>
+        <p style="margin:4px 0 0;">First-aid kit is at the registration desk and a trained adult is on site all afternoon. Grazes, jellyfish, wax-in-eye — find a helper immediately.</p>
+      </div>
+    </div>
+
+    <h2><span>🚩</span> Water safety — listen carefully</h2>
+    <div class="danger-stripe" aria-hidden="true"></div>
+    <p class="lede" style="margin-top:0;">These rules exist so no one gets hurt. They're not negotiable — if a helper or the head judge calls you back, come back, no arguments.</p>
+
+    <div class="card danger">
+      <div class="rule">
+        <div><span class="num">1</span></div>
+        <div>
+          <div class="big">YOU MUST surf WITHIN the poles.</div>
+          <div class="why">Two flags / poles mark the competition zone. Stay between them. That's where the judges can see you and where we can keep you safe.</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div><span class="num">2</span></div>
+        <div>
+          <div class="big">YOU CANNOT go OUTSIDE the poles.</div>
+          <div class="why">If you drift past a pole — paddle <em>around</em> the outside and re-enter from behind. <strong>Never cut back through the line-up</strong> — that's how boards meet heads. Always paddle around.</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div><span class="num">3</span></div>
+        <div>
+          <div class="big">ONE SURFER PER WAVE. 🚫🚫</div>
+          <div class="why">If someone is already up and riding, the wave is theirs. Don't drop in. Wait, smile, take the next one — there are plenty of waves.</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div><span class="num">4</span></div>
+        <div>
+          <div class="big">Leash on. Helmet if you have one. Sunscreen on.</div>
+          <div class="why">Board hits hurt. A leash keeps your board with you, not flying into someone else.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2><span>⏱️</span> How a heat runs</h2>
+    <p class="lede" style="margin-top:0;">We'll call every step from the beach with the mic — you don't have to remember the clock, just listen.</p>
+    <div class="timer">
+      <div class="step"><div class="when">2 min before</div><div class="what">🌊 Warm-up call</div><div class="why" style="font-size:0.82rem; margin-top:4px;">"Heat ___ — paddle out, warm up, find your spot."</div></div>
+      <div class="step go"><div class="when">0:00</div><div class="what">🟢 Heat STARTS</div><div class="why" style="font-size:0.82rem; margin-top:4px;">"Your ten minutes start NOW!"</div></div>
+      <div class="step warn"><div class="when">3 min to go</div><div class="what">🟡 3-min warning</div><div class="why" style="font-size:0.82rem; margin-top:4px;">"Three minutes left — still time for one more!"</div></div>
+      <div class="step stop"><div class="when">10:00</div><div class="what">🔴 Heat STOPS</div><div class="why" style="font-size:0.82rem; margin-top:4px;">"Time! Paddle in — well done!" Catch the wave you're on, then come in.</div></div>
+    </div>
+    <p style="margin-top:10px; font-size:0.92rem;"><strong>Heats are 10 minutes.</strong> When time's up, finish the wave you're on if you're already riding it — then paddle straight in. Don't start a new wave after the horn.</p>
+
+    <h2><span>🏅</span> Judging — only your TOP 2 waves count</h2>
+    <div class="card calm">
+      <p style="margin:0 0 6px;">
+        Catch as many waves as you want — but at the end of the heat <strong>only your best 2 waves</strong> go
+        toward your score. That means it's better to <strong>commit hard to a few good ones</strong> than to flap
+        on every ripple. Pick your wave, paddle with everything, stand tall.
+      </p>
+      <p style="margin:6px 0 0;">
+        Each wave is scored on <strong>5 simple things</strong> — the judge ticks a box for each one you nail.
+        Max 5 ticks per wave, max 10 across your best 2.
+      </p>
+    </div>
+
+    <div class="criteria">
+      <div class="crit"><div class="name">🏊 Paddle &amp; commit</div><div class="desc">You went for the wave with everything — no hesitation, head down, full strokes.</div></div>
+      <div class="crit"><div class="name">🚀 Pop-up</div><div class="desc">Clean push to your feet — hands on the board, jump up, no knees first.</div></div>
+      <div class="crit"><div class="name">🧘 Stance</div><div class="desc">Feet apart, knees bent, eyes up the wave — like your coach showed you.</div></div>
+      <div class="crit"><div class="name">🌊 Ride</div><div class="desc">You stayed up and rode the wave — even a few seconds counts. Longer = better.</div></div>
+      <div class="crit"><div class="name">🎉 Stoke</div><div class="desc">Big smile, claim it, kick out with style. Energy in the water matters!</div></div>
+    </div>
+
+    <h2><span>📣</span> One last thing — cheer for EVERYONE</h2>
+    <div class="card warm">
+      <p style="margin:0;">
+        Parents, friends, fellow ducklings — <strong>cheer for every kid, not just yours</strong>. The kid
+        who falls hardest gets the loudest cheer. The kid who's scared and paddles out anyway is a hero.
+        That's the Duckies way.
+      </p>
+    </div>
+
+    <div class="quote" style="margin-top:18px;">
+      "Any questions? No? Then let's surf the first ever Sunset Duckies Cup! 🤙"
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>
