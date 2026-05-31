@@ -234,6 +234,13 @@ export const site = {
         accent: "sticker-teal",
       },
       {
+        title: "Payment tracker",
+        file: "/templates/payment-tracker.html",
+        description: "One row per kid, grouped by family — pre-filled paid/waiver status, late-add slots, totals box. Pin at the registration desk.",
+        emoji: "💰",
+        accent: "sticker-teal",
+      },
+      {
         title: "Pre-event checklist",
         file: "/templates/pre-event-checklist.html",
         description: "Owners + due dates from now through Saturday 30 May.",
