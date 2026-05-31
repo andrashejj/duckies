@@ -33,7 +33,6 @@
     tr.paid-row td.col-paid { background: var(--paid); }
     tr.unpaid-row td.col-paid { background: var(--unpaid); }
     .col-num { width: 22px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.5); text-align: right; }
-    .col-family { width: 90px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.75); white-space: nowrap; }
     .col-name { font-weight: 600; white-space: nowrap; }
     .col-name .age { font-family: "JetBrains Mono", monospace; font-size: 0.66rem; color: rgba(11,22,32,0.55); margin-left: 5px; }
     .col-name .div { margin-right: 4px; }
@@ -42,7 +41,6 @@
     .col-paid { width: 54px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; font-weight: 700; }
     .col-when { width: 110px; }
     .col-waiver { width: 50px; text-align: center; }
-    .col-notes { font-size: 0.74rem; color: rgba(11,22,32,0.72); }
     .blank { display: inline-block; min-width: 100%; min-height: 1.05em; border-bottom: 1px solid rgba(11,22,32,0.45); }
     .tickbox { display: inline-block; width: 16px; height: 16px; border: 1.5px solid var(--ink); border-radius: 4px; vertical-align: middle; }
     .tick-yes { display: inline-block; width: 16px; height: 16px; border: 1.5px solid var(--ink); border-radius: 4px; background: var(--teal); color: var(--ink); font-weight: 800; text-align: center; line-height: 14px; font-size: 0.78rem; vertical-align: middle; }
@@ -69,7 +67,7 @@
       table.tracker thead { display: table-header-group; }
       table.tracker thead th { font-size: 0.58rem; padding: 3.5px 5px; }
       table.tracker tbody td { padding: 3px 5px; font-size: 0.72rem; }
-      .col-name .age, .col-family, .col-contact, .col-parent, .col-notes { font-size: 0.6rem; }
+      .col-name .age, .col-contact, .col-parent { font-size: 0.6rem; }
       .col-paid { font-size: 0.62rem; }
       .total-card { box-shadow: none; border-radius: 6px; padding: 7px 9px; }
       .total-card .label { font-size: 0.56rem; }
@@ -106,7 +104,7 @@
       <span class="chip">💸 1'000 MUR per kid</span>
       <span class="chip">🎯 23 surfers (+1 cheerleader)</span>
       <span class="chip paid">✅ 13 paid · 13'000 MUR in</span>
-      <span class="chip unpaid">⚠️ 7 unpaid · 7'000 MUR to chase</span>
+      <span class="chip unpaid">⚠️ 7 unpaid · 7'000 MUR</span>
       <span class="chip">❓ 4 late-adds · TBC</span>
     </div>
 
@@ -119,74 +117,72 @@
       <thead>
         <tr>
           <th class="col-num">#</th>
-          <th class="col-family">Family</th>
           <th>Surfer</th>
           <th class="col-parent">Parent / guardian</th>
           <th class="col-contact">Contact</th>
           <th class="col-paid">Paid</th>
           <th class="col-when">Date / method</th>
           <th class="col-waiver">Waiv.</th>
-          <th class="col-notes">Notes</th>
         </tr>
       </thead>
       <tbody>
         <!-- Basu -->
-        <tr class="family-split paid-row"><td class="col-num">1</td><td class="col-family">Basu</td><td class="col-name"><span class="div">🐤</span>Leonie Basu <span class="age">8</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
-        <tr class="paid-row"><td class="col-num">2</td><td class="col-family">Basu</td><td class="col-name"><span class="div">🐤</span>Shanay Basu <span class="age">11</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Confirm Duckling at 11</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">1</td><td class="col-name"><span class="div">🐤</span>Leonie Basu <span class="age">8</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="paid-row"><td class="col-num">2</td><td class="col-name"><span class="div">🐤</span>Shanay Basu <span class="age">11</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Bax De Keating (Skye — same mother as Tylers) -->
-        <tr class="family-split unpaid-row"><td class="col-num">3</td><td class="col-family">Bax De K.</td><td class="col-name"><span class="div">🦆</span>Skye Bax De Keating <span class="age">11</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Same mum as Tylers — bundle the bill</td></tr>
+        <tr class="family-split unpaid-row"><td class="col-num">3</td><td class="col-name"><span class="div">🦆</span>Skye Bax De Keating <span class="age">11</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Datoo (late-add, paid) -->
-        <tr class="family-split paid-row"><td class="col-num">4</td><td class="col-family">Datoo</td><td class="col-name"><span class="div">🐤</span>Yusuf Datoo <span class="age">6</span></td><td class="col-parent">Laila Datoo</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · Laila on cleanup roster · waiver TBC</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">4</td><td class="col-name"><span class="div">🐤</span>Yusuf Datoo <span class="age">6</span></td><td class="col-parent">Laila Datoo</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
 
         <!-- de Waal (late-add, siblings) -->
-        <tr class="family-split"><td class="col-num">5</td><td class="col-family">de Waal</td><td class="col-name"><span class="div">🦆</span>Eljana de Waal <span class="age">10</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · Rulandi donating whiteboard</td></tr>
-        <tr><td class="col-num">6</td><td class="col-family">de Waal</td><td class="col-name"><span class="div">🦆</span>Ruhan de Waal <span class="age">8</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · sibling of Eljana</td></tr>
+        <tr class="family-split"><td class="col-num">5</td><td class="col-name"><span class="div">🦆</span>Eljana de Waal <span class="age">10</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
+        <tr><td class="col-num">6</td><td class="col-name"><span class="div">🦆</span>Ruhan de Waal <span class="age">8</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
 
         <!-- Hejj (paid by default — organiser) -->
-        <tr class="family-split paid-row"><td class="col-num">7</td><td class="col-family">Hejj</td><td class="col-name"><span class="div">🐤</span>Lara Hejj <span class="age">6</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Organiser's kid · paid by default</td></tr>
-        <tr class="paid-row"><td class="col-num">8</td><td class="col-family">Hejj</td><td class="col-name"><span class="div">🦆</span>Noah Hejj <span class="age">9</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Organiser's kid · also on judging panel</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">7</td><td class="col-name"><span class="div">🐤</span>Lara Hejj <span class="age">6</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="paid-row"><td class="col-num">8</td><td class="col-name"><span class="div">🦆</span>Noah Hejj <span class="age">9</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Klein (siblings, both paid) -->
-        <tr class="family-split paid-row"><td class="col-num">9</td><td class="col-family">Klein</td><td class="col-name"><span class="div">🐤</span>Alysia Klein <span class="age">10</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
-        <tr class="paid-row"><td class="col-num">10</td><td class="col-family">Klein</td><td class="col-name"><span class="div">🐤</span>Ella Klein <span class="age">8</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Vegetarian — flag for BBQ</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">9</td><td class="col-name"><span class="div">🐤</span>Alysia Klein <span class="age">10</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="paid-row"><td class="col-num">10</td><td class="col-name"><span class="div">🐤</span>Ella Klein <span class="age">8</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Mats (late-add) -->
-        <tr class="family-split"><td class="col-num">11</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="div">🐤</span>Mats <span class="age">9</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · surname / parent TBC</td></tr>
+        <tr class="family-split"><td class="col-num">11</td><td class="col-name"><span class="div">🐤</span>Mats <span class="age">9</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
 
         <!-- Maud (late-add) -->
-        <tr class="family-split"><td class="col-num">12</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="div">🐤</span>Maud <span class="age">7</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · surname / parent TBC</td></tr>
+        <tr class="family-split"><td class="col-num">12</td><td class="col-name"><span class="div">🐤</span>Maud <span class="age">7</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
 
         <!-- Nel (siblings, both unpaid) -->
-        <tr class="family-split unpaid-row"><td class="col-num">13</td><td class="col-family">Nel</td><td class="col-name"><span class="div">🦆</span>Karia Nel <span class="age">14</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Josua</td></tr>
-        <tr class="unpaid-row"><td class="col-num">14</td><td class="col-family">Nel</td><td class="col-name"><span class="div">🦆</span>Josua Nel <span class="age">12</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Karissa loaning chairs + cool box</td></tr>
+        <tr class="family-split unpaid-row"><td class="col-num">13</td><td class="col-name"><span class="div">🦆</span>Karia Nel <span class="age">14</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="unpaid-row"><td class="col-num">14</td><td class="col-name"><span class="div">🦆</span>Josua Nel <span class="age">12</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Niescierowicz (Teo surfer + Alek cheerleader) -->
-        <tr class="family-split paid-row"><td class="col-num">15</td><td class="col-family">Niescierowicz</td><td class="col-name"><span class="div">🦆</span>Teo Niescierowicz <span class="age">9</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
-        <tr class="paid-row"><td class="col-num">16</td><td class="col-family">Niescierowicz</td><td class="col-name"><span class="div">📣</span>Alek Niescierowicz <span class="age">7</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Cheerleader — not surfing</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">15</td><td class="col-name"><span class="div">🦆</span>Teo Niescierowicz <span class="age">9</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="paid-row"><td class="col-num">16</td><td class="col-name"><span class="div">📣</span>Alek Niescierowicz <span class="age">7</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Raye (siblings, both paid) -->
-        <tr class="family-split paid-row"><td class="col-num">17</td><td class="col-family">Raye</td><td class="col-name"><span class="div">🐤</span>Robyn Raye <span class="age">4</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Mark on setup crew</td></tr>
-        <tr class="paid-row"><td class="col-num">18</td><td class="col-family">Raye</td><td class="col-name"><span class="div">🐤</span>Taylor Raye <span class="age">6</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">17</td><td class="col-name"><span class="div">🐤</span>Robyn Raye <span class="age">4</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="paid-row"><td class="col-num">18</td><td class="col-name"><span class="div">🐤</span>Taylor Raye <span class="age">6</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- St Guillaume -->
-        <tr class="family-split paid-row"><td class="col-num">19</td><td class="col-family">St Guillaume</td><td class="col-name"><span class="div">🦆</span>Holly St Guillaume <span class="age">11</span></td><td class="col-parent">Trinity St Guillaume</td><td class="col-contact">70104746</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Celiac — gluten-free bun</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">19</td><td class="col-name"><span class="div">🦆</span>Holly St Guillaume <span class="age">11</span></td><td class="col-parent">Trinity St Guillaume</td><td class="col-contact">70104746</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Tyler (siblings, both unpaid; Skye Bax De Keating above shares mother) -->
-        <tr class="family-split unpaid-row"><td class="col-num">20</td><td class="col-family">Tyler</td><td class="col-name"><span class="div">🐤</span>Ezrah Wild Tyler <span class="age">6</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Elijah + Skye = 3'000 MUR</td></tr>
-        <tr class="unpaid-row"><td class="col-num">21</td><td class="col-family">Tyler</td><td class="col-name"><span class="div">🦆</span>Elijah Bear Tyler <span class="age">9</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Kyrah running setup / teardown</td></tr>
+        <tr class="family-split unpaid-row"><td class="col-num">20</td><td class="col-name"><span class="div">🐤</span>Ezrah Wild Tyler <span class="age">6</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="unpaid-row"><td class="col-num">21</td><td class="col-name"><span class="div">🦆</span>Elijah Bear Tyler <span class="age">9</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Vlok (siblings, both unpaid) -->
-        <tr class="family-split unpaid-row"><td class="col-num">22</td><td class="col-family">Vlok</td><td class="col-name"><span class="div">🐤</span>Marc-Emmanuel Vlok <span class="age">7</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Emma-Jayne · NO social media</td></tr>
-        <tr class="unpaid-row"><td class="col-num">23</td><td class="col-family">Vlok</td><td class="col-name"><span class="div">🦆</span>Emma-Jayne Vlok <span class="age">10</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Theola lending BBQ + tables</td></tr>
+        <tr class="family-split unpaid-row"><td class="col-num">22</td><td class="col-name"><span class="div">🐤</span>Marc-Emmanuel Vlok <span class="age">7</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
+        <tr class="unpaid-row"><td class="col-num">23</td><td class="col-name"><span class="div">🦆</span>Emma-Jayne Vlok <span class="age">10</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Webb -->
-        <tr class="family-split paid-row"><td class="col-num">24</td><td class="col-family">Webb</td><td class="col-name"><span class="div">🦆</span>Jaxon Webb <span class="age">8</span></td><td class="col-parent">Tracy Loumeau</td><td class="col-contact">54890928</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Pete (father) on BBQ duty</td></tr>
+        <tr class="family-split paid-row"><td class="col-num">24</td><td class="col-name"><span class="div">🦆</span>Jaxon Webb <span class="age">8</span></td><td class="col-parent">Tracy Loumeau</td><td class="col-contact">54890928</td><td class="col-paid"><span class="tick-yes">✓</span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td></tr>
 
         <!-- Late-add slots -->
-        <tr class="family-split"><td class="col-num">25</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes"><span class="blank"></span></td></tr>
-        <tr><td class="col-num">26</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes"><span class="blank"></span></td></tr>
+        <tr class="family-split"><td class="col-num">25</td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
+        <tr><td class="col-num">26</td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td></tr>
       </tbody>
     </table>
 
@@ -211,13 +207,6 @@
     </div>
 
     <div class="note">
-      <strong>Chasing the seven unpaid:</strong>
-      <ul>
-        <li><strong>Tyler / Bax De Keating (Kyrah, 5775 9547) — 3'000 MUR</strong> · Ezrah + Elijah + Skye, all same mum.</li>
-        <li><strong>Vlok (Theola, 5977 6564) — 2'000 MUR</strong> · Marc-Emmanuel + Emma-Jayne. Photo policy: WhatsApp + website only, NO social media.</li>
-        <li><strong>Nel (Karissa, 58424945) — 2'000 MUR</strong> · Karia + Josua.</li>
-        <li><strong>Late-add families (de Waal · Mats · Maud) — TBC</strong> · confirm fee + waiver + photo before they walk on the sand. (Datoo paid — still chase waiver. Hejj paid by default.)</li>
-      </ul>
       <strong>Cash handling on the day:</strong>
       <ul>
         <li><strong>One person on the till</strong> at the registration desk — fewer hands = fewer reconciliation headaches.</li>
