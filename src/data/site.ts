@@ -227,6 +227,13 @@ export const site = {
         accent: "sticker-pink",
       },
       {
+        title: "Welcome & announcements",
+        file: "/templates/welcome-announcements.html",
+        description: "Read aloud at 13:30 — welcome, food/BBQ/timetable, helpers, first aid, water-safety rules (poles, one-surfer-per-wave), heat timer flow, and the 5 judging criteria explained.",
+        emoji: "📣",
+        accent: "sticker-coral",
+      },
+      {
         title: "Volunteer sheet",
         file: "/templates/volunteer-roles.html",
         description: "Doing and bringing — claim a role or an item.",
@@ -253,13 +260,6 @@ export const site = {
         description: "Sausages (pork + Halal), baguettes, fruit, charcoal, paper goods — quantities for ~26 plates, with the two special diets flagged.",
         emoji: "🛒",
         accent: "sticker-pink",
-      },
-      {
-        title: "Finisher certificate",
-        file: "/templates/finisher-certificate.html",
-        description: "Certificate of Stoke — print one per surfer. Everyone who paddles out gets one.",
-        emoji: "🏆",
-        accent: "sticker-coral",
       },
       {
         title: "Certificates & prizes",
