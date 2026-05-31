@@ -481,121 +481,145 @@ body.finisher .signoff { margin-top: 18px; }
 }
 
 @media print {
-  @page { size: A5 landscape; margin: 5mm; }
+  @page { size: A5 landscape; margin: 0; }
+
   html, body {
-    width: 100%;
-    height: 100%;
-    background: #fff !important;
-    padding: 0;
+    width: 210mm;
+    height: 148mm;
     margin: 0;
+    padding: 0;
+    background: #fff !important;
     color: #111;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+
   .cert {
-    width: 100%;
-    height: 100%;
+    width: 210mm;
+    height: 148mm;
     max-width: none;
     min-height: 0;
     margin: 0;
-    padding: 11mm 14mm 9mm;
+    padding: 0;
     aspect-ratio: auto;
     display: block;
-    border: 2.5px solid #111;
-    border-radius: 7mm;
-    background: #fff !important;
-    box-shadow: none;
+    position: relative;
     overflow: hidden;
+    background: #fff !important;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     page-break-inside: avoid;
     break-inside: avoid;
     page-break-after: avoid;
   }
+
+  /* Outer hairline frame, safe inside the printable area */
   .cert::before {
-    inset: 3mm;
-    border: 1px solid #111;
+    content: "";
+    position: absolute;
+    inset: 6mm;
+    border: 1.4px solid #111;
     border-radius: 4mm;
+    pointer-events: none;
   }
   .cert::after,
   .rays,
-  .kicker {
+  .kicker,
+  .corner,
+  .print-btn,
+  .hint {
     display: none !important;
   }
-  .inner {
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto auto auto auto auto 1fr auto auto;
-    align-content: center;
-    padding: 0 5mm;
-  }
-  .inner::before {
-    content: "Salty hair.\A Real grit.\A No cap.";
-    display: block !important;
+
+  /* Brand logo: top-left of the header band, no longer over the title */
+  .brand-logo {
+    display: block;
     position: absolute;
-    top: 3mm;
-    left: 9mm;
-    width: 35mm;
-    height: auto;
+    top: 12mm;
+    left: 18mm;
+    z-index: 5;
+    width: 15mm;
+    height: 15mm;
     margin: 0;
-    background: none;
-    color: #111;
-    font-family: "Sunset Anton", Impact, "Arial Black", sans-serif;
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0;
-    line-height: 1.08;
-    text-align: left;
-    text-transform: none;
-    white-space: pre;
+    border: 1.2px solid #111;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.35);
   }
-  .inner::after {
+  .brand-logo-left { left: 18mm; }
+  .brand-logo-right { display: none !important; }
+
+  .inner {
+    position: relative;
+    height: 100%;
+    padding: 34mm 18mm 13mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  /* SUNSET DUCKIES wordmark, sitting next to the logo */
+  .inner::before {
     content: "SUNSET\A DUCKIES";
     display: block !important;
     position: absolute;
-    top: 3mm;
-    right: 9mm;
-    width: 28mm;
+    top: 14mm;
+    left: 36mm;
+    width: auto;
     height: auto;
     margin: 0;
+    padding: 0;
     background: none;
     color: #111;
     font-family: "Sunset Anton", Impact, "Arial Black", sans-serif;
     font-size: 0.95rem;
     font-weight: 900;
-    letter-spacing: 0.01em;
-    line-height: 0.92;
+    letter-spacing: 0.02em;
+    line-height: 0.95;
     text-align: left;
     text-transform: uppercase;
     white-space: pre;
   }
-  .corner {
-    display: none !important;
-  }
-  .brand-logo {
-    display: block;
+
+  /* Tagline, top-right */
+  .inner::after {
+    content: "Salty hair. Real grit. No cap.";
+    display: block !important;
     position: absolute;
-    top: 10mm;
-    z-index: 4;
-    width: 19mm;
-    height: 19mm;
-    border: 1.4px solid #111;
-    border-radius: 50%;
-    object-fit: cover;
-    filter: grayscale(1) contrast(1.35);
+    top: 16.5mm;
+    right: 18mm;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: none;
+    color: #111;
+    font-family: "Sunset Anton", Impact, "Arial Black", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-align: right;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
-  .brand-logo-left { left: calc(50% - 9.5mm); }
-  .brand-logo-right { display: none; }
+
   .emblem,
   .rosette {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 5px;
+    width: 12mm;
+    height: 12mm;
+    margin: 0 0 2.5mm;
+    flex-shrink: 0;
   }
   .emblem {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     filter: grayscale(1) contrast(1.25);
   }
   .emblem::before {
-    border: 1.5px solid #111;
+    border: 1.4px solid #111;
     border-radius: 50%;
     background: #fff !important;
     box-shadow: none;
@@ -607,120 +631,126 @@ body.finisher .signoff { margin-top: 18px; }
   }
   .rosette .burst {
     inset: 0;
-    border: 1.5px solid #111;
+    border: 1.4px solid #111;
     border-radius: 50%;
     background: #fff !important;
     box-shadow: none;
     animation: none;
   }
   .rosette .disc {
-    inset: 8px;
-    border: 1.3px solid #111;
+    inset: 1.6mm;
+    border: 1.2px solid #111;
     background: #fff !important;
     font-size: 1.2rem;
     filter: grayscale(1) contrast(1.25);
   }
+
   .eyebrow,
   .awarded,
   .subtitle,
   .sig {
-    color: #555 !important;
+    color: #444 !important;
   }
-  .eyebrow,
-  .awarded {
-    margin-bottom: 3px;
-    font-size: 0.48rem;
-    letter-spacing: 0.18em;
+  .eyebrow {
+    margin: 0 0 1.5mm;
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
   }
+
   h1 {
-    max-width: 160mm;
-    margin: 0 auto 4px;
-    font-size: 1.95rem;
-    line-height: 0.95;
-    letter-spacing: -0.015em;
+    max-width: 170mm;
+    margin: 0 auto 2mm;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
   }
   h1 .title,
   h1 .accent {
     color: #111 !important;
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 700;
   }
+
   .subtitle {
-    margin: 0 0 7px;
-    font-size: 0.5rem;
-    letter-spacing: 0.16em;
+    margin: 0 0 4mm;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
   }
+
   .awarded {
-    margin-top: 0;
+    margin: 0 0 1mm;
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
   }
+
   .name {
-    width: 118mm;
-    min-height: 16mm;
-    margin: 0 auto 6px;
-    padding: 0 5mm 3px;
-    border-bottom: 1.5px solid #111;
-    font-size: 1.9rem;
+    width: 140mm;
+    min-height: 13mm;
+    margin: 0 auto 4mm;
+    padding: 0 6mm 1.5mm;
+    border-bottom: 1.4px solid #111;
+    font-size: 1.85rem;
+    font-style: italic;
+    line-height: 1.05;
   }
+
   .blurb {
     position: relative;
-    width: 142mm;
-    max-width: 142mm;
+    max-width: 158mm;
     margin: 0 auto;
     padding: 0;
-    font-size: 0.72rem;
-    line-height: 1.28;
+    font-size: 0.74rem;
+    line-height: 1.32;
+    text-wrap: balance;
   }
   .blurb::before {
-    content: "";
+    content: "~  ~  ~";
     display: block;
-    width: 23mm;
-    height: 7mm;
-    margin: 0 auto 4mm;
-    background:
-      radial-gradient(12px 5px at 6px 7px, transparent 0 3px, #111 3.2px 4.5px, transparent 4.7px),
-      radial-gradient(12px 5px at 18px 0, transparent 0 3px, #111 3.2px 4.5px, transparent 4.7px);
-    background-size: 12px 7px;
-    background-position: 0 0, 0 0;
-    background-repeat: repeat-x;
+    margin: 0 auto 2.5mm;
+    font-family: "Fraunces", serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.2em;
+    line-height: 1;
   }
-  .award-line {
-    margin-top: 6px;
-  }
+
+  .award-line { margin-top: 3mm; }
   .award-tag {
     border: 1.2px solid #111;
     background: #fff !important;
     box-shadow: none;
     transform: none;
-    font-size: 0.64rem;
-    padding: 3px 10px;
+    font-size: 0.68rem;
+    padding: 2px 10px;
   }
+
   .signoff {
-    max-width: 138mm;
-    margin: 9px auto 0;
-    gap: 16mm;
+    width: 150mm;
+    margin: auto auto 0;
+    padding-top: 6mm;
+    gap: 18mm;
     grid-template-columns: 1fr 1fr;
   }
   .sig {
     border-top: 1.2px solid #111;
-    padding-top: 3px;
-    font-size: 0.43rem;
+    padding-top: 2.5mm;
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
   }
   .sig strong {
-    font-size: 0.64rem;
+    margin-bottom: 1mm;
+    font-size: 0.72rem;
     color: #111 !important;
   }
-  body.finisher .emblem {
-    width: 46px;
-    height: 46px;
-    margin: 0 auto 5px;
-  }
-  body.finisher h1 {
-    font-size: 1.9rem;
-  }
-  body.finisher .name {
-    min-height: 14mm;
-  }
-  body.finisher .award-line {
-    margin-top: 5px;
-  }
-  .print-btn, .hint { display: none; }
+
+  body.finisher h1 { font-size: 1.95rem; }
+  body.finisher .name { min-height: 12mm; }
+  body.finisher .award-line { margin-top: 2.5mm; }
+
   [contenteditable]:focus { outline: none; }
 }
