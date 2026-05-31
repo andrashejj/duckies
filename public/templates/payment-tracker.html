@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Payment Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; --mint: #d8f5e3; --paid: rgba(7,201,182,0.18); --unpaid: rgba(255,78,43,0.12); }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
+    .sheet { max-width: 1040px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--mint); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.2rem; margin: 26px 0 6px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    .lede { font-size: 1rem; margin: 6px 0 14px; max-width: 70ch; }
+    .chips { margin: 8px 0 6px; }
+    .chip { display: inline-block; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.7rem; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; margin: 0 6px 8px 0; box-shadow: 2px 2px 0 0 var(--ink); }
+    .chip.paid { background: var(--mint); }
+    .chip.unpaid { background: var(--unpaid); }
+    .legend { margin: 14px 0 18px; padding: 12px 14px; background: rgba(7,201,182,0.10); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.86rem; }
+    .legend strong { font-family: "Bricolage Grotesque", sans-serif; }
+    .legend code { background: rgba(11,22,32,0.06); padding: 1px 6px; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: 0.78rem; }
+    table.tracker { width: 100%; border-collapse: separate; border-spacing: 0; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; box-shadow: 3px 3px 0 0 var(--ink); background: var(--cream-soft); }
+    table.tracker thead th { background: var(--ink); color: var(--cream); font-family: "JetBrains Mono", monospace; font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 8px 7px; text-align: left; font-weight: 500; }
+    table.tracker tbody td { padding: 7px 7px; border-bottom: 1px solid rgba(11,22,32,0.16); font-size: 0.82rem; vertical-align: middle; }
+    table.tracker tbody tr:last-child td { border-bottom: none; }
+    table.tracker tbody tr.family-split td { border-top: 2px solid rgba(11,22,32,0.4); }
+    tr.paid-row td.col-paid { background: var(--paid); }
+    tr.unpaid-row td.col-paid { background: var(--unpaid); }
+    .col-num { width: 22px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.5); text-align: right; }
+    .col-family { width: 90px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.75); white-space: nowrap; }
+    .col-name { font-weight: 600; white-space: nowrap; }
+    .col-name .age { font-family: "JetBrains Mono", monospace; font-size: 0.66rem; color: rgba(11,22,32,0.55); margin-left: 5px; }
+    .col-name .div { margin-right: 4px; }
+    .col-parent { font-size: 0.78rem; }
+    .col-contact { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.78); }
+    .col-paid { width: 54px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; font-weight: 700; }
+    .col-when { width: 110px; }
+    .col-waiver { width: 50px; text-align: center; }
+    .col-notes { font-size: 0.74rem; color: rgba(11,22,32,0.72); }
+    .blank { display: inline-block; min-width: 100%; min-height: 1.05em; border-bottom: 1px solid rgba(11,22,32,0.45); }
+    .tickbox { display: inline-block; width: 16px; height: 16px; border: 1.5px solid var(--ink); border-radius: 4px; vertical-align: middle; }
+    .tick-yes { display: inline-block; width: 16px; height: 16px; border: 1.5px solid var(--ink); border-radius: 4px; background: var(--teal); color: var(--ink); font-weight: 800; text-align: center; line-height: 14px; font-size: 0.78rem; vertical-align: middle; }
+    .totals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 22px 0 8px; }
+    .total-card { border: 2px solid var(--ink); border-radius: 12px; padding: 12px 14px; background: var(--cream-soft); box-shadow: 3px 3px 0 0 var(--ink); }
+    .total-card .label { font-family: "JetBrains Mono", monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(11,22,32,0.7); }
+    .total-card .value { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 1.3rem; margin-top: 4px; letter-spacing: -0.02em; }
+    .total-card .value .unit { font-size: 0.78rem; font-weight: 500; color: rgba(11,22,32,0.6); margin-left: 4px; }
+    .total-card.collected { background: var(--paid); }
+    .total-card.outstanding { background: var(--unpaid); }
+    .total-card.fill .value { border-bottom: 1.5px solid var(--ink); min-width: 60px; display: inline-block; }
+    .note { margin-top: 22px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.9rem; }
+    .note ul { margin: 6px 0 0; padding-left: 20px; }
+    .note li { margin: 4px 0; }
+    .footer { margin-top: 28px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print {
+      @page { size: A4 landscape; margin: 8mm; }
+      html, body { background: white; }
+      body { padding: 0; font-size: 9.5pt; line-height: 1.3; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .sheet { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border-radius: 0; border: none; background: white; }
+      .print-btn { display: none; }
+      table.tracker { box-shadow: none; border-radius: 6px; }
+      table.tracker thead { display: table-header-group; }
+      table.tracker thead th { font-size: 0.58rem; padding: 3.5px 5px; }
+      table.tracker tbody td { padding: 3px 5px; font-size: 0.72rem; }
+      .col-name .age, .col-family, .col-contact, .col-parent, .col-notes { font-size: 0.6rem; }
+      .col-paid { font-size: 0.62rem; }
+      .total-card { box-shadow: none; border-radius: 6px; padding: 7px 9px; }
+      .total-card .label { font-size: 0.56rem; }
+      .total-card .value { font-size: 0.94rem; }
+      .total-card .value .unit { font-size: 0.62rem; }
+      .totals { gap: 5px; margin: 10px 0 4px; }
+      .legend { padding: 6px 9px; font-size: 0.68rem; border-radius: 6px; margin: 6px 0 8px; }
+      .legend code { font-size: 0.66rem; }
+      .note { padding: 7px 10px; font-size: 0.68rem; border-radius: 6px; margin-top: 10px; }
+      .note ul { padding-left: 14px; }
+      .note li { margin: 2px 0; }
+      h1 { font-size: 1.55rem; margin: 5px 0 3px; }
+      h2 { font-size: 0.95rem; margin: 12px 0 4px; padding-bottom: 3px; }
+      .meta { font-size: 0.66rem; }
+      .lede { font-size: 0.76rem; margin: 3px 0 6px; max-width: none; }
+      .chips { margin: 3px 0 4px; }
+      .chip { font-size: 0.56rem; padding: 0.15rem 0.5rem; margin: 0 3px 3px 0; box-shadow: none; }
+      .kicker { font-size: 0.56rem; padding: 0.15rem 0.55rem; box-shadow: none; }
+      .footer { margin-top: 8px; font-size: 0.56rem; }
+      .tickbox { width: 11px; height: 11px; border-radius: 3px; }
+      .tick-yes { width: 11px; height: 11px; line-height: 9px; font-size: 0.6rem; border-radius: 3px; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Money in the till</span>
+    <h1>Payment tracker 💰</h1>
+    <p class="meta">Sunday · 31 May 2026 · Tamarin Bay · pin on the registration desk · landscape print</p>
+    <p class="lede">One row per kid, grouped by family so a parent pays once for both. Pre-filled from the comp tracker — green = already paid, red = still owed, blank = late-add not yet confirmed. Tick the empty boxes as cash lands or the Juice ping comes in.</p>
+
+    <div class="chips">
+      <span class="chip">💸 1'000 MUR per kid</span>
+      <span class="chip">🎯 23 surfers (+1 cheerleader)</span>
+      <span class="chip paid">✅ 13 paid · 13'000 MUR in</span>
+      <span class="chip unpaid">⚠️ 7 unpaid · 7'000 MUR to chase</span>
+      <span class="chip">❓ 4 late-adds · TBC</span>
+    </div>
+
+    <div class="legend">
+      <strong>Methods shorthand:</strong> <code>Cash</code> · <code>Juice</code> (MCB Juice) · <code>MCB</code> (bank transfer) · <code>Other</code> (write it in). <strong>Waiver:</strong> ✓ = already on file (reg form consent box ticked or signed waiver received). <strong>Receipt #:</strong> only fill for cash — bank/Juice notification is the receipt.
+    </div>
+
+    <h2><span>🐤🦆📣</span> Roster — grouped by family</h2>
+    <table class="tracker">
+      <thead>
+        <tr>
+          <th class="col-num">#</th>
+          <th class="col-family">Family</th>
+          <th>Surfer</th>
+          <th class="col-parent">Parent / guardian</th>
+          <th class="col-contact">Contact</th>
+          <th class="col-paid">Paid</th>
+          <th class="col-when">Date / method</th>
+          <th class="col-waiver">Waiv.</th>
+          <th class="col-notes">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Basu -->
+        <tr class="family-split paid-row"><td class="col-num">1</td><td class="col-family">Basu</td><td class="col-name"><span class="div">🐤</span>Leonie Basu <span class="age">8</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
+        <tr class="paid-row"><td class="col-num">2</td><td class="col-family">Basu</td><td class="col-name"><span class="div">🐤</span>Shanay Basu <span class="age">11</span></td><td class="col-parent">Anaïs Basu</td><td class="col-contact">57597274</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Confirm Duckling at 11</td></tr>
+
+        <!-- Bax De Keating (Skye — same mother as Tylers) -->
+        <tr class="family-split unpaid-row"><td class="col-num">3</td><td class="col-family">Bax De K.</td><td class="col-name"><span class="div">🦆</span>Skye Bax De Keating <span class="age">11</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Same mum as Tylers — bundle the bill</td></tr>
+
+        <!-- Datoo (late-add, paid) -->
+        <tr class="family-split paid-row"><td class="col-num">4</td><td class="col-family">Datoo</td><td class="col-name"><span class="div">🐤</span>Yusuf Datoo <span class="age">6</span></td><td class="col-parent">Laila Datoo</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · Laila on cleanup roster · waiver TBC</td></tr>
+
+        <!-- de Waal (late-add, siblings) -->
+        <tr class="family-split"><td class="col-num">5</td><td class="col-family">de Waal</td><td class="col-name"><span class="div">🦆</span>Eljana de Waal <span class="age">10</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · Rulandi donating whiteboard</td></tr>
+        <tr><td class="col-num">6</td><td class="col-family">de Waal</td><td class="col-name"><span class="div">🦆</span>Ruhan de Waal <span class="age">8</span></td><td class="col-parent">Rulandi de Waal</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · sibling of Eljana</td></tr>
+
+        <!-- Hejj (paid by default — organiser) -->
+        <tr class="family-split paid-row"><td class="col-num">7</td><td class="col-family">Hejj</td><td class="col-name"><span class="div">🐤</span>Lara Hejj <span class="age">6</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Organiser's kid · paid by default</td></tr>
+        <tr class="paid-row"><td class="col-num">8</td><td class="col-family">Hejj</td><td class="col-name"><span class="div">🦆</span>Noah Hejj <span class="age">9</span></td><td class="col-parent">Andras Hejj</td><td class="col-contact"><span class="blank"></span></td><td class="col-paid">PAID ✓</td><td class="col-when">host · default</td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Organiser's kid · also on judging panel</td></tr>
+
+        <!-- Klein (siblings, both paid) -->
+        <tr class="family-split paid-row"><td class="col-num">9</td><td class="col-family">Klein</td><td class="col-name"><span class="div">🐤</span>Alysia Klein <span class="age">10</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
+        <tr class="paid-row"><td class="col-num">10</td><td class="col-family">Klein</td><td class="col-name"><span class="div">🐤</span>Ella Klein <span class="age">8</span></td><td class="col-parent">Peter Klein</td><td class="col-contact">70467181</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Vegetarian — flag for BBQ</td></tr>
+
+        <!-- Mats (late-add) -->
+        <tr class="family-split"><td class="col-num">11</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="div">🐤</span>Mats <span class="age">9</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · surname / parent TBC</td></tr>
+
+        <!-- Maud (late-add) -->
+        <tr class="family-split"><td class="col-num">12</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="div">🐤</span>Maud <span class="age">7</span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes">Late-add · surname / parent TBC</td></tr>
+
+        <!-- Nel (siblings, both unpaid) -->
+        <tr class="family-split unpaid-row"><td class="col-num">13</td><td class="col-family">Nel</td><td class="col-name"><span class="div">🦆</span>Karia Nel <span class="age">14</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Josua</td></tr>
+        <tr class="unpaid-row"><td class="col-num">14</td><td class="col-family">Nel</td><td class="col-name"><span class="div">🦆</span>Josua Nel <span class="age">12</span></td><td class="col-parent">Karissa Nel</td><td class="col-contact">58424945</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Karissa loaning chairs + cool box</td></tr>
+
+        <!-- Niescierowicz (Teo surfer + Alek cheerleader) -->
+        <tr class="family-split paid-row"><td class="col-num">15</td><td class="col-family">Niescierowicz</td><td class="col-name"><span class="div">🦆</span>Teo Niescierowicz <span class="age">9</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
+        <tr class="paid-row"><td class="col-num">16</td><td class="col-family">Niescierowicz</td><td class="col-name"><span class="div">📣</span>Alek Niescierowicz <span class="age">7</span></td><td class="col-parent">Justyna Niescierowicz</td><td class="col-contact">700 25 775</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Cheerleader — not surfing</td></tr>
+
+        <!-- Raye (siblings, both paid) -->
+        <tr class="family-split paid-row"><td class="col-num">17</td><td class="col-family">Raye</td><td class="col-name"><span class="div">🐤</span>Robyn Raye <span class="age">4</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Mark on setup crew</td></tr>
+        <tr class="paid-row"><td class="col-num">18</td><td class="col-family">Raye</td><td class="col-name"><span class="div">🐤</span>Taylor Raye <span class="age">6</span></td><td class="col-parent">Mark</td><td class="col-contact">59316734</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">—</td></tr>
+
+        <!-- St Guillaume -->
+        <tr class="family-split paid-row"><td class="col-num">19</td><td class="col-family">St Guillaume</td><td class="col-name"><span class="div">🦆</span>Holly St Guillaume <span class="age">11</span></td><td class="col-parent">Trinity St Guillaume</td><td class="col-contact">70104746</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Celiac — gluten-free bun</td></tr>
+
+        <!-- Tyler (siblings, both unpaid; Skye Bax De Keating above shares mother) -->
+        <tr class="family-split unpaid-row"><td class="col-num">20</td><td class="col-family">Tyler</td><td class="col-name"><span class="div">🐤</span>Ezrah Wild Tyler <span class="age">6</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Elijah + Skye = 3'000 MUR</td></tr>
+        <tr class="unpaid-row"><td class="col-num">21</td><td class="col-family">Tyler</td><td class="col-name"><span class="div">🦆</span>Elijah Bear Tyler <span class="age">9</span></td><td class="col-parent">Kyrah Ashe Tyler</td><td class="col-contact">5775 9547</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Kyrah running setup / teardown</td></tr>
+
+        <!-- Vlok (siblings, both unpaid) -->
+        <tr class="family-split unpaid-row"><td class="col-num">22</td><td class="col-family">Vlok</td><td class="col-name"><span class="div">🐤</span>Marc-Emmanuel Vlok <span class="age">7</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Bundle with Emma-Jayne · NO social media</td></tr>
+        <tr class="unpaid-row"><td class="col-num">23</td><td class="col-family">Vlok</td><td class="col-name"><span class="div">🦆</span>Emma-Jayne Vlok <span class="age">10</span></td><td class="col-parent">Theola Vlok</td><td class="col-contact">5977 6564</td><td class="col-paid">CHASE</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Theola lending BBQ + tables</td></tr>
+
+        <!-- Webb -->
+        <tr class="family-split paid-row"><td class="col-num">24</td><td class="col-family">Webb</td><td class="col-name"><span class="div">🦆</span>Jaxon Webb <span class="age">8</span></td><td class="col-parent">Tracy Loumeau</td><td class="col-contact">54890928</td><td class="col-paid">PAID ✓</td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tick-yes">✓</span></td><td class="col-notes">Pete (father) on BBQ duty</td></tr>
+
+        <!-- Late-add slots -->
+        <tr class="family-split"><td class="col-num">25</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes"><span class="blank"></span></td></tr>
+        <tr><td class="col-num">26</td><td class="col-family"><span class="blank"></span></td><td class="col-name"><span class="blank"></span></td><td class="col-parent"><span class="blank"></span></td><td class="col-contact"><span class="blank"></span></td><td class="col-paid"><span class="tickbox"></span></td><td class="col-when"><span class="blank"></span></td><td class="col-waiver"><span class="tickbox"></span></td><td class="col-notes"><span class="blank"></span></td></tr>
+      </tbody>
+    </table>
+
+    <h2><span>💰</span> Totals — tally at the end of each day</h2>
+    <div class="totals">
+      <div class="total-card collected fill">
+        <p class="label">Collected</p>
+        <p class="value"><span></span><span class="unit">MUR</span></p>
+      </div>
+      <div class="total-card outstanding fill">
+        <p class="label">Outstanding</p>
+        <p class="value"><span></span><span class="unit">MUR</span></p>
+      </div>
+      <div class="total-card fill">
+        <p class="label">Kids paid</p>
+        <p class="value"><span></span><span class="unit">/ 23</span></p>
+      </div>
+      <div class="total-card fill">
+        <p class="label">Late-adds confirmed</p>
+        <p class="value"><span></span><span class="unit">MUR</span></p>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Chasing the seven unpaid:</strong>
+      <ul>
+        <li><strong>Tyler / Bax De Keating (Kyrah, 5775 9547) — 3'000 MUR</strong> · Ezrah + Elijah + Skye, all same mum.</li>
+        <li><strong>Vlok (Theola, 5977 6564) — 2'000 MUR</strong> · Marc-Emmanuel + Emma-Jayne. Photo policy: WhatsApp + website only, NO social media.</li>
+        <li><strong>Nel (Karissa, 58424945) — 2'000 MUR</strong> · Karia + Josua.</li>
+        <li><strong>Late-add families (de Waal · Mats · Maud) — TBC</strong> · confirm fee + waiver + photo before they walk on the sand. (Datoo paid — still chase waiver. Hejj paid by default.)</li>
+      </ul>
+      <strong>Cash handling on the day:</strong>
+      <ul>
+        <li><strong>One person on the till</strong> at the registration desk — fewer hands = fewer reconciliation headaches.</li>
+        <li><strong>Tick the row as the money lands</strong>, not later from memory. Date in DD/MM, method as the legend above.</li>
+        <li><strong>Waiver + photo are blockers</strong> — entry isn't locked in until both ticks are filled, even if the fee is paid.</li>
+        <li><strong>Reconcile that evening:</strong> cash in hand + Juice + MCB notifications should match the "Collected" box. Note any gap.</li>
+      </ul>
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>
