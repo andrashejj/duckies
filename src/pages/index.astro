@@ -121,6 +121,56 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
     </div>
   </section>
 
+  <!-- ===================== AGE RECOMMENDATION ===================== -->
+  <section id="age-guide" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] py-16 text-[var(--color-ink-950)] lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 88% 12%, rgba(255,210,63,0.55), transparent 45%), radial-gradient(circle at 8% 92%, rgba(255,225,212,0.6), transparent 50%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14">
+        <div class="space-y-5" data-reveal>
+          <p class="section-kicker">{site.ageGuide.kicker}</p>
+
+          <div class="wobble inline-flex rotate-[-2deg] items-center gap-3 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-5 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+            <span class="text-2xl" aria-hidden="true">🐤</span>
+            <span class="font-display text-2xl font-black leading-none sm:text-3xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
+              {site.ageGuide.rangeLabel}
+            </span>
+          </div>
+
+          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+            Built for kids
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">6/7</span>
+            to <span class="ink-underline">11/12</span>.
+          </h2>
+          <p class="text-base leading-7 text-[var(--color-ink-950)]/85 sm:text-lg sm:leading-8">
+            {site.ageGuide.intro}
+          </p>
+          <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/70">
+            {site.ageGuide.footnote}
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:gap-5" data-reveal>
+          {site.ageGuide.requirements.map((req, i) => (
+            <div class:list={["surface-card flex items-start gap-4 p-6 sm:p-7", i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
+              <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] text-3xl shadow-[3px_3px_0_0_var(--color-ink-950)]" aria-hidden="true">
+                {req.emoji}
+              </span>
+              <div>
+                <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {req.title}
+                </p>
+                <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                  {req.text}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== HOW TO JOIN ===================== -->
   <section id="how-to-join" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-16 lg:py-20">
     <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 90% 10%, #cdf7f0, transparent 55%), radial-gradient(circle at 10% 90%, #ffe1d4, transparent 55%);"></div>

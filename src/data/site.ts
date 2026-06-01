@@ -297,6 +297,31 @@ export const site = {
       },
     ],
   },
+  ageGuide: {
+    kicker: "★ Is your duckie ready?",
+    rangeLabel: "6/7 – 11/12 yrs",
+    headline: "Built for kids 6/7 to 11/12.",
+    intro:
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. The right age is roughly 6 or 7 up to 11 or 12 — but age is a guide, not a gate. What really matters is that your kid can already:",
+    requirements: [
+      {
+        emoji: "🏊",
+        title: "Swim alone & well",
+        text: "Confident swimming on their own in open water — not just the pool. This is the non-negotiable.",
+      },
+      {
+        emoji: "🤙",
+        title: "Paddle a board",
+        text: "Lie on the board and paddle themselves into position and onto a wave.",
+      },
+      {
+        emoji: "🚀",
+        title: "Pop up",
+        text: "Get to their feet from lying down — the move that turns a duckling into a duck.",
+      },
+    ],
+    footnote: "Not quite there yet? Message on WhatsApp — we'll tell you what to work on first.",
+  },
   contact: {
     coordinatorEmail: "andras@sunsetduckies.com",
     coordinatorName: "Andras",
