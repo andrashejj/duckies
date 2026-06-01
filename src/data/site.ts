@@ -299,10 +299,10 @@ export const site = {
   },
   ageGuide: {
     kicker: "★ Is your duckie ready?",
-    rangeLabel: "6/7 – 11/12 yrs",
-    headline: "Built for kids 6/7 to 11/12.",
+    rangeLabel: "7 yrs +",
+    headline: "Built for kids 7 and up.",
     intro:
-      "We surf the shorebreak, so every duckie has to be water-confident from day one. The right age is roughly 6 or 7 up to 11 or 12 — but age is a guide, not a gate. What really matters is that your kid can already:",
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. Kids are usually ready from around 7 — but age is a guide, not a gate. What really matters is that your kid can already:",
     requirements: [
       {
         emoji: "🏊",
