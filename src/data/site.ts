@@ -297,6 +297,21 @@ export const site = {
       },
     ],
   },
+  ageGuide: {
+    kicker: "★ Is your duckie ready?",
+    rangeLabel: "7 yrs +",
+    headline: "Built for kids 7 and up.",
+    intro:
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. Kids are usually ready from around 7 — but age is a guide, not a gate. The one thing that really matters:",
+    requirements: [
+      {
+        emoji: "🏊",
+        title: "Swim alone & well",
+        text: "Confident swimming on their own in open water — not just the pool. This is the non-negotiable. Surf skills like paddling and popping up come later, with the crew.",
+      },
+    ],
+    footnote: "Not quite there yet? Message on WhatsApp — we'll tell you what to work on first.",
+  },
   contact: {
     coordinatorEmail: "andras@sunsetduckies.com",
     coordinatorName: "Andras",
