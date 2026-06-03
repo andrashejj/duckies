@@ -297,7 +297,6 @@ export const site = {
         tag: "Judging",
         accent: "sticker-coral",
         title: "Colour-coded rashies",
-        learned: "Same kit on everyone — judges lost track.",
         change: "One rashie colour per surfer. Score by colour.",
       },
       {
@@ -305,7 +304,6 @@ export const site = {
         tag: "Format",
         accent: "sticker-sun",
         title: "Four to a heat",
-        learned: "Heats of six got crowded and messy to score.",
         change: "Hard cap of 4. More waves each.",
       },
       {
@@ -313,7 +311,6 @@ export const site = {
         tag: "Scoring",
         accent: "sticker-teal",
         title: "Wave size counts",
-        learned: "Tick boxes scored an ankle-slapper like a real wall.",
         change: "New scoring rewards bigger, longer rides.",
       },
       {
@@ -321,7 +318,6 @@ export const site = {
         tag: "Scoring",
         accent: "sticker-pink",
         title: "A score per division",
-        learned: "One card couldn't fit both divisions.",
         change: "Playful tick boxes for ducklings, real points for ducks.",
       },
       {
@@ -329,7 +325,6 @@ export const site = {
         tag: "Timing",
         accent: "sticker-lilac",
         title: "Start earlier",
-        learned: "13:00–18:00 ran into the dark.",
         change: "Earlier start, more buffer. Crowns in daylight.",
       },
       {
@@ -337,7 +332,6 @@ export const site = {
         tag: "Set-up",
         accent: "sticker-sun",
         title: "Branded gazebos",
-        learned: "No shade to register or judge from.",
         change: "Branded gazebos for desk, judges and shade.",
       },
       {
@@ -345,7 +339,6 @@ export const site = {
         tag: "Food",
         accent: "sticker-coral",
         title: "More food",
-        learned: "The BBQ ran thin.",
         change: "More food, plus a paid stall — Shakti could help.",
       },
       {
@@ -353,7 +346,6 @@ export const site = {
         tag: "Judging",
         accent: "sticker-teal",
         title: "Better judges",
-        learned: "Judging was the wobbliest part of the day.",
         change: "More experienced judges, properly briefed.",
       },
       {
@@ -361,7 +353,6 @@ export const site = {
         tag: "Kids",
         accent: "sticker-pink",
         title: "Stuff to do between heats",
-        learned: "Waiting kids got restless.",
         change: "1–2 side activities running all day.",
       },
     ],
