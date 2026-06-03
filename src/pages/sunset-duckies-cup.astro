@@ -1,6 +1,7 @@
 ---
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { loadCupPhotoFiles } from "../lib/cup-photos";
 
 const cup = site.cup;
 const title = `${cup.name} — first ever, 31 May 2026 | ${site.name}`;
@@ -12,8 +13,11 @@ const cupPreview = (file: string, size: number) =>
   `${cup.photos.base}/index.php/apps/files_sharing/publicpreview/${cup.photos.token}` +
   `?file=/${encodeURIComponent(file)}&x=${size}&y=${size}&a=true`;
 
-const photos = cup.photos.files.map((file, i) => ({
-  alt: `Sunset Duckies Cup, first edition — photo ${i + 1} of ${cup.photos.files.length}`,
+// Enumerated from the Nextcloud share at build time (falls back to
+// cup.photos.files if the share is unreachable from the build environment).
+const photoFiles = await loadCupPhotoFiles();
+const photos = photoFiles.map((file, i) => ({
+  alt: `Sunset Duckies Cup, first edition — photo ${i + 1} of ${photoFiles.length}`,
   thumb: cupPreview(file, 700),
   full: cupPreview(file, 2048),
 }));
