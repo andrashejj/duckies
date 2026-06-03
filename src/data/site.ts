@@ -281,11 +281,10 @@ export const site = {
   cupVol2: {
     name: "Sunset Duckies Cup",
     edition: "Vol. 02",
-    dateLabel: "Saturday · 27 June 2026",
-    dateISO: "2026-06-27",
+    dateLabel: "Date TBD",
     timeLabel: "Earlier start · daylight finish",
     location: "Tamarin Bay, Mauritius",
-    registerCtaLabel: "Save the date on WhatsApp",
+    registerCtaLabel: "Get updates on WhatsApp",
     previousEdition: {
       label: "Vol. 01 · 31 May 2026",
       href: "/sunset-duckies-cup",
@@ -357,7 +356,7 @@ export const site = {
       },
     ],
     lockedIn: [
-      "Saturday 27 June",
+      "Tamarin Bay",
       "Heats of 4",
       "Colour-coded rashies",
       "Two scoring styles",
