@@ -277,6 +277,18 @@ export const site = {
         accent: "sticker-lilac",
       },
     ],
+    // Photos from the day. They live in a Nextcloud public share; we hotlink
+    // Nextcloud's `publicpreview` endpoint (sized server-side) per image.
+    // To (re)generate `files`, run `bash scripts/list-cup-photos.sh` on a
+    // network that can reach owncloud.justnet.pl and paste its output below.
+    photos: {
+      shareUrl: "https://owncloud.justnet.pl/index.php/s/kmNsjY62yRzergT",
+      base: "https://owncloud.justnet.pl",
+      token: "kmNsjY62yRzergT",
+      files: [
+        "20260531 Sunset Duckies Cup 13.JPG",
+      ],
+    },
   },
   cupVol2: {
     name: "Sunset Duckies Cup",
