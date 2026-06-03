@@ -55,6 +55,7 @@ export const site = {
   ],
   navigation: [
     { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
+    { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
   ],
   stats: [
@@ -275,6 +276,119 @@ export const site = {
         emoji: "💬",
         accent: "sticker-lilac",
       },
+    ],
+  },
+  cupVol2: {
+    name: "Sunset Duckies Cup",
+    edition: "Vol. 02",
+    status: "Planning",
+    dateLabel: "Saturday · 27 June 2026",
+    dateISO: "2026-06-27",
+    timeLabel: "Earlier start · finish in daylight",
+    location: "Tamarin Bay, Mauritius",
+    registerCtaLabel: "Save the date on WhatsApp",
+    previousEdition: {
+      label: "Vol. 01 · 31 May 2026",
+      href: "/sunset-duckies-cup",
+    },
+    tagline: "Same beach, same ducklings — leveled up from everything Vol. 01 taught us.",
+    blurb:
+      "The first ever Sunset Duckies Cup was a blast — and a brilliant teacher. Vol. 02 lands at Tamarin Bay on Saturday 27 June, sharpened by everything we learned the first time around.",
+    lessons: [
+      {
+        emoji: "🎽",
+        tag: "Judging",
+        accent: "sticker-coral",
+        title: "Colour-coded rashies",
+        learned:
+          "Everyone paddled out in the same kit — judges lost track of who caught which wave.",
+        change:
+          "Each surfer in a heat gets their own coloured rashie — red, yellow, teal, pink — so judges score by colour at a glance, just like the world tour.",
+      },
+      {
+        emoji: "🦆",
+        tag: "Format",
+        accent: "sticker-sun",
+        title: "Four to a heat",
+        learned:
+          "Heats of up to six got crowded — too many bodies, not enough waves, messy to score.",
+        change:
+          "A hard cap of 4 surfers a heat. Cleaner line-up, more waves each, and one rashie colour per kid.",
+      },
+      {
+        emoji: "🌊",
+        tag: "Scoring",
+        accent: "sticker-teal",
+        title: "Wave size counts",
+        learned:
+          "Five yes/no tick boxes meant an ankle-slapper scored the same as a proper wall of water.",
+        change:
+          "A smarter scoring system that rewards the size and length of the ride — go bigger, score bigger.",
+      },
+      {
+        emoji: "⚖️",
+        tag: "Scoring",
+        accent: "sticker-pink",
+        title: "A scoring style per division",
+        learned:
+          "One scorecard couldn't be both a gentle confidence-builder and a real contest.",
+        change:
+          "Ducklings keep the playful 'every wave's a win' tick boxes. Ducks step up to a more serious points system, closer to a real heat.",
+      },
+      {
+        emoji: "🌅",
+        tag: "Timing",
+        accent: "sticker-lilac",
+        title: "Start earlier, finish in daylight",
+        learned:
+          "13:00–18:00 sounded like loads, but everything takes longer — and by 18:00 it was already dark.",
+        change:
+          "We kick off earlier and build in real buffers between segments, so the crowns go out while the sun's still up.",
+      },
+      {
+        emoji: "⛺",
+        tag: "Set-up",
+        accent: "sticker-sun",
+        title: "Branded gazebos",
+        learned: "Nowhere shaded to register, judge, or duck out of the midday sun.",
+        change:
+          "Branded Sunset Duckies gazebos for the registration desk, the judges' table, and a shady base camp.",
+      },
+      {
+        emoji: "🍔",
+        tag: "Food",
+        accent: "sticker-coral",
+        title: "More food — and a stall",
+        learned: "The BBQ ran thin and plenty of folks were still hungry.",
+        change:
+          "More food across the day, plus a paid food stall — Shakti could help run the kitchen.",
+      },
+      {
+        emoji: "👀",
+        tag: "Judging",
+        accent: "sticker-teal",
+        title: "A stronger judging panel",
+        learned: "Judging was the wobbliest part of the day.",
+        change:
+          "We're lining up more experienced judges and briefing them properly — new scorecards in hand before the first horn.",
+      },
+      {
+        emoji: "🏖️",
+        tag: "Kids",
+        accent: "sticker-pink",
+        title: "Stuff to do between heats",
+        learned: "Kids waiting on their heat got restless on the sand.",
+        change:
+          "One or two side activities running all day — beach games and more — so nobody's bored between waves.",
+      },
+    ],
+    lockedIn: [
+      "Saturday 27 June",
+      "Heats of 4",
+      "Colour-coded rashies",
+      "Two scoring styles",
+      "Earlier start",
+      "Branded gazebos",
     ],
   },
   clubRules: {
