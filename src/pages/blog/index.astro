@@ -1,0 +1,77 @@
+---
+import { site } from "../../data/site";
+import { blog } from "../../data/blog";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = `${blog.name} — ${site.name}`;
+const description = blog.tagline;
+
+const posts = [...blog.posts].sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- ===================== HERO ===================== -->
+  <section class="relative isolate overflow-hidden">
+    <div class="sunburst -left-20 -top-24 opacity-60" aria-hidden="true"></div>
+    <div class="blob-teal -right-24 top-10" aria-hidden="true"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
+      <div data-float>
+        <p class="section-kicker">✎ Field notes from the club</p>
+      </div>
+      <h1
+        data-float
+        class="font-display mt-6 text-[var(--color-ink-950)]"
+        style="font-size: clamp(2.8rem, 9vw, 6.6rem); line-height: 0.92; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 650;"
+      >
+        The
+        <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Logbook</span>.
+      </h1>
+      <p data-float class="body-copy mt-6 max-w-2xl text-lg">
+        {blog.tagline}
+      </p>
+    </div>
+  </section>
+
+  <div class="wave-divider" aria-hidden="true"></div>
+
+  <!-- ===================== POSTS ===================== -->
+  <section class="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:px-6 lg:px-10">
+    <div class="grid gap-7">
+      {posts.map((post, i) => (
+        <a
+          href={`/blog/${post.slug}`}
+          class:list={["surface-card group block p-7 no-underline md:p-10", i % 2 === 0 ? "tilt-left" : "tilt-right"]}
+          data-reveal
+        >
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="tag-pill sun">{post.dateLabel}</span>
+            <span class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+              📍 {post.location}
+            </span>
+          </div>
+          <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 4vw, 3rem);">
+            {post.title}
+            <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">{post.titleAccent}</span>
+          </h2>
+          <p class="body-copy mt-4 max-w-3xl">{post.excerpt}</p>
+          <p class="mt-6 inline-flex items-center gap-2 font-mono text-[0.74rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)] transition-transform group-hover:translate-x-1.5">
+            Read the post <span class="text-[var(--color-coral-500)]">→</span>
+          </p>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-14 surface-card sticker-sun dashed p-7 text-center md:p-9" data-reveal>
+      <p class="font-display text-xl font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110;">
+        More pages incoming — every comp, every trip, every milestone.
+      </p>
+      <p class="body-copy mx-auto mt-3 max-w-xl">
+        Want your duckie in the next one? The whole story starts in the WhatsApp group.
+      </p>
+      <a class="cta-primary mt-6" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+        Join the crew
+      </a>
+    </div>
+  </section>
+</BaseLayout>
