@@ -57,6 +57,7 @@ export const site = {
     { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
     { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
+    { label: "Blog", labelFull: "The Logbook", href: "/blog" },
   ],
   stats: [
     { value: "100%", label: "kids in the lineup" },
