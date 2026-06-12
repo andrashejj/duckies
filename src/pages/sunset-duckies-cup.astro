@@ -21,6 +21,7 @@ const photos = photoFiles.map((file, i) => ({
   thumb: cupPreview(file, 700),
   full: cupPreview(file, 2048),
 }));
+const teaser = photos.slice(0, 6);
 ---
 
 <BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup — Tamarin Bay">
@@ -336,35 +337,40 @@ const photos = photoFiles.map((file, i) => ({
               The first Cup,
               <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">in pictures</span>.
             </h2>
-            <p class="body-copy mt-4">
-              Every duckling who paddled out, every claim on the beach. Tap a photo to open it full-size.
-            </p>
           </div>
           <a class="cta-secondary shrink-0" href={cup.photos.shareUrl} target="_blank" rel="noreferrer">
-            ↗ Full album
+            ↗ See all {photos.length} photos
           </a>
         </div>
 
-        <div class="gallery-grid" data-reveal>
-          {photos.map((photo, i) => (
+        <div class="teaser-grid" data-reveal>
+          {teaser.map((photo, i) => (
             <button
               type="button"
-              class="gallery-tile"
+              class="teaser-tile"
               data-lb-trigger
               data-full={photo.full}
               data-alt={photo.alt}
-              aria-label={`Open photo ${i + 1} of ${photos.length}`}
+              aria-label={`Open photo ${i + 1}`}
             >
               <img
                 src={photo.thumb}
                 alt={photo.alt}
-                loading="lazy"
+                loading={i < 3 ? "eager" : "lazy"}
                 decoding="async"
-                onerror="this.closest('.gallery-tile')?.remove()"
+                onerror="this.closest('.teaser-tile')?.remove()"
               />
             </button>
           ))}
         </div>
+
+        {photos.length > 6 && (
+          <div class="mt-8 flex justify-center" data-reveal>
+            <a href={cup.photos.shareUrl} target="_blank" rel="noreferrer" class="cta-primary">
+              ↗ See all {photos.length} photos from the day
+            </a>
+          </div>
+        )}
       </section>
 
       <dialog id="cup-lightbox" class="lightbox" aria-label="Cup photo viewer">
@@ -502,40 +508,39 @@ const photos = photoFiles.map((file, i) => ({
 
 
 <style>
-  /* ---- gallery grid (CSS masonry via columns) ---- */
-  .gallery-grid {
-    columns: 2;
-    column-gap: 1rem;
+  /* ---- photo teaser grid (uniform 2→3 col, fixed aspect ratio) ---- */
+  .teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
   }
-  @media (min-width: 640px) { .gallery-grid { columns: 3; column-gap: 1.15rem; } }
-  @media (min-width: 1024px) { .gallery-grid { columns: 4; column-gap: 1.25rem; } }
+  @media (min-width: 640px) { .teaser-grid { grid-template-columns: repeat(3, 1fr); gap: 1rem; } }
 
-  .gallery-tile {
+  .teaser-tile {
     display: block;
-    width: 100%;
-    margin: 0 0 1rem;
+    aspect-ratio: 4 / 3;
     padding: 0;
     border: 2px solid var(--color-ink-950);
     border-radius: 1.1rem;
     overflow: hidden;
-    background: var(--color-cream-soft);
+    background: var(--color-ink-900);
     box-shadow: 4px 4px 0 0 var(--color-ink-950);
     cursor: zoom-in;
-    break-inside: avoid;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
   }
-  .gallery-tile:nth-child(3n) { transform: rotate(-1.1deg); }
-  .gallery-tile:nth-child(4n) { transform: rotate(0.9deg); }
-  .gallery-tile:hover,
-  .gallery-tile:focus-visible {
-    transform: translate(-2px, -2px) rotate(0);
+  .teaser-tile:nth-child(3n+2) { transform: rotate(-0.7deg); }
+  .teaser-tile:nth-child(3n) { transform: rotate(0.6deg); }
+  .teaser-tile:hover,
+  .teaser-tile:focus-visible {
+    transform: translate(-2px, -2px) rotate(0) !important;
     box-shadow: 7px 7px 0 0 var(--color-ink-950);
     outline: none;
   }
-  .gallery-tile img {
+  .teaser-tile img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* ---- lightbox ---- */

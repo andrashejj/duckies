@@ -51,37 +51,37 @@ export const blog = {
         { emoji: "🌊", value: "One Eye", label: "a world-class left" },
       ],
       intro: [
-        "Most weeks the club rhythm is simple: Monday and Friday, 4pm, Tamarin Bay, whitewater reps until the sun drops. This time we broke the routine — we loaded the duckies onto a boat and pointed it south, to the corner of the island where the reef goes wild.",
-        "Le Morne is only a short run down the coast from Tamarin, but it feels like a different planet: a giant basalt mountain falling straight into a turquoise lagoon, a reef wrapped all the way around it, and some of the best waves and kite water anywhere on Earth.",
+        "Monday and Friday, 4pm, Tamarin Bay. This time we loaded the duckies onto a boat and pointed south.",
+        "Le Morne: basalt mountain, turquoise lagoon, the best waves on the island — about 40 minutes down the coast.",
       ],
       sections: [
         {
           emoji: "🚤",
           title: "Down the coast",
           accent: "sticker-teal",
-          body: "The trip itself is half the fun. Out of the bay, past the salt pans and the fishing boats, with the mountain growing bigger the whole way down. By the time we crossed into the Le Morne lagoon the water had turned that unreasonable shade of blue and every duckie was hanging off the side calling out fish.",
+          body: "Out of the bay, past the salt pans and fishing boats, the mountain growing the whole way down. By the time we crossed into the Le Morne lagoon every duckie was hanging off the side calling out fish.",
         },
         {
           emoji: "🐠",
           title: "Faces in the water",
           accent: "sticker-sun",
-          body: "Masks on, fins on, over the side. The reef here is alive — parrotfish chewing coral, needlefish hanging just under the surface, the odd squeal through a snorkel when something bigger cruised past. Half the crew didn't want to get back on the boat.",
+          body: "Masks on, fins on, over the side. Parrotfish, needlefish, the odd squeal when something bigger cruised past. Half the crew didn't want to get back on the boat.",
         },
         {
           emoji: "🌊",
           title: "Wave school, no paddling required",
           accent: "sticker-coral",
-          body: "Near the passes we sat and watched One Eye do its thing — one of the best lefts in the world, breaking over the same kind of reef the kids had just been swimming over. Two sessions a week in the Tamarin whitewater leads somewhere, and the duckies got to see exactly where.",
+          body: "Near the passes we watched One Eye peel — one of the best lefts alive, over the same reef the kids had just been swimming. Two sessions a week in the Tamarin whitewater leads exactly here.",
         },
         {
           emoji: "⛰️",
           title: "What the mountain remembers",
           accent: "sticker-lilac",
-          body: "Le Morne Brabant isn't just a backdrop — it's a UNESCO World Heritage site, once a refuge for escaped slaves who chose its cliffs over capture. We took a quiet minute under it. Surfing here is a privilege, and knowing the story of the place is part of being a local crew.",
+          body: "Le Morne Brabant is a UNESCO Heritage site — once a refuge for escaped slaves who chose its cliffs over capture. We took a quiet minute under it. Knowing the story is part of being a local crew.",
         },
       ],
       outro:
-        "Back in the bay by sunset, salty and fried, with a boatload of new fish facts and a new answer to “why do we train twice a week?” — because one day, that reef. Scroll the photos below, and come say hi on WhatsApp if your duckie wants in on the next trip.",
+        “Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.”,
       media: {
         shareUrl: "https://owncloud.justnet.pl/index.php/s/jZtkwTHpCzoxHaB",
         base: "https://owncloud.justnet.pl",

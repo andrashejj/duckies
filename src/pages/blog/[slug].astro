@@ -143,15 +143,18 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
         <div class="mb-8" data-reveal>
           <p class="section-kicker">🎬 Rolling clips</p>
         </div>
-        <div class="grid gap-7 md:grid-cols-2" data-reveal>
+        <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3" data-reveal>
           {clips.map((clip) => (
             <div class="media-frame">
               <video
                 src={clip.src}
                 poster={clip.poster}
-                controls
+                autoplay
+                muted
+                loop
                 playsinline
-                preload="metadata"
+                controls
+                preload="auto"
                 class="aspect-video w-full"
               ></video>
             </div>
