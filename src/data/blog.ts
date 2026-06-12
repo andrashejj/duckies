@@ -81,7 +81,7 @@ export const blog = {
         },
       ],
       outro:
-        “Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.”,
+        'Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.',
       media: {
         shareUrl: "https://owncloud.justnet.pl/index.php/s/jZtkwTHpCzoxHaB",
         base: "https://owncloud.justnet.pl",
