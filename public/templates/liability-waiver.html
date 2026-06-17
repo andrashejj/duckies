@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sunset Duckies Cup — Liability Waiver</title>
+  <title>Sunset Duckies — Liability Waiver</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
@@ -27,36 +27,58 @@
     .meta { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: rgba(11,22,32,0.65); }
     .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
     .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
-    @media print { body { background: white; padding: 0; } .sheet { box-shadow: none; max-width: 100%; margin: 0; } .print-btn { display: none; } }
+    @page { size: A4; margin-top: 10mm; margin-right: 10mm; margin-bottom: 10mm; margin-left: 10mm; }
+    @media print {
+      html, body { background: white; }
+      body { padding: 0; line-height: 1.35; font-size: 10pt; }
+      .sheet { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border: none; border-radius: 0; background: white; }
+      .print-btn { display: none; }
+      .kicker { font-size: 0.6rem; padding: 0.2rem 0.55rem; box-shadow: 1px 1px 0 0 var(--ink); }
+      h1 { font-size: 1.5rem; margin: 8px 0 4px; }
+      h2 { font-size: 0.95rem; margin: 10px 0 4px; }
+      p, li { font-size: 9.5pt; }
+      p { margin: 6px 0; }
+      ul { margin: 4px 0 4px 1.1rem; padding: 0; }
+      li { margin: 2px 0; }
+      .meta { font-size: 0.65rem; }
+      .check { margin: 4px 0; font-size: 9pt; }
+      .box { width: 14px; height: 14px; }
+      .field { margin: 6px 0; }
+      .field label { font-size: 0.78rem; margin-bottom: 2px; }
+      .blank { min-height: 1.2rem; }
+      .row { gap: 12px; }
+      .footer { margin-top: 12px; font-size: 0.62rem; }
+    }
   </style>
 </head>
 <body>
   <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
   <main class="sheet">
-    <span class="kicker">★ Sunset Duckies Cup</span>
+    <span class="kicker">★ Sunset Duckies</span>
     <h1>Parent / guardian liability waiver</h1>
-    <p class="meta">Saturday · 30 May 2026 · Tamarin Bay, Mauritius</p>
+    <p class="meta">Covers all Sunset Duckies activities · Tamarin Bay, Mauritius</p>
 
     <p>
       I confirm that I am the parent or legal guardian of the child named below, and that I am voluntarily
-      registering them to participate in the Sunset Duckies Cup ("the event"), a kids' surf competition
-      organised by the Sunset Duckies surf club at Tamarin Bay on Saturday 30 May 2026, between 13:00 and 17:30.
+      enrolling them to participate in Sunset Duckies activities ("the activities") — including but not
+      limited to club training sessions, the Sunset Duckies Cup, and any other competitions, socials, or
+      club events organised by the Sunset Duckies surf club at Tamarin Bay.
     </p>
 
     <h2>I acknowledge that:</h2>
     <ul>
       <li>Surfing is a physical activity that carries an inherent risk of injury, including from waves, rocks, board contact, marine life, sun exposure, and other ocean conditions.</li>
-      <li>The event is run by volunteer coaches and parents. Reasonable safety measures are taken (water marshals, beach marshal, first-aid kit on site), but participation remains at our own risk.</li>
-      <li>My child has the basic ability to be safe in the water as agreed with the head coach, and can swim unassisted in waist-deep water.</li>
-      <li>I will remain on-site for the full duration of the event. This is not a drop-off.</li>
+      <li>Sunset Duckies is volunteer-run by coaches and parents. Reasonable safety measures are taken, but participation remains at our own risk.</li>
+      <li>My child can swim confidently in open water, including in waves up to around 2 m and in currents — as agreed with the head coach.</li>
+      <li>A parent or guardian will remain on-site for the full duration of every session or event, either watching from the beach or joining their child in the water. This is never a drop-off.</li>
       <li>The organisers may take reasonable medical decisions in an emergency if I cannot be reached immediately.</li>
     </ul>
 
     <h2>I agree to:</h2>
     <ul>
-      <li>Release the volunteer organisers, coaches, judges, and Sunset Duckies from any claim arising from ordinary risks of the event.</li>
-      <li>Follow all instructions from the coaches, water marshals, and beach marshal on the day.</li>
-      <li>Inform the registration desk of any medical condition, allergy, or medication relevant to my child.</li>
+      <li>Release the volunteer organisers, coaches, judges, and Sunset Duckies from any claim arising from ordinary risks of the activities.</li>
+      <li>Follow all instructions from the coaches and any water or beach marshals on the day.</li>
+      <li>Inform the head coach of any medical condition, allergy, or medication relevant to my child, and keep this up to date.</li>
     </ul>
 
     <h2>Photo &amp; video</h2>

@@ -69,7 +69,7 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
       <div data-float class="mb-6">
         <span class="eyebrow-badge">
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
-          Tamarin Bay · Mauritius
+          Registration open · 2026 season
         </span>
       </div>
 
@@ -87,19 +87,20 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
             <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
-            A surf club for kids in Tamarin Bay. Two sessions a week, proper coaching, paddle out together, ride home at sunset.
+            {site.name} is a surf club for kids in Tamarin. Two sessions a week, kids training
+            together, paddling out and riding home into the sunset.
           </p>
         </div>
 
         <div data-float class="flex flex-col gap-3">
-          <a class="cta-primary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Join via WhatsApp
+          <a class="cta-primary w-full" href="#how-to-join">
+            Start here · how to join
           </a>
-          <a class="cta-secondary w-full" href="#sponsors">
-            Become a sponsor
+          <a class="cta-secondary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            Slide into WhatsApp
           </a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
-            Wed + Fri · 4-6pm · Tamarin Bay
+            Mon + Fri · 4-6pm · Tamarin Bay
           </p>
         </div>
       </div>
@@ -125,6 +126,170 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
     </div>
   </section>
 
+  <!-- ===================== AGE RECOMMENDATION ===================== -->
+  <section id="age-guide" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] py-16 text-[var(--color-ink-950)] lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 88% 12%, rgba(255,210,63,0.55), transparent 45%), radial-gradient(circle at 8% 92%, rgba(255,225,212,0.6), transparent 50%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14">
+        <div class="space-y-5" data-reveal>
+          <p class="section-kicker">{site.ageGuide.kicker}</p>
+
+          <div class="wobble inline-flex rotate-[-2deg] items-center gap-3 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-5 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+            <span class="text-2xl" aria-hidden="true">🐤</span>
+            <span class="font-display text-2xl font-black leading-none sm:text-3xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
+              {site.ageGuide.rangeLabel}
+            </span>
+          </div>
+
+          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+            Built for kids
+            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">7</span>
+            and <span class="ink-underline">up</span>.
+          </h2>
+          <p class="text-base leading-7 text-[var(--color-ink-950)]/85 sm:text-lg sm:leading-8">
+            {site.ageGuide.intro}
+          </p>
+          <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/70">
+            {site.ageGuide.footnote}
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:gap-5" data-reveal>
+          {site.ageGuide.requirements.map((req, i) => (
+            <div class:list={["surface-card flex items-start gap-4 p-6 sm:p-7", i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
+              <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] text-3xl shadow-[3px_3px_0_0_var(--color-ink-950)]" aria-hidden="true">
+                {req.emoji}
+              </span>
+              <div>
+                <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {req.title}
+                </p>
+                <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                  {req.text}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW TO JOIN ===================== -->
+  <section id="how-to-join" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 90% 10%, #cdf7f0, transparent 55%), radial-gradient(circle at 10% 90%, #ffe1d4, transparent 55%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="max-w-3xl space-y-5" data-reveal>
+        <p class="section-kicker">{site.howToJoin.kicker}</p>
+        <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+          How to <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">join</span>
+          the club, in <span class="ink-underline">four</span> steps.
+        </h2>
+        <p class="body-copy">{site.howToJoin.intro}</p>
+      </div>
+
+      <ol class="mt-10 grid gap-5 sm:gap-6 lg:mt-14 lg:grid-cols-2">
+        {site.howToJoin.steps.map((step, i) => (
+          <li class:list={["surface-card p-6 sm:p-7", step.accent]} data-reveal>
+            <div class="flex items-start gap-4">
+              <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+              <div class="min-w-0 flex-1 space-y-3">
+                <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
+                  {step.tag}
+                </p>
+                <p class="font-display text-2xl leading-tight text-[var(--color-ink-950)] sm:text-[1.65rem]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  {step.title}
+                </p>
+                <p class="text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                  {step.body}
+                </p>
+
+                {step.id === "waiver" && (
+                  <details class="join-details mt-2">
+                    <summary>What the waiver says (1-min read)</summary>
+                    <ul class="mt-3 space-y-2 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/80">
+                      {site.howToJoin.waiverSummary.map((bullet) => (
+                        <li class="flex gap-2"><span aria-hidden="true">✦</span><span>{bullet}</span></li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+
+                <div class="flex flex-wrap gap-2 pt-1">
+                  {step.actions.map((action) => (
+                    <a
+                      class:list={[action.variant === "primary" ? "cta-primary" : "cta-secondary"]}
+                      href={action.href}
+                      {...(action.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                    >
+                      {action.label}
+                    </a>
+                  ))}
+                </div>
+
+                {step.footnote && (
+                  <p class="pt-1 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+                    {step.footnote}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="mt-10 text-center font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
+        Stuck? → <a href={`mailto:${site.contact.coordinatorEmail}`} class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">{site.contact.coordinatorEmail}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== HOW THE CLUB WORKS ===================== -->
+  <section id="how-it-works" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 opacity-60" aria-hidden="true" style="background-image: radial-gradient(circle at 12% 25%, #ffe1d4, transparent 55%), radial-gradient(circle at 88% 75%, #fff0b3, transparent 55%);"></div>
+
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-14">
+        <div class="space-y-5" data-reveal>
+          <p class="section-kicker">{site.clubRules.kicker}</p>
+          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+            It's a <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club</span>.
+            <span class="block">Not a <span class="ink-underline">lesson</span>.</span>
+          </h2>
+          <p class="body-copy max-w-md">
+            {site.clubRules.intro}
+          </p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="chip">BYO surfboard</span>
+            <span class="chip">BYO wetsuit</span>
+            <span class="chip">Parents responsible</span>
+            <span class="chip">No drop-off</span>
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:gap-5" data-reveal>
+          {site.clubRules.rules.map((rule, i) => (
+            <div class:list={["surface-card p-6 sm:p-7", pillarAccents[i % pillarAccents.length]]}>
+              <div class="flex items-start gap-4">
+                <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                    {rule.title}
+                  </p>
+                  <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                    {rule.text}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== EVENT SPOTLIGHT — SUNSET DUCKIES CUP ===================== -->
   <section class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
     <div class="absolute inset-0 -z-10 opacity-[0.18]" aria-hidden="true" style="background-image: radial-gradient(circle at 18% 20%, var(--color-coral-500), transparent 45%), radial-gradient(circle at 82% 80%, var(--color-sun-500), transparent 45%), radial-gradient(circle at 50% 50%, var(--color-teal-500), transparent 55%);"></div>
@@ -147,7 +312,7 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
 
         <div class="space-y-3">
           <p class="text-base leading-7 text-[var(--color-cream-soft)]/90 sm:text-lg">
-            {site.cup.tagline} Saturday <strong>30 May 2026</strong>, Tamarin Bay, 13:00–17:30.
+            {site.cup.tagline} Sunday <strong>31 May 2026</strong>, Tamarin Bay, 13:00–17:30.
           </p>
           <div class="flex flex-wrap gap-2">
             <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]">🐤 Duckling + 🦆 Duck</span>
@@ -228,7 +393,7 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
       <div class="surface-card sticker-sun p-8" data-reveal>
         <p class="section-kicker">Weekly rhythm</p>
         <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          Wednesday <span class="font-accent italic">+</span> Friday, 4-6pm.
+          Monday <span class="font-accent italic">+</span> Friday, 4-6pm.
         </h2>
         <div class="mt-6 grid gap-4">
           {site.schedule.map((session) => (
@@ -245,6 +410,10 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
             </div>
           ))}
         </div>
+
+        <p class="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
+          ↑ <a href="#how-it-works" class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">How the club works</a> — BYO board + wetsuit, parents responsible.
+        </p>
       </div>
 
       <div class="surface-card sticker-coral p-8" data-reveal>
@@ -260,7 +429,7 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
             ★ Next up · first ever
           </p>
           <p class="mt-2 font-display text-xl leading-tight text-[var(--color-cream-soft)] sm:text-2xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span> · Sat 30 May 2026 🦆
+            Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span> — Sun 31 May 2026 🦆
           </p>
           <p class="mt-2 text-[0.92rem] leading-6 text-[var(--color-cream-soft)]/85">
             Tamarin Bay, 13:00–17:30. Heats of 4, two divisions, BBQ on the sand, parent heat at 16:30.
@@ -300,7 +469,7 @@ const teaserProducts = site.shop.teaserProductIds.flatMap((id) => {
               Two sessions a week
             </p>
             <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-              Wednesday + Friday, 4-6pm.
+              Monday + Friday, 4-6pm.
             </p>
             <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
               Technique, whitewater reps, and sunset paddle-outs.

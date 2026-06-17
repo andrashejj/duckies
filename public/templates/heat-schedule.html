@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies Cup — Heat Schedule &amp; Draw</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root { --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec; --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6; --pink: #ff9bb3; --lilac: #c8b6ff; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Outfit", system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 32px 24px 64px; line-height: 1.5; }
+    .sheet { max-width: 920px; margin: 0 auto; background: var(--cream-soft); border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--ink); border-radius: 18px; padding: 36px; }
+    .kicker { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; background: var(--lilac); border: 1.5px solid var(--ink); padding: 0.3rem 0.75rem; border-radius: 999px; box-shadow: 2px 2px 0 0 var(--ink); }
+    h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 2.2rem; margin: 14px 0 6px; letter-spacing: -0.03em; }
+    h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1.2rem; margin: 28px 0 4px; padding-bottom: 6px; border-bottom: 2px dashed rgba(11,22,32,0.35); display: flex; align-items: center; gap: 0.5rem; }
+    h3 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 1rem; margin: 18px 0 6px; }
+    .meta { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: rgba(11,22,32,0.65); }
+    .lede { font-size: 1rem; margin: 6px 0 14px; max-width: 66ch; }
+    .chips { margin: 8px 0 6px; }
+    .chip { display: inline-block; background: var(--sun); border: 1.5px solid var(--ink); padding: 0.3rem 0.7rem; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; margin: 0 6px 8px 0; box-shadow: 2px 2px 0 0 var(--ink); }
+    .heat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 10px 0; }
+    .heat { border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; box-shadow: 3px 3px 0 0 var(--ink); background: var(--cream-soft); }
+    .heat-head { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; background: var(--ink); color: var(--cream); }
+    .heat-head .title { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .heat-head .time { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; opacity: 0.85; }
+    table { width: 100%; border-collapse: collapse; }
+    .heat td { padding: 9px 12px; border-bottom: 1px solid rgba(11,22,32,0.18); font-size: 0.9rem; }
+    .heat tr:last-child td { border-bottom: none; }
+    .seed { width: 26px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: rgba(11,22,32,0.45); }
+    .name { font-weight: 600; }
+    .name .age { font-family: "JetBrains Mono", monospace; font-size: 0.64rem; color: rgba(11,22,32,0.55); margin-left: 5px; }
+    .fill { border-bottom: 1.5px solid var(--ink); min-height: 1.1em; display: block; }
+    .adv { width: 90px; text-align: right; font-family: "JetBrains Mono", monospace; font-size: 0.66rem; text-transform: uppercase; color: rgba(11,22,32,0.6); }
+    .note { margin-top: 22px; padding: 14px 16px; background: rgba(255,210,63,0.35); border: 1.5px dashed var(--ink); border-radius: 12px; font-size: 0.92rem; }
+    .note ul { margin: 6px 0 0; padding-left: 20px; }
+    .note li { margin: 4px 0; }
+    .full { grid-column: 1 / -1; }
+    .footer { margin-top: 32px; font-family: "JetBrains Mono", monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(11,22,32,0.6); text-align: center; }
+    .print-btn { position: fixed; top: 16px; right: 16px; background: var(--coral); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink); padding: 10px 18px; border-radius: 999px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      html, body { background: white; }
+      body { padding: 0; font-size: 10.5pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .sheet { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border-radius: 0; border: none; background: white; }
+      .print-btn { display: none; }
+      .heat { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+      .heat-grid { break-inside: avoid; page-break-inside: avoid; }
+      h2 { break-after: avoid; page-break-after: avoid; }
+      .note { break-inside: avoid; page-break-inside: avoid; }
+      .page-break-before { break-before: page; page-break-before: always; }
+      .kicker { font-size: 0.62rem; padding: 0.2rem 0.6rem; box-shadow: none; }
+      h1 { font-size: 1.7rem; margin: 6px 0 3px; }
+      h2 { font-size: 1.02rem; margin: 14px 0 5px; padding-bottom: 4px; }
+      .meta { font-size: 0.72rem; }
+      .lede { font-size: 0.86rem; margin: 4px 0 7px; max-width: none; }
+      .chips { margin: 4px 0 6px; }
+      .chip { font-size: 0.62rem; padding: 0.2rem 0.55rem; margin: 0 4px 5px 0; box-shadow: none; }
+      .heat-grid { gap: 8px; margin: 6px 0; }
+      .heat { border-radius: 8px; }
+      .heat-head { padding: 4px 9px; }
+      .heat-head .title { font-size: 0.86rem; }
+      .heat-head .time { font-size: 0.66rem; }
+      .heat td { padding: 4px 9px; font-size: 0.82rem; }
+      .seed { width: 20px; font-size: 0.64rem; }
+      .name .age { font-size: 0.6rem; }
+      .adv { width: 82px; font-size: 0.6rem; }
+      .note { margin-top: 12px; padding: 9px 12px; font-size: 0.78rem; border-radius: 8px; }
+      .note ul { padding-left: 16px; margin: 4px 0 0; }
+      .note li { margin: 2.5px 0; }
+      .footer { margin-top: 12px; font-size: 0.6rem; }
+    }
+    @media (max-width: 640px) { .heat-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Heat draw &amp; running order</span>
+    <h1>Heat schedule 🏁</h1>
+    <p class="meta">Sunday · 31 May 2026 · Tamarin Bay · pin next to the run-of-show</p>
+    <p class="lede">The field is <strong>26 surfers — 15 ducklings + 11 ducks</strong>, plus 1 cheerleader (cheer division, not surfing). That's <strong>2 qualifying heats per division</strong>, then a <strong>10-surfer Final</strong> (2♂ + 2♀ ducklings + 3♂ + 3♀ ducks), and the parent heat to close. If surf or daylight is short, split the Final into a Duckling Final (4) and a Duck Final (6) — same crowns, two sessions. Heats of 5–8, 10 minutes, best 2 waves. Surfers are pre-drawn below — siblings split, ages kept even.</p>
+
+    <div class="chips">
+      <span class="chip">🐤 15 ducklings → 2 heats</span>
+      <span class="chip">🦆 11 ducks → 2 heats</span>
+      <span class="chip">🌊 Final · 10 (4 ducklings + 6 ducks)</span>
+      <span class="chip">↔️ split if needed</span>
+      <span class="chip">⏱️ 10 min each</span>
+    </div>
+
+    <h2><span>🐤</span> Duckling qualifiers — 14:00</h2>
+    <div class="heat-grid">
+      <div class="heat">
+        <div class="heat-head"><span class="title">Duckling Heat 1</span><span class="time">14:00 · 10 min</span></div>
+        <table>
+          <tr><td class="seed">1</td><td class="name">Alysia Klein <span class="age">10</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Leonie Basu <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Marc-Emmanuel Vlok <span class="age">7</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Robyn Raye <span class="age">4</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Lara Hejj <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">6</td><td class="name">Mats <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">7</td><td class="name">Edouard-Betsy <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+        </table>
+      </div>
+      <div class="heat">
+        <div class="heat-head"><span class="title">Duckling Heat 2</span><span class="time">~14:12 · 10 min</span></div>
+        <table>
+          <tr><td class="seed">1</td><td class="name">Shanay Basu <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Ella Klein <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Ezrah Wild Tyler <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Taylor Raye <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Maud <span class="age">7</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">6</td><td class="name">Yusuf Datoo <span class="age">6</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">7</td><td class="name">River Rainer <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">8</td><td class="name">Jordyn McKenzie Meikle-Braes <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2><span>🦆</span> Duck qualifiers — ~14:45</h2>
+    <div class="heat-grid">
+      <div class="heat">
+        <div class="heat-head"><span class="title">Duck Heat 1</span><span class="time">~14:45 · 10 min</span></div>
+        <table>
+          <tr><td class="seed">1</td><td class="name">Karia Nel <span class="age">14</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Holly St Guillaume <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Elijah Bear Tyler <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Jaxon Webb <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Eljana de Waal <span class="age">10</span></td><td class="adv">advances ☐</td></tr>
+        </table>
+      </div>
+      <div class="heat">
+        <div class="heat-head"><span class="title">Duck Heat 2</span><span class="time">~14:57 · 10 min</span></div>
+        <table>
+          <tr><td class="seed">1</td><td class="name">Josua Nel <span class="age">12</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name">Skye Bax De Keating <span class="age">11</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name">Emma-Jayne Vlok <span class="age">10</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name">Teo Niescierowicz <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">5</td><td class="name">Noah Hejj <span class="age">9</span></td><td class="adv">advances ☐</td></tr>
+          <tr><td class="seed">6</td><td class="name">Ruhan de Waal <span class="age">8</span></td><td class="adv">advances ☐</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="page-break-before"><span>🌊</span> The Final — 16:00</h2>
+    <p class="meta">10 finalists: <strong>2♂ + 2♀ ducklings + 3♂ + 3♀ ducks</strong>. Run as one combined heat if conditions allow, or split into two back-to-back finals (Duckling Final first, Duck Final after). Crowns per division: top duckling boy + girl = Duckling King &amp; Queen; top duck boy + girl = Duck King &amp; Queen.</p>
+    <div class="heat-grid">
+      <div class="heat full">
+        <div class="heat-head"><span class="title">🐤 Duckling Final</span><span class="time">16:00 · ~10 min · 4 surfers</span></div>
+        <table>
+          <tr><td class="seed">♂</td><td class="name"><span class="fill"></span></td><td class="adv">duckling · top ♂ H1</td></tr>
+          <tr><td class="seed">♂</td><td class="name"><span class="fill"></span></td><td class="adv">duckling · top ♂ H2</td></tr>
+          <tr><td class="seed">♀</td><td class="name"><span class="fill"></span></td><td class="adv">duckling · top ♀ H1</td></tr>
+          <tr><td class="seed">♀</td><td class="name"><span class="fill"></span></td><td class="adv">duckling · top ♀ H2</td></tr>
+        </table>
+      </div>
+      <div class="heat full">
+        <div class="heat-head"><span class="title">🦆 Duck Final</span><span class="time">~16:15 · ~12 min · 6 surfers</span></div>
+        <table>
+          <tr><td class="seed">♂</td><td class="name"><span class="fill"></span></td><td class="adv">duck · top ♂ H1</td></tr>
+          <tr><td class="seed">♂</td><td class="name"><span class="fill"></span></td><td class="adv">duck · top ♂ H2</td></tr>
+          <tr><td class="seed">♂</td><td class="name"><span class="fill"></span></td><td class="adv">duck · ♂ wildcard ☐</td></tr>
+          <tr><td class="seed">♀</td><td class="name"><span class="fill"></span></td><td class="adv">duck · top ♀ H1</td></tr>
+          <tr><td class="seed">♀</td><td class="name"><span class="fill"></span></td><td class="adv">duck · top ♀ H2</td></tr>
+          <tr><td class="seed">♀</td><td class="name"><span class="fill"></span></td><td class="adv">duck · ♀ wildcard ☐</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2><span>😂</span> Parent "Grey Goose" heat — 16:30</h2>
+    <div class="heat-grid">
+      <div class="heat full">
+        <div class="heat-head"><span class="title">Grey Goose Heat</span><span class="time">16:30 · 10 min · kids judge by cheer</span></div>
+        <table>
+          <tr><td class="seed">1</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">2</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">3</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+          <tr><td class="seed">4</td><td class="name"><span class="fill"></span></td><td class="adv">side award ☐</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Running the draw:</strong>
+      <ul>
+        <li><strong>Seeding:</strong> siblings are already split across heats and ages kept even — check it still holds if anyone scratches or swaps division.</li>
+        <li><strong>10 finalists — 4 ducklings + 6 ducks, balanced by gender:</strong>
+          <ul>
+            <li><em>Ducklings (4 advance):</em> top boy + top girl from each Duckling heat. <em>Fallback:</em> if a heat is short one gender, advance the next-best so both crowns stay fillable.</li>
+            <li><em>Ducks (6 advance):</em> top boy + top girl from each Duck heat = 4, plus 1 ♂ + 1 ♀ wildcard chosen by the head judge across both heats.</li>
+            <li>The head judge marks the advancing surfers on the scorecards at the end of each qualifier.</li>
+          </ul>
+        </li>
+        <li><strong>One final or two:</strong> run all 10 together if surf and time allow; otherwise run Duckling Final first, then Duck Final. Same crowns either way.</li>
+        <li><strong>Crowns:</strong> top duckling ♂ + ♀ = Duckling King &amp; Queen; top duck ♂ + ♀ = Duck King &amp; Queen.</li>
+        <li><strong>If surf is too big:</strong> drop to Duckling-only and shorten heats — same draw, fewer rounds.</li>
+        <li><strong>One card per heat × judge</strong> — pair this sheet with the judge scorecards (3 judges + 1 instructing).</li>
+      </ul>
+    </div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

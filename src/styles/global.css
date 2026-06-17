@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Sunset Anton";
+  src: url("/brand/anton-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sunset La Belle";
+  src: url("/brand/la-belle-aurore-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Distinctive type: variable Bricolage Grotesque for display (weird + playful),
      Fraunces Wonky for accents, Outfit for body, JetBrains Mono for tags. */
+  --font-brand: "Sunset Anton", "Arial Black", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Sunset La Belle", "Fraunces", cursive;
   --font-display: "Bricolage Grotesque", "Fraunces", ui-serif, serif;
   --font-accent: "Fraunces", "Iowan Old Style", serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
@@ -79,6 +97,31 @@ body {
   overflow-x: clip;
 }
 
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* On phones, drop backdrop-blur and use an opaque background — the
+   translucent glass effect is what makes mobile browsers flicker as the
+   address bar resizes. Also pin the header to its own compositor layer
+   so iOS Safari doesn't desync the sticky layer from the visual viewport
+   during scroll / address-bar transitions (the coral stats strip behind
+   the header would flash above it). Safe on mobile only because
+   backdrop-filter is disabled here. */
+@media (max-width: 640px) {
+  .site-header {
+    background: var(--color-cream-soft) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
 .font-display {
   font-family: var(--font-display);
   font-optical-sizing: auto;
@@ -93,6 +136,16 @@ body {
 
 .font-mono {
   font-family: var(--font-mono);
+}
+
+.font-brand {
+  font-family: var(--font-brand);
+  letter-spacing: 0.01em;
+}
+
+.font-script {
+  font-family: var(--font-script);
+  letter-spacing: 0.02em;
 }
 
 /* ==== BRUTALIST STICKER CARDS ==== */
@@ -519,4 +572,55 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .floating, .spin-slow, .wobble, .marquee-track { animation: none; }
+}
+
+.join-details {
+  border: 1.5px solid rgba(11, 22, 32, 0.35);
+  border-radius: 1rem;
+  background: rgba(255, 245, 222, 0.6);
+  padding: 0.55rem 0.9rem;
+}
+
+.join-details > summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-950);
+}
+
+.join-details > summary::-webkit-details-marker { display: none; }
+
+.join-details > summary::before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1.5px solid var(--color-ink-950);
+  border-radius: 999px;
+  background: var(--color-sun-500);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.join-details[open] > summary::before {
+  content: "−";
+  background: var(--color-coral-500);
+  color: var(--color-cream);
+}
+
+.join-details > summary:focus-visible {
+  outline: 2px solid var(--color-coral-500);
+  outline-offset: 4px;
+  border-radius: 8px;
 }

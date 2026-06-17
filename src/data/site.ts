@@ -52,7 +52,9 @@ const sponsors: readonly Sponsor[] = [
 
 const navigation: readonly NavItem[] = [
   { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
+  { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
   { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
+  { label: "Blog", labelFull: "The Logbook", href: "/blog" },
   { label: "Shop", labelFull: "Shop", href: "/shop" },
 ];
 
@@ -228,7 +230,7 @@ export const site = {
   ],
   schedule: [
     {
-      day: "Wednesday",
+      day: "Monday",
       time: "4:00-6:00pm",
       focus: "Technique, confidence, whitewater reps.",
     },
@@ -246,10 +248,10 @@ export const site = {
   },
   cup: {
     name: "Sunset Duckies Cup",
-    edition: "Vol. 01 · first ever",
-    dateLabel: "Saturday · 30 May 2026",
-    dateISO: "2026-05-30",
-    timeLabel: "13:00 – 17:30",
+    edition: "Vol. 01 — first ever",
+    dateLabel: "Sunday · 31 May 2026",
+    dateISO: "2026-05-31",
+    timeLabel: "13:00 – late (bonfire from 18:00)",
     location: "Tamarin Bay, Mauritius",
     entryFeeLabel: "1'000 MUR",
     registerDeadlineLabel: "Friday 15 May",
@@ -275,11 +277,12 @@ export const site = {
       { time: "13:00", label: "Arrival + warm-up on the sand", emoji: "🌅" },
       { time: "14:00", label: "Duckling heats", emoji: "🐤" },
       { time: "~14:45", label: "Duck heats", emoji: "🦆" },
-      { time: "15:30", label: "Break, BBQ, free surf", emoji: "🍔" },
-      { time: "16:00", label: "Final heats (best of duckling & duck)", emoji: "🌊" },
+      { time: "15:30", label: "Break — BBQ + free surf", emoji: "🍔" },
+      { time: "16:00", label: "The Final — top ducklings + top ducks, one heat", emoji: "🌊" },
       { time: "16:30", label: "Grey goose heat (watch the parents try)", emoji: "😂" },
       { time: "17:00", label: "Awards ceremony", emoji: "🏆" },
-      { time: "17:30", label: "Wrap", emoji: "✨" },
+      { time: "17:30", label: "Wind-down + teardown", emoji: "✨" },
+      { time: "18:00", label: "Bonfire on the sand", emoji: "🔥" },
     ],
     judgingCriteria: [
       {
@@ -310,24 +313,24 @@ export const site = {
     ],
     prizes: {
       crowns: [
-        { emoji: "🐤", title: "Duckling King + Queen", text: "Top boy + top girl, Duckling division." },
-        { emoji: "🦆", title: "Duck King + Queen", text: "Top boy + top girl, Duck division." },
-        { emoji: "🏄‍♀️", title: "Sunset Duckies King + Queen", text: "Top boy + top girl, overall." },
+        { emoji: "🐤", title: "Sunset Duckling King + Queen", text: "Top duckling boy + top duckling girl in the Final." },
+        { emoji: "🦆", title: "Sunset Duckie King + Queen", text: "Top duck boy + top duck girl in the Final." },
       ],
       sideAwards: [
-        { emoji: "🌅", title: "Sunset Stoke", text: "Biggest celebration of the day." },
-        { emoji: "💪", title: "Paddle Power", text: "Never stopped going for waves." },
-        { emoji: "💦", title: "Best Wipeout", text: "Fell hardest, smiled hardest." },
-        { emoji: "✨", title: "Style Duckling", text: "That one moment of perfect balance." },
-        { emoji: "🔄", title: "Best Comeback", text: "Fell off, jumped right back on." },
-        { emoji: "📣", title: "Best Cheer Squad", text: "Cheered loudest for everyone else." },
+        { emoji: "💪", title: "Tried Hardest", text: "Never gave up — got back on every time." },
+        { emoji: "💥", title: "Fell Hardest", text: "The most spectacular wipeout of the day." },
+        { emoji: "😁", title: "Biggest Smile", text: "Lit up the whole beach, first wave to last." },
+        { emoji: "📣", title: "Loudest Claim", text: "Celebrated that wave like a world title." },
+        { emoji: "📈", title: "Most Improved", text: "Biggest leap from first paddle to final wave." },
+        { emoji: "🎉", title: "Best Cheer Squad", text: "Powered the loudest cheer on the sand." },
+        { emoji: "🌅", title: "Sunset Stoke", text: "The biggest claim on a knee-high wave." },
       ],
-      everyone: "Every duckling gets a personalised finisher certificate with their name on it.",
+      everyone: "Every surfer gets a personalised Certificate of Stoke with their name on it.",
     },
     parentHeat: {
       title: "The Parent Heat 🦆",
       blurb:
-        "After the kids' finals, four parents are going in the water. Same rules, same scoring. Kids vote for the side awards, loudest cheer wins.",
+        "After the kids' Final, four parents are going in the water. Same rules, same scoring — but kids vote for the side awards. Loudest cheer wins.",
       awards: [
         "Best Dad Stance",
         "Best Mom Stance",
@@ -343,6 +346,7 @@ export const site = {
       "BBQ for the whole fam",
       "Water for the kids at the break",
       "Prizes + personalised finisher certificate",
+      "Bonfire on the sand to close the day 🔥",
     ],
     templates: [
       {
@@ -367,6 +371,13 @@ export const site = {
         accent: "sticker-teal",
       },
       {
+        title: "Heat schedule & draw",
+        file: "/templates/heat-schedule.html",
+        description: "The running order + blank draw sheet — 2 duckling heats, 2 duck heats, one combined Final (up to 8), parent heat. Write in arm numbers on the day.",
+        emoji: "🏁",
+        accent: "sticker-lilac",
+      },
+      {
         title: "Judge scorecard",
         file: "/templates/judge-scorecard.html",
         description: "One card per heat × judge. 4 surfers, 5 tick boxes per wave, best 2 waves count.",
@@ -381,6 +392,13 @@ export const site = {
         accent: "sticker-pink",
       },
       {
+        title: "Welcome & announcements",
+        file: "/templates/welcome-announcements.html",
+        description: "Read aloud at 13:30 — welcome, food/BBQ/timetable, helpers, first aid, water-safety rules (poles, one-surfer-per-wave), heat timer flow, and the 5 judging criteria explained.",
+        emoji: "📣",
+        accent: "sticker-coral",
+      },
+      {
         title: "Volunteer sheet",
         file: "/templates/volunteer-roles.html",
         description: "Doing and bringing. Claim a role or an item.",
@@ -388,25 +406,32 @@ export const site = {
         accent: "sticker-teal",
       },
       {
+        title: "Payment tracker",
+        file: "/templates/payment-tracker.html",
+        description: "One row per kid, grouped by family — pre-filled paid/waiver status, late-add slots, totals box. Pin at the registration desk.",
+        emoji: "💰",
+        accent: "sticker-teal",
+      },
+      {
         title: "Pre-event checklist",
         file: "/templates/pre-event-checklist.html",
-        description: "Owners + due dates from now through Friday 29 May.",
+        description: "Owners + due dates from now through Saturday 30 May.",
         emoji: "✅",
         accent: "sticker-sun",
       },
       {
         title: "Shopping list",
         file: "/templates/shopping-list.html",
-        description: "Sausages, buns, sides, drinks, charcoal. Quantities for ~25 mouths with rough MUR costs.",
+        description: "Sausages (pork + Halal), baguettes, fruit, charcoal, paper goods — quantities for ~26 plates, with the two special diets flagged.",
         emoji: "🛒",
         accent: "sticker-pink",
       },
       {
-        title: "Finisher certificate",
-        file: "/templates/finisher-certificate.html",
-        description: "Personalised certificate template. Print one per duckling.",
-        emoji: "🏆",
-        accent: "sticker-coral",
+        title: "Certificates & prizes",
+        file: "/templates/certificates.html",
+        description: "One printable certificate per prize — the 4 crowns (Duckling/Duckie King & Queen) plus the fun awards (Tried Hardest, Fell Hardest, Biggest Smile, and more). Type the winner's name and print.",
+        emoji: "👑",
+        accent: "sticker-sun",
       },
       {
         title: "Parent WhatsApp message",
@@ -416,11 +441,257 @@ export const site = {
         accent: "sticker-lilac",
       },
     ],
+    // Photos from the day. They live in a Nextcloud public share; we hotlink
+    // Nextcloud's `publicpreview` endpoint (sized server-side) per image.
+    // To (re)generate `files`, run `bash scripts/list-cup-photos.sh` on a
+    // network that can reach owncloud.justnet.pl and paste its output below.
+    photos: {
+      shareUrl: "https://owncloud.justnet.pl/index.php/s/kmNsjY62yRzergT",
+      base: "https://owncloud.justnet.pl",
+      token: "kmNsjY62yRzergT",
+      files: [
+        "20260531 Sunset Duckies Cup 13.JPG",
+      ],
+    },
+  },
+  cupVol2: {
+    name: "Sunset Duckies Cup",
+    edition: "Vol. 02",
+    dateLabel: "Date TBD",
+    timeLabel: "Earlier start · daylight finish",
+    location: "Tamarin Bay, Mauritius",
+    registerCtaLabel: "Get updates on WhatsApp",
+    previousEdition: {
+      label: "Vol. 01 · 31 May 2026",
+      href: "/sunset-duckies-cup",
+    },
+    blurb: "Round two at Tamarin Bay — sharpened by everything Vol. 01 taught us.",
+    lessons: [
+      {
+        emoji: "🎽",
+        tag: "Judging",
+        accent: "sticker-coral",
+        title: "Colour-coded rashies",
+        change: "One rashie colour per surfer. Score by colour.",
+      },
+      {
+        emoji: "🦆",
+        tag: "Format",
+        accent: "sticker-sun",
+        title: "Four to a heat",
+        change: "Hard cap of 4. More waves each.",
+      },
+      {
+        emoji: "🌊",
+        tag: "Scoring",
+        accent: "sticker-teal",
+        title: "Wave size counts",
+        change: "New scoring rewards bigger, longer rides.",
+      },
+      {
+        emoji: "⚖️",
+        tag: "Scoring",
+        accent: "sticker-pink",
+        title: "A score per division",
+        change: "Playful tick boxes for ducklings, real points for ducks.",
+      },
+      {
+        emoji: "🌅",
+        tag: "Timing",
+        accent: "sticker-lilac",
+        title: "Start earlier",
+        change: "Earlier start, more buffer. Crowns in daylight.",
+      },
+      {
+        emoji: "⛺",
+        tag: "Set-up",
+        accent: "sticker-sun",
+        title: "Branded gazebos",
+        change: "Branded gazebos for desk, judges and shade.",
+      },
+      {
+        emoji: "🍔",
+        tag: "Food",
+        accent: "sticker-coral",
+        title: "More food",
+        change: "More food, plus a paid stall — Shakti could help.",
+      },
+      {
+        emoji: "👀",
+        tag: "Judging",
+        accent: "sticker-teal",
+        title: "Better judges",
+        change: "More experienced judges, properly briefed.",
+      },
+      {
+        emoji: "🏖️",
+        tag: "Kids",
+        accent: "sticker-pink",
+        title: "Stuff to do between heats",
+        change: "1–2 side activities running all day.",
+      },
+    ],
+    lockedIn: [
+      "Tamarin Bay",
+      "Heats of 4",
+      "Colour-coded rashies",
+      "Two scoring styles",
+      "Earlier start",
+      "Branded gazebos",
+    ],
+  },
+  clubRules: {
+    kicker: "★ Before you join — read this once",
+    headline: "It's a club. Not a lesson.",
+    intro:
+      "Sunset Duckies is a volunteer-run club, not a surf school. Nobody is on the payroll, nobody is in the water with your kid. Three things every family needs to be clear on before joining:",
+    rules: [
+      {
+        title: "BYO surfboard + wetsuit",
+        text: "Every kid brings their own board and wetsuit, every session. We don't rent, lend, or store gear. No board, no surf.",
+      },
+      {
+        title: "Parents stay responsible",
+        text: "Your child, your call. A parent or guardian stays on the beach or in the water with their kid for the whole session. The club does not take legal responsibility for what happens in the ocean.",
+      },
+      {
+        title: "Coach trains, doesn't babysit",
+        text: "The coach is on the beach to run drills, spot, encourage, and nudge. Not a lesson. Not a lifeguard. Not a child-minder.",
+      },
+    ],
+  },
+  ageGuide: {
+    kicker: "★ Is your duckie ready?",
+    rangeLabel: "7 yrs +",
+    headline: "Built for kids 7 and up.",
+    intro:
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. Kids are usually ready from around 7 — but age is a guide, not a gate. The one thing that really matters:",
+    requirements: [
+      {
+        emoji: "🏊",
+        title: "Swim alone & well",
+        text: "Confident swimming on their own in open water — not just the pool. This is the non-negotiable. Surf skills like paddling and popping up come later, with the crew.",
+      },
+    ],
+    footnote: "Not quite there yet? Message on WhatsApp — we'll tell you what to work on first.",
+  },
+  contact: {
+    coordinatorEmail: "andras@sunsetduckies.com",
+    coordinatorName: "Andras",
+  },
+  howToJoin: {
+    kicker: "★ How to join · 4 steps",
+    headline: "How to join the club, in four steps.",
+    intro:
+      "We're volunteer-run, no online portal. The path is short: meet the crew on WhatsApp, sign the waiver, try a couple of sessions, then make it official. Email anything signed straight to Andras.",
+    steps: [
+      {
+        id: "whatsapp",
+        accent: "sticker-teal",
+        tag: "Step 01 · meet the crew",
+        title: "Join the WhatsApp group.",
+        body:
+          "This is where Andras posts session updates, surf calls, and answers questions. Lurk for a week, say hi when you're ready.",
+        actions: [
+          {
+            label: "Open WhatsApp group",
+            href: "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
+            variant: "primary",
+            external: true,
+          },
+        ],
+        footnote: "It's the club's only group — no spam.",
+      },
+      {
+        id: "waiver",
+        accent: "sticker-sun",
+        tag: "Step 02 · sign the waiver",
+        title: "Sign the liability waiver.",
+        body:
+          "Open the waiver, print or save it, fill it in, sign, then email a photo or scan back to Andras. Standard ocean-sports release — the short version below covers the gist.",
+        actions: [
+          {
+            label: "Open the waiver",
+            href: "/templates/liability-waiver.html",
+            variant: "secondary",
+            external: true,
+          },
+          {
+            label: "Email signed waiver",
+            href:
+              "mailto:andras@sunsetduckies.com?subject=" +
+              encodeURIComponent("Sunset Duckies · signed liability waiver") +
+              "&body=" +
+              encodeURIComponent(
+                "Hi Andras,\n\nAttached is the signed liability waiver for my child to join Sunset Duckies.\n\nChild's name:\nParent / guardian name:\nPhone:\n\nThanks!\n",
+              ),
+            variant: "primary",
+            external: false,
+          },
+        ],
+        footnote: "Attach the photo/scan in your email client.",
+      },
+      {
+        id: "try",
+        accent: "sticker-lilac",
+        tag: "Step 03 · come paddle",
+        title: "Try a few training sessions.",
+        body:
+          "Monday and Friday, 4–6pm in Tamarin Bay. A parent stays on-site (beach or water). One or two trial sessions without a board are fine — after that we want kids on their own surfboard (rentable across the road) and in a wetsuit for the winter months.",
+        actions: [
+          {
+            label: "See the weekly rhythm",
+            href: "#schedule",
+            variant: "secondary",
+            external: false,
+          },
+        ],
+        footnote: "First time? Message on WhatsApp before you come so we can spot you.",
+      },
+      {
+        id: "register",
+        accent: "sticker-coral",
+        tag: "Step 04 · make it official",
+        title: "Join the club.",
+        body:
+          "Once you know you're in, fill the club registration form and email it to Andras. Annual dues are Rs 5,000 — covers a custom club rashie with your kid's name, two coached sessions a week, safety cover at trainings, the club WhatsApp, and end-of-season certificates. Competitions like the Cup are ticketed separately.",
+        actions: [
+          {
+            label: "Open club registration form",
+            href: "/templates/club-registration-form.html",
+            variant: "secondary",
+            external: true,
+          },
+          {
+            label: "Email registration",
+            href:
+              "mailto:andras@sunsetduckies.com?subject=" +
+              encodeURIComponent("Sunset Duckies · club membership registration") +
+              "&body=" +
+              encodeURIComponent(
+                "Hi Andras,\n\nAttached is our completed Sunset Duckies club membership registration form.\n\nChild's name:\nAge:\nRashie size + name to print:\nParent / guardian name:\nPhone:\n\nWe've also signed the liability waiver (sent separately / attached).\n\nThanks!\n",
+              ),
+            variant: "primary",
+            external: false,
+          },
+        ],
+        footnote: "We'll confirm by WhatsApp once you're in. Cup-only? That's a separate form on the cup page.",
+      },
+    ],
+    waiverSummary: [
+      "Covers everything ducky — weekly trainings, the cup, and any other club events.",
+      "Surfing carries inherent risk — waves, rocks, board contact, marine life, sun.",
+      "The club is volunteer-run. Safety measures are in place, but participation is at your own risk.",
+      "Your kid can swim confidently in open water — waves up to ~2 m and currents, agreed with the head coach.",
+      "A parent or guardian stays on-site every session, watching from the beach or joining in the water — never a drop-off.",
+      "Coaches may make reasonable medical decisions in an emergency if you can't be reached.",
+      "Photo / video opt-in is your choice, ticked on the form.",
+    ],
   },
   pillars: [
     {
       title: "Get good at surfing",
-      text: "Two sessions a week, proper coaching, real reps in the water.",
+      text: "Two sessions a week, kids training together, real reps in the water — not a lesson.",
     },
     {
       title: "Sunset sessions",

@@ -1,0 +1,205 @@
+---
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const cup = site.cupVol2;
+const title = `${cup.name} — Vol. 02 | ${site.name}`;
+const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay (date TBD) — leveled up from the lessons of the first ever cup: colour-coded rashies, heats of 4, smarter scoring, an earlier start, branded gazebos and more food.`;
+---
+
+<BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup Vol. 02 — Tamarin Bay">
+  <!-- ===================== HERO ===================== -->
+  <section class="relative isolate overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute inset-0 bg-[var(--color-ink-950)]"></div>
+      <img
+        src="/media/tamarin-shore.jpg"
+        alt=""
+        class="h-full w-full object-cover opacity-55"
+        aria-hidden="true"
+      />
+      <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(11,22,32,0.85)_0%,rgba(7,201,182,0.42)_52%,rgba(255,210,63,0.55)_100%)]"></div>
+    </div>
+
+    <!-- Sticker flairs -->
+    <div class="pointer-events-none absolute -right-4 top-32 hidden lg:block" aria-hidden="true">
+      <div class="floating">
+        <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-5 py-3 shadow-[5px_5px_0_0_var(--color-ink-950)]" style="transform: rotate(-8deg);">
+          <p class="font-display text-lg font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
+            ✦ the glow-up · vol. 02
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="pointer-events-none absolute left-6 bottom-24 hidden lg:block" aria-hidden="true">
+      <div class="wobble">
+        <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-4 py-2 shadow-[4px_4px_0_0_var(--color-ink-950)]" style="transform: rotate(6deg);">
+          <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-ink-950)]">
+            lessons → upgrades
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative mx-auto flex min-h-[74vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
+      <div data-float class="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span class="eyebrow-badge">
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-teal-500)]"></span>
+          {cup.dateLabel}
+        </span>
+        <a
+          href={cup.previousEdition.href}
+          class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-white/75 underline decoration-[var(--color-sun-500)] decoration-2 underline-offset-4 transition hover:text-white"
+        >
+          ← {cup.previousEdition.label}
+        </a>
+      </div>
+
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
+        <div data-float class="max-w-4xl space-y-6">
+          <h1
+            class="font-display text-white"
+            style="font-size: clamp(2.6rem, 8vw, 6.4rem); line-height: 0.9; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 600;"
+          >
+            <span class="block">Sunset Duckies</span>
+            <span class="block">
+              <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Cup</span>
+              ·
+              <span class="font-accent italic text-[var(--color-teal-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Vol.&nbsp;02</span>
+            </span>
+          </h1>
+          <p class="max-w-3xl text-base leading-7 text-white/90 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
+            {cup.blurb}
+          </p>
+          <p class="font-mono text-[0.78rem] uppercase tracking-[0.22em] text-white/75">
+            📍 {cup.location}  ·  🗓 {cup.timeLabel}
+          </p>
+        </div>
+
+        <div data-float class="flex flex-col gap-3">
+          <a class="cta-primary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            {cup.registerCtaLabel}
+          </a>
+          <a class="cta-secondary w-full" href="#lessons">
+            ↓ See what's changing
+          </a>
+          <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
+            {cup.lessons.length} fixes ★ all from vol. 01
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TICKER STRIP ===================== -->
+  <section class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] text-[var(--color-ink-950)]">
+    <div class="mx-auto grid max-w-7xl grid-cols-2 gap-0 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">TBD</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">date to come</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">Heats of 4</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">one colour each</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-[var(--color-ink-950)]/25">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">2 scores</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">playful + serious</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6">
+        <p class="font-display text-3xl font-black leading-none md:text-4xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">{cup.lessons.length} fixes</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">learned at vol. 01</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LESSONS LEARNED ===================== -->
+  <section id="lessons" class="relative mx-auto max-w-7xl px-6 pb-12 pt-20 lg:px-10">
+    <div class="blob-teal absolute -left-20 top-12 -z-0"></div>
+    <div class="blob-coral absolute -right-24 bottom-10 -z-0"></div>
+
+    <div class="relative space-y-10">
+      <div class="max-w-3xl space-y-5" data-reveal>
+        <p class="section-kicker">Lessons learned · Vol. 01 → 02</p>
+        <h2 class="section-title">
+          What the first cup
+          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">taught</span>
+          us.
+        </h2>
+        <p class="body-copy max-w-2xl">
+          Every wobble from round one, turned into a fix.
+        </p>
+      </div>
+
+      <ul class="grid max-w-3xl gap-3" data-reveal>
+        {cup.lessons.map((lesson) => (
+          <li class:list={["flex items-center gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)] sm:p-5", lesson.accent]}>
+            <span class="shrink-0 text-3xl sm:text-4xl">{lesson.emoji}</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-display text-lg text-[var(--color-ink-950)] sm:text-xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                {lesson.title}
+              </p>
+              <p class="mt-0.5 text-[0.88rem] leading-snug text-[var(--color-ink-950)]/75">
+                {lesson.change}
+              </p>
+            </div>
+            <span class="hidden shrink-0 rounded-full border-[1.5px] border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-1 font-mono text-[0.56rem] font-semibold uppercase tracking-[0.16em] text-[var(--color-ink-950)]/80 sm:inline">
+              {lesson.tag}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== LOCKED IN ===================== -->
+  <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <div class="surface-card sticker-sun p-8 md:p-10" data-reveal>
+      <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div>
+          <p class="section-kicker">Locked in</p>
+          <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+            Already <span class="ink-underline">nailed down</span>.
+          </h2>
+          <p class="body-copy mt-4 max-w-md">
+            Big calls made. Sign-up and draws drop closer to the day.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          {cup.lockedIn.map((item) => (
+            <span class="chip">{item}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SAVE THE DATE ===================== -->
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
+    <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
+      <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <p class="section-kicker">Stay tuned</p>
+          <h2 class="section-title mt-4">
+            Date <span class="ink-underline">TBD</span>.
+          </h2>
+          <p class="body-copy mt-4 max-w-2xl">
+            Same beach, levelled up. Jump in the WhatsApp group for sign-up and the draw first.
+          </p>
+          <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+            {cup.dateLabel} · {cup.location}
+          </p>
+        </div>
+        <div class="flex flex-col gap-3">
+          <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
+            {cup.registerCtaLabel}
+          </a>
+          <a class="cta-secondary" href={cup.previousEdition.href}>
+            ← See how Vol. 01 ran
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
