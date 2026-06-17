@@ -3,6 +3,10 @@ import "../styles/global.css";
 
 import { site } from "../data/site";
 
+const session = Astro.locals?.session ?? null;
+const isAdmin = Astro.locals?.isAdmin ?? false;
+const signedIn = Boolean(session?.user);
+
 interface Props {
   title?: string;
   description?: string;
@@ -10,7 +14,6 @@ interface Props {
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
-  page?: "home" | "materials";
 }
 
 const {
@@ -20,7 +23,6 @@ const {
   imageAlt = site.ogImage.alt,
   imageWidth = site.ogImage.width,
   imageHeight = site.ogImage.height,
-  page = "home",
 } = Astro.props;
 
 const siteOrigin = Astro.site ?? new URL(site.url);
@@ -99,15 +101,33 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             ))}
           </nav>
 
-          <a
-            class="cta-primary shrink-0 px-3 py-2 text-[0.72rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
-            href={site.whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span class="hidden sm:inline">Slide in ✿ WhatsApp</span>
-            <span class="sm:hidden">Slide in</span>
-          </a>
+          <div class="flex items-center gap-2 sm:gap-3">
+            {signedIn ? (
+              <a
+                class="chip hidden sm:inline-flex !bg-[var(--color-cream-soft)] !text-[var(--color-ink-950)] hover:!bg-[var(--color-lilac-400)]"
+                href={isAdmin ? "/admin" : "/account"}
+                aria-label={isAdmin ? "Open admin" : "Open account"}
+              >
+                {isAdmin ? "Admin ✦" : (session!.user!.name?.split(" ")[0] ?? "Account")}
+              </a>
+            ) : (
+              <a
+                class="chip hidden sm:inline-flex !bg-[var(--color-cream-soft)] !text-[var(--color-ink-950)] hover:!bg-[var(--color-sun-500)]"
+                href="/login"
+              >
+                Sign in
+              </a>
+            )}
+            <a
+              class="cta-primary shrink-0 px-3 py-2 text-[0.72rem] sm:px-5 sm:py-3 sm:text-[0.85rem]"
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="hidden sm:inline">Slide in ✿ WhatsApp</span>
+              <span class="sm:hidden">Slide in</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -162,6 +182,18 @@ const absoluteImage = new URL(image, siteOrigin).toString();
               <a href="/blog" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
                 → The logbook
               </a>
+              <a href="/shop" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
+                → Duckies shop
+              </a>
+              {signedIn ? (
+                <a href="/account" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
+                  → Your account
+                </a>
+              ) : (
+                <a href="/login" class="font-semibold text-[var(--color-ink-950)] transition hover:text-[var(--color-coral-500)]">
+                  → Sign in
+                </a>
+              )}
               <a
                 href={site.whatsappUrl}
                 target="_blank"
@@ -218,7 +250,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         animate(
           "[data-float]",
           { opacity: [0, 1], y: [32, 0] },
-          { delay: stagger(0.1), duration: 0.85, easing: [0.22, 1, 0.36, 1] },
+          { delay: stagger(0.1), duration: 0.85, ease: [0.22, 1, 0.36, 1] },
         );
 
         inView("[data-reveal]", (element) => {
@@ -227,7 +259,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           animate(
             element,
             { opacity: [0, 1], y: [28, 0], filter: ["blur(10px)", "blur(0px)"] },
-            { duration: 0.7, easing: [0.22, 1, 0.36, 1] },
+            { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
           );
         });
       }

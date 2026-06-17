@@ -1,0 +1,19 @@
+---
+import DropForm from "../../../components/react/DropForm";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="New drop · Admin" section="drops">
+  <div class="mb-6 space-y-2">
+    <a href="/admin/drops" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+      ← Drops
+    </a>
+    <h1
+      class="font-display text-[var(--color-ink-950)]"
+      style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+    >
+      Spin up the next drop.
+    </h1>
+  </div>
+  <DropForm client:load mode="create" />
+</AdminLayout>

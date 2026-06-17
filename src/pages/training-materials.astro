@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 
@@ -29,7 +31,7 @@ const pillars: Pillar[] = [
     kicker: "Pillar 01",
     title: "Body",
     blurb:
-      "Mobility, strength, and technique in one stack. Loose hips and open shoulders for a smoother paddle, bodyweight reps for the push-up and the legs underneath your stance, and pop-up mechanics drilled slow on a rug. Short sessions, clean shape, eyes forward — the way you move at home is the way you'll move on the wave.",
+      "Mobility, strength, and technique in one stack. Loose hips and open shoulders for a smoother paddle, bodyweight reps for the push-up and the legs underneath your stance, and pop-up mechanics drilled slow on a rug. Short sessions, clean shape, eyes forward. The way you move at home is the way you'll move on the wave.",
     accent: "sticker-teal",
     videos: [
       {
@@ -72,7 +74,7 @@ const pillars: Pillar[] = [
     kicker: "Pillar 02",
     title: "Mind",
     blurb:
-      "Start the day calm and energised. A few minutes of Qigong gets the body awake; a round of Wim Hof breathing teaches you to stay relaxed when sets roll through. This is the quiet pillar — it makes the body work better.",
+      "Start the day calm and energised. A few minutes of Qigong gets the body awake; a round of Wim Hof breathing teaches you to stay relaxed when sets roll through. The quiet pillar. It makes the body work better.",
     accent: "sticker-lilac",
     videos: [
       {
@@ -97,7 +99,6 @@ const pillars: Pillar[] = [
   imageAlt="Young Sunset Duckies surfers training between sessions."
   imageWidth={1920}
   imageHeight={1080}
-  page="materials"
 >
   <!-- ===================== HERO ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">

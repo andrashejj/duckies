@@ -16,6 +16,16 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env.local
+.env.*.local
+
+# vercel
+.vercel
+
+# prisma
+prisma/*.db
+prisma/*.db-journal
+src/generated/
 
 # macOS-specific files
 .DS_Store

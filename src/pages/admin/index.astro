@@ -1,0 +1,262 @@
+---
+import type { Order, OrderItem, Product } from "../../generated/prisma/client";
+import { OrderStatus } from "../../generated/prisma/client";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { STATUS_COLOR, STATUS_LABEL } from "../../lib/admin-orders";
+import { formatPrice, shortOrderId } from "../../lib/format";
+import { prisma } from "../../lib/prisma";
+
+type DashboardData = {
+  revenue7d: number;
+  revenue30d: number;
+  openCount: number;
+  cashToCollectCents: number;
+  cashToCollectCount: number;
+  totalCount: number;
+  recentOrders: (Order & { items: OrderItem[] })[];
+  lowStock: Product[];
+  statusBreakdown: Record<OrderStatus, number>;
+};
+
+const now = new Date();
+const day = 24 * 60 * 60 * 1000;
+
+let data: DashboardData | null = null;
+let loadError: string | null = null;
+
+try {
+  const [
+    revenue7dAgg,
+    revenue30dAgg,
+    openCount,
+    cashToCollectAgg,
+    totalCount,
+    recentOrders,
+    lowStock,
+    statusGroups,
+  ] = await Promise.all([
+    prisma.order.aggregate({
+      _sum: { totalCents: true },
+      where: {
+        createdAt: { gte: new Date(now.getTime() - 7 * day) },
+        status: { not: OrderStatus.CANCELLED },
+      },
+    }),
+    prisma.order.aggregate({
+      _sum: { totalCents: true },
+      where: {
+        createdAt: { gte: new Date(now.getTime() - 30 * day) },
+        status: { not: OrderStatus.CANCELLED },
+      },
+    }),
+    prisma.order.count({
+      where: {
+        status: {
+          in: [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.READY],
+        },
+      },
+    }),
+    prisma.order.aggregate({
+      _sum: { totalCents: true },
+      _count: { _all: true },
+      where: {
+        status: OrderStatus.FULFILLED,
+        paidAt: null,
+      },
+    }),
+    prisma.order.count(),
+    prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: { items: true },
+    }),
+    prisma.product.findMany({
+      where: { active: true, stock: { not: null, lte: 3 } },
+      orderBy: { stock: "asc" },
+      take: 6,
+    }),
+    prisma.order.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    }),
+  ]);
+
+  const statusBreakdown: Record<OrderStatus, number> = {
+    PENDING: 0,
+    CONFIRMED: 0,
+    READY: 0,
+    FULFILLED: 0,
+    CANCELLED: 0,
+  };
+  for (const row of statusGroups) {
+    statusBreakdown[row.status] = row._count._all;
+  }
+
+  data = {
+    revenue7d: revenue7dAgg._sum.totalCents ?? 0,
+    revenue30d: revenue30dAgg._sum.totalCents ?? 0,
+    openCount,
+    cashToCollectCents: cashToCollectAgg._sum.totalCents ?? 0,
+    cashToCollectCount: cashToCollectAgg._count._all,
+    totalCount,
+    recentOrders,
+    lowStock,
+    statusBreakdown,
+  };
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Could not load dashboard.";
+  console.error("[admin] dashboard load failed:", err);
+}
+---
+
+<AdminLayout title="Dashboard · Admin · Sunset Duckies" section="dashboard">
+  <div class="mb-8 space-y-2">
+    <p class="section-kicker">✦ Overview</p>
+    <h1
+      class="font-display text-[var(--color-ink-950)]"
+      style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+    >
+      Club backstage.
+    </h1>
+  </div>
+
+  {loadError ? (
+    <div class="surface-card p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+        Dashboard offline
+      </p>
+      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
+    </div>
+  ) : data && (
+    <>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="surface-card p-5">
+          <p class="section-kicker">Booked · 7d</p>
+          <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+            {formatPrice(data.revenue7d)}
+          </p>
+          <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+            Reserved value · excludes cancelled
+          </p>
+        </div>
+        <div class="surface-card p-5">
+          <p class="section-kicker">Booked · 30d</p>
+          <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+            {formatPrice(data.revenue30d)}
+          </p>
+        </div>
+        <div class="surface-card p-5">
+          <p class="section-kicker">Open reservations</p>
+          <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+            {data.openCount}
+          </p>
+          <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+            Pending · confirmed · ready
+          </p>
+        </div>
+        <div class="surface-card p-5" style="background:var(--color-sun-500);">
+          <p class="section-kicker">Cash to collect</p>
+          <p class="mt-2 font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+            {formatPrice(data.cashToCollectCents)}
+          </p>
+          <p class="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/65">
+            {data.cashToCollectCount} fulfilled, unpaid
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
+        <section class="surface-card p-5">
+          <div class="mb-4 flex items-end justify-between">
+            <p class="section-kicker">Recent reservations</p>
+            <a href="/admin/orders" class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)] hover:underline">
+              All reservations →
+            </a>
+          </div>
+          {data.recentOrders.length === 0 ? (
+            <p class="py-10 text-center font-mono text-[0.76rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+              No reservations yet — the first one will appear here.
+            </p>
+          ) : (
+            <ul class="divide-y divide-dashed divide-[var(--color-ink-950)]/15">
+              {data.recentOrders.map((o) => (
+                <li class="py-3">
+                  <a href={`/admin/orders/${o.id}`} class="flex flex-wrap items-center justify-between gap-3 hover:text-[var(--color-coral-500)]">
+                    <div class="min-w-0">
+                      <p class="font-display text-base text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                        {o.name} · {shortOrderId(o.id)}
+                      </p>
+                      <p class="font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+                        {new Date(o.createdAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                        · {o.items.reduce((n, i) => n + i.quantity, 0)} items
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span
+                        class="rounded-full border border-[var(--color-ink-950)] px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]"
+                        style={`background:${STATUS_COLOR[o.status]};`}
+                      >
+                        {STATUS_LABEL[o.status]}
+                      </span>
+                      <span class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                        {formatPrice(o.totalCents, o.currency)}
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <aside class="space-y-6">
+          <div class="surface-card p-5">
+            <p class="section-kicker">Status mix</p>
+            <ul class="mt-3 space-y-2">
+              {(Object.keys(data.statusBreakdown) as OrderStatus[]).map((status) => (
+                <li class="flex items-center justify-between gap-3">
+                  <span class="flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+                    <span class="inline-block h-2 w-2 rounded-full" style={`background:${STATUS_COLOR[status]};`}></span>
+                    {STATUS_LABEL[status]}
+                  </span>
+                  <span class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                    {data.statusBreakdown[status]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="surface-card p-5">
+            <p class="section-kicker">Low stock</p>
+            {data.lowStock.length === 0 ? (
+              <p class="mt-3 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+                Nothing's running low.
+              </p>
+            ) : (
+              <ul class="mt-3 space-y-2">
+                {data.lowStock.map((p) => (
+                  <li>
+                    <a href={`/admin/products/${p.id}`} class="flex items-center justify-between gap-3 hover:text-[var(--color-coral-500)]">
+                      <span class="font-display text-sm" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                        {p.name}
+                      </span>
+                      <span class="rounded-full border border-[var(--color-coral-500)] bg-[var(--color-coral-500)]/10 px-2 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+                        {p.stock} left
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
+      </div>
+    </>
+  )}
+</AdminLayout>

@@ -1,0 +1,77 @@
+---
+import { site } from "../../data/site";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const session = Astro.locals.session;
+
+const title = `Members | ${site.name}`;
+const description = "Members-only corner of Sunset Duckies — session replays, comp intel, training logs.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto max-w-4xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
+    <div class="space-y-4" data-float>
+      <p class="section-kicker">✦ Members only</p>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      >
+        The duckies' room.
+      </h1>
+      <p class="body-copy max-w-2xl">
+        Welcome back, {session?.user?.name?.split(" ")[0] ?? "Duckie"}. This
+        corner is getting built out — session replays, comp intel, training
+        logs, and a quiet chat with the coaches will live here.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-3" data-reveal>
+      {[
+        {
+          title: "Session replays",
+          copy: "Short video reviews from Wednesday/Friday sesh — what worked, what to tweak, where to paddle next time.",
+          tag: "Soon",
+        },
+        {
+          title: "Comp intel",
+          copy: "Heat draws, conditions, prep videos for the four Duckies comps a year.",
+          tag: "Soon",
+        },
+        {
+          title: "Training logs",
+          copy: "Your progress, pop-up drills, balance streaks, and water-time tallies — logged by coaches.",
+          tag: "Soon",
+        },
+      ].map((card) => (
+        <div class="surface-card p-6 space-y-3">
+          <span class="tag-pill">{card.tag}</span>
+          <p
+            class="font-display text-2xl text-[var(--color-ink-950)]"
+            style="font-variation-settings: 'wdth' 110; font-weight: 700;"
+          >
+            {card.title}
+          </p>
+          <p class="text-[0.94rem] leading-7 text-[var(--color-ink-950)]/78">
+            {card.copy}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 glass-panel p-8 text-center" data-reveal>
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.24em] text-[var(--color-sun-500)]">
+        ✦ We'll email when a new piece lands
+      </p>
+      <p
+        class="mt-3 font-display text-3xl text-[var(--color-cream)]"
+        style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+      >
+        In the meantime — see you at the bay.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <a class="cta-primary" href="/shop">Visit the shop</a>
+        <a class="cta-secondary" href="/account">Back to your account</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

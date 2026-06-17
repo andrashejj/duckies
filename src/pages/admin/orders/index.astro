@@ -1,0 +1,184 @@
+---
+import { OrderStatus } from "../../../generated/prisma/client";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { STATUS_COLOR, STATUS_LABEL } from "../../../lib/admin-orders";
+import { formatPrice, shortOrderId } from "../../../lib/format";
+import { prisma } from "../../../lib/prisma";
+
+const statusParam = Astro.url.searchParams.get("status");
+const qParam = Astro.url.searchParams.get("q")?.trim() ?? "";
+
+const statusFilter =
+  statusParam && Object.values(OrderStatus).includes(statusParam as OrderStatus)
+    ? (statusParam as OrderStatus)
+    : null;
+
+let orders: Awaited<ReturnType<typeof prisma.order.findMany>> = [];
+let loadError: string | null = null;
+
+try {
+  orders = await prisma.order.findMany({
+    where: {
+      ...(statusFilter ? { status: statusFilter } : {}),
+      ...(qParam
+        ? {
+            OR: [
+              { email: { contains: qParam, mode: "insensitive" } },
+              { name: { contains: qParam, mode: "insensitive" } },
+              { id: { contains: qParam } },
+            ],
+          }
+        : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    include: { items: true },
+    take: 100,
+  });
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Could not load reservations.";
+  console.error("[admin/orders] load failed:", err);
+}
+
+const filterChips: { label: string; value: OrderStatus | null }[] = [
+  { label: "All", value: null },
+  { label: "Pending", value: OrderStatus.PENDING },
+  { label: "Confirmed", value: OrderStatus.CONFIRMED },
+  { label: "Ready", value: OrderStatus.READY },
+  { label: "Fulfilled", value: OrderStatus.FULFILLED },
+  { label: "Cancelled", value: OrderStatus.CANCELLED },
+];
+
+const buildChipHref = (value: OrderStatus | null) => {
+  const params = new URLSearchParams();
+  if (value) params.set("status", value);
+  if (qParam) params.set("q", qParam);
+  const qs = params.toString();
+  return `/admin/orders${qs ? `?${qs}` : ""}`;
+};
+---
+
+<AdminLayout title="Reservations · Admin" section="orders">
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div class="space-y-2">
+      <p class="section-kicker">✦ Reservations</p>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      >
+        The book.
+      </h1>
+    </div>
+    <form method="get" action="/admin/orders" class="flex items-center gap-2">
+      {statusFilter && <input type="hidden" name="status" value={statusFilter} />}
+      <input
+        type="search"
+        name="q"
+        value={qParam}
+        placeholder="Email, name, reservation id…"
+        class="w-64 rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+      />
+      <button type="submit" class="cta-secondary py-2 px-4 text-[0.78rem]">
+        Search
+      </button>
+    </form>
+  </div>
+
+  <div class="mb-4 flex flex-wrap gap-2">
+    {filterChips.map((chip) => {
+      const active = chip.value === statusFilter;
+      return (
+        <a
+          href={buildChipHref(chip.value)}
+          class:list={[
+            "rounded-full border-2 px-3 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.14em] transition",
+            active
+              ? "border-[var(--color-ink-950)] bg-[var(--color-ink-950)] text-[var(--color-sun-500)] shadow-[3px_3px_0_0_var(--color-ink-950)]"
+              : "border-[var(--color-ink-950)]/40 bg-[var(--color-cream-soft)] text-[var(--color-ink-950)]/75 hover:bg-[var(--color-sun-500)]",
+          ]}
+        >
+          {chip.label}
+        </a>
+      );
+    })}
+  </div>
+
+  {loadError ? (
+    <div class="surface-card p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+        Could not load reservations
+      </p>
+      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
+    </div>
+  ) : orders.length === 0 ? (
+    <div class="surface-card p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+        No reservations match.
+      </p>
+    </div>
+  ) : (
+    <div class="surface-card overflow-hidden">
+      <table class="w-full border-separate border-spacing-0 text-sm">
+        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+          <tr>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Reservation</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Customer</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Status</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Paid</th>
+            <th class="px-4 py-3 text-right font-mono text-[0.66rem] uppercase tracking-[0.2em]">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((o) => (
+            <tr class="group border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+              <td class="px-4 py-3">
+                <a href={`/admin/orders/${o.id}`} class="block">
+                  <p class="font-display text-sm text-[var(--color-ink-950)] group-hover:text-[var(--color-coral-500)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                    {shortOrderId(o.id)}
+                  </p>
+                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                    {new Date(o.createdAt).toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </a>
+              </td>
+              <td class="px-4 py-3">
+                <a href={`/admin/orders/${o.id}`} class="block">
+                  <p class="font-semibold text-[var(--color-ink-950)]">{o.name}</p>
+                  <p class="font-mono text-[0.68rem] text-[var(--color-ink-950)]/65">{o.email}</p>
+                </a>
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="rounded-full border border-[var(--color-ink-950)] px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]"
+                  style={`background:${STATUS_COLOR[o.status]};`}
+                >
+                  {STATUS_LABEL[o.status]}
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                {o.paidAt ? (
+                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-teal-500)]">
+                    ✓ Paid
+                  </span>
+                ) : (
+                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/45">
+                    —
+                  </span>
+                )}
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                  {formatPrice(o.totalCents, o.currency)}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>

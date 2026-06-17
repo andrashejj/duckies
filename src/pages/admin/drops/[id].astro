@@ -1,0 +1,51 @@
+---
+import DropForm from "../../../components/react/DropForm";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getDrop } from "../../../lib/drops";
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect("/admin/drops");
+
+const drop = await getDrop(id);
+
+if (!drop) {
+  return new Response(null, { status: 404, statusText: "Drop not found" });
+}
+
+function toLocal(dt: Date | null): string {
+  if (!dt) return "";
+  // datetime-local expects "yyyy-mm-ddThh:mm" in local time
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+}
+
+const initial = {
+  id: drop.id,
+  slug: drop.slug,
+  name: drop.name,
+  description: drop.description ?? "",
+  status: drop.status as "DRAFT" | "LIVE" | "CLOSED",
+  opensAt: toLocal(drop.opensAt),
+  closesAt: toLocal(drop.closesAt),
+  pickupNote: drop.pickupNote ?? "",
+  sortOrder: String(drop.sortOrder),
+};
+---
+
+<AdminLayout title={`Edit ${drop.name} · Admin`} section="drops">
+  <div class="mb-6 space-y-2">
+    <a href="/admin/drops" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+      ← Drops
+    </a>
+    <h1
+      class="font-display text-[var(--color-ink-950)]"
+      style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+    >
+      {drop.name}
+    </h1>
+    <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+      /{drop.slug}
+    </p>
+  </div>
+  <DropForm client:load mode="edit" initial={initial} />
+</AdminLayout>

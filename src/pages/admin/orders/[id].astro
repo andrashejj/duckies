@@ -1,0 +1,239 @@
+---
+import OrderActions from "../../../components/react/OrderActions";
+import OrderNoteForm from "../../../components/react/OrderNoteForm";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import {
+  getOrderForAdmin,
+  STATUS_COLOR,
+  STATUS_LABEL,
+  STATUS_TRANSITIONS,
+} from "../../../lib/admin-orders";
+import { formatPrice, shortOrderId } from "../../../lib/format";
+import { prisma } from "../../../lib/prisma";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/orders");
+}
+
+let order: Awaited<ReturnType<typeof getOrderForAdmin>> = null;
+let actor: { name: string | null; email: string } | null = null;
+
+try {
+  order = await getOrderForAdmin(id);
+  if (order?.userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: order.userId },
+      select: { name: true, email: true },
+    });
+    actor = user ?? null;
+  }
+} catch (err) {
+  console.error("[admin/orders/[id]] load failed:", err);
+}
+
+if (!order) {
+  return new Response(null, { status: 404, statusText: "Reservation not found" });
+}
+
+const nextStatuses = STATUS_TRANSITIONS[order.status];
+const eventTypeLabel: Record<string, string> = {
+  CREATED: "Created",
+  CONFIRMED: "Confirmed",
+  READY: "Ready",
+  FULFILLED: "Fulfilled",
+  CANCELLED: "Cancelled",
+  PAID: "Paid",
+  NOTE: "Note",
+  EMAIL_SENT: "Email sent",
+};
+
+const eventTypeColor: Record<string, string> = {
+  CREATED: "var(--color-sun-500)",
+  CONFIRMED: "var(--color-teal-500)",
+  READY: "var(--color-teal-500)",
+  FULFILLED: "var(--color-lilac-400)",
+  CANCELLED: "var(--color-coral-500)",
+  PAID: "var(--color-teal-500)",
+  NOTE: "var(--color-cream-deep)",
+  EMAIL_SENT: "var(--color-cream-deep)",
+};
+---
+
+<AdminLayout
+  title={`Reservation ${shortOrderId(order.id)} · Admin`}
+  section="orders"
+>
+  <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div class="space-y-2">
+      <a href="/admin/orders" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+        ← Reservations
+      </a>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 112; font-weight: 700;"
+      >
+        Reservation {shortOrderId(order.id)}
+      </h1>
+      <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+        Placed {new Date(order.createdAt).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+        {actor ? ` · signed-in · ${actor.email}` : " · guest"}
+      </p>
+    </div>
+    <div class="flex flex-col items-end gap-2">
+      <span
+        class="rounded-full border-2 border-[var(--color-ink-950)] px-4 py-1.5 font-mono text-[0.72rem] uppercase tracking-[0.18em] shadow-[3px_3px_0_0_var(--color-ink-950)]"
+        style={`background:${STATUS_COLOR[order.status]};`}
+      >
+        {STATUS_LABEL[order.status]}
+      </span>
+      {order.paidAt ? (
+        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-teal-500)]">
+          ✓ Paid {new Date(order.paidAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+        </span>
+      ) : (
+        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-coral-500)]">
+          Cash outstanding · {formatPrice(order.totalCents, order.currency)}
+        </span>
+      )}
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+    <section class="space-y-6">
+      <div class="surface-card p-5">
+        <p class="section-kicker">Items</p>
+        <ul class="mt-4 divide-y divide-dashed divide-[var(--color-ink-950)]/15">
+          {order.items.map((item) => (
+            <li class="flex justify-between gap-4 py-3">
+              <div class="min-w-0">
+                <p class="font-display text-base text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+                  {item.nameSnapshot}
+                </p>
+                <p class="mt-0.5 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/60">
+                  SKU {item.sku}
+                  {item.size ? ` · ${item.size}` : ""} · ×{item.quantity}
+                </p>
+                {item.kidName && (
+                  <p class="mt-1 inline-flex rounded-full border border-[var(--color-ink-950)]/40 bg-[var(--color-sun-500)]/40 px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]">
+                    For {item.kidName}
+                  </p>
+                )}
+              </div>
+              <div class="text-right">
+                <p class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                  {formatPrice(item.lineTotalCents, order.currency)}
+                </p>
+                <p class="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                  {formatPrice(item.priceCentsSnapshot, order.currency)} each
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <dl class="mt-4 space-y-1 border-t-2 border-[var(--color-ink-950)] pt-4 font-mono text-[0.82rem]">
+          <div class="flex justify-between">
+            <dt class="text-[var(--color-ink-950)]/70">Subtotal</dt>
+            <dd>{formatPrice(order.subtotalCents, order.currency)}</dd>
+          </div>
+          <div class="mt-2 flex justify-between border-t-2 border-[var(--color-ink-950)] pt-3 text-base">
+            <dt class="font-display" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+              Cash to collect
+            </dt>
+            <dd class="font-display" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+              {formatPrice(order.totalCents, order.currency)}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="surface-card p-5">
+        <p class="section-kicker">Activity</p>
+        <ul class="mt-4 space-y-3">
+          {order.events.map((event) => (
+            <li class="flex gap-3">
+              <span
+                class="mt-1 inline-block h-3 w-3 flex-none rounded-full border border-[var(--color-ink-950)]"
+                style={`background:${eventTypeColor[event.type] ?? "var(--color-cream-deep)"};`}
+              ></span>
+              <div class="min-w-0 flex-1">
+                <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/65">
+                  {eventTypeLabel[event.type] ?? event.type}
+                  {" · "}
+                  {new Date(event.createdAt).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+                {event.message && (
+                  <p class="mt-0.5 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/85">
+                    {event.message}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="mt-4 border-t border-dashed border-[var(--color-ink-950)]/15 pt-4">
+          <OrderNoteForm client:load orderId={order.id} />
+        </div>
+      </div>
+    </section>
+
+    <aside class="space-y-6">
+      <div class="surface-card p-5">
+        <p class="section-kicker">Move it</p>
+        <div class="mt-4">
+          <OrderActions
+            client:load
+            orderId={order.id}
+            currentStatus={order.status}
+            isPaid={order.paidAt !== null}
+            nextStatuses={nextStatuses}
+            statusLabel={STATUS_LABEL}
+          />
+        </div>
+      </div>
+
+      <div class="surface-card p-5 space-y-3">
+        <p class="section-kicker">Customer</p>
+        <p class="font-display text-lg text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+          {order.name}
+        </p>
+        <a href={`mailto:${order.email}`} class="block font-mono text-[0.82rem] text-[var(--color-coral-500)] hover:underline">
+          {order.email}
+        </a>
+        {order.phone && (
+          <p class="font-mono text-[0.82rem] text-[var(--color-ink-950)]/80">
+            {order.phone}
+          </p>
+        )}
+        <dl class="space-y-2 border-t border-dashed border-[var(--color-ink-950)]/15 pt-3 font-mono text-[0.72rem] uppercase tracking-[0.14em]">
+          <div class="flex justify-between">
+            <dt class="text-[var(--color-ink-950)]/65">Pickup</dt>
+            <dd class="text-[var(--color-ink-950)]">{order.pickupMethod}</dd>
+          </div>
+        </dl>
+        {order.customerNote && (
+          <div class="rounded-[0.8rem] border border-[var(--color-ink-950)]/20 bg-[var(--color-cream-deep)]/60 p-3">
+            <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+              Customer note
+            </p>
+            <p class="mt-1 text-[0.88rem] leading-6 text-[var(--color-ink-950)]/85">
+              {order.customerNote}
+            </p>
+          </div>
+        )}
+      </div>
+    </aside>
+  </div>
+</AdminLayout>

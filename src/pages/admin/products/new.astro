@@ -1,0 +1,22 @@
+---
+import ProductForm from "../../../components/react/ProductForm";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listDropsForSelect } from "../../../lib/drops";
+
+const drops = await listDropsForSelect();
+---
+
+<AdminLayout title="New product · Admin" section="products">
+  <div class="mb-6 space-y-2">
+    <a href="/admin/products" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+      ← Products
+    </a>
+    <h1
+      class="font-display text-[var(--color-ink-950)]"
+      style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+    >
+      Add a new piece.
+    </h1>
+  </div>
+  <ProductForm client:load mode="create" drops={drops} />
+</AdminLayout>

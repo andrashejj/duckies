@@ -1,0 +1,148 @@
+---
+import { OrderStatus } from "../../../generated/prisma/client";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { formatPrice } from "../../../lib/format";
+import { prisma } from "../../../lib/prisma";
+
+type CustomerRow = {
+  email: string;
+  name: string;
+  userId: string | null;
+  role: "CUSTOMER" | "ADMIN" | null;
+  orderCount: number;
+  spendCents: number;
+  firstAt: Date;
+  lastAt: Date;
+};
+
+let rows: CustomerRow[] = [];
+let loadError: string | null = null;
+
+try {
+  const grouped = await prisma.order.groupBy({
+    by: ["email"],
+    _count: { _all: true },
+    _sum: { totalCents: true },
+    _min: { createdAt: true },
+    _max: { createdAt: true, name: true, userId: true },
+    where: { status: { not: OrderStatus.CANCELLED } },
+  });
+
+  // Map user metadata in a single query
+  const emails = grouped.map((g) => g.email);
+  const users = emails.length
+    ? await prisma.user.findMany({
+        where: { email: { in: emails } },
+        select: { id: true, email: true, name: true, role: true },
+      })
+    : [];
+  const userByEmail = new Map(users.map((u) => [u.email, u]));
+
+  rows = grouped
+    .map((g): CustomerRow => {
+      const u = userByEmail.get(g.email);
+      return {
+        email: g.email,
+        name: u?.name ?? g._max.name ?? "—",
+        userId: u?.id ?? g._max.userId ?? null,
+        role: (u?.role as "CUSTOMER" | "ADMIN" | undefined) ?? null,
+        orderCount: g._count._all,
+        spendCents: g._sum.totalCents ?? 0,
+        firstAt: g._min.createdAt!,
+        lastAt: g._max.createdAt!,
+      };
+    })
+    .sort((a, b) => b.spendCents - a.spendCents);
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Could not load customers.";
+  console.error("[admin/customers] load failed:", err);
+}
+---
+
+<AdminLayout title="Customers · Admin" section="customers">
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div class="space-y-2">
+      <p class="section-kicker">✦ Customers</p>
+      <h1
+        class="font-display text-[var(--color-ink-950)]"
+        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      >
+        The lineup.
+      </h1>
+    </div>
+  </div>
+
+  {loadError ? (
+    <div class="surface-card p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+        Could not load customers
+      </p>
+      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
+    </div>
+  ) : rows.length === 0 ? (
+    <div class="surface-card p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+        No customers yet.
+      </p>
+    </div>
+  ) : (
+    <div class="surface-card overflow-hidden">
+      <table class="w-full border-separate border-spacing-0 text-sm">
+        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+          <tr>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Customer</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Account</th>
+            <th class="px-4 py-3 text-right font-mono text-[0.66rem] uppercase tracking-[0.2em]">Orders</th>
+            <th class="px-4 py-3 text-right font-mono text-[0.66rem] uppercase tracking-[0.2em]">Spend</th>
+            <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Last order</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((c) => (
+            <tr class="border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+              <td class="px-4 py-3">
+                <p class="font-display text-sm text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+                  {c.name}
+                </p>
+                <a href={`mailto:${c.email}`} class="font-mono text-[0.66rem] text-[var(--color-coral-500)] hover:underline">
+                  {c.email}
+                </a>
+              </td>
+              <td class="px-4 py-3">
+                {c.userId ? (
+                  <div class="flex flex-wrap gap-1">
+                    <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+                      Signed up
+                    </span>
+                    {c.role === "ADMIN" && (
+                      <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-cream-deep)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/80">
+                    Guest
+                  </span>
+                )}
+              </td>
+              <td class="px-4 py-3 text-right font-mono text-[0.82rem]">
+                {c.orderCount}
+              </td>
+              <td class="px-4 py-3 text-right font-mono text-[0.82rem]">
+                {formatPrice(c.spendCents)}
+              </td>
+              <td class="px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/70">
+                {new Date(c.lastAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>
