@@ -1,0 +1,524 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+
+const title = `Brand Development Plan | ${site.name}`;
+const description =
+  "The Sunset Duckies brand development plan: a standard 5-phase branding process compressed into 4 weeks — discovery, strategy, validation, articulation.";
+
+const timeline = [
+  { week: "W1", label: "Discovery" },
+  { week: "W2", label: "Strategy + Ideation" },
+  { week: "W3", label: "Validation" },
+  { week: "W4", label: "Articulation" },
+];
+
+const researchStreams = [
+  {
+    stream: "Primary",
+    method: "Kid activity sessions, parent interviews, coach conversations, questionnaires",
+    sample: "20 kids, 10 parents, 3 coaches",
+  },
+  {
+    stream: "Desk",
+    method: "Category audit — purpose brands, youth movements, surf culture",
+    sample: "20 organisations",
+  },
+  {
+    stream: "Internal",
+    method: "Founder interrogation — your belief, written before results",
+    sample: "you, 1 hour",
+  },
+];
+
+const week1Deliverables = [
+  "Research findings — one page, five questions answered",
+  "Category audit grid + “conventions we could refuse” list",
+  "Founder Position Note — your unarguable belief",
+  "The Insight — “Everyone assumes X. Actually Y. So Z.”",
+];
+
+const routes = [
+  {
+    name: "Access",
+    accent: "sticker-teal",
+    emoji: "🌊",
+    tension: "The ocean is free, reaching it isn't",
+  },
+  {
+    name: "Indoors",
+    accent: "sticker-sun",
+    emoji: "📱",
+    tension: "Childhood moved onto screens",
+  },
+  {
+    name: "Belonging",
+    accent: "sticker-pink",
+    emoji: "🤝",
+    tension: "Kids don't lack activities, they lack a group that's theirs",
+  },
+];
+
+const week2Deliverables = [
+  "Brand Platform — one page",
+  "Three route boards",
+  "Rationale — what each bets on, what it gives up",
+];
+
+const validationInstruments = [
+  {
+    instrument: "Behavioural",
+    method: "Which sticker goes on your board? Would you help start a Bay?",
+    weight: "30%",
+  },
+  {
+    instrument: "Recall",
+    method: "Show Monday, ask Wednesday, no prompt",
+    weight: "25%",
+  },
+  {
+    instrument: "Transmission",
+    method: "A describes to B, B draws it — how much survives?",
+    weight: "20%",
+  },
+  {
+    instrument: "Comprehension",
+    method: "5 seconds, 10 strangers: what is this?",
+    weight: "15%",
+  },
+  {
+    instrument: "Semantic fit",
+    method: "1–7 scales: babyish/grown-up, ours/theirs, local/global",
+    weight: "10%",
+  },
+  {
+    instrument: "Stated preference",
+    method: "Collect it, don't score it",
+    weight: "0%",
+  },
+];
+
+const week3Deliverables = [
+  "Results pack, age-split",
+  "Decision memo — route chosen, evidence, what carries over from the losers",
+  "Kill list",
+];
+
+const week4Blocks = [
+  {
+    tag: "Mon–Wed",
+    title: "Refine",
+    accent: "sticker-coral",
+    body:
+      "One freelancer, €400–800, working to the decided route — not exploring. Three sign-off tests: a ten-year-old draws it from memory; legible at 15mm; works in one colour.",
+  },
+  {
+    tag: "Wed–Thu",
+    title: "Systematise",
+    accent: "sticker-lilac",
+    body:
+      "Brand Concept Book, 20–25 pages: platform, identity, Bay badge template (constants vs. variables, plus one imagined second club to prove it travels), colour/type/thread, voice with counter-examples, lexicon, rituals, anti-dilution rules.",
+  },
+  {
+    tag: "Fri–Sat",
+    title: "Apply",
+    accent: "sticker-teal",
+    body:
+      "Four real mockups, photographed: rashguard on a kid in water, beach flag at the break, sticker on a board, one page of the site.",
+  },
+];
+
+const week4Deliverables = [
+  "Brand Concept Book",
+  "Asset pack — SVG/PNG/EPS, one-colour, reversed",
+  "Bay badge template, two worked examples",
+  "Four applied mockups",
+  "Reveal plan — founding 20 see it first",
+];
+
+const failureModes = [
+  {
+    emoji: "🥣",
+    title: "Research-led beige",
+    accent: "sticker-sun",
+    problem: "Averaging twenty opinions.",
+    guard: "Founder Position Note written before results. Evidence informs; you decide.",
+  },
+  {
+    emoji: "💘",
+    title: "Deciding in Week 2",
+    accent: "sticker-pink",
+    problem: "You'll fall for a route.",
+    guard: "Seal your prediction Monday of Week 3, open it Friday.",
+  },
+  {
+    emoji: "🐌",
+    title: "Slipping to five weeks",
+    accent: "sticker-teal",
+    problem: "Gates are hard.",
+    guard: "A good route decided on time beats a perfect one in October.",
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- ===================== HERO ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
+    <div class="surface-card p-8 md:p-12" data-float>
+      <div class="flex flex-wrap items-center gap-3">
+        <p class="section-kicker">Branding HQ · internal</p>
+        <span class="tag-pill lilac">24 Aug – 20 Sep 2026</span>
+      </div>
+      <h1
+        class="section-title mt-6 max-w-4xl"
+        style="font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 0.95;"
+      >
+        The
+        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">brand</span>
+        development
+        <span class="ink-underline">plan</span>.
+      </h1>
+      <p class="body-copy mt-6 max-w-3xl">
+        A standard 5-phase branding process, compressed into 4 weeks. There's a gate at the
+        end of each week — <strong>don't advance until it's passed.</strong>
+      </p>
+
+      <!-- Timeline strip -->
+      <div class="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">
+        {
+          timeline.map((step, i) => (
+            <>
+              <span class="chip">
+                <strong class="font-bold">{step.week}</strong>&nbsp;{step.label}
+              </span>
+              {i < timeline.length - 1 && (
+                <span class="font-mono text-lg font-bold text-[var(--color-coral-500)]" aria-hidden="true">
+                  →
+                </span>
+              )}
+            </>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WEEK 1 — DISCOVERY ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <div class="mb-8 flex flex-wrap items-center gap-4">
+      <span class="step-bubble">W1</span>
+      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Discovery</h2>
+      <span class="tag-pill">24–30 Aug</span>
+      <span class="tag-pill sun">Gate: the insight, in one sentence</span>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="surface-card p-6 md:p-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+          Research · three streams
+        </p>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full min-w-[36rem] border-collapse text-left text-sm">
+            <thead>
+              <tr class="border-b-2 border-[var(--color-ink-950)] font-mono text-[0.68rem] uppercase tracking-[0.16em]">
+                <th class="py-2 pr-4">Stream</th>
+                <th class="py-2 pr-4">Method</th>
+                <th class="py-2">Sample</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                researchStreams.map((row) => (
+                  <tr class="border-b border-[var(--color-ink-950)]/15 align-top">
+                    <td class="py-3 pr-4 font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
+                      {row.stream}
+                    </td>
+                    <td class="body-copy py-3 pr-4 text-sm">{row.method}</td>
+                    <td class="py-3 font-mono text-xs">{row.sample}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <p class="body-copy mt-6 text-sm">
+          <strong>Key instruments:</strong> sticker test (behaviour, not opinion), the barbecue
+          question to parents (<em class="font-accent italic">“what do you say we are, word for word?”</em>),
+          5-second stranger test.
+        </p>
+      </div>
+
+      <div class="surface-card sticker-sun dashed p-6 md:p-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
+          ✦ Deliverables
+        </p>
+        <ol class="mt-4 space-y-3">
+          {
+            week1Deliverables.map((item, i) => (
+              <li class="flex items-start gap-3 text-sm leading-relaxed">
+                <span class="mt-0.5 font-mono text-xs font-bold text-[var(--color-coral-500)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span class:list={[i === week1Deliverables.length - 1 && "font-bold"]}>{item}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== WEEK 2 — STRATEGY + IDEATION ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <div class="mb-8 flex flex-wrap items-center gap-4">
+      <span class="step-bubble">W2</span>
+      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Strategy + Ideation</h2>
+      <span class="tag-pill">31 Aug – 6 Sep</span>
+      <span class="tag-pill sun">Gate: three routes a stranger can tell apart</span>
+    </div>
+
+    <div class="surface-card p-6 md:p-8">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+        Mon–Tue · Brand platform
+      </p>
+      <p class="body-copy mt-3 max-w-3xl text-sm">
+        One page: belief, enemy, purpose, positioning, promise, personality, proof. The
+        <em class="font-accent italic">proof</em> row is the costly behaviours that make the
+        belief credible — write them while they're free.
+      </p>
+    </div>
+
+    <p class="mt-10 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+      Wed–Sat · Three routes
+    </p>
+    <p class="body-copy mt-3 max-w-3xl text-sm">
+      Not three logos. Three mutually exclusive answers to “what is this brand,” each on a
+      different tension:
+    </p>
+
+    <div class="mt-6 grid gap-6 md:grid-cols-3">
+      {
+        routes.map((route, i) => (
+          <div class:list={["surface-card p-6", route.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{route.emoji}</span>
+            <h3
+              class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {route.name}
+            </h3>
+            <p class="body-copy mt-2 text-sm">{route.tension}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="surface-card p-6 md:p-8">
+        <p class="body-copy text-sm">
+          Each route on one A3 board: line, belief, enemy, rough badge, 3 colours, three voice
+          samples, rashguard, sticker. Keep all three at identical roughness — polish biases
+          testing toward craft. <strong>Push one further than is comfortable.</strong>
+        </p>
+      </div>
+      <div class="surface-card sticker-sun dashed p-6 md:p-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
+          ✦ Deliverables
+        </p>
+        <ol class="mt-4 space-y-3">
+          {
+            week2Deliverables.map((item, i) => (
+              <li class="flex items-start gap-3 text-sm leading-relaxed">
+                <span class="mt-0.5 font-mono text-xs font-bold text-[var(--color-coral-500)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== WEEK 3 — VALIDATION ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <div class="mb-8 flex flex-wrap items-center gap-4">
+      <span class="step-bubble">W3</span>
+      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Validation</h2>
+      <span class="tag-pill">7–13 Sep</span>
+      <span class="tag-pill sun">Gate: one route wins on evidence, not preference</span>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="surface-card p-6 md:p-8">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[36rem] border-collapse text-left text-sm">
+            <thead>
+              <tr class="border-b-2 border-[var(--color-ink-950)] font-mono text-[0.68rem] uppercase tracking-[0.16em]">
+                <th class="py-2 pr-4">Instrument</th>
+                <th class="py-2 pr-4">Method</th>
+                <th class="py-2 text-right">Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                validationInstruments.map((row) => (
+                  <tr class="border-b border-[var(--color-ink-950)]/15 align-top">
+                    <td class="py-3 pr-4 font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
+                      {row.instrument}
+                    </td>
+                    <td class="body-copy py-3 pr-4 text-sm">{row.method}</td>
+                    <td class:list={["py-3 text-right font-mono text-sm font-bold", row.weight === "0%" ? "text-[var(--color-ink-950)]/40" : "text-[var(--color-coral-500)]"]}>
+                      {row.weight}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="surface-card sticker-pink p-6 md:p-8">
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
+            Community session
+          </p>
+          <p class="body-copy mt-3 text-sm">
+            Silent scoring <strong>before</strong> discussion, then debate only the disagreements.
+            Ask <em class="font-accent italic">“which would embarrass you”</em> — never
+            <em class="font-accent italic">“which do you like.”</em> Split every result by age band;
+            the 8s and the 13s will diverge and that gap is the central design problem.
+          </p>
+          <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+            Not a vote. Say so at the start.
+          </p>
+        </div>
+
+        <div class="surface-card sticker-sun dashed p-6 md:p-8">
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
+            ✦ Deliverables
+          </p>
+          <ol class="mt-4 space-y-3">
+            {
+              week3Deliverables.map((item, i) => (
+                <li class="flex items-start gap-3 text-sm leading-relaxed">
+                  <span class="mt-0.5 font-mono text-xs font-bold text-[var(--color-coral-500)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== WEEK 4 — ARTICULATION ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <div class="mb-8 flex flex-wrap items-center gap-4">
+      <span class="step-bubble">W4</span>
+      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Articulation</h2>
+      <span class="tag-pill">14–20 Sep</span>
+      <span class="tag-pill sun">Gate: someone else could apply this without asking you</span>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        week4Blocks.map((block) => (
+          <div class:list={["surface-card p-6", block.accent]}>
+            <span class="tag-pill">{block.tag}</span>
+            <h3
+              class="mt-4 text-2xl font-bold text-[var(--color-ink-950)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {block.title}
+            </h3>
+            <p class="body-copy mt-3 text-sm">{block.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="surface-card sticker-sun dashed mt-6 p-6 md:p-8">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
+        ✦ Deliverables
+      </p>
+      <ol class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          week4Deliverables.map((item, i) => (
+            <li class="flex items-start gap-3 text-sm leading-relaxed">
+              <span class="mt-0.5 font-mono text-xs font-bold text-[var(--color-coral-500)]">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== FAILURE MODES ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">Watch out</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      Three ways it goes
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">wrong</span>.
+    </h2>
+
+    <div class="mt-8 grid gap-6 md:grid-cols-3">
+      {
+        failureModes.map((mode, i) => (
+          <div class:list={["surface-card p-6", mode.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{mode.emoji}</span>
+            <h3
+              class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {mode.title}
+            </h3>
+            <p class="body-copy mt-2 text-sm">{mode.problem}</p>
+            <p class="mt-3 text-sm">
+              <span class="font-mono text-[0.66rem] font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+                Guard →
+              </span>
+              <span class="body-copy text-sm"> {mode.guard}</span>
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===================== THE TEST ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10" data-reveal>
+    <div class="glass-panel p-8 md:p-12">
+      <p class="eyebrow-badge">The test on 20 September</p>
+      <h2
+        class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl"
+        style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+      >
+        Show the book to a stranger.
+      </h2>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
+        <em class="font-accent italic text-[var(--color-sun-500)]">What does this organisation believe?
+        What is it against?</em>
+        <br />
+        If they answer both without hesitating, you have a brand.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
