@@ -36,16 +36,18 @@ const pillars = [
 
 const milestones = [
   {
-    date: "24 Aug",
-    marker: "opens P1",
+    date: "Mid Aug",
+    marker: "done ✓",
+    status: "done",
     emoji: "📚",
     accent: "sticker-teal",
     title: "Kickoff",
-    text: "Estelle starts on the books, and the coaches start collecting parents' words on WhatsApp.",
+    text: "Estelle started on the books, and the coaches started collecting parents' words on WhatsApp.",
   },
   {
     date: "6 Sep",
     marker: "closes P1",
+    status: "now",
     emoji: "📄",
     accent: "sticker-teal",
     title: "Research digest",
@@ -243,7 +245,7 @@ const failureModes = [
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
         <p class="section-kicker">Club notebook · working in the open</p>
-        <span class="tag-pill lilac">24 Aug – 1 Nov 2026</span>
+        <span class="tag-pill lilac">Underway · wraps 1 Nov 2026</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
@@ -265,7 +267,8 @@ const failureModes = [
         four. The club gets treated as a purpose company in miniature, answerable to the kids,
         the families, and the lagoon, the way Patagonia describes it in its books. And the
         brand gets designed to travel on social media by itself, because the club will never
-        have an advertising budget and shouldn't need one.
+        have an advertising budget and shouldn't need one. Kickoff is behind us; the research
+        phase is running now.
       </p>
 
       <!-- Timeline strip -->
@@ -324,7 +327,8 @@ const failureModes = [
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">timeline</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      The work inside each phase flexes around Estelle's studies. These seven dates hold.
+      Kickoff is done and research is underway. The remaining dates hold, even when the work
+      inside a phase flexes around Estelle's studies.
     </p>
 
     <div class="relative mx-auto mt-10 max-w-3xl">
@@ -339,14 +343,22 @@ const failureModes = [
           milestones.map((m) => (
             <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
               <span
-                class="relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]"
+                class:list={[
+                  "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
+                  m.status === "done"
+                    ? "bg-[var(--color-teal-500)] font-bold"
+                    : m.status === "now"
+                      ? "bg-[var(--color-coral-500)]"
+                      : "bg-[var(--color-sun-500)]",
+                ]}
                 aria-hidden="true"
               >
-                {m.emoji}
+                {m.status === "done" ? "✓" : m.emoji}
               </span>
-              <div class:list={["surface-card p-5 md:p-6", m.accent]}>
+              <div class:list={["surface-card p-5 md:p-6", m.accent, m.status === "now" ? "dashed" : ""]}>
                 <div class="flex flex-wrap items-center gap-3">
                   <span class="tag-pill sun">{m.date}</span>
+                  {m.status === "now" && <span class="tag-pill pink">we are here</span>}
                   <span class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
                     {m.marker}
                   </span>
@@ -373,7 +385,7 @@ const failureModes = [
     <div class="mb-8 flex flex-wrap items-center gap-4">
       <span class="step-bubble">P1</span>
       <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Research</h2>
-      <span class="tag-pill">24 Aug – 6 Sep</span>
+      <span class="tag-pill pink">now · until 6 Sep</span>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
