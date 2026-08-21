@@ -34,6 +34,65 @@ const pillars = [
   },
 ];
 
+const milestones = [
+  {
+    date: "24 Aug",
+    marker: "opens P1",
+    emoji: "📚",
+    accent: "sticker-teal",
+    title: "Kickoff",
+    text: "Estelle starts on the books, and the coaches start collecting parents' words on WhatsApp.",
+  },
+  {
+    date: "6 Sep",
+    marker: "closes P1",
+    emoji: "📄",
+    accent: "sticker-teal",
+    title: "Research digest",
+    text: "One page on how community brands were built, what a responsible company owes, and what makes club content get shared.",
+  },
+  {
+    date: "20 Sep",
+    marker: "closes P2",
+    emoji: "🧭",
+    accent: "sticker-sun",
+    title: "Concept locked",
+    text: "The brand core one-pager plus three equally rough direction sheets, ready to travel.",
+  },
+  {
+    date: "21 Sep",
+    marker: "opens P3",
+    emoji: "✉️",
+    accent: "sticker-pink",
+    title: "Sheets land in Tamarin",
+    text: "Estelle's prediction goes in a sealed envelope, the posters go up at training, the questionnaires go out.",
+  },
+  {
+    date: "4 Oct",
+    marker: "closes P3",
+    emoji: "🏁",
+    accent: "sticker-pink",
+    title: "The direction",
+    text: "Chosen on the family call, for reasons the club can point to. Photo permissions signed.",
+  },
+  {
+    date: "12 Oct",
+    marker: "mid P4",
+    emoji: "📲",
+    accent: "sticker-coral",
+    title: "Badge final, trial live",
+    text: "The cleaned-up badge passes the draw-it-from-memory, 15mm, and one-colour checks. Two weeks of organic posting begin.",
+  },
+  {
+    date: "1 Nov",
+    marker: "closes P4",
+    emoji: "🎉",
+    accent: "sticker-lilac",
+    title: "Handover",
+    text: "The brand book is done, the stranger test is passed, and the founding families see everything first.",
+  },
+];
+
 const researchSteps = [
   {
     emoji: "📚",
@@ -252,6 +311,58 @@ const failureModes = [
           </div>
         ))
       }
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== TIMELINE & MILESTONES ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">Milestones</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      The
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">timeline</span>.
+    </h2>
+    <p class="body-copy mt-4 max-w-3xl text-sm">
+      The work inside each phase flexes around Estelle's studies. These seven dates hold.
+    </p>
+
+    <div class="relative mx-auto mt-10 max-w-3xl">
+      <div
+        class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35"
+        style="left: calc(1.5rem - 1px);"
+        aria-hidden="true"
+      >
+      </div>
+      <ol class="space-y-6">
+        {
+          milestones.map((m) => (
+            <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
+              <span
+                class="relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]"
+                aria-hidden="true"
+              >
+                {m.emoji}
+              </span>
+              <div class:list={["surface-card p-5 md:p-6", m.accent]}>
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="tag-pill sun">{m.date}</span>
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
+                    {m.marker}
+                  </span>
+                </div>
+                <h3
+                  class="mt-2 text-xl font-bold text-[var(--color-ink-950)]"
+                  style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+                >
+                  {m.title}
+                </h3>
+                <p class="body-copy mt-1 text-sm">{m.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
