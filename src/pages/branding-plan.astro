@@ -53,43 +53,98 @@ const steps = [
     date: "August",
     emoji: "🗣️",
     accent: "sticker-teal",
-    title: "Listen first",
-    text: "Estelle reads up on community brands and asks parents and coaches how they already describe the club. The aim is to describe Sunset Duckies as it is today.",
+    status: "done",
+    title: "Collect the club's words",
+    text: "Start with the language people in Tamarin already use for Sunset Duckies.",
+    tasks: [
+      "Send the first part of the parent questionnaire to the family WhatsApp group.",
+      "Ask coaches how they describe the club to a new family.",
+      "Copy the answers into one working document, keeping people's own words.",
+    ],
+    links: [
+      { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
+    ],
   },
   {
     date: "By 6 Sep",
     emoji: "📄",
     accent: "sticker-teal",
-    title: "Finish the research",
-    text: "Estelle collects the useful parts into one page: how other community brands grew, what families have said about Sunset Duckies and which kinds of club posts people share.",
+    status: "now",
+    title: "Read and write up the research",
+    text: "The research ends with one page of useful notes for this club.",
+    tasks: [
+      "Read “Let My People Go Surfing” by Yvon Chouinard.",
+      "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley.",
+      "Look at how other surf clubs, kids' sports clubs and small community projects present themselves.",
+      "Write one page covering what is useful for Sunset Duckies, what families have said and which kinds of club posts people share.",
+    ],
+    links: [],
   },
   {
     date: "By 20 Sep",
     emoji: "✏️",
     accent: "sticker-sun",
     title: "Make three rough versions",
-    text: "Each idea gets a rough badge, colours, a sticker and an example social post. They stay deliberately unfinished so people react to the idea, not the polish.",
+    text: "Prepare one version for Access, one for Outside and one for Belonging.",
+    tasks: [
+      "Fill in the project summary with the club's purpose, promise to families and way of speaking.",
+      "Complete one idea sheet for each of the three starting points.",
+      "Give every version a line, a badge sketch, three colours, a sticker and one post using a real training photo.",
+      "Keep all three equally rough so the family feedback is about the idea rather than the neatest drawing.",
+    ],
+    links: [
+      { label: "Project summary", file: "/templates/brand-concept.html" },
+      { label: "Idea sheet", file: "/templates/brand-direction-sheet.html" },
+    ],
   },
   {
     date: "21 Sep – 4 Oct",
     emoji: "🏄",
     accent: "sticker-pink",
-    title: "Show the club",
-    text: "The sheets go to the family WhatsApp group and come to training. Kids, parents and coaches say what feels true, what they remember and what they would actually use.",
+    title: "Show all three to the club",
+    text: "Families see the same rough sheets in WhatsApp and at training.",
+    tasks: [
+      "Send the three idea sheets and the second part of the parent questionnaire to the family WhatsApp group.",
+      "Use the kid conversations sheet at training: offer the stickers, ask which one would embarrass them, and check on Friday what they remember.",
+      "Record answers from ages 7 to 9 separately from ages 10 to 13.",
+      "Collect a photo permission form from every family before posting images of the kids.",
+      "Hold a call with Estelle and the founding families, then choose one idea and write down why.",
+    ],
+    links: [
+      { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
+      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
+      { label: "Photo permission", file: "/templates/brand-photo-permission.html" },
+    ],
   },
   {
     date: "5 Oct – 1 Nov",
     emoji: "🛹",
     accent: "sticker-coral",
-    title: "Finish it on real things",
-    text: "Estelle develops the strongest idea and tries it as a rashie print, board sticker, profile image and page on this site. Anything that does not read clearly gets changed.",
+    title: "Finish and test the chosen idea",
+    text: "Turn the rough version into artwork the club can use.",
+    tasks: [
+      "Finish the badge and check that it still works in one colour, at 15 mm and as a profile picture.",
+      "Run the five-second recognition check with eight people who do not know the club.",
+      "Put the badge on a rashie, board sticker, social profile and page on this site. Photograph the real items and fix anything that is hard to read.",
+      "Use the new look in club posts for two weeks and note which posts parents share, save or repost.",
+    ],
+    links: [
+      { label: "Quick recognition check", file: "/templates/brand-stranger-test.html" },
+    ],
   },
   {
     date: "1 Nov",
     emoji: "🎉",
     accent: "sticker-lilac",
     title: "Hand it over",
-    text: "The club gets the final artwork and a short, practical guide. The families who helped with the project see it first.",
+    text: "Give the club the artwork and the instructions needed to keep using it.",
+    tasks: [
+      "Deliver the final badge files for print and screen.",
+      "List the colours, type choices and rules for placing the badge.",
+      "Include example posts, writing notes and the agreed photo rules.",
+      "Show the finished work to the families who helped before sharing it more widely.",
+    ],
+    links: [],
   },
 ];
 
@@ -244,8 +299,9 @@ const kit = [
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">schedule</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      Estelle does the research and design work. The club helps her understand Tamarin,
-      shows the ideas to families and tests them on the things we actually use.
+      Estelle does the research and design work. The club collects answers in Tamarin, shows
+      the ideas to families and tests them on the things we use. Each step below lists the work
+      and links to the worksheet that goes with it.
     </p>
 
     <div class="relative mx-auto mt-10 max-w-3xl">
@@ -259,13 +315,24 @@ const kit = [
           steps.map((step) => (
             <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
               <span
-                class="relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]"
+                class:list={[
+                  "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
+                  step.status === "done"
+                    ? "bg-[var(--color-teal-500)]"
+                    : step.status === "now"
+                      ? "bg-[var(--color-coral-500)]"
+                      : "bg-[var(--color-sun-500)]",
+                ]}
                 aria-hidden="true"
               >
-                {step.emoji}
+                {step.status === "done" ? "✓" : step.emoji}
               </span>
-              <div class:list={["surface-card p-5 md:p-6", step.accent]}>
-                <span class="tag-pill sun">{step.date}</span>
+              <div class:list={["surface-card p-5 md:p-6", step.accent, step.status === "now" ? "dashed" : ""]}>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="tag-pill sun">{step.date}</span>
+                  {step.status === "done" && <span class="tag-pill">done</span>}
+                  {step.status === "now" && <span class="tag-pill pink">we are here</span>}
+                </div>
                 <h3
                   class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
                   style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
@@ -273,6 +340,28 @@ const kit = [
                   {step.title}
                 </h3>
                 <p class="body-copy mt-1 text-sm">{step.text}</p>
+                <ul class="mt-4 space-y-2">
+                  {step.tasks.map((task) => (
+                    <li class="flex items-start gap-3 text-sm leading-relaxed text-[var(--color-ink-950)]/80">
+                      <span class="mt-[0.1rem] font-mono font-bold text-[var(--color-coral-500)]" aria-hidden="true">→</span>
+                      <span>{task}</span>
+                    </li>
+                  ))}
+                </ul>
+                {step.links.length > 0 && (
+                  <div class="mt-5 flex flex-wrap gap-2 border-t border-[var(--color-ink-950)]/15 pt-4">
+                    {step.links.map((link) => (
+                      <a
+                        href={link.file}
+                        target="_blank"
+                        rel="noreferrer"
+                        class="tag-pill transition hover:-translate-y-0.5 hover:bg-[var(--color-teal-500)]"
+                      >
+                        Open {link.label} ↗
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </li>
           ))
