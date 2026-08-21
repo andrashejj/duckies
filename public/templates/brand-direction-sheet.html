@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies — Direction Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root {
+      --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec;
+      --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      padding: 32px 24px 64px;
+      line-height: 1.5;
+    }
+    .sheet {
+      max-width: 780px; margin: 0 auto;
+      background: var(--cream-soft);
+      border: 2px solid var(--ink);
+      box-shadow: 6px 6px 0 0 var(--ink);
+      border-radius: 18px;
+      padding: 36px 36px 44px;
+    }
+    .kicker {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+      background: var(--sun); border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      box-shadow: 2px 2px 0 0 var(--ink);
+    }
+    h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em; line-height: 1; margin: 16px 0 8px;
+    }
+    h2 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; font-size: 1.15rem;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px dashed rgba(11,22,32,0.35);
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem; letter-spacing: 0.06em;
+      color: rgba(11,22,32,0.65); margin-bottom: 8px;
+    }
+    .field { margin: 10px 0; }
+    .field label {
+      display: block; font-weight: 600; font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .blank {
+      display: block;
+      border-bottom: 1.5px solid var(--ink);
+      min-height: 1.7rem;
+    }
+    .blank + .blank { margin-top: 8px; }
+    .row {
+      display: grid; gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 540px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    .pills {
+      display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0;
+    }
+    .pill {
+      border: 1.5px solid var(--ink);
+      padding: 4px 10px; border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      background: var(--cream);
+    }
+    .check {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin: 8px 0; font-size: 0.92rem;
+    }
+    .box {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--ink); border-radius: 4px;
+      background: var(--cream); flex-shrink: 0; margin-top: 2px;
+    }
+    .note {
+      font-size: 0.8rem; color: rgba(11,22,32,0.62); margin: 6px 0 0;
+    }
+    .sketch {
+      border: 2px dashed rgba(11,22,32,0.45);
+      border-radius: 14px;
+      min-height: 220px;
+      background: var(--cream);
+      display: grid; place-items: center;
+      color: rgba(11,22,32,0.4);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      margin: 10px 0;
+    }
+    .sketch.small { min-height: 150px; }
+    .swatches {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 10px 0;
+    }
+    .swatch {
+      border: 2px solid var(--ink); border-radius: 12px;
+      min-height: 80px; background: var(--cream);
+      margin-bottom: 6px;
+    }
+    .footer {
+      margin-top: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(11,22,32,0.6); text-align: center;
+    }
+    .print-btn {
+      position: fixed; top: 16px; right: 16px;
+      background: var(--coral); color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 0 var(--ink);
+      padding: 10px 18px; border-radius: 999px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; text-transform: uppercase;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .sheet { box-shadow: none; border: 2px solid #000; max-width: 100%; margin: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies · Brand kit</span>
+    <h1>Direction sheet ✏️</h1>
+    <p class="meta">Phase 2 · Concept · print three copies, one per direction, all equally rough</p>
+
+    <div class="row">
+      <div class="field">
+        <label>Which direction is this?</label>
+        <div class="pills">
+          <span class="pill">☐ 1</span>
+          <span class="pill">☐ 2</span>
+          <span class="pill">☐ 3</span>
+        </div>
+      </div>
+      <div class="field"><label>Direction name</label><span class="blank"></span></div>
+    </div>
+
+    <h2>1. The line</h2>
+    <div class="field">
+      <label>One sentence that answers “what is this club?” in this direction's voice.</label>
+      <span class="blank"></span>
+    </div>
+    <div class="field">
+      <label>What's true about Tamarin behind it?</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+
+    <h2>2. The badge</h2>
+    <div class="sketch">Felt-tip rough · on purpose</div>
+    <p class="note">If this sheet looks prettier than the other two, the kids will pick the drawing instead of the idea. Rough it back up.</p>
+
+    <h2>3. Three colours</h2>
+    <div class="swatches">
+      <div>
+        <div class="swatch"></div>
+        <span class="blank"></span>
+      </div>
+      <div>
+        <div class="swatch"></div>
+        <span class="blank"></span>
+      </div>
+      <div>
+        <div class="swatch"></div>
+        <span class="blank"></span>
+      </div>
+    </div>
+    <p class="note">Colour in the boxes, name each underneath. Marker or pencil is fine.</p>
+
+    <h2>4. The sticker</h2>
+    <div class="sketch small">The thing a kid would put on a board</div>
+
+    <h2>5. The example post</h2>
+    <div class="field">
+      <label>Which real training photo would this direction post first?</label>
+      <span class="blank"></span>
+    </div>
+    <div class="field">
+      <label>The caption, in this direction's voice</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+    <div class="field">
+      <label>Why would a parent share this on their own profile?</label>
+      <span class="blank"></span>
+    </div>
+
+    <h2>6. Self-check before it ships</h2>
+    <div class="check"><span class="box"></span><span>As rough as the other two sheets.</span></div>
+    <div class="check"><span class="box"></span><span>At least slightly too bold. Safe three times over means one idea drawn three times.</span></div>
+    <div class="check"><span class="box"></span><span>A stranger could say what this direction is going for.</span></div>
+    <div class="check"><span class="box"></span><span>The line, the badge, and the post all say the same thing.</span></div>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

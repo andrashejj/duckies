@@ -34,6 +34,67 @@ const pillars = [
   },
 ];
 
+const milestones = [
+  {
+    date: "Mid Aug",
+    marker: "done ✓",
+    status: "done",
+    emoji: "📚",
+    accent: "sticker-teal",
+    title: "Kickoff",
+    text: "Estelle started on the books, and the coaches started collecting parents' words on WhatsApp.",
+  },
+  {
+    date: "6 Sep",
+    marker: "closes P1",
+    status: "now",
+    emoji: "📄",
+    accent: "sticker-teal",
+    title: "Research digest",
+    text: "One page on how community brands were built, what a responsible company owes, and what makes club content get shared.",
+  },
+  {
+    date: "20 Sep",
+    marker: "closes P2",
+    emoji: "🧭",
+    accent: "sticker-sun",
+    title: "Concept locked",
+    text: "The brand core one-pager plus three equally rough direction sheets, ready to travel.",
+  },
+  {
+    date: "21 Sep",
+    marker: "opens P3",
+    emoji: "✉️",
+    accent: "sticker-pink",
+    title: "Sheets land in Tamarin",
+    text: "Estelle's prediction goes in a sealed envelope, the posters go up at training, the questionnaires go out.",
+  },
+  {
+    date: "4 Oct",
+    marker: "closes P3",
+    emoji: "🏁",
+    accent: "sticker-pink",
+    title: "The direction",
+    text: "Chosen on the family call, for reasons the club can point to. Photo permissions signed.",
+  },
+  {
+    date: "12 Oct",
+    marker: "mid P4",
+    emoji: "📲",
+    accent: "sticker-coral",
+    title: "Badge final, trial live",
+    text: "The cleaned-up badge passes the draw-it-from-memory, 15mm, and one-colour checks. Two weeks of organic posting begin.",
+  },
+  {
+    date: "1 Nov",
+    marker: "closes P4",
+    emoji: "🎉",
+    accent: "sticker-lilac",
+    title: "Handover",
+    text: "The brand book is done, the stranger test is passed, and the founding families see everything first.",
+  },
+];
+
 const researchSteps = [
   {
     emoji: "📚",
@@ -105,6 +166,51 @@ const communityTests = [
   },
 ];
 
+const kit = [
+  {
+    emoji: "🧭",
+    title: "Brand concept one-pager",
+    phase: "P2",
+    file: "/templates/brand-concept.html",
+    desc: "The skeleton Estelle fills in: the sentence, purpose and responsibilities, beliefs, the promise to families, voice, and the map of the three directions.",
+  },
+  {
+    emoji: "✏️",
+    title: "Direction sheet",
+    phase: "P2",
+    file: "/templates/brand-direction-sheet.html",
+    desc: "Printed three times, one per direction: the line, badge sketch, colours, sticker, example post, and a self-check before it ships.",
+  },
+  {
+    emoji: "💬",
+    title: "Parent questionnaire",
+    phase: "P1 + P3",
+    file: "/templates/brand-parent-questionnaire.html",
+    desc: "Five minutes on the beach or over WhatsApp. Part one collects the words parents already use; part two comes back with the direction sheets.",
+  },
+  {
+    emoji: "🏄",
+    title: "Kid conversations run sheet",
+    phase: "P3",
+    file: "/templates/brand-kid-conversations.html",
+    desc: "For the coaches at training: the sticker tally, the embarrassment question by age group, the memory test, and space for exact words.",
+  },
+  {
+    emoji: "⏱️",
+    title: "Stranger test scoresheet",
+    phase: "P2 + P4",
+    file: "/templates/brand-stranger-test.html",
+    desc: "Five seconds, three questions, eight people. Works for the rough directions and again for the finished badge.",
+  },
+  {
+    emoji: "📸",
+    title: "Photo permission form",
+    phase: "P3",
+    file: "/templates/brand-photo-permission.html",
+    desc: "One per kid, signed before the first post goes out. Families choose what is OK, and the club's promises are printed on the same page.",
+  },
+];
+
 const failureModes = [
   {
     emoji: "🥣",
@@ -139,7 +245,7 @@ const failureModes = [
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
         <p class="section-kicker">Club notebook · working in the open</p>
-        <span class="tag-pill lilac">24 Aug – 1 Nov 2026</span>
+        <span class="tag-pill lilac">Underway · wraps 1 Nov 2026</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
@@ -161,7 +267,8 @@ const failureModes = [
         four. The club gets treated as a purpose company in miniature, answerable to the kids,
         the families, and the lagoon, the way Patagonia describes it in its books. And the
         brand gets designed to travel on social media by itself, because the club will never
-        have an advertising budget and shouldn't need one.
+        have an advertising budget and shouldn't need one. Kickoff is behind us; the research
+        phase is running now.
       </p>
 
       <!-- Timeline strip -->
@@ -212,12 +319,73 @@ const failureModes = [
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
+  <!-- ===================== TIMELINE & MILESTONES ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">Milestones</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      The
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">timeline</span>.
+    </h2>
+    <p class="body-copy mt-4 max-w-3xl text-sm">
+      Kickoff is done and research is underway. The remaining dates hold, even when the work
+      inside a phase flexes around Estelle's studies.
+    </p>
+
+    <div class="relative mx-auto mt-10 max-w-3xl">
+      <div
+        class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35"
+        style="left: calc(1.5rem - 1px);"
+        aria-hidden="true"
+      >
+      </div>
+      <ol class="space-y-6">
+        {
+          milestones.map((m) => (
+            <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
+              <span
+                class:list={[
+                  "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
+                  m.status === "done"
+                    ? "bg-[var(--color-teal-500)] font-bold"
+                    : m.status === "now"
+                      ? "bg-[var(--color-coral-500)]"
+                      : "bg-[var(--color-sun-500)]",
+                ]}
+                aria-hidden="true"
+              >
+                {m.status === "done" ? "✓" : m.emoji}
+              </span>
+              <div class:list={["surface-card p-5 md:p-6", m.accent, m.status === "now" ? "dashed" : ""]}>
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="tag-pill sun">{m.date}</span>
+                  {m.status === "now" && <span class="tag-pill pink">we are here</span>}
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
+                    {m.marker}
+                  </span>
+                </div>
+                <h3
+                  class="mt-2 text-xl font-bold text-[var(--color-ink-950)]"
+                  style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+                >
+                  {m.title}
+                </h3>
+                <p class="body-copy mt-1 text-sm">{m.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
   <!-- ===================== PHASE 1 — RESEARCH ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
     <div class="mb-8 flex flex-wrap items-center gap-4">
       <span class="step-bubble">P1</span>
       <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Research</h2>
-      <span class="tag-pill">24 Aug – 6 Sep</span>
+      <span class="tag-pill pink">now · until 6 Sep</span>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -450,6 +618,49 @@ const failureModes = [
       <p class="body-copy mt-3 text-sm">
         The founding families see it first. They earned that.
       </p>
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== THE KIT ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">Print and fill</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      The
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">kit</span>.
+    </h2>
+    <p class="body-copy mt-4 max-w-3xl text-sm">
+      Every worksheet the plan mentions, ready to print. Estelle fills the first two; the
+      coaches and families in Tamarin get the rest. Pencil beats polish on all of them.
+    </p>
+
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        kit.map((item) => (
+          <a
+            href={item.file}
+            target="_blank"
+            rel="noreferrer"
+            class="surface-card group block p-6 transition hover:-translate-y-1"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <span class="text-2xl" aria-hidden="true">{item.emoji}</span>
+              <span class="tag-pill">{item.phase}</span>
+            </div>
+            <h3
+              class="mt-3 text-xl font-bold text-[var(--color-ink-950)] transition group-hover:text-[var(--color-coral-500)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {item.title}
+            </h3>
+            <p class="body-copy mt-2 text-sm">{item.desc}</p>
+            <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+              → Open &amp; print
+            </p>
+          </a>
+        ))
+      }
     </div>
   </section>
 
