@@ -4,7 +4,7 @@ import { site } from "../data/site";
 
 const title = `The Brand Plan | ${site.name}`;
 const description =
-  "How Sunset Duckies gets a proper identity: Estelle's part-time brand project, from research to concept to testing on the beach in Tamarin.";
+  "How Sunset Duckies gets a proper identity: Estelle's part-time brand project treats the club as a small purpose company and designs the brand to travel on social media without ad spend.";
 
 const timeline = [
   { week: "P1", label: "Research" },
@@ -13,10 +13,39 @@ const timeline = [
   { week: "P4", label: "Test" },
 ];
 
+const pillars = [
+  {
+    emoji: "🧭",
+    title: "Purpose",
+    accent: "sticker-teal",
+    text: "The club teaches kids to surf, and it takes on responsibility while doing it: for the kids' confidence, for the families' trust, and for the lagoon they surf in. The brand has to carry that, and every decision in this plan gets checked against it.",
+  },
+  {
+    emoji: "🤝",
+    title: "Community",
+    accent: "sticker-sun",
+    text: "The families build the brand with Estelle. They supply the words, react to the directions, and pick the winner. A brand the community shaped is one it will wear and defend.",
+  },
+  {
+    emoji: "📲",
+    title: "Organic social",
+    accent: "sticker-pink",
+    text: "There is no ad budget, and the plan is to never need one. The brand has to earn its reach: moments worth filming, a badge that reads at feed size, and posts parents are proud to share. Unpaid social is a design requirement from day one.",
+  },
+];
+
 const researchSteps = [
   {
     emoji: "📚",
     text: "Start with Patagonia. In “Let My People Go Surfing”, Yvon Chouinard describes a brand that came from how the company already behaved, written down after the fact. That is the model here: the club already has a character, and the job is to find it and put it on paper.",
+  },
+  {
+    emoji: "🌍",
+    text: "Then “The Future of the Responsible Company”, where Chouinard and Vincent Stanley set out what a business owes the people and places it touches. The exercise: translate that to a volunteer kids' club. Who is the club answerable to, and what does each answer mean for the brand?",
+  },
+  {
+    emoji: "📲",
+    text: "Study how small clubs and community projects grow on social media without paying for reach. Find a handful of accounts that managed it, work out which posts actually travelled, and write down the patterns: the moments, the formats, the captions.",
   },
   {
     emoji: "🏄",
@@ -67,7 +96,7 @@ const communityTests = [
   {
     emoji: "💬",
     title: "The parent question",
-    text: "Parents get asked which direction sounds like the club they actually send their kids to, and what they would change about it.",
+    text: "Parents get asked two things: which direction sounds like the club they actually send their kids to, and which example post they would share on their own profile. Sharing is a higher bar than liking, and it is the bar that matters.",
   },
   {
     emoji: "📞",
@@ -90,9 +119,15 @@ const failureModes = [
     text: "The risk of working remotely is a brand that looks great in a study project and wrong on a beach in Tamarin. Every direction has to be built on something a coach or parent actually said, and nothing ships without a photo of it on a real board.",
   },
   {
+    emoji: "🎭",
+    title: "Performing for the algorithm",
+    accent: "sticker-teal",
+    text: "Chasing shares can quietly take over, until the club posts what travels instead of what is true. The purpose page is the guardrail: if a post would feel off to a family on the beach, it doesn't go up, however well it would do.",
+  },
+  {
     emoji: "🐌",
     title: "Drifting into next year",
-    accent: "sticker-teal",
+    accent: "sticker-lilac",
     text: "A part-time project next to full-time studies can slide forever. Each phase has an end date, and a decent direction decided on time beats a perfect one that never ships.",
   },
 ];
@@ -104,7 +139,7 @@ const failureModes = [
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
         <p class="section-kicker">Club notebook · working in the open</p>
-        <span class="tag-pill lilac">24 Aug – 18 Oct 2026</span>
+        <span class="tag-pill lilac">24 Aug – 1 Nov 2026</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
@@ -122,11 +157,11 @@ const failureModes = [
         in Tamarin do the reacting.
       </p>
       <p class="body-copy mt-4 max-w-3xl">
-        The plan runs in four phases. First she studies how community brands like Patagonia
-        were built and how the branding process works. Then comes the heart of the project:
-        the brand concept, written down as one page of beliefs and three possible directions.
-        Then the club gets involved and picks one. Then the winner gets tested on real kids,
-        real boards, and real strangers.
+        The plan runs in four phases: research, concept, community, test. Two ideas shape all
+        four. The club gets treated as a purpose company in miniature, answerable to the kids,
+        the families, and the lagoon, the way Patagonia describes it in its books. And the
+        brand gets designed to travel on social media by itself, because the club will never
+        have an advertising budget and shouldn't need one.
       </p>
 
       <!-- Timeline strip -->
@@ -148,6 +183,34 @@ const failureModes = [
       </div>
     </div>
   </section>
+
+  <!-- ===================== PILLARS ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">Before the phases</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      Three pillars the brand
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">stands on</span>.
+    </h2>
+
+    <div class="mt-8 grid gap-6 md:grid-cols-3">
+      {
+        pillars.map((pillar, i) => (
+          <div class:list={["surface-card p-6", pillar.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{pillar.emoji}</span>
+            <h3
+              class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {pillar.title}
+            </h3>
+            <p class="body-copy mt-2 text-sm">{pillar.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
   <!-- ===================== PHASE 1 — RESEARCH ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
@@ -176,8 +239,11 @@ const failureModes = [
           ✦ Done when
         </p>
         <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          She can explain, on one page, how strong community brands were built and which of
-          those steps a small volunteer club can copy for free.
+          She can explain, on one page, how community brands were built, what a responsible
+          company owes the people around it, and what makes club content get shared.
+        </p>
+        <p class="body-copy mt-3 text-sm">
+          All of it reduced to steps a small volunteer club can copy for free.
         </p>
       </div>
     </div>
@@ -196,9 +262,9 @@ const failureModes = [
     <div class="surface-card p-6 md:p-8">
       <p class="body-copy max-w-3xl text-sm">
         This is the main part of the project. It starts with one page: what the club believes,
-        what it promises families, and how it talks. Then three rough directions, each a
-        different answer to “what is this club?”, and each built on something true about
-        Tamarin:
+        what it is responsible for, what it promises families, and how it talks. Then three
+        rough directions, each a different answer to “what is this club?”, and each built on
+        something true about Tamarin:
       </p>
     </div>
 
@@ -222,10 +288,13 @@ const failureModes = [
     <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
       <div class="surface-card p-6 md:p-8">
         <p class="body-copy text-sm">
-          Each direction gets one sheet: a line, a rough badge, three colours, a sticker.
-          All three stay <strong>equally</strong> rough, because if one is prettier the kids
-          will pick the drawing instead of the idea. At least one should feel slightly too
-          bold. If all three feel safe, she has drawn the same thing three times.
+          Each direction gets one sheet: a line, a rough badge, three colours, a sticker, and
+          one example post built from a real training photo. The post matters as much as the
+          badge, because the feed and the beach are the two places this brand will actually
+          live. All three sheets stay <strong>equally</strong> rough, because if one is
+          prettier the kids will pick the drawing instead of the idea. At least one should
+          feel slightly too bold. If all three feel safe, she has drawn the same thing three
+          times.
         </p>
       </div>
       <div class="surface-card sticker-sun dashed p-6 md:p-8">
@@ -233,7 +302,8 @@ const failureModes = [
           ✦ Done when
         </p>
         <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          A stranger can tell the three directions apart and say what each one is going for.
+          A stranger can tell the three directions apart, say what each one is going for, and
+          point at the one they would follow.
         </p>
       </div>
     </div>
@@ -283,6 +353,12 @@ const failureModes = [
           embarrassment. And the 8-year-olds' answers stay separate from the 13-year-olds',
           because the two groups will disagree, and the badge has to work for both.
         </p>
+        <p class="body-copy mt-4 text-sm">
+          This phase also settles photo permissions. Every family signs off, in writing, on
+          whether and how their kid can appear on the club's accounts, before the first post
+          goes out. Responsibility to the kids starts there, and the social pillar depends on
+          it.
+        </p>
         <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
           It's a conversation, not a vote. Everyone hears that up front.
         </p>
@@ -293,7 +369,8 @@ const failureModes = [
           ✦ Done when
         </p>
         <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          One direction is chosen, for reasons the club can point to.
+          One direction is chosen, for reasons the club can point to, and the photo
+          permissions are signed.
         </p>
         <p class="body-copy mt-3 text-sm">
           Plus a short note on what to borrow from the two that lost. There is always
@@ -310,10 +387,10 @@ const failureModes = [
     <div class="mb-8 flex flex-wrap items-center gap-4">
       <span class="step-bubble">P4</span>
       <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Test</h2>
-      <span class="tag-pill">5 – 18 Oct</span>
+      <span class="tag-pill">5 Oct – 1 Nov</span>
     </div>
 
-    <div class="grid gap-6 md:grid-cols-3">
+    <div class="grid gap-6 md:grid-cols-2">
       <div class="surface-card sticker-coral p-6">
         <span class="text-2xl" aria-hidden="true">🎨</span>
         <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
@@ -321,14 +398,26 @@ const failureModes = [
         </h3>
         <p class="body-copy mt-2 text-sm">
           Free tools and a few evenings. It passes when a ten-year-old can draw it from
-          memory, it stays legible at 15mm, and it works in a single colour, because that is
-          how it will actually get printed.
+          memory, it stays legible at 15mm and as a profile picture, and it works in a single
+          colour, because that is how it will actually get printed.
+        </p>
+      </div>
+      <div class="surface-card sticker-pink p-6">
+        <span class="text-2xl" aria-hidden="true">📲</span>
+        <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+          The social trial
+        </h3>
+        <p class="body-copy mt-2 text-sm">
+          Two weeks of posting with the new identity, organic only: first waves, wipeouts,
+          award days, the walk down to the beach. Success is measured in shares, saves, and
+          reposts by parents, since those are the free reach the brand is designed for. What
+          travelled and what didn't goes into the brand book.
         </p>
       </div>
       <div class="surface-card sticker-teal p-6">
         <span class="text-2xl" aria-hidden="true">🧪</span>
         <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-          Test it for real
+          Put it on real things
         </h3>
         <p class="body-copy mt-2 text-sm">
           A rashie in the water, a sticker on a board, a page of this site, photographed by
@@ -343,9 +432,10 @@ const failureModes = [
           A short brand book
         </h3>
         <p class="body-copy mt-2 text-sm">
-          A dozen pages: what the club believes, the badge and how to use it, colours, and how
-          the club talks, with real examples. Enough that any volunteer can make a poster
-          without asking Estelle anything.
+          A dozen pages: what the club believes and is responsible for, the badge and how to
+          use it, colours, how the club talks, and a social chapter with the posts that
+          worked, the kinds it never posts, and the photo permission rules. Enough that any
+          volunteer can run the accounts and make a poster without asking Estelle anything.
         </p>
       </div>
     </div>
@@ -369,14 +459,14 @@ const failureModes = [
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
     <p class="section-kicker">Being honest</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Three ways this could go
+      Four ways this could go
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">wrong</span>.
     </h2>
 
-    <div class="mt-8 grid gap-6 md:grid-cols-3">
+    <div class="mt-8 grid gap-6 md:grid-cols-2">
       {
         failureModes.map((mode, i) => (
-          <div class:list={["surface-card p-6", mode.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+          <div class:list={["surface-card p-6", mode.accent, i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
             <span class="text-3xl" aria-hidden="true">{mode.emoji}</span>
             <h3
               class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
@@ -394,7 +484,7 @@ const failureModes = [
   <!-- ===================== THE TEST ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10" data-reveal>
     <div class="glass-panel p-8 md:p-12">
-      <p class="eyebrow-badge">18 October</p>
+      <p class="eyebrow-badge">1 November</p>
       <h2
         class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl"
         style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
@@ -402,11 +492,11 @@ const failureModes = [
         How we'll know it worked.
       </h2>
       <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
-        Show everything to someone who has never heard of us and ask two questions:
+        Show everything to someone who has never heard of us and ask three questions:
         <em class="font-accent italic text-[var(--color-sun-500)]">what does this club believe,
-        and who is it for?</em>
-        If they answer both without hesitating, we have a brand. If they hesitate, back to
-        work.
+        who is it for, and would you follow it?</em>
+        If they answer all three without hesitating, we have a brand. If they hesitate, back
+        to work.
       </p>
     </div>
   </section>
