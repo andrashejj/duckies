@@ -2,313 +2,232 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 
-const title = `The Brand Plan | ${site.name}`;
+const title = `Brand project | ${site.name}`;
 const description =
-  "The plan for the Sunset Duckies brand: Estelle's part-time project, from research to concept to community feedback to testing, with unpaid social reach as a core requirement.";
+  "How Estelle is helping Sunset Duckies find a simple, useful identity with the kids, parents and coaches in Tamarin.";
 
-const timeline = [
-  { week: "P1", label: "Research" },
-  { week: "P2", label: "Concept" },
-  { week: "P3", label: "Community" },
-  { week: "P4", label: "Test" },
-];
-
-const pillars = [
+const deliverables = [
   {
-    emoji: "🧭",
-    title: "Purpose",
+    emoji: "🦆",
+    title: "A badge",
     accent: "sticker-teal",
-    text: "The club teaches kids to surf and takes on responsibility in the process: for the kids' confidence, the families' trust, and the lagoon. Brand decisions get checked against this purpose.",
+    text: "One clear mark for rashies, board stickers, posters and the club's profile picture.",
   },
   {
-    emoji: "🤝",
-    title: "Community",
+    emoji: "🎨",
+    title: "A simple style",
     accent: "sticker-sun",
-    text: "The families help build the brand. They provide the language, give feedback on the direction options, and take part in the final decision.",
+    text: "A small set of colours, type choices and examples that look like Sunset Duckies wherever they appear.",
   },
   {
-    emoji: "📲",
-    title: "Organic social",
+    emoji: "📓",
+    title: "A short guide",
     accent: "sticker-pink",
-    text: "The club has no advertising budget, so the brand has to earn its reach: recognisable at feed size, built around moments worth filming, with posts parents want to share. Unpaid social performance is a design requirement from the start.",
+    text: "Enough guidance for any volunteer to make a post, sign or poster without needing a designer.",
   },
 ];
 
-const milestones = [
-  {
-    date: "Mid Aug",
-    marker: "done ✓",
-    status: "done",
-    emoji: "📚",
-    accent: "sticker-teal",
-    title: "Kickoff",
-    text: "Reading started, and the coaches began collecting parents' descriptions of the club over WhatsApp.",
-  },
-  {
-    date: "6 Sep",
-    marker: "closes P1",
-    status: "now",
-    emoji: "📄",
-    accent: "sticker-teal",
-    title: "Research digest",
-    text: "A one-page summary of the research: how community brands were built, what a responsible company owes, and what makes club content get shared.",
-  },
-  {
-    date: "20 Sep",
-    marker: "closes P2",
-    emoji: "🧭",
-    accent: "sticker-sun",
-    title: "Concept locked",
-    text: "The brand core one-pager and three equally rough direction sheets are finished.",
-  },
-  {
-    date: "21 Sep",
-    marker: "opens P3",
-    emoji: "✉️",
-    accent: "sticker-pink",
-    title: "The directions go out",
-    text: "The three sheets and the questionnaires are sent to the family WhatsApp group. Estelle records her expected winner beforehand, to compare against the feedback later.",
-  },
-  {
-    date: "4 Oct",
-    marker: "closes P3",
-    emoji: "🏁",
-    accent: "sticker-pink",
-    title: "The direction",
-    text: "One direction chosen on the family call, with documented reasons. Photo permissions collected.",
-  },
-  {
-    date: "12 Oct",
-    marker: "mid P4",
-    emoji: "📲",
-    accent: "sticker-coral",
-    title: "Badge final, trial live",
-    text: "The final badge passes its checks, and the two-week organic posting trial starts.",
-  },
-  {
-    date: "1 Nov",
-    marker: "closes P4",
-    emoji: "🎉",
-    accent: "sticker-lilac",
-    title: "Handover",
-    text: "The brand book is delivered, the stranger test is passed, and the founding families get the first look.",
-  },
-];
-
-const researchSteps = [
-  {
-    emoji: "📚",
-    text: "Read Patagonia's “Let My People Go Surfing”. The brand described there grew out of how the company already operated and was written down afterwards. The same approach applies here: document the character the club already has.",
-  },
-  {
-    emoji: "🌍",
-    text: "Read “The Future of the Responsible Company” by Chouinard and Stanley, and translate its list of responsibilities to a volunteer kids' club: who the club is accountable to, and what each answer means for the brand.",
-  },
-  {
-    emoji: "📲",
-    text: "Analyse how small clubs and community projects grow on social media without paid reach: which accounts managed it, which posts performed, and which patterns repeat in moments, formats, and captions.",
-  },
-  {
-    emoji: "🏄",
-    text: "Review how other surf clubs and kids' sports clubs present themselves, to collect ideas and to identify clichés to avoid.",
-  },
-  {
-    emoji: "🎓",
-    text: "Cover the branding fundamentals from her course material: positioning, brand core, identity, tone of voice.",
-  },
-  {
-    emoji: "🗣️",
-    text: "Collect the words families already use. Coaches and parents describe the club in their own words over WhatsApp, and the answers are gathered into one document that feeds the concept.",
-  },
-];
-
-const routes = [
+const ideas = [
   {
     name: "Access",
     accent: "sticker-teal",
     emoji: "🌊",
-    tension: "The lagoon is close, but gear and coaching are the barrier. The club removes it.",
+    text: "The lagoon is right here, but learning to surf and finding the right gear is not easy for every kid. The club helps make that possible.",
   },
   {
     name: "Outside",
     accent: "sticker-sun",
-    emoji: "📱",
-    tension: "Time in the water as the alternative to time on screens.",
+    emoji: "☀️",
+    text: "More time in the water, less time on a screen. The club gives kids a regular reason to get outside and surf together.",
   },
   {
     name: "Belonging",
     accent: "sticker-pink",
     emoji: "🤝",
-    tension: "Beyond the sport, the club gives kids a group they belong to.",
+    text: "Surfing brings everyone together. The club also gives the kids, parents and coaches a group that looks out for them.",
   },
 ];
 
-const communityTests = [
+const steps = [
   {
+    date: "August",
+    emoji: "🗣️",
+    accent: "sticker-teal",
+    title: "Listen first",
+    text: "Estelle reads up on community brands and asks parents and coaches how they already describe the club. The aim is to describe Sunset Duckies as it is today.",
+  },
+  {
+    date: "By 6 Sep",
+    emoji: "📄",
+    accent: "sticker-teal",
+    title: "Finish the research",
+    text: "Estelle collects the useful parts into one page: how other community brands grew, what families have said about Sunset Duckies and which kinds of club posts people share.",
+  },
+  {
+    date: "By 20 Sep",
+    emoji: "✏️",
+    accent: "sticker-sun",
+    title: "Make three rough versions",
+    text: "Each idea gets a rough badge, colours, a sticker and an example social post. They stay deliberately unfinished so people react to the idea, not the polish.",
+  },
+  {
+    date: "21 Sep – 4 Oct",
+    emoji: "🏄",
+    accent: "sticker-pink",
+    title: "Show the club",
+    text: "The sheets go to the family WhatsApp group and come to training. Kids, parents and coaches say what feels true, what they remember and what they would actually use.",
+  },
+  {
+    date: "5 Oct – 1 Nov",
     emoji: "🛹",
-    title: "The sticker test",
-    text: "Three sticker designs are available at training, with no obligation to take one. The coaches track which designs get taken and which end up on boards.",
+    accent: "sticker-coral",
+    title: "Finish it on real things",
+    text: "Estelle develops the strongest idea and tries it as a rashie print, board sticker, profile image and page on this site. Anything that does not read clearly gets changed.",
   },
   {
-    emoji: "🧠",
-    title: "The memory test",
-    text: "The kids see the three sheets on Monday. On Friday the coaches ask what they remember. Elements that survive the week are working.",
-  },
-  {
-    emoji: "💬",
-    title: "The parent question",
-    text: "Parents answer two questions: which direction matches the club they send their kids to, and which example post they would share on their own profile. Sharing is a higher bar than liking.",
-  },
-  {
-    emoji: "📞",
-    title: "The call",
-    text: "A video call between Estelle and the founding families to review the feedback and choose a direction.",
+    date: "1 Nov",
+    emoji: "🎉",
+    accent: "sticker-lilac",
+    title: "Hand it over",
+    text: "The club gets the final artwork and a short, practical guide. The families who helped with the project see it first.",
   },
 ];
 
 const kit = [
   {
     emoji: "🧭",
-    title: "Brand concept one-pager",
-    phase: "P2",
+    title: "Project summary",
+    phase: "Estelle",
     file: "/templates/brand-concept.html",
-    desc: "The template Estelle fills in: the one-sentence answer, purpose and responsibilities, beliefs, the promise to families, tone of voice, and an overview of the three directions.",
+    desc: "A one-page place to write down what the club is, what it wants to say and the three ideas being explored.",
   },
   {
     emoji: "✏️",
-    title: "Direction sheet",
-    phase: "P2",
+    title: "Idea sheet",
+    phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    desc: "Used three times, once per direction: the line, badge sketch, colours, sticker, example post, and a checklist.",
+    desc: "The same sheet used for each rough idea: badge, colours, sticker and one example post.",
   },
   {
     emoji: "💬",
-    title: "Parent questionnaire",
-    phase: "P1 + P3",
+    title: "Questions for parents",
+    phase: "Families",
     file: "/templates/brand-parent-questionnaire.html",
-    desc: "Six questions in two parts: first the words parents already use, then their reaction to the three directions.",
+    desc: "A few questions about how parents describe Sunset Duckies now, followed later by their thoughts on the three ideas.",
   },
   {
     emoji: "🏄",
-    title: "Kid conversations run sheet",
-    phase: "P3",
+    title: "Talking to the kids",
+    phase: "Coaches",
     file: "/templates/brand-kid-conversations.html",
-    desc: "The coaches' guide for training week: the sticker tally, the embarrassment question by age group, and the memory test.",
+    desc: "A simple guide for showing the ideas at training and recording what the younger and older kids say about them.",
   },
   {
     emoji: "⏱️",
-    title: "Stranger test scoresheet",
-    phase: "P2 + P4",
+    title: "Quick recognition check",
+    phase: "Testing",
     file: "/templates/brand-stranger-test.html",
-    desc: "Five seconds, three questions, eight people. Used for the rough directions and again for the final badge.",
+    desc: "Show someone the badge for five seconds, then ask what they saw. It tells us whether the design is clear enough.",
   },
   {
     emoji: "📸",
-    title: "Photo permission form",
-    phase: "P3",
+    title: "Photo permission",
+    phase: "Families",
     file: "/templates/brand-photo-permission.html",
-    desc: "One per kid, confirmed before the first post. Families choose what is OK, and the club's commitments are on the same page.",
-  },
-];
-
-const failureModes = [
-  {
-    emoji: "🥣",
-    title: "Averaging into generic",
-    accent: "sticker-sun",
-    text: "If every opinion is weighted equally, the result is generic. The concept is written before the feedback round, and feedback informs the decision rather than making it.",
-  },
-  {
-    emoji: "✈️",
-    title: "Designing from a distance",
-    accent: "sticker-pink",
-    text: "A brand developed remotely can miss how the club actually feels. Every direction has to be grounded in something a coach or parent said, and nothing is final without a photo of it on a real board.",
-  },
-  {
-    emoji: "🎭",
-    title: "Performing for the algorithm",
-    accent: "sticker-teal",
-    text: "Optimising for shares can drift into posting what performs instead of what is true. The purpose page is the check: a post that would feel wrong to a family on the beach doesn't go up.",
-  },
-  {
-    emoji: "🐌",
-    title: "Stalling",
-    accent: "sticker-lilac",
-    text: "A part-time project next to full-time studies can stall. Each phase has a fixed end date, and a good direction delivered on time is worth more than a perfect one that never ships.",
+    desc: "A clear record of whether and where each child may appear in club photos and videos.",
   },
 ];
 ---
 
 <BaseLayout title={title} description={description}>
-  <!-- ===================== HERO ===================== -->
+  <!-- ===================== INTRO ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
-        <p class="section-kicker">Club notebook · working in the open</p>
-        <span class="tag-pill lilac">Underway · wraps 1 Nov 2026</span>
+        <p class="section-kicker">A project for the club</p>
+        <span class="tag-pill lilac">In progress · August–November 2026</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
         style="font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 0.95;"
       >
-        The
-        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">brand</span>
-        <span class="ink-underline">plan</span>.
+        Finding the right look for
+        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Sunset Duckies</span>.
       </h1>
       <p class="body-copy mt-6 max-w-3xl">
-        Sunset Duckies needs an identity: a badge for the rashies, stickers for the boards,
-        and a short, clear answer to what the club is. Estelle, a friend of the club studying
-        in Switzerland, runs the project part time alongside her degree. She does the research
-        and concept work remotely; feedback and testing happen through the club in Tamarin.
+        Estelle is helping us work out how Sunset Duckies should look and sound. She is a
+        friend of the club, studying in Switzerland, and is doing the project part time
+        alongside her degree. She works remotely; the kids, parents and coaches in Tamarin
+        help by sharing what the club means to them and trying out her ideas.
       </p>
       <p class="body-copy mt-4 max-w-3xl">
-        The project has four phases: research, concept, community feedback, and testing. Two
-        principles apply throughout. The club is treated as a small purpose-driven
-        organisation, accountable to the kids, the families, and the lagoon. And the identity
-        is designed for unpaid social media reach, since the club has no advertising budget.
-        Kickoff is complete and the research phase is in progress.
+        The result should stay small and practical. We need a badge that works on a rashie and
+        a board sticker, a few colours and type choices, and a straightforward way to explain
+        what the club is. This page shows the work in progress and the documents we are using.
       </p>
-
-      <!-- Timeline strip -->
-      <div class="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">
-        {
-          timeline.map((step, i) => (
-            <>
-              <span class="chip">
-                <strong class="font-bold">{step.week}</strong>&nbsp;{step.label}
-              </span>
-              {i < timeline.length - 1 && (
-                <span class="font-mono text-lg font-bold text-[var(--color-coral-500)]" aria-hidden="true">
-                  →
-                </span>
-              )}
-            </>
-          ))
-        }
-      </div>
     </div>
   </section>
 
-  <!-- ===================== PILLARS ===================== -->
+  <!-- ===================== WHAT WE ARE MAKING ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">Before the phases</p>
+    <p class="section-kicker">What we are making</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Three pillars the brand
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">stands on</span>.
+      A small, useful set of
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club tools</span>.
     </h2>
 
     <div class="mt-8 grid gap-6 md:grid-cols-3">
       {
-        pillars.map((pillar, i) => (
-          <div class:list={["surface-card p-6", pillar.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
-            <span class="text-3xl" aria-hidden="true">{pillar.emoji}</span>
+        deliverables.map((item, i) => (
+          <div class:list={["surface-card p-6", item.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{item.emoji}</span>
             <h3
               class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
               style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
             >
-              {pillar.title}
+              {item.title}
             </h3>
-            <p class="body-copy mt-2 text-sm">{pillar.text}</p>
+            <p class="body-copy mt-2 text-sm">{item.text}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="body-copy mt-8 max-w-3xl text-sm">
+      Families will mostly see the new look on the beach, in WhatsApp and as a small social
+      profile image. The club does not buy advertising. Parents sharing training photos and
+      club posts is how other local families hear about it, so the design has to be easy to
+      spot and still feel like the club they know.
+    </p>
+  </section>
+
+  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+
+  <!-- ===================== THE IDEAS ===================== -->
+  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
+    <p class="section-kicker">The starting point</p>
+    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
+      Three ideas to
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">explore</span>.
+    </h2>
+    <p class="body-copy mt-4 max-w-3xl text-sm">
+      The three starting points describe things that are already true about Sunset Duckies.
+      Estelle will make a rough badge, sticker and example post for each one. The club can then
+      see which idea feels closest to what happens at training every week.
+    </p>
+
+    <div class="mt-8 grid gap-6 md:grid-cols-3">
+      {
+        ideas.map((idea, i) => (
+          <div class:list={["surface-card p-6", idea.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{idea.emoji}</span>
+            <h3
+              class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]"
+              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
+            >
+              {idea.name}
+            </h3>
+            <p class="body-copy mt-2 text-sm">{idea.text}</p>
           </div>
         ))
       }
@@ -317,16 +236,16 @@ const failureModes = [
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
-  <!-- ===================== TIMELINE & MILESTONES ===================== -->
+  <!-- ===================== THE PROCESS ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">Milestones</p>
+    <p class="section-kicker">How the project works</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
       The
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">timeline</span>.
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">schedule</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      Kickoff is complete and research is in progress. The dates below are fixed; the work
-      inside each phase flexes around Estelle's studies.
+      Estelle does the research and design work. The club helps her understand Tamarin,
+      shows the ideas to families and tests them on the things we actually use.
     </p>
 
     <div class="relative mx-auto mt-10 max-w-3xl">
@@ -334,40 +253,26 @@ const failureModes = [
         class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35"
         style="left: calc(1.5rem - 1px);"
         aria-hidden="true"
-      >
-      </div>
+      ></div>
       <ol class="space-y-6">
         {
-          milestones.map((m) => (
+          steps.map((step) => (
             <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
               <span
-                class:list={[
-                  "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
-                  m.status === "done"
-                    ? "bg-[var(--color-teal-500)] font-bold"
-                    : m.status === "now"
-                      ? "bg-[var(--color-coral-500)]"
-                      : "bg-[var(--color-sun-500)]",
-                ]}
+                class="relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]"
                 aria-hidden="true"
               >
-                {m.status === "done" ? "✓" : m.emoji}
+                {step.emoji}
               </span>
-              <div class:list={["surface-card p-5 md:p-6", m.accent, m.status === "now" ? "dashed" : ""]}>
-                <div class="flex flex-wrap items-center gap-3">
-                  <span class="tag-pill sun">{m.date}</span>
-                  {m.status === "now" && <span class="tag-pill pink">we are here</span>}
-                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-950)]/60">
-                    {m.marker}
-                  </span>
-                </div>
+              <div class:list={["surface-card p-5 md:p-6", step.accent]}>
+                <span class="tag-pill sun">{step.date}</span>
                 <h3
-                  class="mt-2 text-xl font-bold text-[var(--color-ink-950)]"
+                  class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
                   style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
                 >
-                  {m.title}
+                  {step.title}
                 </h3>
-                <p class="body-copy mt-1 text-sm">{m.text}</p>
+                <p class="body-copy mt-1 text-sm">{step.text}</p>
               </div>
             </li>
           ))
@@ -378,252 +283,18 @@ const failureModes = [
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
-  <!-- ===================== PHASE 1 — RESEARCH ===================== -->
+  <!-- ===================== WORKING DOCUMENTS ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-      <span class="step-bubble">P1</span>
-      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Research</h2>
-      <span class="tag-pill pink">now · until 6 Sep</span>
-    </div>
-
-    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-      <div class="surface-card p-6 md:p-8">
-        <ul class="space-y-5">
-          {
-            researchSteps.map((step) => (
-              <li class="flex items-start gap-4">
-                <span class="text-2xl" aria-hidden="true">{step.emoji}</span>
-                <p class="body-copy text-sm">{step.text}</p>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div class="surface-card sticker-sun dashed p-6 md:p-8">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
-          ✦ Done when
-        </p>
-        <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          A one-page summary exists: how community brands were built, what a responsible
-          company owes the people around it, and what makes club content get shared.
-        </p>
-        <p class="body-copy mt-3 text-sm">
-          Reduced to steps a small volunteer club can apply for free.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
-
-  <!-- ===================== PHASE 2 — CONCEPT ===================== -->
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-      <span class="step-bubble">P2</span>
-      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Concept</h2>
-      <span class="tag-pill">7 – 20 Sep</span>
-    </div>
-
-    <div class="surface-card p-6 md:p-8">
-      <p class="body-copy max-w-3xl text-sm">
-        The core of the project. First a one-page brand core: what the club believes, what it
-        is responsible for, what it promises families, and how it communicates. Then three
-        rough directions, each a different answer to the question “what is this club?”, and
-        each based on something true about Tamarin:
-      </p>
-    </div>
-
-    <div class="mt-6 grid gap-6 md:grid-cols-3">
-      {
-        routes.map((route, i) => (
-          <div class:list={["surface-card p-6", route.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
-            <span class="text-3xl" aria-hidden="true">{route.emoji}</span>
-            <h3
-              class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
-              {route.name}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{route.tension}</p>
-          </div>
-        ))
-      }
-    </div>
-
-    <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-      <div class="surface-card p-6 md:p-8">
-        <p class="body-copy text-sm">
-          Each direction gets one sheet: a line, a rough badge, three colours, a sticker, and
-          one example post based on a real training photo. The post carries the same weight as
-          the badge, since the feed and the beach are where the brand will live. All three
-          sheets stay <strong>equally</strong> rough, so the feedback is about the idea rather
-          than the prettiest drawing, and at least one direction should be noticeably bold to
-          keep the range wide.
-        </p>
-      </div>
-      <div class="surface-card sticker-sun dashed p-6 md:p-8">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
-          ✦ Done when
-        </p>
-        <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          An outsider can tell the three directions apart, describe what each one is going
-          for, and name the one they would follow.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
-
-  <!-- ===================== PHASE 3 — COMMUNITY ===================== -->
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-      <span class="step-bubble">P3</span>
-      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Community</h2>
-      <span class="tag-pill">21 Sep – 4 Oct</span>
-    </div>
-
-    <p class="body-copy max-w-3xl text-sm">
-      Estelle works remotely, so this phase runs through the club and happens digitally: the
-      three sheets go to the family WhatsApp group and are shown on phones at training.
-      Estelle records her own expectation of the winning direction before the feedback starts,
-      so the result can be compared against it honestly.
-    </p>
-
-    <div class="mt-6 grid gap-6 sm:grid-cols-2">
-      {
-        communityTests.map((test) => (
-          <div class="surface-card p-6">
-            <span class="text-2xl" aria-hidden="true">{test.emoji}</span>
-            <h3
-              class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
-              {test.title}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{test.text}</p>
-          </div>
-        ))
-      }
-    </div>
-
-    <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-      <div class="surface-card sticker-pink p-6 md:p-8">
-        <p class="body-copy text-sm">
-          Two rules for the conversations with kids. The coaches ask
-          <em class="font-accent italic">“which one would embarrass you?”</em> instead of
-          “which one do you like?”, because it produces more honest answers. And the 7 to 9
-          age group's answers are recorded separately from the 10 to 13 group's, because the
-          badge has to work for both.
-        </p>
-        <p class="body-copy mt-4 text-sm">
-          This phase also covers photo permissions: every family confirms in writing whether
-          and how their kid can appear on the club's accounts, before the first post goes out.
-        </p>
-        <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
-          Feedback informs the decision. It is not a vote.
-        </p>
-      </div>
-
-      <div class="surface-card sticker-sun dashed p-6 md:p-8">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
-          ✦ Done when
-        </p>
-        <p class="mt-4 text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-          One direction is chosen with documented reasons, and the photo permissions are
-          collected.
-        </p>
-        <p class="body-copy mt-3 text-sm">
-          Including notes on which elements of the two other directions are worth keeping.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
-
-  <!-- ===================== PHASE 4 — TEST ===================== -->
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-      <span class="step-bubble">P4</span>
-      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Test</h2>
-      <span class="tag-pill">5 Oct – 1 Nov</span>
-    </div>
-
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="surface-card sticker-coral p-6">
-        <span class="text-2xl" aria-hidden="true">🎨</span>
-        <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-          Finalise the winner
-        </h3>
-        <p class="body-copy mt-2 text-sm">
-          Final artwork with free tools. Acceptance criteria: a ten-year-old can draw it from
-          memory, it stays legible at 15mm and as a profile picture, and it works in a single
-          colour, which is how it will be printed.
-        </p>
-      </div>
-      <div class="surface-card sticker-pink p-6">
-        <span class="text-2xl" aria-hidden="true">📲</span>
-        <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-          The social trial
-        </h3>
-        <p class="body-copy mt-2 text-sm">
-          Two weeks of organic posting with the new identity: training moments, first waves,
-          award days. Measured by shares, saves, and reposts from parents. The results go into
-          the brand book.
-        </p>
-      </div>
-      <div class="surface-card sticker-teal p-6">
-        <span class="text-2xl" aria-hidden="true">🧪</span>
-        <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-          Test on real objects
-        </h3>
-        <p class="body-copy mt-2 text-sm">
-          The badge goes on real things: a rashie in the water, a sticker on a board, a page
-          of this site, photographed by the club. A five-second stranger test decides whether
-          it reads clearly; if outsiders can't say what it is, it goes back for revision.
-        </p>
-      </div>
-      <div class="surface-card sticker-lilac p-6">
-        <span class="text-2xl" aria-hidden="true">📓</span>
-        <h3 class="mt-3 text-xl font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-          The brand book
-        </h3>
-        <p class="body-copy mt-2 text-sm">
-          Roughly a dozen pages: what the club believes and is responsible for, badge usage,
-          colours, tone of voice, and a social chapter with posting guidelines and the photo
-          permission rules. Complete enough that any volunteer can produce a poster or run the
-          accounts without help.
-        </p>
-      </div>
-    </div>
-
-    <div class="surface-card sticker-sun dashed mt-6 p-6 md:p-8">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)]">
-        ✦ Done when
-      </p>
-      <p class="mt-4 max-w-3xl text-lg font-bold leading-snug" style="font-family: var(--font-display); font-variation-settings: 'wdth' 106;">
-        Someone outside the project can use all of the material without further explanation.
-      </p>
-      <p class="body-copy mt-3 text-sm">
-        The founding families see the result first.
-      </p>
-    </div>
-  </section>
-
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
-
-  <!-- ===================== THE KIT ===================== -->
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">Worksheets</p>
+    <p class="section-kicker">The templates</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      The
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">kit</span>.
+      The documents we are
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">working with</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      The worksheets used in the plan. All of them work on a screen, in a WhatsApp chat, or
-      printed. Estelle uses the first two; the coaches and families get the rest.
+      These practical worksheets are part of the work in progress. Estelle uses the first two
+      to develop the ideas. The other four help the coaches and families give feedback, test
+      the result and agree how photos of the kids may be used. They work on a phone and can
+      also be printed.
     </p>
 
     <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -655,49 +326,20 @@ const failureModes = [
     </div>
   </section>
 
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
-
-  <!-- ===================== RISKS ===================== -->
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">Risks</p>
-    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      What could go
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">wrong</span>.
-    </h2>
-
-    <div class="mt-8 grid gap-6 md:grid-cols-2">
-      {
-        failureModes.map((mode, i) => (
-          <div class:list={["surface-card p-6", mode.accent, i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
-            <span class="text-3xl" aria-hidden="true">{mode.emoji}</span>
-            <h3
-              class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
-              {mode.title}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{mode.text}</p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- ===================== THE TEST ===================== -->
+  <!-- ===================== FINISH ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10" data-reveal>
     <div class="glass-panel p-8 md:p-12">
-      <p class="eyebrow-badge">1 November</p>
+      <p class="eyebrow-badge">By 1 November</p>
       <h2
         class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl"
         style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
       >
-        How we'll know it worked.
+        A badge the kids are happy to wear.
       </h2>
       <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
-        Show the results to someone who has never heard of the club and ask three questions:
-        <em class="font-accent italic text-[var(--color-sun-500)]">what does this club believe,
-        who is it for, and would you follow it?</em>
-        Three quick answers mean the brand works. Hesitation means another revision round.
+        At the end, Sunset Duckies should have a finished badge, the files needed to use it,
+        and a short guide for future volunteers. The badge should feel at home on a rashie, a
+        board and the club's WhatsApp profile.
       </p>
     </div>
   </section>
