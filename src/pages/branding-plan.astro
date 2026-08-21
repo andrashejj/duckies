@@ -2,28 +2,28 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 
-const title = `Brand project | ${site.name}`;
+const title = `Global brand project | ${site.name}`;
 const description =
-  "How Estelle is helping Sunset Duckies put its story, voice and character into something the whole club can use.";
+  "A project to see whether the story and character of Sunset Duckies can grow from Tamarin into a global kids' surf brand.";
 
 const deliverables = [
   {
     emoji: "🧭",
-    title: "The club's story",
+    title: "A story rooted in Tamarin",
     accent: "sticker-teal",
-    text: "The words that explain why Sunset Duckies exists, what families can expect and how the club talks.",
+    text: "The words that explain where Sunset Duckies came from, what it gives kids and why families take part.",
   },
   {
     emoji: "🎨",
-    title: "A recognisable badge",
+    title: "A brand people remember",
     accent: "sticker-sun",
-    text: "A badge, colours and type that work on rashies, board stickers, posters and a small profile picture.",
+    text: "A name, voice, badge, colours and type that work in Tamarin and still make sense to someone seeing them elsewhere.",
   },
   {
     emoji: "📓",
-    title: "Examples and a guide",
+    title: "A way to test its reach",
     accent: "sticker-pink",
-    text: "Examples for WhatsApp, social posts, stickers and signs, with notes any volunteer can follow.",
+    text: "Rashies, stickers and posts that people can wear, use or share, followed by a record of what travelled beyond the club.",
   },
 ];
 
@@ -75,8 +75,8 @@ const steps = [
     tasks: [
       "Read “Let My People Go Surfing” by Yvon Chouinard.",
       "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley.",
-      "Look at how other surf clubs, kids' sports clubs and small community projects present themselves.",
-      "Write one page covering what is useful for Sunset Duckies, what families have said and which kinds of club posts people share.",
+      "Find examples of clubs and youth brands that began in one place and reached people elsewhere. Note what stayed local and what needed explaining.",
+      "Write one page covering what is useful for Sunset Duckies, what families have said, which kinds of club posts people share and what could make sense beyond Mauritius.",
     ],
     links: [],
   },
@@ -90,6 +90,7 @@ const steps = [
       "Fill in the project summary with the club's purpose, promise to families and way of speaking.",
       "Complete one idea sheet for each of the three starting points.",
       "Give every version a line, a badge sketch, three colours, a sticker and one post using a real training photo.",
+      "Write the main line so someone outside Mauritius can understand it without already knowing Tamarin.",
       "Keep all three equally rough so the family feedback is about the idea rather than the neatest drawing.",
     ],
     links: [
@@ -124,9 +125,9 @@ const steps = [
     text: "Turn the rough version into artwork the club can use.",
     tasks: [
       "Finish the badge and check that it still works in one colour, at 15 mm and as a profile picture.",
-      "Run the five-second recognition check with eight people who do not know the club.",
+      "Run the five-second recognition check with eight people who do not know the club, including people outside Mauritius.",
       "Put the badge on a rashie, board sticker, social profile and page on this site. Photograph the real items and fix anything that is hard to read.",
-      "Use the new look in club posts for two weeks and note which posts parents share, save or repost.",
+      "Use the new brand in club posts for two weeks. Note which posts parents share, save or repost, and whether any reach people beyond the existing club families.",
     ],
     links: [
       { label: "Quick recognition check", file: "/templates/brand-stranger-test.html" },
@@ -142,6 +143,7 @@ const steps = [
       "Deliver the final badge files for print and screen.",
       "List the colours, type choices and rules for placing the badge.",
       "Include example posts, writing notes and the agreed photo rules.",
+      "Add one page on what people outside Mauritius understood, what confused them and what the club should test next.",
       "Show the finished work to the families who helped before sharing it more widely.",
     ],
     links: [],
@@ -154,14 +156,14 @@ const kit = [
     title: "Project summary",
     phase: "Estelle",
     file: "/templates/brand-concept.html",
-    desc: "A one-page place to write down what the club is, what it wants to say and the three ideas being explored.",
+    desc: "A one-page place to write down what the club is, what comes from Tamarin and what could make sense elsewhere.",
   },
   {
     emoji: "✏️",
     title: "Idea sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    desc: "The same sheet used for each rough idea: badge, colours, sticker and one example post.",
+    desc: "The same sheet used for each rough idea: its Tamarin roots, main line, badge, colours, sticker and example post.",
   },
   {
     emoji: "💬",
@@ -182,7 +184,7 @@ const kit = [
     title: "Quick recognition check",
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
-    desc: "Show someone the badge for five seconds, then ask what they saw. It tells us whether the design is clear enough.",
+    desc: "Show the badge for five seconds to people who do not know the club, including people outside Mauritius, and record what they understood.",
   },
   {
     emoji: "📸",
@@ -199,38 +201,39 @@ const kit = [
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
-        <p class="section-kicker">A project for the club</p>
+        <p class="section-kicker">A global brand experiment</p>
         <span class="tag-pill lilac">In progress · August–November 2026</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
         style="font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 0.95;"
       >
-        Giving
+        Can
         <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Sunset Duckies</span>
-        a life of its own.
+        become a global brand?
       </h1>
       <p class="body-copy mt-6 max-w-3xl">
-        Estelle is helping us put what already happens at training into words, images and
-        things the club can use beyond the water. That means a clear story, a voice, a badge,
-        and ways for families to take part and share it. She is a friend of the club, studying
-        in Switzerland, and is doing the project part time alongside her degree.
+        Estelle's project tests whether a small kids' surf club in Tamarin has an idea that can
+        travel. She will turn what already happens at training into a story, voice, badge and
+        set of real examples, then show them to families in the club and to people who have
+        never heard of Sunset Duckies. She is a friend of the club, studying in Switzerland,
+        and is doing the work part time alongside her degree.
       </p>
       <p class="body-copy mt-4 max-w-3xl">
-        The project starts with the club as it is today: kids learning to surf, coaches giving
-        their time, families helping on the beach, and everyone meeting at Tamarin Bay twice a
-        week. Estelle works remotely; the kids, parents and coaches shape the work by sharing
-        what the club means to them and trying out her ideas.
+        Sunset Duckies begins with kids learning to surf, coaches giving their time, families
+        helping on the beach, and everyone meeting at Tamarin Bay twice a week. Those details
+        give the brand its character. The project asks whether that character also speaks to
+        kids and families outside Mauritius.
       </p>
     </div>
   </section>
 
   <!-- ===================== WHAT WE ARE MAKING ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">What comes out of it</p>
+    <p class="section-kicker">What we are testing</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Words, artwork and a way to
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">use them</span>.
+      A brand that starts here and can
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">travel</span>.
     </h2>
 
     <div class="mt-8 grid gap-6 md:grid-cols-3">
@@ -251,10 +254,10 @@ const kit = [
     </div>
 
     <p class="body-copy mt-8 max-w-3xl text-sm">
-      Families will mostly see the new look on the beach, in WhatsApp and as a small social
-      profile image. The club does not buy advertising. Parents sharing training photos and
-      club posts is how other local families hear about it, so the design has to be easy to
-      spot and still feel like the club they know.
+      The first test is with families in Tamarin. The second is with people outside Mauritius
+      who have no context for the club. If both groups understand the same story and want to
+      wear, share or follow it, the idea has room to grow. The club has no advertising budget,
+      so the test uses real club objects, posts and unpaid sharing.
     </p>
   </section>
 
@@ -268,9 +271,10 @@ const kit = [
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">explore</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      The three starting points describe things that are already true about Sunset Duckies.
+      The three starting points describe things that are already true in Tamarin and could
+      matter to kids elsewhere: access to the water, time outside and a group to belong to.
       Estelle will make a rough badge, sticker and example post for each one. The club can then
-      see which idea feels closest to what happens at training every week.
+      choose the idea that feels true at training and makes sense beyond it.
     </p>
 
     <div class="mt-8 grid gap-6 md:grid-cols-3">
@@ -425,12 +429,12 @@ const kit = [
         class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl"
         style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
       >
-        A badge the kids are happy to wear.
+        By 1 November, we should know whether the idea travels.
       </h2>
       <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
-        At the end, Sunset Duckies should have a finished badge, the files needed to use it,
-        and a short guide for future volunteers. The badge should feel at home on a rashie, a
-        board and the club's WhatsApp profile.
+        The evidence will come from kids in Tamarin wanting to wear it, parents sharing it,
+        and people outside Mauritius being able to say what Sunset Duckies is and who it is
+        for. If those things happen, the club has a clear next step to test.
       </p>
     </div>
   </section>
