@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies — Stranger Test Scoresheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root {
+      --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec;
+      --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      padding: 32px 24px 64px;
+      line-height: 1.5;
+    }
+    .sheet {
+      max-width: 780px; margin: 0 auto;
+      background: var(--cream-soft);
+      border: 2px solid var(--ink);
+      box-shadow: 6px 6px 0 0 var(--ink);
+      border-radius: 18px;
+      padding: 36px 36px 44px;
+    }
+    .kicker {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+      background: var(--sun); border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      box-shadow: 2px 2px 0 0 var(--ink);
+    }
+    h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em; line-height: 1; margin: 16px 0 8px;
+    }
+    h2 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; font-size: 1.15rem;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px dashed rgba(11,22,32,0.35);
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem; letter-spacing: 0.06em;
+      color: rgba(11,22,32,0.65); margin-bottom: 8px;
+    }
+    .note {
+      font-size: 0.8rem; color: rgba(11,22,32,0.62); margin: 6px 0 0;
+    }
+    .script {
+      border-left: 4px solid var(--coral);
+      background: var(--cream);
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+    table.tally {
+      width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+    }
+    .tally th, .tally td {
+      border: 1.5px solid var(--ink); padding: 8px; text-align: left; vertical-align: top;
+    }
+    .tally th {
+      font-family: "Bricolage Grotesque", sans-serif; font-size: 0.8rem;
+      background: var(--cream);
+    }
+    .tally td { height: 46px; }
+    .tally td.yn {
+      white-space: nowrap;
+      font-family: "JetBrains Mono", monospace; font-size: 0.75rem;
+    }
+    .footer {
+      margin-top: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(11,22,32,0.6); text-align: center;
+    }
+    .print-btn {
+      position: fixed; top: 16px; right: 16px;
+      background: var(--coral); color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 0 var(--ink);
+      padding: 10px 18px; border-radius: 999px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; text-transform: uppercase;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .sheet { box-shadow: none; border: 2px solid #000; max-width: 100%; margin: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies · Brand kit</span>
+    <h1>Stranger test scoresheet ⏱️</h1>
+    <p class="meta">Phase 2 for the rough directions · Phase 4 for the finished badge</p>
+    <p style="margin-top: 14px; font-size: 0.95rem;">
+      Find people who have never heard of the club. Show them the sheet or the badge for five
+      seconds, take it away, then ask the three questions. Write the first thing they say, in
+      their words. Eight people is enough to see a pattern.
+    </p>
+    <p class="script">“You get five seconds. Ready?” · then · “What is this? Who is it for? Would you follow it?”</p>
+
+    <h2>The answers</h2>
+    <table class="tally">
+      <tr><th style="width:28%">What is this?</th><th style="width:28%">Who is it for?</th><th>Would you follow it?</th><th style="width:26%">First word they used</th></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+      <tr><td></td><td></td><td class="yn">☐ yes · ☐ no</td><td></td></tr>
+    </table>
+
+    <h2>Reading the results</h2>
+    <p style="font-size: 0.92rem;">
+      If most people can answer “what is this?”, the design works. If they hesitate, it goes
+      back for another round, whatever the club's own favourites are. The “first word” column
+      is the bonus: when strangers keep reaching for the same word, that word belongs in the
+      brand book.
+    </p>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>

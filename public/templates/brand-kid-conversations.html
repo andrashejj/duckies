@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sunset Duckies — Kid Conversations Run Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Outfit:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" />
+  <style>
+    :root {
+      --ink: #0b1620; --cream: #fff5de; --cream-soft: #fffaec;
+      --coral: #ff4e2b; --sun: #ffd23f; --teal: #07c9b6;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      padding: 32px 24px 64px;
+      line-height: 1.5;
+    }
+    .sheet {
+      max-width: 780px; margin: 0 auto;
+      background: var(--cream-soft);
+      border: 2px solid var(--ink);
+      box-shadow: 6px 6px 0 0 var(--ink);
+      border-radius: 18px;
+      padding: 36px 36px 44px;
+    }
+    .kicker {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+      background: var(--sun); border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      box-shadow: 2px 2px 0 0 var(--ink);
+    }
+    h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em; line-height: 1; margin: 16px 0 8px;
+    }
+    h2 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; font-size: 1.15rem;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px dashed rgba(11,22,32,0.35);
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem; letter-spacing: 0.06em;
+      color: rgba(11,22,32,0.65); margin-bottom: 8px;
+    }
+    .field { margin: 10px 0; }
+    .field label {
+      display: block; font-weight: 600; font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .blank {
+      display: block;
+      border-bottom: 1.5px solid var(--ink);
+      min-height: 1.7rem;
+    }
+    .blank + .blank { margin-top: 8px; }
+    .row {
+      display: grid; gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 540px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    .check {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin: 8px 0; font-size: 0.92rem;
+    }
+    .box {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--ink); border-radius: 4px;
+      background: var(--cream); flex-shrink: 0; margin-top: 2px;
+    }
+    .note {
+      font-size: 0.8rem; color: rgba(11,22,32,0.62); margin: 6px 0 0;
+    }
+    .script {
+      border-left: 4px solid var(--coral);
+      background: var(--cream);
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+    table.tally {
+      width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+    }
+    .tally th, .tally td {
+      border: 1.5px solid var(--ink); padding: 8px; text-align: left; vertical-align: top;
+    }
+    .tally th {
+      font-family: "Bricolage Grotesque", sans-serif; font-size: 0.8rem;
+      background: var(--cream);
+    }
+    .tally td { height: 40px; }
+    .footer {
+      margin-top: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(11,22,32,0.6); text-align: center;
+    }
+    .print-btn {
+      position: fixed; top: 16px; right: 16px;
+      background: var(--coral); color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 0 var(--ink);
+      padding: 10px 18px; border-radius: 999px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 700; text-transform: uppercase;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .sheet { box-shadow: none; border: 2px solid #000; max-width: 100%; margin: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">↓ Print / Save PDF</button>
+  <main class="sheet">
+    <span class="kicker">★ Sunset Duckies · Brand kit</span>
+    <h1>Kid conversations run sheet 🏄</h1>
+    <p class="meta">Phase 3 · Community · for the coaches at Monday and Friday training</p>
+    <p style="margin-top: 14px; font-size: 0.95rem;">
+      The job this week is mostly to watch and write down exact words. Put the three direction
+      sheets up before Monday training, put the sticker designs on the table, and let the kids
+      come to them. Say this out loud at the start:
+    </p>
+    <p class="script">“We're picking how the club looks. It's a conversation, not a vote. Your job is to be honest.”</p>
+
+    <h2>1. The sticker test · Monday to Friday</h2>
+    <p class="note" style="margin-bottom: 8px;">Nobody has to take one. Count what actually happens, without nudging.</p>
+    <table class="tally">
+      <tr><th></th><th>Taken from the table</th><th>Seen on a board by Friday</th></tr>
+      <tr><th>Sticker 1</th><td></td><td></td></tr>
+      <tr><th>Sticker 2</th><td></td><td></td></tr>
+      <tr><th>Sticker 3</th><td></td><td></td></tr>
+    </table>
+
+    <h2>2. The embarrassment question · during the week</h2>
+    <p class="script">“Which one would embarrass you if it was on your rashie?”</p>
+    <p class="note" style="margin-bottom: 8px;">Ask this one, skip “which do you like”. Kids are polite about likes and honest about embarrassment. Keep the age groups separate; they will disagree, and that gap is the point.</p>
+    <div class="field">
+      <label>What the 7–9s said, exact words</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+    <div class="field">
+      <label>What the 10–13s said, exact words</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+
+    <h2>3. The memory test · Friday</h2>
+    <p class="script">“The posters came down days ago. What do you remember from them?”</p>
+    <div class="field">
+      <label>What survived the four days</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+
+    <h2>4. The drawing test · optional, if there's time</h2>
+    <p class="note" style="margin-bottom: 8px;">One kid describes a badge to another kid, who draws it without seeing it. Whatever makes it through the description is the part that actually works.</p>
+    <div class="field">
+      <label>What made it through</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+
+    <h2>5. Anything else</h2>
+    <div class="field">
+      <label>Jokes, nicknames, complaints, the sentence a kid said that stuck with you</label>
+      <span class="blank"></span>
+      <span class="blank"></span>
+      <span class="blank"></span>
+    </div>
+
+    <div class="row" style="margin-top: 24px;">
+      <div class="field"><label>Coach</label><span class="blank"></span></div>
+      <div class="field"><label>Week of</label><span class="blank"></span></div>
+    </div>
+    <p class="note">Photograph this sheet and send it to Estelle on WhatsApp by Saturday.</p>
+
+    <p class="footer">Sunset Duckies · Tamarin Bay · sunsetduckies.com</p>
+  </main>
+</body>
+</html>
