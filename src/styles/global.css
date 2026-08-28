@@ -624,3 +624,100 @@ body {
   outline-offset: 4px;
   border-radius: 8px;
 }
+
+/* ==== PERFORMANCE PRODUCT DEVELOPMENT THEME ==== */
+body.performance-theme {
+  color-scheme: dark;
+  background: #071015;
+  color: #f2f4ed;
+}
+
+body.performance-theme::before {
+  opacity: 0.12;
+  mix-blend-mode: screen;
+}
+
+.performance-theme .site-header {
+  border-color: rgba(242, 244, 237, 0.16) !important;
+  background: rgba(7, 16, 21, 0.92) !important;
+  color: #f2f4ed;
+}
+
+.performance-theme .site-header p,
+.performance-theme .site-header nav a {
+  color: #f2f4ed !important;
+}
+
+.performance-theme .site-header > div > a:first-child > span:first-child {
+  border-color: rgba(242, 244, 237, 0.28) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: none !important;
+}
+
+.performance-theme .site-header > div > a:first-child:hover > span:first-child {
+  transform: none;
+}
+
+.performance-theme .site-header nav a {
+  border-radius: 0.35rem;
+  font-family: var(--font-mono) !important;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.performance-theme .site-header nav a:hover {
+  background: rgba(215, 255, 63, 0.12);
+  color: #d7ff3f !important;
+  transform: none;
+}
+
+.performance-theme .site-header .cta-primary {
+  border: 1px solid #d7ff3f;
+  border-radius: 0.35rem;
+  box-shadow: none;
+  background: #d7ff3f;
+  color: #071015;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.performance-theme .site-header .cta-primary:hover {
+  transform: none;
+  background: #f2f4ed;
+}
+
+.performance-theme footer {
+  border-color: rgba(242, 244, 237, 0.16) !important;
+  background: #09141a !important;
+  color: #f2f4ed;
+}
+
+.performance-theme footer .section-title,
+.performance-theme footer a {
+  color: #f2f4ed !important;
+}
+
+.performance-theme footer .body-copy,
+.performance-theme footer > div:last-child {
+  color: rgba(242, 244, 237, 0.6) !important;
+}
+
+.performance-theme footer .section-kicker,
+.performance-theme footer .chip {
+  border-color: rgba(242, 244, 237, 0.22);
+  background: transparent;
+  box-shadow: none;
+  color: #d7ff3f;
+}
+
+.performance-theme footer .section-kicker::before,
+.performance-theme footer .chip::before {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .performance-theme .site-header {
+    background: #071015 !important;
+  }
+}

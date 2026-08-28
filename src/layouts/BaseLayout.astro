@@ -11,6 +11,7 @@ interface Props {
   imageWidth?: number;
   imageHeight?: number;
   page?: "home" | "materials";
+  variant?: "default" | "performance";
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   imageWidth = site.ogImage.width,
   imageHeight = site.ogImage.height,
   page = "home",
+  variant = "default",
 } = Astro.props;
 
 const siteOrigin = Astro.site ?? new URL(site.url);
@@ -66,7 +68,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
       document.documentElement.classList.add("js");
     </script>
   </head>
-  <body class="min-h-screen antialiased">
+  <body class:list={["min-h-screen antialiased", variant === "performance" && "performance-theme"]}>
     <div class="page-shell">
       <header class="site-header border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]/92 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
@@ -78,10 +80,10 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             </span>
             <div class="min-w-0">
               <p class="truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--color-coral-500)] sm:text-xs sm:tracking-[0.28em]">
-                Sunset ★ Duckies
+                {variant === "performance" ? "Sunset Duckies" : "Sunset ★ Duckies"}
               </p>
               <p class="hidden truncate text-sm font-bold text-[var(--color-ink-950)] sm:block sm:text-base" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-                Surf the Bay · Tamarin
+                {variant === "performance" ? "Product development · Tamarin" : "Surf the Bay · Tamarin"}
               </p>
             </div>
           </a>
@@ -105,8 +107,8 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             target="_blank"
             rel="noreferrer"
           >
-            <span class="hidden sm:inline">Slide in ✿ WhatsApp</span>
-            <span class="sm:hidden">Slide in</span>
+            <span class="hidden sm:inline">{variant === "performance" ? "Talk to the club" : "Slide in ✿ WhatsApp"}</span>
+            <span class="sm:hidden">{variant === "performance" ? "Contact" : "Slide in"}</span>
           </a>
         </div>
       </header>
@@ -115,26 +117,28 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         <slot />
       </main>
 
-      <div class="marquee mt-20">
-        <div class="marquee-track">
-          <span>
-            Tamarin Bay · Kid-first <span class="star">✦</span>
-            <em>Monday + Friday</em> <span class="star">✦</span>
-            4 comps a year <span class="star">✦</span>
-            <em>Kids only · No cap</em> <span class="star">✦</span>
-            Confidence in the water <span class="star">✦</span>
-            <em>Community on the beach</em> <span class="star">✦</span>
-          </span>
-          <span aria-hidden="true">
-            Tamarin Bay · Kid-first <span class="star">✦</span>
-            <em>Monday + Friday</em> <span class="star">✦</span>
-            4 comps a year <span class="star">✦</span>
-            <em>Kids only · No cap</em> <span class="star">✦</span>
-            Confidence in the water <span class="star">✦</span>
-            <em>Community on the beach</em> <span class="star">✦</span>
-          </span>
+      {variant !== "performance" && (
+        <div class="marquee mt-20">
+          <div class="marquee-track">
+            <span>
+              Tamarin Bay · Kid-first <span class="star">✦</span>
+              <em>Monday + Friday</em> <span class="star">✦</span>
+              4 comps a year <span class="star">✦</span>
+              <em>Kids only · No cap</em> <span class="star">✦</span>
+              Confidence in the water <span class="star">✦</span>
+              <em>Community on the beach</em> <span class="star">✦</span>
+            </span>
+            <span aria-hidden="true">
+              Tamarin Bay · Kid-first <span class="star">✦</span>
+              <em>Monday + Friday</em> <span class="star">✦</span>
+              4 comps a year <span class="star">✦</span>
+              <em>Kids only · No cap</em> <span class="star">✦</span>
+              Confidence in the water <span class="star">✦</span>
+              <em>Community on the beach</em> <span class="star">✦</span>
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       <footer class="border-t-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]">
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
@@ -143,13 +147,24 @@ const absoluteImage = new URL(image, siteOrigin).toString();
               {site.name}
             </p>
             <p class="body-copy max-w-2xl">
-              Surf sessions for kids in Tamarin Bay. Young duckies paddling out, getting amazing at
-              surfing, and riding home into the sunset together.
+              {variant === "performance"
+                ? "High-quality products for growing kids and everyday surf families. Products fund the clubs and communities that bring young surfers into the water."
+                : "Surf sessions for kids in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding home into the sunset together."}
             </p>
             <div class="flex flex-wrap gap-3">
-              <span class="chip">Monday + Friday</span>
-              <span class="chip">4:00-6:00pm</span>
-              <span class="chip">{site.location}</span>
+              {variant === "performance" ? (
+                <>
+                  <span class="chip">Everyday wear</span>
+                  <span class="chip">Surf wear</span>
+                  <span class="chip">Surf gear</span>
+                </>
+              ) : (
+                <>
+                  <span class="chip">Monday + Friday</span>
+                  <span class="chip">4:00-6:00pm</span>
+                  <span class="chip">{site.location}</span>
+                </>
+              )}
             </div>
           </div>
 

@@ -48,6 +48,27 @@ const principles = [
   },
 ];
 
+const categories = [
+  {
+    code: "01",
+    name: "Everyday wear",
+    context: "Off the water",
+    text: "Clothes kids and parents choose for ordinary days. The test is repeated use, a strong look and enough useful life to justify the price.",
+  },
+  {
+    code: "02",
+    name: "Surf wear",
+    context: "In the water",
+    text: "Lycra, wetsuit and other products worn while surfing. Fit, movement, comfort, sun, salt and growth shape the brief.",
+  },
+  {
+    code: "03",
+    name: "Surf gear",
+    context: "Boards and equipment",
+    text: "The technical end of the range. A first board must be useful, durable and realistic to produce, test, transport and pass on.",
+  },
+];
+
 const steps = [
   {
     date: "August",
@@ -227,65 +248,97 @@ const kit = [
 ];
 ---
 
-<BaseLayout title={title} description={description}>
-  <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
-    <div class="surface-card p-8 md:p-12" data-float>
-      <div class="flex flex-wrap items-center gap-3">
-        <p class="section-kicker">Better surf products for families</p>
-        <span class="tag-pill lilac">Initial assessment · August–1 November 2026</span>
-        <span class="tag-pill">Product development follows</span>
+<BaseLayout title={title} description={description} variant="performance">
+  <div class="performance-plan">
+    <section class="plan-hero">
+      <figure class="plan-hero-media" data-float>
+        <img
+          src="/media/young-rider.jpg"
+          alt="A young surfer riding a wave at sunset in Tamarin"
+          width="1200"
+          height="1600"
+          loading="eager"
+        />
+        <figcaption>Tamarin · Mauritius · First product community</figcaption>
+      </figure>
+
+      <div class="plan-hero-panel" data-float>
+        <div class="plan-hero-topline">
+          <span>Sunset Duckies / Product development</span>
+          <span>Assessment 2026</span>
+        </div>
+
+        <div class="plan-hero-content">
+          <p class="plan-overline">Premium products for surf families</p>
+          <h1>Products for <span>kids who grow.</span></h1>
+          <p class="plan-hero-lead">
+            High-quality products for children and the mums and dads who surf with them.
+            Designed to look good, work hard and stay useful for as long as possible.
+          </p>
+          <p class="plan-hero-copy">
+            The first decision is where to start: everyday wear, surf wear or surf gear. The
+            price will reflect the materials, construction, testing and a fixed contribution
+            to the club.
+          </p>
+        </div>
+
+        <div class="plan-hero-data" aria-label="Project facts">
+          <div><strong>03</strong><span>Product categories</span></div>
+          <div><strong>01</strong><span>Core community</span></div>
+          <div><strong>01.11</strong><span>Initial assessment</span></div>
+        </div>
       </div>
-      <h1
-        class="section-title mt-6 max-w-4xl"
-        style="font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 0.95;"
-      >
-        Products for
-        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">kids who grow</span>.
-      </h1>
-      <p class="body-copy mt-6 max-w-3xl">
-        Sunset Duckies wants to build high-quality surf products for children and the mums
-        and dads who surf with them. The first decision is where to start: everyday wear they
-        can use anywhere, surf wear they use in the water, or surf gear such as a board. In
-        every category, the product should look good, work hard and stay useful for as long as
-        possible.
-      </p>
-      <p class="body-copy mt-4 max-w-3xl">
-        The price will reflect the materials, construction, testing and a fixed contribution
-        to the club. That contribution should be visible when someone buys the product. It can
-        help pay for shared boards and gear, regular sessions, events and other costs agreed by
-        the club.
-      </p>
-      <p class="body-copy mt-4 max-w-3xl">
-        Tamarin is the starting community. The kids and parents help decide what is worth
-        making, test it in real surf life and see where the club money goes. If that works,
-        Sunset Duckies has the foundation for a global product brand built from strong local
-        surf communities.
-      </p>
+    </section>
+
+    <nav class="plan-index" aria-label="Brand development sections">
+      <a href="#product-focus"><span>01</span> Product focus</a>
+      <a href="#product-standard"><span>02</span> Product standard</a>
+      <a href="#assessment"><span>03</span> Assessment</a>
+      <a href="#working-documents"><span>04</span> Working documents</a>
+    </nav>
+
+    <section id="product-focus" class="plan-section plan-category-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">01 / Product focus</p>
+        <h2>Choose the category before the product.</h2>
+        <p>
+          We will develop one equally rough concept in each category, then compare need,
+          repeat use, growth, product life, production difficulty, price and the contribution
+          each sale could return to the club.
+        </p>
+      </div>
+
+      <div class="plan-category-grid">
+        {categories.map((category) => (
+          <article class="plan-category-card">
+            <div class="plan-card-code"><span>{category.code}</span><span>{category.context}</span></div>
+            <h3>{category.name}</h3>
+            <p>{category.text}</p>
+            <span class="plan-card-line" aria-hidden="true"></span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+  <section class="plan-section plan-audience-section" data-reveal>
+    <div class="plan-section-head plan-section-head-wide">
+      <p class="plan-overline">The customer and the community</p>
+      <h2>Everyday surf life, made better.</h2>
     </div>
-  </section>
 
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">Who we are building for</p>
-    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Everyday surf life,
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">made better</span>.
-    </h2>
-
-    <div class="mt-8 grid gap-6 md:grid-cols-3">
+    <div class="plan-three-grid">
       {
         audience.map((item, i) => (
-          <div class:list={["surface-card p-6", item.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
-            <span class="text-3xl" aria-hidden="true">{item.emoji}</span>
-            <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-              {item.title}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{item.text}</p>
-          </div>
+          <article class="plan-info-card">
+            <span class="plan-info-number">0{i + 1}</span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
         ))
       }
     </div>
 
-    <p class="body-copy mt-8 max-w-3xl text-sm">
+    <p class="plan-note">
       The customer is the child learning to surf, the parent fitting in a morning session and
       the family buying gear that has to survive sun, salt, sand and hand-me-down life. The
       product has to earn a premium price through its quality and usefulness.
@@ -293,152 +346,715 @@ const kit = [
     </p>
   </section>
 
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+  <div class="plan-divider" aria-hidden="true"></div>
 
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">The product rules</p>
-    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Purpose has to show up in
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">the product</span>.
-    </h2>
-    <p class="body-copy mt-4 max-w-3xl text-sm">
+  <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
+    <div class="plan-section-head">
+      <p class="plan-overline">02 / Product standard</p>
+      <h2>Purpose has to show up in the product.</h2>
+    </div>
+    <p class="plan-reference-copy">
       Two books are working references for the assessment:
-      <a class="font-bold underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-2" href="https://www.patagonia.com/product/let-my-people-go-surfing-revised-paperback-book/BK067.html" target="_blank" rel="noreferrer">Let My People Go Surfing</a>
+      <a href="https://www.patagonia.com/product/let-my-people-go-surfing-revised-paperback-book/BK067.html" target="_blank" rel="noreferrer">Let My People Go Surfing</a>
       and
-      <a class="font-bold underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-2" href="https://www.patagonia.com/product/the-future-of-the-responsible-company-paperback/BK235.html" target="_blank" rel="noreferrer">The Future of the Responsible Company</a>.
+      <a href="https://www.patagonia.com/product/the-future-of-the-responsible-company-paperback/BK235.html" target="_blank" rel="noreferrer">The Future of the Responsible Company</a>.
       Their useful challenge for Sunset Duckies is practical: make a legitimate product that
       lasts, understand how it is made, respect the people around the business and make the
       purpose part of how the company operates.
     </p>
 
-    <div class="mt-8 grid gap-6 md:grid-cols-3">
+    <div class="plan-three-grid plan-principles-grid">
       {
         principles.map((principle, i) => (
-          <div class:list={["surface-card p-6", principle.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
-            <span class="text-3xl" aria-hidden="true">{principle.emoji}</span>
-            <h3 class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-              {principle.name}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{principle.text}</p>
-          </div>
+          <article class="plan-info-card plan-principle-card">
+            <span class="plan-info-number">P-0{i + 1}</span>
+            <h3>{principle.name}</h3>
+            <p>{principle.text}</p>
+          </article>
         ))
       }
     </div>
 
-    <p class="body-copy mt-8 max-w-3xl text-sm">
+    <p class="plan-note">
       A premium price is a promise. The assessment has to define the materials, construction,
       useful life, testing and service that make the price fair. It also has to choose a clear
       club contribution, state what it funds and set up a simple way to report the money.
     </p>
   </section>
 
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+  <div class="plan-divider" aria-hidden="true"></div>
 
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">How the project works</p>
-    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      The
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">schedule</span>.
-    </h2>
-    <p class="body-copy mt-4 max-w-3xl text-sm">
-      The work through 1 November is an assessment. It identifies the customer, chooses a
-      first product, tests the price and contribution, and checks whether production looks
-      credible. The approved product is developed, wear-tested and produced afterward.
-    </p>
-
-    <div class="relative mx-auto mt-10 max-w-3xl">
-      <div class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35" style="left: calc(1.5rem - 1px);" aria-hidden="true"></div>
-      <ol class="space-y-6">
-        {
-          steps.map((step) => (
-            <li class="relative grid grid-cols-[3rem_1fr] gap-4 sm:gap-6">
-              <span
-                class:list={[
-                  "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
-                  step.status === "now" ? "bg-[var(--color-coral-500)]" : "bg-[var(--color-sun-500)]",
-                ]}
-                aria-hidden="true"
-              >
-                {step.emoji}
-              </span>
-              <div class:list={["surface-card p-5 md:p-6", step.accent, step.status === "now" ? "dashed" : ""]}>
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="tag-pill sun">{step.date}</span>
-                  {step.status === "now" && <span class="tag-pill pink">we are here</span>}
-                </div>
-                <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-                  {step.title}
-                </h3>
-                <p class="body-copy mt-1 text-sm">{step.text}</p>
-                <ul class="mt-4 space-y-2">
-                  {step.tasks.map((task) => (
-                    <li class="flex items-start gap-3 text-sm leading-relaxed text-[var(--color-ink-950)]/80">
-                      <span class="mt-[0.1rem] font-mono font-bold text-[var(--color-coral-500)]" aria-hidden="true">→</span>
-                      <span>{task}</span>
-                    </li>
-                  ))}
-                </ul>
-                {step.links.length > 0 && (
-                  <div class="mt-5 flex flex-wrap gap-2 border-t border-[var(--color-ink-950)]/15 pt-4">
-                    {step.links.map((link) => (
-                      <a href={link.file} target="_blank" rel="noreferrer" class="tag-pill transition hover:-translate-y-0.5 hover:bg-[var(--color-teal-500)]">
-                        Open {link.label} ↗
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </li>
-          ))
-        }
-      </ol>
+  <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
+    <div class="plan-section-head">
+      <p class="plan-overline">03 / Initial assessment</p>
+      <h2>From category decision to launch brief.</h2>
+      <p>
+        The work through 1 November chooses the first product, tests the price and club
+        contribution, and checks whether it can be made properly. Development, wear testing
+        and production begin only after the assessment is approved.
+      </p>
     </div>
+
+    <ol class="plan-timeline">
+      {
+        steps.map((step, index) => (
+          <li class:list={["plan-step", step.status === "now" && "is-current"]}>
+            <div class="plan-step-rail">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <time>{step.date}</time>
+              {step.status === "now" && <em>Current phase</em>}
+            </div>
+            <div class="plan-step-body">
+              <h3>{step.title}</h3>
+              <p class="plan-step-intro">{step.text}</p>
+              <ul>
+                {step.tasks.map((task) => <li>{task}</li>)}
+              </ul>
+              {step.links.length > 0 && (
+                <div class="plan-step-links">
+                  {step.links.map((link) => (
+                    <a href={link.file} target="_blank" rel="noreferrer">
+                      {link.label} <span aria-hidden="true">↗</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 
-  <div class="wave-divider mx-auto max-w-7xl px-6"></div>
+  <div class="plan-divider" aria-hidden="true"></div>
 
-  <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">The templates</p>
-    <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      The documents we are
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">working with</span>.
-    </h2>
-    <p class="body-copy mt-4 max-w-3xl text-sm">
-      These are working sheets, linked to the steps above. They collect the product decisions,
-      family evidence, kid feedback and outside-buyer reactions needed for the assessment.
-      They work on a phone and can also be printed.
-    </p>
+  <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
+    <div class="plan-section-head">
+      <p class="plan-overline">04 / Working documents</p>
+      <h2>Evidence, recorded as we go.</h2>
+      <p>
+        These sheets turn interviews, product decisions and outside-buyer reactions into a
+        usable assessment. Each one works on a phone and can also be printed.
+      </p>
+    </div>
 
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="plan-document-grid">
       {
-        kit.map((item) => (
-          <a href={item.file} target="_blank" rel="noreferrer" class="surface-card group block p-6 transition hover:-translate-y-1">
-            <div class="flex items-start justify-between gap-3">
-              <span class="text-2xl" aria-hidden="true">{item.emoji}</span>
-              <span class="tag-pill">{item.phase}</span>
+        kit.map((item, index) => (
+          <a href={item.file} target="_blank" rel="noreferrer" class="plan-document-card">
+            <div class="plan-document-meta">
+              <span>DOC-{String(index + 1).padStart(2, "0")}</span>
+              <span>{item.phase}</span>
             </div>
-            <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)] transition group-hover:text-[var(--color-coral-500)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-              {item.title}
-            </h3>
-            <p class="body-copy mt-2 text-sm">{item.desc}</p>
-            <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">→ Open</p>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
+            <span class="plan-document-open">Open document ↗</span>
           </a>
         ))
       }
     </div>
   </section>
 
-  <section class="relative mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10" data-reveal>
-    <div class="glass-panel p-8 md:p-12">
-      <p class="eyebrow-badge">1 November · initial assessment</p>
-      <h2 class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
-        On 1 November, we decide whether the first product deserves to be made.
-      </h2>
-      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
-        The assessment provides the product brief, family evidence, supplier picture, price,
-        club contribution and implementation budget. Product development, wear testing,
-        production and launch come next, after approval.
+  <section class="plan-decision" data-reveal>
+    <img
+      src="/media/board-lineup.jpg"
+      alt="Young surfers and their boards gathered on the beach at sunset"
+      width="1600"
+      height="1067"
+      loading="lazy"
+    />
+    <div class="plan-decision-overlay">
+      <p class="plan-overline">Decision gate / 01 November</p>
+      <h2>Does the first product deserve to be made?</h2>
+      <p>
+        The initial assessment ends with a product brief, family evidence, supplier picture,
+        provisional price, club contribution and implementation budget. If the case is strong,
+        the work of developing, testing and launching it starts next.
       </p>
     </div>
   </section>
+  </div>
 </BaseLayout>
+
+<style is:global>
+  .performance-plan {
+    --plan-bg: #071015;
+    --plan-panel: #0b171d;
+    --plan-panel-raised: #0f1e25;
+    --plan-text: #f2f4ed;
+    --plan-muted: #9ba8a5;
+    --plan-line: rgba(242, 244, 237, 0.16);
+    --plan-accent: #d7ff3f;
+    --plan-warm: #ff6849;
+    overflow: hidden;
+    color: var(--plan-text);
+    background:
+      linear-gradient(rgba(242, 244, 237, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(242, 244, 237, 0.035) 1px, transparent 1px),
+      radial-gradient(circle at 82% 5%, rgba(68, 113, 109, 0.22), transparent 28rem),
+      var(--plan-bg);
+    background-size: 64px 64px, 64px 64px, auto, auto;
+  }
+
+  .performance-plan a:focus-visible {
+    outline: 2px solid var(--plan-accent);
+    outline-offset: 4px;
+  }
+
+  .plan-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    min-height: calc(100vh - 5rem);
+    border-bottom: 1px solid var(--plan-line);
+  }
+
+  .plan-hero-media {
+    position: relative;
+    min-height: 760px;
+    overflow: hidden;
+    border-right: 1px solid var(--plan-line);
+    background: #17272d;
+  }
+
+  .plan-hero-media::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background:
+      linear-gradient(180deg, rgba(7, 16, 21, 0.05), rgba(7, 16, 21, 0.55)),
+      linear-gradient(90deg, transparent 60%, rgba(7, 16, 21, 0.28));
+  }
+
+  .plan-hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.82) contrast(1.08);
+  }
+
+  .plan-hero-media figcaption {
+    position: absolute;
+    z-index: 1;
+    right: 2rem;
+    bottom: 2rem;
+    left: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(242, 244, 237, 0.72);
+  }
+
+  .plan-hero-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: clamp(2rem, 5vw, 5rem);
+  }
+
+  .plan-hero-topline,
+  .plan-card-code,
+  .plan-document-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--plan-muted);
+  }
+
+  .plan-hero-topline {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--plan-line);
+  }
+
+  .plan-hero-content {
+    max-width: 800px;
+    margin: auto 0;
+    padding: 4rem 0;
+  }
+
+  .plan-overline {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--plan-accent);
+  }
+
+  .plan-hero h1 {
+    max-width: 9ch;
+    margin: 0;
+    font-family: var(--font-brand);
+    font-size: clamp(5rem, 8.5vw, 10rem);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 0.82;
+    text-transform: uppercase;
+    color: var(--plan-text);
+  }
+
+  .plan-hero h1 span {
+    display: block;
+    color: var(--plan-accent);
+  }
+
+  .plan-hero-lead {
+    max-width: 690px;
+    margin: 2.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.75rem);
+    font-weight: 550;
+    line-height: 1.35;
+  }
+
+  .plan-hero-copy {
+    max-width: 640px;
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--plan-muted);
+  }
+
+  .plan-hero-data {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--plan-line);
+  }
+
+  .plan-hero-data div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.4rem 1.25rem;
+    border-right: 1px solid var(--plan-line);
+  }
+
+  .plan-hero-data div:last-child { border-right: 0; }
+
+  .plan-hero-data strong {
+    font-family: var(--font-brand);
+    font-size: 2.2rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--plan-text);
+  }
+
+  .plan-hero-data span {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--plan-muted);
+  }
+
+  .plan-index {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 1400px;
+    margin: 0 auto;
+    border-left: 1px solid var(--plan-line);
+  }
+
+  .plan-index a {
+    padding: 1.25rem 1.5rem;
+    border-right: 1px solid var(--plan-line);
+    border-bottom: 1px solid var(--plan-line);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--plan-muted);
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  .plan-index a:hover {
+    color: var(--plan-text);
+    background: rgba(215, 255, 63, 0.07);
+  }
+
+  .plan-index a span { margin-right: 0.65rem; color: var(--plan-accent); }
+
+  .plan-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(5rem, 9vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+    scroll-margin-top: 6rem;
+  }
+
+  .plan-section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+    gap: 2.5rem 5rem;
+    align-items: end;
+    margin-bottom: 4rem;
+  }
+
+  .plan-section-head .plan-overline { grid-column: 1 / -1; margin-bottom: -0.5rem; }
+
+  .plan-section-head h2,
+  .plan-decision h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5.8vw, 6rem);
+    font-weight: 650;
+    letter-spacing: -0.055em;
+    line-height: 0.92;
+    color: var(--plan-text);
+  }
+
+  .plan-section-head > p:last-child,
+  .plan-reference-copy,
+  .plan-note {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--plan-muted);
+  }
+
+  .plan-section-head-wide h2 { grid-column: 1 / -1; }
+
+  .plan-category-grid,
+  .plan-three-grid,
+  .plan-document-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .plan-category-card,
+  .plan-info-card,
+  .plan-document-card {
+    position: relative;
+    min-height: 320px;
+    padding: 2rem;
+    border: 1px solid var(--plan-line);
+    background: linear-gradient(145deg, rgba(15, 30, 37, 0.92), rgba(8, 18, 23, 0.9));
+  }
+
+  .plan-category-card + .plan-category-card,
+  .plan-info-card + .plan-info-card,
+  .plan-document-card + .plan-document-card { border-left: 0; }
+
+  .plan-card-code span:first-child,
+  .plan-info-number { color: var(--plan-accent); }
+
+  .plan-category-card h3,
+  .plan-info-card h3,
+  .plan-document-card h3,
+  .plan-step-body h3 {
+    margin: 5.5rem 0 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--plan-text);
+  }
+
+  .plan-category-card p,
+  .plan-info-card p,
+  .plan-document-card p {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--plan-muted);
+  }
+
+  .plan-card-line {
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+    left: 2rem;
+    height: 2px;
+    background: var(--plan-accent);
+    transform: scaleX(0.18);
+    transform-origin: left;
+    transition: transform 240ms ease;
+  }
+
+  .plan-category-card:hover .plan-card-line { transform: scaleX(1); }
+
+  .plan-info-number {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .plan-info-card h3 { margin-top: 6.75rem; }
+
+  .plan-principle-card { background: rgba(215, 255, 63, 0.055); }
+
+  .plan-reference-copy { max-width: 900px; margin-bottom: 3rem; }
+
+  .plan-reference-copy a {
+    border-bottom: 1px solid var(--plan-accent);
+    color: var(--plan-text);
+  }
+
+  .plan-note {
+    max-width: 860px;
+    margin-top: 3rem;
+    padding-left: 1.4rem;
+    border-left: 2px solid var(--plan-accent);
+  }
+
+  .plan-divider {
+    max-width: 1400px;
+    height: 1px;
+    margin: 0 auto;
+    background: var(--plan-line);
+  }
+
+  .plan-timeline {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--plan-line);
+    list-style: none;
+  }
+
+  .plan-step {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    border-bottom: 1px solid var(--plan-line);
+  }
+
+  .plan-step.is-current { background: rgba(215, 255, 63, 0.035); }
+
+  .plan-step-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2.25rem 2rem 2.25rem 0;
+    border-right: 1px solid var(--plan-line);
+  }
+
+  .plan-step-rail > span {
+    font-family: var(--font-brand);
+    font-size: 3.5rem;
+    font-weight: 400;
+    line-height: 1;
+    color: rgba(242, 244, 237, 0.28);
+  }
+
+  .plan-step.is-current .plan-step-rail > span { color: var(--plan-accent); }
+
+  .plan-step-rail time,
+  .plan-step-rail em {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--plan-muted);
+  }
+
+  .plan-step-rail em {
+    margin-top: 0.7rem;
+    padding: 0.4rem 0.55rem;
+    background: var(--plan-accent);
+    color: var(--plan-bg);
+  }
+
+  .plan-step-body { padding: 2.35rem 0 2.75rem 3rem; }
+  .plan-step-body h3 { max-width: 740px; margin: 0 0 0.75rem; }
+
+  .plan-step-intro {
+    max-width: 760px;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--plan-muted);
+  }
+
+  .plan-step-body ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 2.5rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan-step-body li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: rgba(242, 244, 237, 0.78);
+  }
+
+  .plan-step-body li::before {
+    position: absolute;
+    left: 0;
+    content: "/";
+    color: var(--plan-accent);
+  }
+
+  .plan-step-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--plan-line);
+  }
+
+  .plan-step-links a {
+    padding: 0.7rem 0.85rem;
+    border: 1px solid rgba(215, 255, 63, 0.45);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--plan-accent);
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  .plan-step-links a:hover { background: var(--plan-accent); color: var(--plan-bg); }
+
+  .plan-document-grid { gap: 1px; background: var(--plan-line); }
+
+  .plan-document-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 330px;
+    border: 0;
+    color: inherit;
+    transition: background 180ms ease, transform 180ms ease;
+  }
+
+  .plan-document-card:hover {
+    z-index: 1;
+    background: #14272f;
+    transform: translateY(-4px);
+  }
+
+  .plan-document-card h3 { margin-top: 4.5rem; }
+
+  .plan-document-open {
+    margin-top: auto;
+    padding-top: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--plan-accent);
+  }
+
+  .plan-decision {
+    position: relative;
+    display: flex;
+    min-height: 760px;
+    align-items: flex-end;
+    overflow: hidden;
+    border-top: 1px solid var(--plan-line);
+    background: #102027;
+  }
+
+  .plan-decision::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(180deg, rgba(7, 16, 21, 0.12), rgba(7, 16, 21, 0.95));
+  }
+
+  .plan-decision > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.72) contrast(1.08);
+  }
+
+  .plan-decision-overlay {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 5rem);
+  }
+
+  .plan-decision h2 {
+    max-width: 980px;
+    font-family: var(--font-brand);
+    font-size: clamp(4rem, 8vw, 8.5rem);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 0.84;
+    text-transform: uppercase;
+  }
+
+  .plan-decision-overlay > p:last-child {
+    max-width: 720px;
+    margin: 2rem 0 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(242, 244, 237, 0.78);
+  }
+
+  @media (max-width: 1024px) {
+    .plan-hero { grid-template-columns: 1fr; }
+    .plan-hero-media { min-height: 58vh; max-height: 680px; border-right: 0; border-bottom: 1px solid var(--plan-line); }
+    .plan-hero-panel { min-height: 660px; }
+    .plan-section-head { grid-template-columns: 1fr; }
+    .plan-section-head .plan-overline,
+    .plan-section-head-wide h2 { grid-column: auto; }
+    .plan-three-grid,
+    .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .plan-info-card + .plan-info-card { border-left: 1px solid var(--plan-line); }
+    .plan-info-card:nth-child(even) { border-left: 0; }
+    .plan-step { grid-template-columns: 170px minmax(0, 1fr); }
+    .plan-step-body { padding-left: 2rem; }
+    .plan-step-body ul { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 680px) {
+    .plan-hero-media { min-height: 48vh; }
+    .plan-hero-media figcaption { right: 1.25rem; bottom: 1.25rem; left: 1.25rem; }
+    .plan-hero-panel { min-height: 650px; padding: 1.5rem; }
+    .plan-hero-topline { flex-wrap: wrap; }
+    .plan-hero h1 { font-size: clamp(4rem, 20vw, 6.2rem); }
+    .plan-hero-data div { padding: 1.1rem 0.65rem; }
+    .plan-hero-data strong { font-size: 1.75rem; }
+    .plan-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .plan-category-grid,
+    .plan-three-grid,
+    .plan-document-grid { grid-template-columns: 1fr; }
+    .plan-category-card + .plan-category-card,
+    .plan-info-card + .plan-info-card { border-top: 0; border-left: 1px solid var(--plan-line); }
+    .plan-section-head { margin-bottom: 2.75rem; }
+    .plan-section-head h2 { font-size: clamp(2.8rem, 14vw, 4rem); }
+    .plan-step { display: block; }
+    .plan-step-rail {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 0;
+      border-right: 0;
+      border-bottom: 1px solid var(--plan-line);
+    }
+    .plan-step-rail time,
+    .plan-step-rail em { margin: 0; }
+    .plan-step-body { padding: 2rem 0 2.5rem; }
+    .plan-decision { min-height: 660px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plan-document-card,
+    .plan-card-line { transition: none; }
+    .plan-document-card:hover { transform: none; }
+  }
+</style>
