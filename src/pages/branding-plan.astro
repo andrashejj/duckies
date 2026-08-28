@@ -2,49 +2,49 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 
-const title = `Global brand project | ${site.name}`;
+const title = `A product brand for surf families | ${site.name}`;
 const description =
-  "The assessment and implementation plan for Sunset Duckies, a global purpose-driven brand that promotes local kids' surf clubs.";
+  "The plan for Sunset Duckies: premium, long-life surf products for growing kids and everyday surf families, with a contribution from every sale going back to the club.";
 
-const deliverables = [
+const audience = [
   {
-    emoji: "🧭",
-    title: "A clear purpose",
+    emoji: "🌱",
+    title: "Kids who grow",
     accent: "sticker-teal",
-    text: "Promote local kids' surf clubs and the coaches, families and communities that keep them going.",
+    text: "Gear designed around changing bodies, regular use and the possibility of passing it on when a child outgrows it.",
   },
   {
-    emoji: "🎨",
-    title: "A global brand",
+    emoji: "🏄",
+    title: "Mums and dads who surf",
     accent: "sticker-sun",
-    text: "A shared name, voice and identity that can introduce local clubs to people far beyond their home break.",
+    text: "Reliable, good-looking products for family surf life: school mornings, weekend sessions, holidays and time in the water together.",
   },
   {
-    emoji: "📓",
-    title: "A format for local clubs",
+    emoji: "🤝",
+    title: "The club around them",
     accent: "sticker-pink",
-    text: "A repeatable way to feature each club's place, people and work without losing what makes it local.",
+    text: "A close community that helps choose and test the products, then sees exactly what each product gives back to the club.",
   },
 ];
 
-const ideas = [
+const principles = [
   {
-    name: "Access",
+    name: "Designed for growth",
     accent: "sticker-teal",
-    emoji: "🌊",
-    text: "Promote the local clubs that help kids reach the water, find gear and learn from people they trust.",
+    emoji: "📏",
+    text: "Use fit, adjustment and sizing carefully so a child gets more useful time from the product.",
   },
   {
-    name: "Outside",
+    name: "Built for years",
     accent: "sticker-sun",
-    emoji: "☀️",
-    text: "Show what local clubs give kids: time outside, confidence in the water and a regular reason to surf.",
+    emoji: "🛠️",
+    text: "Choose materials and construction for salt, sun and repeat use. Repair and hand-me-down life are part of the brief.",
   },
   {
-    name: "Belonging",
+    name: "The club is in the price",
     accent: "sticker-pink",
-    emoji: "🤝",
-    text: "Tell the stories of the kids, parents and coaches who turn a surf session into a community.",
+    emoji: "🌊",
+    text: "Every product includes a fixed, visible club contribution for equipment, sessions, events and other agreed club costs.",
   },
 ];
 
@@ -53,31 +53,33 @@ const steps = [
     date: "August",
     emoji: "🗣️",
     accent: "sticker-teal",
-    status: "done",
-    title: "Collect the club's words",
-    text: "Start with the language people in Tamarin already use for Sunset Duckies.",
+    status: "now",
+    title: "Find the first real product problem",
+    text: "Start with what Tamarin families already buy, replace, complain about and pass on.",
     tasks: [
-      "Send the first part of the parent questionnaire to the family WhatsApp group.",
-      "Ask coaches how they describe the club to a new family.",
-      "Copy the answers into one working document, keeping people's own words.",
+      "Ask parents which surf products they bought in the last two years, how long each lasted and why it was replaced.",
+      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability or something else.",
+      "Talk to the kids about the gear they reach for, the gear they avoid and what they would be proud to wear or use.",
+      "Ask coaches which product problems they see repeatedly at training.",
+      "List the club costs a product contribution could pay for, including shared gear, sessions and events.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
+      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
     ],
   },
   {
     date: "By 6 Sep",
-    emoji: "📄",
+    emoji: "📚",
     accent: "sticker-teal",
-    status: "now",
-    title: "Read and write up the research",
-    text: "The research ends with one page of useful notes for this club.",
+    title: "Read, compare and write down the rules",
+    text: "Turn the research into a short product and purpose brief for Sunset Duckies.",
     tasks: [
-      "Read “Let My People Go Surfing” by Yvon Chouinard.",
-      "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley.",
-      "Find purpose-driven brands that promote independent local groups. Note how they share attention, credit and control.",
-      "Make a shortlist of local kids' surf clubs in different countries and record how they currently tell their stories.",
-      "Write one page on what Sunset Duckies owes a featured club, its kids and families, and its local community.",
+      "Read “Let My People Go Surfing” by Yvon Chouinard and note what it says about product quality, culture and responsibility.",
+      "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley and note its tests for a legitimate, long-life product and a responsible supply chain.",
+      "Review premium products for growing children and everyday surfers. Record their materials, sizing, useful life, repair options and prices.",
+      "Look at purpose-led product companies and record how they explain where the money goes.",
+      "Write one page of Sunset Duckies rules covering quality, useful life, customer, club contribution and community accountability.",
     ],
     links: [],
   },
@@ -85,56 +87,55 @@ const steps = [
     date: "By 20 Sep",
     emoji: "✏️",
     accent: "sticker-sun",
-    title: "Make three rough versions",
-    text: "Prepare one version for Access, one for Outside and one for Belonging.",
+    title: "Make three rough product concepts",
+    text: "Start with a long-life lycra, a durable first surfboard and one more essential item named by families.",
     tasks: [
-      "Fill in the project summary with the global purpose, the promise to local clubs and the way Sunset Duckies speaks.",
-      "Complete one idea sheet for each of the three starting points.",
-      "Give every version a line, a badge sketch, three colours, a sticker and one example feature about the Tamarin club using a real training photo.",
-      "Write the main line so someone outside Mauritius understands that Sunset Duckies promotes local surf clubs.",
-      "Keep Tamarin, its coaches and its families visible in the example instead of presenting everything as Sunset Duckies' own work.",
-      "Keep all three equally rough so the family feedback is about the idea rather than the neatest drawing.",
+      "Complete the product and purpose brief with the customer, the problem and the promise to the club.",
+      "Fill in one product concept sheet for each option.",
+      "For every concept, define the user, use case, fit or growth idea, materials, expected life, repair or pass-on plan and product look.",
+      "Add a provisional retail price, product cost, margin and fixed club contribution. Mark every number that still needs a supplier quote.",
+      "Show all three at the same rough level, with enough visual detail for kids and parents to react to them.",
     ],
     links: [
-      { label: "Project summary", file: "/templates/brand-concept.html" },
-      { label: "Idea sheet", file: "/templates/brand-direction-sheet.html" },
+      { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
+      { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
     ],
   },
   {
     date: "21 Sep – 4 Oct",
     emoji: "🏄",
     accent: "sticker-pink",
-    title: "Show all three to the club",
-    text: "Families see the same rough sheets in WhatsApp and at training.",
+    title: "Choose the product with families",
+    text: "Put the three concepts in front of the people who would buy and use them.",
     tasks: [
-      "Send the three idea sheets and the second part of the parent questionnaire to the family WhatsApp group.",
-      "Use the kid conversations sheet at training: offer the stickers, ask which one would embarrass them, and check on Friday what they remember.",
-      "Record answers from ages 7 to 9 separately from ages 10 to 13.",
-      "Ask parents whether the example presents the Tamarin club accurately and what a global brand must never take away from it.",
-      "Collect a photo permission form from every family before using images of the kids on global Sunset Duckies channels.",
-      "Hold a call with Estelle and the founding families, then choose one idea and write down why.",
+      "Show the same three concepts to parents in WhatsApp and at training.",
+      "Ask which product they need, what they would expect at the proposed price and what would stop them buying it.",
+      "Explain the club contribution as a separate number and ask whether the use of that money feels clear and worthwhile.",
+      "Let kids handle comparable products or samples. Record reactions to fit, comfort, look and whether they would choose to use it.",
+      "Compare answers from younger kids, older kids and parents instead of averaging them together.",
+      "Choose one product with Estelle, the coaches and founding families, then write down the evidence and the remaining risks.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
       { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
-      { label: "Photo permission", file: "/templates/brand-photo-permission.html" },
     ],
   },
   {
     date: "5 Oct – 1 Nov",
-    emoji: "🛹",
+    emoji: "🧪",
     accent: "sticker-coral",
-    title: "Build and test a prototype",
-    text: "Make enough of the chosen idea to test the model before implementation.",
+    title: "Check whether the first product can work",
+    text: "Test the product, price and contribution far enough to make an honest implementation decision.",
     tasks: [
-      "Prepare a working badge, colours, type and main line. Check them in one colour, at 15 mm and as a profile picture.",
-      "Run the five-second recognition check with eight people who do not know the club. They should understand that Sunset Duckies promotes local surf clubs.",
-      "Prototype the first local club feature around Tamarin, with the club's own place, people, photos and words clearly credited.",
-      "Show that feature to at least two people who run or help with local surf clubs outside Mauritius. Ask what they would need before taking part.",
-      "Run a two-week posting trial and note which local club stories parents share, save or repost, and whether they reach people beyond the existing families.",
+      "Prepare a sample, sourced reference product or detailed prototype specification for the chosen concept.",
+      "Get supplier conversations or quotes for materials, sampling, minimum order, production time, packaging and delivery.",
+      "Test fit, comfort and use with the club. Define what durability testing will be required during implementation.",
+      "Build provisional unit economics showing product cost, shipping, duties, margin, retail price and the club contribution.",
+      "Write the one-sentence explanation customers will see: how much goes to the club, what it can fund and how Sunset Duckies will report it.",
+      "Show the product and price to likely buyers outside the founding families and record purchase or pre-order interest without treating likes as demand.",
     ],
     links: [
-      { label: "Quick recognition check", file: "/templates/brand-stranger-test.html" },
+      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
     ],
   },
   {
@@ -142,13 +143,14 @@ const steps = [
     emoji: "📋",
     accent: "sticker-lilac",
     title: "Complete the initial assessment",
-    text: "Turn the research, concepts and tests into a recommendation and implementation brief.",
+    text: "Decide whether there is a credible first product and define the work required to make it properly.",
     tasks: [
-      "Write the research summary, including the two books, comparable brands and shortlist of local surf clubs.",
-      "Record the chosen direction, the reasons for choosing it and the questions still open.",
-      "Summarise what Tamarin families, outside viewers and people from other local clubs understood, questioned or wanted changed.",
-      "Recommend whether the model should move into implementation and list the changes needed first.",
-      "Set the proposed implementation scope, owners, budget and dates for approval.",
+      "Name the chosen customer and first product, the problem it solves and the evidence behind the choice.",
+      "Set the quality, fit, growth, useful-life, repair and pass-on requirements.",
+      "Summarise supplier feasibility, open production risks and the testing still required.",
+      "Present the provisional price, costs, margin and club contribution, with assumptions clearly marked.",
+      "Summarise family feedback and outside purchase interest.",
+      "Recommend whether to implement, change direction or stop, then set the proposed scope, owners, budget and dates.",
     ],
     links: [],
   },
@@ -156,14 +158,16 @@ const steps = [
     date: "After 1 Nov",
     emoji: "🛠️",
     accent: "sticker-teal",
-    title: "Implement the brand and club programme",
-    text: "The club sets the dates after reviewing and approving the initial assessment.",
+    title: "Develop, test and launch the first product",
+    text: "Implementation begins after the club approves the assessment and its budget.",
     tasks: [
-      "Finalise the badge, colours, type, voice and brand files from the approved direction.",
-      "Build the reusable local club feature and the process for participation, credit, story approval and photo permission.",
-      "Apply the brand to the website, social accounts, rashies, stickers and the first Tamarin club feature.",
-      "Invite the first local surf clubs, collect their stories and approvals, and prepare their features.",
-      "Launch the pilot, publish the first club stories and review what reaches new people and what helps the featured clubs.",
+      "Develop supplier samples and revise the materials, construction, fit and design.",
+      "Run real wear and durability tests with kids and parents, fix failures and repeat until the product meets the brief.",
+      "Confirm production, minimum order, quality control, delivery, returns, repair and pass-on arrangements.",
+      "Finish the identity, packaging, product page and customer explanation of the club contribution.",
+      "Set up a simple record showing money collected, money transferred and what the club used it for.",
+      "Make a limited first production run and launch it through the core Tamarin community.",
+      "Review product quality, sell-through, returns and club impact before choosing the next product or another local club.",
     ],
     links: [],
   },
@@ -172,98 +176,98 @@ const steps = [
 const kit = [
   {
     emoji: "🧭",
-    title: "Project summary",
+    title: "Product and purpose brief",
     phase: "Estelle",
     file: "/templates/brand-concept.html",
-    desc: "A one-page place to define the global purpose, the promise to local clubs and what Sunset Duckies is responsible for.",
+    desc: "Defines the family we are building for, the product standard, the reason for the premium price and the promise to the club.",
   },
   {
     emoji: "✏️",
-    title: "Idea sheet",
+    title: "Product concept sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    desc: "The same sheet used for each rough idea: purpose, line, badge, colours and an example that promotes the Tamarin club.",
+    desc: "The same practical sheet for each product idea: use, fit, useful life, materials, price, club contribution and testing plan.",
   },
   {
     emoji: "💬",
     title: "Questions for parents",
     phase: "Families",
     file: "/templates/brand-parent-questionnaire.html",
-    desc: "Questions about the Tamarin club, the three ideas and whether the global brand represents the local work fairly.",
+    desc: "Finds what families buy and replace, what frustrates them and what they expect from a premium product that funds the club.",
   },
   {
     emoji: "🏄",
     title: "Talking to the kids",
     phase: "Coaches",
     file: "/templates/brand-kid-conversations.html",
-    desc: "A simple guide for showing the ideas at training and recording what the younger and older kids say about them.",
+    desc: "A run sheet for learning which gear kids use, avoid and want to be seen with, then testing product concepts with them.",
   },
   {
     emoji: "⏱️",
-    title: "Quick recognition check",
+    title: "Product clarity check",
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
-    desc: "Show the brand for five seconds and check whether people understand that it promotes local surf clubs.",
+    desc: "Checks whether an outside buyer understands who the product is for, why it costs more and what the club contribution does.",
   },
   {
     emoji: "📸",
     title: "Photo permission",
     phase: "Families",
     file: "/templates/brand-photo-permission.html",
-    desc: "A clear record of whether and where each child may appear when Sunset Duckies promotes the local club.",
+    desc: "A clear record of whether and where each child may appear in product development and Sunset Duckies communications.",
   },
 ];
 ---
 
 <BaseLayout title={title} description={description}>
-  <!-- ===================== INTRO ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="surface-card p-8 md:p-12" data-float>
       <div class="flex flex-wrap items-center gap-3">
-        <p class="section-kicker">A global brand for local clubs</p>
+        <p class="section-kicker">Better surf products for families</p>
         <span class="tag-pill lilac">Initial assessment · August–1 November 2026</span>
-        <span class="tag-pill">Implementation follows</span>
+        <span class="tag-pill">Product development follows</span>
       </div>
       <h1
         class="section-title mt-6 max-w-4xl"
         style="font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 0.95;"
       >
-        Building
-        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Sunset Duckies</span>
-        to promote local surf clubs.
+        Surf gear for
+        <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">kids who grow</span>.
       </h1>
       <p class="body-copy mt-6 max-w-3xl">
-        Sunset Duckies started with a kids' surf club in Tamarin. Estelle's project asks
-        whether it can also become a global, purpose-driven brand whose job is to promote
-        local surf clubs. The local clubs do the work. Sunset Duckies helps more people see
-        the kids, coaches, families and places behind it.
+        Sunset Duckies wants to build high-quality surf products for children and the mums
+        and dads who surf with them. We start with things families already need, such as a
+        lycra or a first surfboard, and make them good-looking, hard-wearing and useful for as
+        long as possible.
       </p>
       <p class="body-copy mt-4 max-w-3xl">
-        Tamarin is the first club and the first test. Its own name, people and character stay
-        visible. The global brand provides a shared identity and a larger audience for its story.
-        Estelle is a friend of the club, studying in Switzerland, and is doing the work part
-        time alongside her degree.
+        The price will reflect the materials, construction, testing and a fixed contribution
+        to the club. That contribution should be visible when someone buys the product. It can
+        help pay for shared boards and gear, regular sessions, events and other costs agreed by
+        the club.
+      </p>
+      <p class="body-copy mt-4 max-w-3xl">
+        Tamarin is the starting community. The kids and parents help decide what is worth
+        making, test it in real surf life and see where the club money goes. If that works,
+        Sunset Duckies has the foundation for a global product brand built from strong local
+        surf communities.
       </p>
     </div>
   </section>
 
-  <!-- ===================== WHAT WE ARE MAKING ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">The model</p>
+    <p class="section-kicker">Who we are building for</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      One global brand, built around
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">local clubs</span>.
+      Everyday surf life,
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">made better</span>.
     </h2>
 
     <div class="mt-8 grid gap-6 md:grid-cols-3">
       {
-        deliverables.map((item, i) => (
+        audience.map((item, i) => (
           <div class:list={["surface-card p-6", item.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
             <span class="text-3xl" aria-hidden="true">{item.emoji}</span>
-            <h3
-              class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
+            <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
               {item.title}
             </h3>
             <p class="body-copy mt-2 text-sm">{item.text}</p>
@@ -273,50 +277,54 @@ const kit = [
     </div>
 
     <p class="body-copy mt-8 max-w-3xl text-sm">
-      Families in Tamarin decide whether the brand represents their club fairly. People
-      outside Mauritius test whether its purpose is clear. People involved in other local
-      surf clubs say whether they would want their own club presented this way. Those three
-      groups give us the answer.
+      The customer is the child learning to surf, the parent fitting in a morning session and
+      the family buying gear that has to survive sun, salt, sand and hand-me-down life. The
+      product has to earn a premium price through its quality and usefulness.
+      Competition-performance gear sits outside this first brief.
     </p>
   </section>
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
-  <!-- ===================== THE IDEAS ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
-    <p class="section-kicker">The starting point</p>
+    <p class="section-kicker">The product rules</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
-      Three ideas to
-      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">explore</span>.
+      Purpose has to show up in
+      <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">the product</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      The three starting points are different ways for the global brand to talk about local
-      clubs: the access they create, the time they give kids outside, and the communities they
-      build. Estelle will make one rough version of each, using the Tamarin club as the first
-      real example.
+      Two books are working references for the assessment:
+      <a class="font-bold underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-2" href="https://www.patagonia.com/product/let-my-people-go-surfing-revised-paperback-book/BK067.html" target="_blank" rel="noreferrer">Let My People Go Surfing</a>
+      and
+      <a class="font-bold underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-2" href="https://www.patagonia.com/product/the-future-of-the-responsible-company-paperback/BK235.html" target="_blank" rel="noreferrer">The Future of the Responsible Company</a>.
+      Their useful challenge for Sunset Duckies is practical: make a legitimate product that
+      lasts, understand how it is made, respect the people around the business and make the
+      purpose part of how the company operates.
     </p>
 
     <div class="mt-8 grid gap-6 md:grid-cols-3">
       {
-        ideas.map((idea, i) => (
-          <div class:list={["surface-card p-6", idea.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
-            <span class="text-3xl" aria-hidden="true">{idea.emoji}</span>
-            <h3
-              class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
-              {idea.name}
+        principles.map((principle, i) => (
+          <div class:list={["surface-card p-6", principle.accent, i === 0 ? "tilt-left" : i === 2 ? "tilt-right" : ""]}>
+            <span class="text-3xl" aria-hidden="true">{principle.emoji}</span>
+            <h3 class="mt-3 text-2xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+              {principle.name}
             </h3>
-            <p class="body-copy mt-2 text-sm">{idea.text}</p>
+            <p class="body-copy mt-2 text-sm">{principle.text}</p>
           </div>
         ))
       }
     </div>
+
+    <p class="body-copy mt-8 max-w-3xl text-sm">
+      A premium price is a promise. The assessment has to define the materials, construction,
+      useful life, testing and service that make the price fair. It also has to choose a clear
+      club contribution, state what it funds and set up a simple way to report the money.
+    </p>
   </section>
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
-  <!-- ===================== THE PROCESS ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
     <p class="section-kicker">How the project works</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
@@ -324,18 +332,13 @@ const kit = [
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">schedule</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      The first part is an assessment: research the model, make rough directions and test one
-      prototype. That work ends on 1 November with a recommendation and implementation brief.
-      The second part turns the approved direction into the finished brand and launches the
-      first local-club pilot. The club sets those dates after reviewing the assessment.
+      The work through 1 November is an assessment. It identifies the customer, chooses a
+      first product, tests the price and contribution, and checks whether production looks
+      credible. The approved product is developed, wear-tested and produced afterward.
     </p>
 
     <div class="relative mx-auto mt-10 max-w-3xl">
-      <div
-        class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35"
-        style="left: calc(1.5rem - 1px);"
-        aria-hidden="true"
-      ></div>
+      <div class="absolute bottom-8 top-2 border-l-2 border-dashed border-[var(--color-ink-950)]/35" style="left: calc(1.5rem - 1px);" aria-hidden="true"></div>
       <ol class="space-y-6">
         {
           steps.map((step) => (
@@ -343,26 +346,18 @@ const kit = [
               <span
                 class:list={[
                   "relative z-10 mt-1 inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] text-xl shadow-[3px_3px_0_0_var(--color-ink-950)]",
-                  step.status === "done"
-                    ? "bg-[var(--color-teal-500)]"
-                    : step.status === "now"
-                      ? "bg-[var(--color-coral-500)]"
-                      : "bg-[var(--color-sun-500)]",
+                  step.status === "now" ? "bg-[var(--color-coral-500)]" : "bg-[var(--color-sun-500)]",
                 ]}
                 aria-hidden="true"
               >
-                {step.status === "done" ? "✓" : step.emoji}
+                {step.emoji}
               </span>
               <div class:list={["surface-card p-5 md:p-6", step.accent, step.status === "now" ? "dashed" : ""]}>
                 <div class="flex flex-wrap items-center gap-2">
                   <span class="tag-pill sun">{step.date}</span>
-                  {step.status === "done" && <span class="tag-pill">done</span>}
                   {step.status === "now" && <span class="tag-pill pink">we are here</span>}
                 </div>
-                <h3
-                  class="mt-3 text-xl font-bold text-[var(--color-ink-950)]"
-                  style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-                >
+                <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
                   {step.title}
                 </h3>
                 <p class="body-copy mt-1 text-sm">{step.text}</p>
@@ -377,12 +372,7 @@ const kit = [
                 {step.links.length > 0 && (
                   <div class="mt-5 flex flex-wrap gap-2 border-t border-[var(--color-ink-950)]/15 pt-4">
                     {step.links.map((link) => (
-                      <a
-                        href={link.file}
-                        target="_blank"
-                        rel="noreferrer"
-                        class="tag-pill transition hover:-translate-y-0.5 hover:bg-[var(--color-teal-500)]"
-                      >
+                      <a href={link.file} target="_blank" rel="noreferrer" class="tag-pill transition hover:-translate-y-0.5 hover:bg-[var(--color-teal-500)]">
                         Open {link.label} ↗
                       </a>
                     ))}
@@ -398,7 +388,6 @@ const kit = [
 
   <div class="wave-divider mx-auto max-w-7xl px-6"></div>
 
-  <!-- ===================== WORKING DOCUMENTS ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 py-10 lg:px-10" data-reveal>
     <p class="section-kicker">The templates</p>
     <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">
@@ -406,55 +395,40 @@ const kit = [
       <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">working with</span>.
     </h2>
     <p class="body-copy mt-4 max-w-3xl text-sm">
-      These practical worksheets are part of the work in progress. Estelle uses the first two
-      to develop the ideas. The other four help the coaches and families give feedback, test
-      the result and agree how photos of the kids may be used. They work on a phone and can
-      also be printed.
+      These are working sheets, linked to the steps above. They collect the product decisions,
+      family evidence, kid feedback and outside-buyer reactions needed for the assessment.
+      They work on a phone and can also be printed.
     </p>
 
     <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {
         kit.map((item) => (
-          <a
-            href={item.file}
-            target="_blank"
-            rel="noreferrer"
-            class="surface-card group block p-6 transition hover:-translate-y-1"
-          >
+          <a href={item.file} target="_blank" rel="noreferrer" class="surface-card group block p-6 transition hover:-translate-y-1">
             <div class="flex items-start justify-between gap-3">
               <span class="text-2xl" aria-hidden="true">{item.emoji}</span>
               <span class="tag-pill">{item.phase}</span>
             </div>
-            <h3
-              class="mt-3 text-xl font-bold text-[var(--color-ink-950)] transition group-hover:text-[var(--color-coral-500)]"
-              style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-            >
+            <h3 class="mt-3 text-xl font-bold text-[var(--color-ink-950)] transition group-hover:text-[var(--color-coral-500)]" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
               {item.title}
             </h3>
             <p class="body-copy mt-2 text-sm">{item.desc}</p>
-            <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
-              → Open
-            </p>
+            <p class="mt-4 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-coral-500)]">→ Open</p>
           </a>
         ))
       }
     </div>
   </section>
 
-  <!-- ===================== FINISH ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10" data-reveal>
     <div class="glass-panel p-8 md:p-12">
       <p class="eyebrow-badge">1 November · initial assessment</p>
-      <h2
-        class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl"
-        style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;"
-      >
-        1 November produces the implementation decision.
+      <h2 class="mt-6 max-w-3xl text-3xl font-bold leading-tight md:text-4xl" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+        On 1 November, we decide whether the first product deserves to be made.
       </h2>
       <p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-cream)]/85">
-        The assessment says whether the model should continue, what needs to change and what
-        the implementation will require. The work after 1 November finalises the brand, builds
-        the club participation process and launches the first pilot with local surf clubs.
+        The assessment provides the product brief, family evidence, supplier picture, price,
+        club contribution and implementation budget. Product development, wear testing,
+        production and launch come next, after approval.
       </p>
     </div>
   </section>
