@@ -77,7 +77,7 @@ const categories = [
 
 const steps = [
   {
-    date: "August",
+    date: "28 Aug – 7 Sep",
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
@@ -101,7 +101,7 @@ const steps = [
     ],
   },
   {
-    date: "By 6 Sep",
+    date: "8 – 14 Sep",
     emoji: "📚",
     accent: "sticker-teal",
     title: "Read, compare and write down the rules",
@@ -119,7 +119,7 @@ const steps = [
     links: [],
   },
   {
-    date: "By 20 Sep",
+    date: "15 – 28 Sep",
     emoji: "✏️",
     accent: "sticker-sun",
     title: "Make one rough concept in each category",
@@ -142,7 +142,7 @@ const steps = [
     ],
   },
   {
-    date: "21 Sep – 4 Oct",
+    date: "29 Sep – 12 Oct",
     emoji: "🏄",
     accent: "sticker-pink",
     title: "Choose the product with families",
@@ -162,7 +162,7 @@ const steps = [
     ],
   },
   {
-    date: "5 Oct – 1 Nov",
+    date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
     title: "Check whether the first product can work",
@@ -181,7 +181,7 @@ const steps = [
     ],
   },
   {
-    date: "1 Nov",
+    date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
     title: "Complete the initial assessment",
@@ -197,7 +197,7 @@ const steps = [
     links: [],
   },
   {
-    date: "After 1 Nov",
+    date: "After 31 Oct",
     emoji: "🛠️",
     accent: "sticker-teal",
     title: "Develop, test and launch the first product",
@@ -221,6 +221,7 @@ const kit = [
     title: "Product and purpose brief",
     phase: "Estelle",
     file: "/templates/brand-concept.html",
+    window: "Opens 8 Sep",
     desc: "Defines the family we are building for, the product standard, the reason for the premium price and the promise to the club.",
   },
   {
@@ -228,6 +229,7 @@ const kit = [
     title: "Product concept sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
+    window: "Opens 15 Sep",
     desc: "The same practical sheet for an everyday-wear, surf-wear, surf-gear or nutrition idea: use, fit or ingredients, useful life or shelf life, price, club contribution and testing.",
   },
   {
@@ -235,6 +237,9 @@ const kit = [
     title: "Questions for parents",
     phase: "Families",
     file: "/templates/brand-parent-questionnaire.html",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Every founding family fills one in. Parts 1 and 2 are answerable today; part 3 waits for the four concepts.",
     desc: "Covers their first six months in surfing, the changes they expect over the next two years and what they want from a premium product that funds the club.",
   },
   {
@@ -242,6 +247,9 @@ const kit = [
     title: "Talking to the kids",
     phase: "Coaches",
     file: "/templates/brand-kid-conversations.html",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now; the concepts and the taste test come later.",
     desc: "A run sheet for learning which gear kids use, avoid and want to be seen with, then testing product concepts with them.",
   },
   {
@@ -249,6 +257,7 @@ const kit = [
     title: "Product clarity check",
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
+    window: "Opens 13 Oct",
     desc: "Checks whether an outside buyer understands who the product is for, why it costs more and what the club contribution does.",
   },
   {
@@ -256,9 +265,14 @@ const kit = [
     title: "Photo permission",
     phase: "Families",
     file: "/templates/brand-photo-permission.html",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Signed once per child, before any photo or video is used. Needed before concept testing starts.",
     desc: "A clear record of whether and where each child may appear in product development and Sunset Duckies communications.",
   },
 ];
+
+const openNow = kit.filter((item) => item.open);
 ---
 
 <BaseLayout title={title} description={description} variant="performance">
@@ -299,7 +313,7 @@ const kit = [
         <div class="plan-hero-data" aria-label="Project facts">
           <div><strong>04</strong><span>Product categories</span></div>
           <div><strong>01</strong><span>Core community</span></div>
-          <div><strong>01.11</strong><span>Initial assessment</span></div>
+          <div><strong>31.10</strong><span>Initial assessment</span></div>
         </div>
       </div>
     </section>
@@ -409,10 +423,34 @@ const kit = [
       <p class="plan-overline">03 / Initial assessment</p>
       <h2>From category decision to launch brief.</h2>
       <p>
-        The work through 1 November chooses the first product, tests the price and club
-        contribution, and checks whether it can be made properly. Development, wear testing
-        and production begin only after the assessment is approved.
+        The work between now and 31 October chooses the first product, tests the price and
+        club contribution, and checks whether it can be made properly. Development, wear
+        testing and production begin only after the assessment is approved.
       </p>
+    </div>
+
+    <div class="plan-open-now">
+      <div class="plan-open-head">
+        <p class="plan-overline">Open now · closes 7 September</p>
+        <h3>Three sheets are collecting answers this week.</h3>
+        <p>
+          Everything after this phase is built on what these say, so they close when the
+          research phase ends on 7 September. Fill them in on a phone or print them.
+        </p>
+      </div>
+
+      <div class="plan-open-grid">
+        {
+          openNow.map((item) => (
+            <a href={item.file} target="_blank" rel="noreferrer" class="plan-open-card">
+              <span class="plan-open-tag">{item.phase}</span>
+              <h4>{item.title}</h4>
+              <p>{item.now}</p>
+              <span class="plan-open-cta">Open sheet ↗</span>
+            </a>
+          ))
+        }
+      </div>
     </div>
 
     <ol class="plan-timeline">
@@ -466,6 +504,7 @@ const kit = [
               <span>DOC-{String(index + 1).padStart(2, "0")}</span>
               <span>{item.phase}</span>
             </div>
+            <span class:list={["plan-document-window", item.open && "is-open"]}>{item.window}</span>
             <h3>{item.title}</h3>
             <p>{item.desc}</p>
             <span class="plan-document-open">Open document ↗</span>
@@ -484,7 +523,7 @@ const kit = [
       loading="lazy"
     />
     <div class="plan-decision-overlay">
-      <p class="plan-overline">Decision gate / 01 November</p>
+      <p class="plan-overline">Decision gate / 31 October</p>
       <h2>Does the first product deserve to be made?</h2>
       <p>
         The initial assessment ends with a product brief, family evidence, supplier picture,
@@ -965,6 +1004,104 @@ const kit = [
 
   .plan-document-card h3 { margin-top: 4.5rem; }
 
+  .plan-open-now {
+    margin-bottom: 4rem;
+    border: 1px solid var(--plan-line);
+    border-left: 3px solid var(--plan-accent);
+    background: rgba(215, 255, 63, 0.05);
+  }
+
+  .plan-open-head {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--plan-line);
+  }
+
+  .plan-open-head h3 {
+    margin: 0.75rem 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--plan-text);
+  }
+
+  .plan-open-head p:last-child {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.65;
+    color: var(--plan-muted);
+  }
+
+  .plan-open-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .plan-open-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 2rem 1.5rem;
+    border-left: 1px solid var(--plan-line);
+    transition: background 200ms ease;
+  }
+
+  .plan-open-card:first-child { border-left: 0; }
+  .plan-open-card:hover { background: rgba(215, 255, 63, 0.06); }
+
+  .plan-open-tag,
+  .plan-open-cta {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .plan-open-tag { color: var(--plan-muted); }
+
+  .plan-open-card h4 {
+    margin: 1rem 0 0.6rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--plan-text);
+  }
+
+  .plan-open-card p {
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--plan-muted);
+  }
+
+  .plan-open-cta {
+    margin-top: auto;
+    color: var(--plan-accent);
+  }
+
+  .plan-document-window {
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 1rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--plan-line);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--plan-muted);
+  }
+
+  .plan-document-window.is-open {
+    border-color: var(--plan-accent);
+    color: var(--plan-accent);
+  }
+
+  .plan-document-card h3 { margin-top: 3.25rem; }
+
   .plan-document-open {
     margin-top: auto;
     padding-top: 2rem;
@@ -1039,6 +1176,9 @@ const kit = [
     .plan-category-grid,
     .plan-three-grid,
     .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .plan-open-grid { grid-template-columns: 1fr; }
+    .plan-open-card { border-top: 1px solid var(--plan-line); border-left: 0; }
+    .plan-open-card:first-child { border-top: 0; }
     .plan-category-card + .plan-category-card,
     .plan-info-card + .plan-info-card { border-left: 1px solid var(--plan-line); }
     .plan-category-card:nth-child(even),
