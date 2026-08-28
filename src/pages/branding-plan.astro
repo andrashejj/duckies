@@ -4,7 +4,7 @@ import { site } from "../data/site";
 
 const title = `A product brand for surf families | ${site.name}`;
 const description =
-  "The plan for Sunset Duckies: premium, long-life surf products for growing kids and everyday surf families, with a contribution from every sale going back to the club.";
+  "The plan for Sunset Duckies: premium products for growing kids and everyday surf families — everyday wear, surf wear, surf gear and surf nutrition — with a contribution from every sale going back to the club.";
 
 const audience = [
   {
@@ -67,6 +67,12 @@ const categories = [
     context: "Boards and equipment",
     text: "The technical end of the range. A first board must be useful, durable and realistic to produce, test, transport and pass on.",
   },
+  {
+    code: "04",
+    name: "Surf nutrition",
+    context: "Before and after",
+    text: "Breakfast and recovery food for surf mornings: granola, porridge and similar. Bought again every few weeks, and quicker to make and test than a garment or a board.",
+  },
 ];
 
 const steps = [
@@ -82,8 +88,9 @@ const steps = [
       "Record anything that has already stopped fitting, broken, become uncomfortable or been replaced, and why.",
       "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability or something else.",
       "Ask families what they expect the next two years to bring: more sessions, bigger waves, changing bodies, more independence, travel or different equipment.",
-      "List what they think they will buy or replace during those two years under three headings: everyday wear, surf wear and surf gear.",
+      "List what they think they will buy or replace during those two years under four headings: everyday wear, surf wear, surf gear and surf nutrition.",
       "Ask which item in each category they hope could last through most of that change.",
+      "Ask what kids eat before an afternoon or early session and what parents pack for training, including what gets refused, what is bought for convenience and what they wish existed.",
       "Talk to the kids about the gear they reach for, the gear they avoid and what they would be proud to wear or use.",
       "Ask coaches which product problems they see repeatedly at training.",
       "List the club costs a product contribution could pay for, including shared gear, sessions and events.",
@@ -103,7 +110,9 @@ const steps = [
       "Read “Let My People Go Surfing” by Yvon Chouinard and note what it says about product quality, culture and responsibility.",
       "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley and note its tests for a legitimate, long-life product and a responsible supply chain.",
       "Review premium everyday wear, surf wear and surf gear for growing children and family surfers. Record materials, sizing, useful life, repair options and prices.",
-      "Compare the three categories on frequency of use, growth problems, production difficulty, likely price and the amount a sale could return to the club.",
+      "Review premium breakfast and sports nutrition for children and active families. Record ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch sizes and prices.",
+      "Find out which Mauritian food production, hygiene and labelling rules would apply to a granola or porridge made and sold locally, and what a small kitchen or co-packer would need.",
+      "Compare the four categories on how often a family buys, the problem each one solves, production difficulty and regulation, likely price and the amount a sale could return to the club.",
       "Look at purpose-led product companies and record how they explain where the money goes.",
       "Write one page of Sunset Duckies rules covering quality, useful life, customer, club contribution and community accountability.",
     ],
@@ -114,16 +123,18 @@ const steps = [
     emoji: "✏️",
     accent: "sticker-sun",
     title: "Make one rough concept in each category",
-    text: "Compare everyday wear, surf wear and surf gear before choosing where Sunset Duckies should start.",
+    text: "Compare everyday wear, surf wear, surf gear and surf nutrition before choosing where Sunset Duckies should start.",
     tasks: [
       "Complete the product and purpose brief with the customer, the problem and the promise to the club.",
       "Make one everyday-wear concept, using the item families name most often.",
       "Make one surf-wear concept, such as a long-life lycra if the research supports it.",
       "Make one surf-gear concept, such as a durable first surfboard if the research supports it.",
-      "Fill in the same product concept sheet for all three categories.",
+      "Make one nutrition concept, such as a club granola or porridge mix if the research supports it.",
+      "Fill in the same product concept sheet for all four categories.",
       "For every concept, define the user, use case, fit or growth idea, materials, expected life, repair or pass-on plan and product look.",
+      "For the nutrition concept, replace fit, life and repair with ingredients and sourcing, nutrition per serving, allergens, shelf life, packaging and serving size.",
       "Add a provisional retail price, product cost, margin and fixed club contribution. Mark every number that still needs a supplier quote.",
-      "Show all three at the same rough level, with enough visual detail for kids and parents to react to them.",
+      "Show all four at the same rough level, with enough visual detail for kids and parents to react to them.",
     ],
     links: [
       { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
@@ -135,12 +146,13 @@ const steps = [
     emoji: "🏄",
     accent: "sticker-pink",
     title: "Choose the product with families",
-    text: "Put the three concepts in front of the people who would buy and use them.",
+    text: "Put the four concepts in front of the people who would buy and use them.",
     tasks: [
-      "Show the same three concepts to parents in WhatsApp and at training.",
+      "Show the same four concepts to parents in WhatsApp and at training.",
       "Ask which category fits their next two years, which product they need, what they would expect at the proposed price and what would stop them buying it.",
       "Explain the club contribution as a separate number and ask whether the use of that money feels clear and worthwhile.",
       "Let kids handle comparable products or samples. Record reactions to fit, comfort, look and whether they would choose to use it.",
+      "For the nutrition concept, run a taste test with a comparable product. Check allergies and permission with parents first, and record what kids finish, what they leave and what they ask for again.",
       "Compare answers from younger kids, older kids and parents instead of averaging them together.",
       "Choose one product with Estelle, the coaches and founding families, then write down the evidence and the remaining risks.",
     ],
@@ -158,6 +170,7 @@ const steps = [
     tasks: [
       "Prepare a sample, sourced reference product or detailed prototype specification for the chosen concept.",
       "Get supplier conversations or quotes for materials, sampling, minimum order, production time, packaging and delivery.",
+      "If the chosen product is food, confirm the kitchen or co-packer, ingredient sourcing, batch size, shelf-life testing, labelling, hygiene approval and how it will be stored and delivered.",
       "Test fit, comfort and use with the club. Define what durability testing will be required during implementation.",
       "Build provisional unit economics showing product cost, shipping, duties, margin, retail price and the club contribution.",
       "Write the one-sentence explanation customers will see: how much goes to the club, what it can fund and how Sunset Duckies will report it.",
@@ -175,7 +188,7 @@ const steps = [
     text: "Decide whether there is a credible first product and define the work required to make it properly.",
     tasks: [
       "Name the chosen category and first product, the customer problem it solves and the evidence behind the choice.",
-      "Set the quality, fit, growth, useful-life, repair and pass-on requirements.",
+      "Set the quality, fit, growth, useful-life, repair and pass-on requirements, or for a food product the ingredients, nutrition, allergen, shelf-life and packaging requirements.",
       "Summarise supplier feasibility, open production risks and the testing still required.",
       "Present the provisional price, costs, margin and club contribution, with assumptions clearly marked.",
       "Summarise family feedback and outside purchase interest.",
@@ -191,7 +204,7 @@ const steps = [
     text: "Implementation begins after the club approves the assessment and its budget.",
     tasks: [
       "Develop supplier samples and revise the materials, construction, fit and design.",
-      "Run real wear and durability tests with kids and parents, fix failures and repeat until the product meets the brief.",
+      "Run real wear and durability tests with kids and parents, or taste, batch and shelf-life tests for a food product, then fix failures and repeat until the product meets the brief.",
       "Confirm production, minimum order, quality control, delivery, returns, repair and pass-on arrangements.",
       "Finish the identity, packaging, product page and customer explanation of the club contribution.",
       "Set up a simple record showing money collected, money transferred and what the club used it for.",
@@ -215,7 +228,7 @@ const kit = [
     title: "Product concept sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    desc: "The same practical sheet for an everyday-wear, surf-wear and surf-gear idea: use, fit, useful life, price, club contribution and testing.",
+    desc: "The same practical sheet for an everyday-wear, surf-wear, surf-gear or nutrition idea: use, fit or ingredients, useful life or shelf life, price, club contribution and testing.",
   },
   {
     emoji: "💬",
@@ -276,14 +289,15 @@ const kit = [
             Designed to look good, work hard and stay useful for as long as possible.
           </p>
           <p class="plan-hero-copy">
-            The first decision is where to start: everyday wear, surf wear or surf gear. The
+            The first decision is where to start: everyday wear, surf wear, surf gear or surf
+            nutrition. The
             price will reflect the materials, construction, testing and a fixed contribution
             to the club.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>03</strong><span>Product categories</span></div>
+          <div><strong>04</strong><span>Product categories</span></div>
           <div><strong>01</strong><span>Core community</span></div>
           <div><strong>01.11</strong><span>Initial assessment</span></div>
         </div>
@@ -303,8 +317,8 @@ const kit = [
         <h2>Choose the category before the product.</h2>
         <p>
           We will develop one equally rough concept in each category, then compare need,
-          repeat use, growth, product life, production difficulty, price and the contribution
-          each sale could return to the club.
+          repeat use or repeat purchase, growth, product life, production difficulty, price
+          and the contribution each sale could return to the club.
         </p>
       </div>
 
@@ -374,6 +388,12 @@ const kit = [
         ))
       }
     </div>
+
+    <p class="plan-note">
+      A food product reads the first two rules differently: growth becomes what a child will
+      actually eat before a session, and long life becomes ingredients we can name, honest
+      nutrition and a shelf life a small batch can hold. The third rule does not change.
+    </p>
 
     <p class="plan-note">
       A premium price is a promise. The assessment has to define the materials, construction,
@@ -728,6 +748,8 @@ const kit = [
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .plan-category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
   .plan-category-card,
   .plan-info-card,
   .plan-document-card {
@@ -777,6 +799,8 @@ const kit = [
     transform-origin: left;
     transition: transform 240ms ease;
   }
+
+  .plan-category-card { padding-bottom: 4.5rem; }
 
   .plan-category-card:hover .plan-card-line { transform: scaleX(1); }
 
@@ -1012,9 +1036,12 @@ const kit = [
     .plan-section-head { grid-template-columns: 1fr; }
     .plan-section-head .plan-overline,
     .plan-section-head-wide h2 { grid-column: auto; }
+    .plan-category-grid,
     .plan-three-grid,
     .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .plan-category-card + .plan-category-card,
     .plan-info-card + .plan-info-card { border-left: 1px solid var(--plan-line); }
+    .plan-category-card:nth-child(even),
     .plan-info-card:nth-child(even) { border-left: 0; }
     .plan-step { grid-template-columns: 170px minmax(0, 1fr); }
     .plan-step-body { padding-left: 2rem; }
