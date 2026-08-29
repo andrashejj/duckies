@@ -52,17 +52,17 @@ const moneyFlow = [
   {
     step: "01",
     title: "The bag pays for itself",
-    text: "Ingredients, packaging, kitchen time and Abigaelle's share come out of the price first. Nothing is sold below what it costs to make.",
+    text: "The idea is that ingredients, packaging, kitchen time and Abigaelle's share come out of the price first, so nothing sells below what it costs to make.",
   },
   {
     step: "02",
     title: "The surplus buys boards",
-    text: "Whatever is left over goes to one thing only: surfboards the club owns and lends out. Not admin, not marketing.",
+    text: "Whatever is left over goes to one thing rather than general funds. Boards is the current answer. More boards, wetsuits, coaching and comp travel are the alternatives to argue about.",
   },
   {
     step: "03",
-    title: "The boards open places",
-    text: "Ten boards in the first year, so ten local kids can train without buying a board first.",
+    title: "Ten boards, ten places?",
+    text: "Ten of each in the first year is a neat fit on paper. Whether free places should depend on granola sales at all is the part we are least sure about.",
   },
 ];
 
@@ -73,21 +73,23 @@ const clubAccess = [
   },
   {
     label: "Ten free places",
-    text: "Ten places held open for local kids at no fee, funded by the club rather than by their families.",
+    text: "The number to start from: ten places for local kids at no fee. How many, and how a family gets one, is not settled.",
   },
   {
-    label: "Why the boards matter",
-    text: "Members bring their own board. A free place is only usable if there is a board to lend, which is what the granola surplus pays for.",
+    label: "The link to test",
+    text: "Members bring their own board, so a free place is only usable if there is one to lend. That is the reasoning behind tying the two together, and it may not survive contact with the club.",
   },
 ];
 
 const openQuestions = [
+  "Whether granola is even the right shape for this, or whether the same idea works better as something else.",
   "What Abigaelle wants out of this: her role, her time, her share of each bag and her name on the product.",
   "What a bag costs to make, what it sells for, and how much surplus is left per bag.",
   "What a community board costs, and therefore how many bags fund ten of them.",
   "Where the granola is made, and which Mauritian kitchen, hygiene and labelling rules apply.",
   "Who decides which kids get the ten free places, and how a family asks for one.",
-  "Whether the free places open as the boards arrive, or all at once.",
+  "Whether the free places open as the boards arrive, all at once, or independently of the granola.",
+  "What else the surplus could buy, and why boards beat the alternatives.",
 ];
 
 const categories = [
@@ -125,15 +127,17 @@ const steps = [
     accent: "sticker-teal",
     status: "now",
     title: "Sit down with Abigaelle and the families",
-    text: "Agree what this is with the person making it, then check the idea against the club.",
+    text: "Agree terms with the person making it, then hand the draft to the club and let them break it.",
     tasks: [
       "Agree with Abigaelle what she wants out of this: her role, her time, her share of each bag and her name on the product.",
       "Write down what she already makes, how she makes it and what she would want to change.",
       "Ask what kids eat before a session and what parents pack: what gets refused, what is bought for convenience, what they wish existed.",
       "Ask the kids what they would actually eat before and after surfing, and what they would not touch.",
       "Ask parents what they would pay for a bag, how often they would buy it and what would stop them.",
-      "Ask coaches and families who the ten free places should reach, and who should decide.",
+      "Ask coaches and families who the free places should reach, who decides, and whether they should depend on granola sales at all.",
       "Price the boards the club would buy, and check what the club already spends on shared gear.",
+      "List what else the surplus could buy — more boards, wetsuits, coaching hours, comp travel — and say why boards win, or change it.",
+      "Show the draft around as a draft. Collect the objections rather than the compliments, then rewrite it before any cooking starts.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -162,7 +166,7 @@ const steps = [
     emoji: "🥣",
     accent: "sticker-sun",
     title: "Make the granola",
-    text: "Batches with Abigaelle until there is something worth putting a name on.",
+    text: "Batches with Abigaelle until there is something worth putting a name on. The concept keeps moving while the recipe does.",
     tasks: [
       "Cook batches with Abigaelle and write down every version of the recipe.",
       "Fix the ingredient list and where each ingredient comes from, local first.",
@@ -332,13 +336,13 @@ const openNow = kit.filter((item) => item.open);
           <p class="plan-overline">Concept draft · first product</p>
           <h1>Granola that <span>buys boards.</span></h1>
           <p class="plan-hero-lead">
-            A granola made with Abigaelle, a local girl. Every bag covers what it costs to
-            make. The surplus buys surfboards the club owns and lends out.
+            The idea: a granola made with Abigaelle, a local girl. Every bag covers what it
+            costs to make, and the surplus buys surfboards the club owns and lends out.
           </p>
           <p class="plan-hero-copy">
-            Ten boards in the first year, so ten local kids can join without owning gear.
-            The brand can go three other directions later. This is the one a small club can
-            make, test and sell now.
+            Ten boards in the first year, and ten free places for local kids. Every number
+            here is a starting guess. The plan to 31 October is how they get argued with,
+            tested and changed.
           </p>
         </div>
 
@@ -351,7 +355,7 @@ const openNow = kit.filter((item) => item.open);
     </section>
 
     <nav class="plan-index" aria-label="Brand development sections">
-      <a href="#concept"><span>01</span> The concept</a>
+      <a href="#concept"><span>01</span> The idea</a>
       <a href="#the-range"><span>02</span> The range</a>
       <a href="#product-standard"><span>03</span> Product standard</a>
       <a href="#assessment"><span>04</span> The plan</a>
@@ -360,11 +364,11 @@ const openNow = kit.filter((item) => item.open);
 
     <section id="concept" class="plan-section plan-concept-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / The concept</p>
+        <p class="plan-overline">01 / Concept draft</p>
         <h2>Make it with Abigaelle, not for her.</h2>
         <p>
-          A draft, not a decision. It is written down so the club, the families and Abigaelle
-          can argue with it before anything gets made.
+          A first idea, written down so it can be pulled apart. Every number here is a guess
+          until the plan tests it, and the shape may change completely.
         </p>
       </div>
 
@@ -383,7 +387,7 @@ const openNow = kit.filter((item) => item.open);
       <div class="plan-access">
         <div class="plan-access-head">
           <p class="plan-overline">Who gets to surf</p>
-          <h3>Ten free places, and the boards to make them real.</h3>
+          <h3>Ten free places, and where the boards come in.</h3>
         </div>
         <dl class="plan-access-list">
           {
@@ -398,7 +402,7 @@ const openNow = kit.filter((item) => item.open);
       </div>
 
       <div class="plan-questions">
-        <p class="plan-overline">Open in this draft</p>
+        <p class="plan-overline">What the plan has to work out</p>
         <ul>
           {openQuestions.map((question) => <li>{question}</li>)}
         </ul>
@@ -504,9 +508,9 @@ const openNow = kit.filter((item) => item.open);
       <p class="plan-overline">04 / The plan</p>
       <h2>From kitchen table to first run.</h2>
       <p>
-        The work to 31 October turns this draft into a real recipe, a real price and an
-        honest answer on whether the surplus buys ten boards in a year. Production starts
-        only once the club approves it.
+        The draft above is the starting point, not the answer. The work to 31 October pulls
+        it apart with the club, rebuilds it, and turns whatever survives into a real recipe,
+        a real price and an honest number. Production starts only once the club approves it.
       </p>
     </div>
 
