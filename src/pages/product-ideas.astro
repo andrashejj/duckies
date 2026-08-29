@@ -5,20 +5,20 @@ import { site } from "../data/site";
 
 const title = `Product candidates | ${site.name}`;
 const description =
-  "Working artifact: four Sunset Duckies product candidates tested in Tamarin against customer demand, quality, local production, economics, community value and whether the model can travel.";
+  "Four Sunset Duckies product concepts to draft, interview, compare and narrow to one proof of concept for an end-of-October launch in Tamarin.";
 
 const ideas = [
   {
     code: "01",
     category: "Surf nutrition",
-    name: "A granola made with Abigaelle",
-    depth: "Ideated",
+    name: "A healthy granola made with Abigaelle",
+    depth: "Leading hypothesis",
     lead:
-      "The working hypothesis is a small-batch granola developed with Abigaelle. Her role, approval, payment and use of her name have to be agreed before this becomes a real candidate.",
+      "Granola is the current front-runner. A small-batch product developed with Abigaelle still has to beat the other three concepts in interviews and maker checks.",
     fields: [
       {
         label: "The idea",
-        text: "A breakfast and recovery granola, sold in bags, made in small batches with Abigaelle.",
+        text: "A breakfast and recovery granola sold in bags and made in small batches with Abigaelle. The concept must define what makes it healthy instead of using the word as an unsupported claim.",
       },
       {
         label: "Who for",
@@ -26,7 +26,7 @@ const ideas = [
       },
       {
         label: "What it takes",
-        text: "A kitchen or co-packer, ingredient sourcing, hygiene approval, labelling and packaging that survives a school bag. Cheaper and quicker to trial than a garment or a board.",
+        text: "A kitchen or co-packer, ingredient sourcing, hygiene approval, nutrition information, allowed claims, shelf-life testing and packaging that survives a school bag. Cheaper and quicker to trial than a garment or a board.",
       },
       {
         label: "Value model to test",
@@ -39,6 +39,7 @@ const ideas = [
     ],
     unknowns: [
       "What Abigaelle wants: her role, her time, her share of each bag, her name on the product.",
+      "What healthy means in the recipe and nutrition information, and what the packaging may claim.",
       "What a bag costs to make, what it sells for, and the surplus left per bag.",
       "Which value model is clear to buyers, fair to the people doing the work and viable at small volume.",
       "Who carries production, stock and compliance risk.",
@@ -198,11 +199,12 @@ const criteria = [
     <section class="plan-section plan-ideas-hero" data-reveal>
       <div class="plan-section-head">
         <p class="plan-overline">Working artifact · candidates</p>
-        <h2>Four candidates before one earns a pilot.</h2>
+        <h2>Draft four. Then choose one.</h2>
         <p>
-          Two are specific enough to investigate. Two still need a product. Nothing is
-          chosen, and every guess stays marked until research, maker conversations, quotes or
-          tests replace it. The <a href="/branding-plan">project brief</a> defines the goals.
+          Complete all four concepts by 7 September. Interview against the same four, choose
+          one from the evidence, then build it for the end-of-October competition and launch.
+          Granola leads today, but it has not won. The <a href="/branding-plan">project brief</a>
+          defines the full sequence.
         </p>
       </div>
 
@@ -213,8 +215,8 @@ const criteria = [
         </div>
         <dl class="plan-access-list">
           <div>
-            <dt>Ideated</dt>
-            <dd>Worked up far enough to argue with. Still a draft.</dd>
+            <dt>Leading hypothesis</dt>
+            <dd>The most likely route going in. It still competes on the same evidence.</dd>
           </div>
           <div>
             <dt>Sketch</dt>
@@ -240,7 +242,7 @@ const criteria = [
             </div>
             <h2>{idea.name}</h2>
             <p class="plan-idea-lead">{idea.lead}</p>
-            <span class:list={["plan-idea-depth", idea.depth === "Ideated" && "is-full"]}>
+            <span class:list={["plan-idea-depth", idea.depth === "Leading hypothesis" && "is-full"]}>
               {idea.depth}
             </span>
           </div>
@@ -303,9 +305,9 @@ const criteria = [
       </div>
 
       <p class="plan-note">
-        Scoring happens between 22 September and 12 October. Families, kids, outside buyers,
-        makers and the Tamarin community supply the evidence. The winner moves to pilot work; the other
-        three stay here with the reasons they did not pass.
+        Interviews run from 8 to 18 September and the product decision closes on 25 September.
+        Families, kids, outside buyers and makers supply the evidence. The winner moves into proof-of-concept
+        work and an end-of-October launch; the other three stay here with the reasons they did not pass.
       </p>
 
       <a class="plan-jump" href="/branding-plan">

@@ -79,36 +79,36 @@ const problem = [
 const octoberDeliverables = [
   {
     code: "D-01",
-    name: "Tamarin baseline",
-    context: "What exists now",
-    text: "The people, routines, assets, costs, product needs and dependencies that already shape the first community.",
+    name: "Product decision record",
+    context: "Four down to one",
+    text: "Four complete concepts, the interview evidence, the scoring and a clear record of why one product advanced and three did not.",
   },
   {
     code: "D-02",
-    name: "Chosen hypotheses",
-    context: "What to test",
-    text: "A product direction, maker route, community lifecycle and value model selected for testing, with rejected options and open assumptions recorded.",
+    name: "A real proof of concept",
+    context: "Chosen product",
+    text: "A small run or launch-ready sample with a product specification, quality tests, maker agreement, production route, price and unit economics.",
   },
   {
     code: "D-03",
-    name: "Pilot delivery plan",
-    context: "November to February",
-    text: "Monthly milestones, owners, budget, product tests, community work, decision gates and the evidence expected by February 2027.",
+    name: "Competition and launch evidence",
+    context: "End of October",
+    text: "The surf event, product launch, sales or orders, customer feedback, product failures, event costs and a short post-event decision record.",
   },
   {
     code: "D-04",
-    name: "Approval to continue",
-    context: "31 October gate",
-    text: "A clear recommendation on what to build in Tamarin, what it will cost and which assumptions could still stop or change the work.",
+    name: "November to February plan",
+    context: "Next live tests",
+    text: "Monthly milestones, owners, budget, product and community tests, decision gates and the evidence required for the global rollout plan.",
   },
 ];
 
 const pilotOutcomes = [
   {
     code: "P-01",
-    name: "A product tested in the market",
+    name: "A product tested twice",
     context: "Product proof",
-    text: "At least one real product run tested for quality, demand, price, repeat interest, production reliability and customer response.",
+    text: "The October launch followed by another meaningful sales or order cycle, with evidence on quality, demand, price, repeat interest and production reliability.",
   },
   {
     code: "P-02",
@@ -133,17 +133,35 @@ const pilotOutcomes = [
 const steps = [
   {
     date: "28 Aug – 7 Sep",
-    emoji: "🗣️",
+    emoji: "✏️",
     accent: "sticker-teal",
     status: "now",
-    title: "Document how Tamarin works now",
-    text: "Show the people, relationships, routines and assets that already make the first community real, including where it still depends on outside help.",
+    title: "Draft all four product concepts",
+    text: "Make each area concrete enough for a parent, child, buyer or maker to understand and compare.",
     tasks: [
-      "Collect the parent questionnaires and kid conversations.",
-      "Map the kids, families, coaches, local leads, makers, places, activities and existing responsibilities.",
-      "Record which decisions and tasks already sit locally and which still rely on Sunset Duckies or one individual.",
-      "Record the product and access problems families and coaches see, without assuming how product money should solve them.",
-      "Map Mauritian kitchens, textile makers, printers, shapers and other relevant producers, including their limits.",
+      "Complete the same concept sheet for surf nutrition, surf gear, everyday wear and surf wear.",
+      "Name the specific product, customer, problem, quality promise, likely price and maker route in each area.",
+      "Work the healthy granola up as the leading hypothesis while keeping it open to rejection.",
+      "Ask one relevant maker or supplier in each area what would make the concept slow, expensive or unrealistic.",
+      "Prepare the same four concepts and questions for every interview.",
+    ],
+    links: [
+      { label: "Four product areas", file: "/product-ideas" },
+      { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
+    ],
+  },
+  {
+    date: "8 – 18 Sep",
+    emoji: "🗣️",
+    accent: "sticker-teal",
+    title: "Interview against the same four",
+    text: "Let the interviews change the concepts and show which one people would use, buy and support.",
+    tasks: [
+      "Interview kids and parents using the same four concepts, pictures, descriptions and provisional prices.",
+      "Ask likely buyers outside the club what they understand, would buy and would reject.",
+      "Ask local makers what they can produce, at what quality, volume, cost and lead time.",
+      "Record choices, reasons, price objections and refusals instead of collecting general enthusiasm.",
+      "Revise each concept only when the interviews expose a specific problem.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -151,94 +169,78 @@ const steps = [
     ],
   },
   {
-    date: "8 – 21 Sep",
-    emoji: "📚",
-    accent: "sticker-teal",
-    title: "Design the community lifecycle",
-    text: "Define what Sunset Duckies does from first contact to handover, and what a local community must bring and own.",
-    tasks: [
-      "Read “Let My People Go Surfing” and “The Future of the Responsible Company,” then keep the product and responsibility rules that apply here.",
-      "Write the readiness test for a new microcommunity: local lead, real group, safe place, time, trust and a reason to start.",
-      "Define what Sunset Duckies may supply at the start and what the local community supplies from day one.",
-      "Separate shared brand decisions from local decisions about people, activities, stories, money and approvals.",
-      "List the roles, assets, accounts, knowledge and relationships that must move into local hands.",
-      "Define what staying connected means after handover, without turning the community into a centrally managed chapter.",
-    ],
-    links: [
-      { label: "Brand and community model", file: "/templates/brand-concept.html" },
-    ],
-  },
-  {
-    date: "22 Sep – 12 Oct",
+    date: "19 – 25 Sep",
     emoji: "⚖️",
     accent: "sticker-pink",
-    title: "Test the product and value options in Tamarin",
-    text: "Use the proof community to test what people want, what can be made and how value could stay local or support the wider model.",
+    title: "Narrow four products down to one",
+    text: "Choose the product that has the strongest combined case for customers, quality, production and brand fit.",
     tasks: [
-      "Turn the four product directions into specific candidates and test them with kids, parents and buyers outside the community.",
-      "Confirm what local makers can produce, at what quality, volume, cost and level of ownership.",
-      "Compare paid local work, a fixed contribution, revenue share, a shared fund and hybrid value models using the same unit economics.",
-      "Record who carries stock, compliance and financial risk under each option.",
-      "Show the community model to people from another local surf community and record what would not translate.",
+      "Score all four against the same demand, quality, maker, cost, risk and brand criteria.",
+      "Choose one with the kids, parents, makers and project leads represented in the decision.",
+      "Treat granola as the expected winner only if its evidence is stronger than the other three.",
+      "Record why the winner advanced and why each other concept stopped or was parked.",
+      "Write the proof-of-concept brief, budget, owner and pass or fail tests.",
     ],
     links: [
       { label: "Product candidates", file: "/product-ideas" },
-      { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
-      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
+      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
     ],
   },
   {
-    date: "13 – 26 Oct",
+    date: "26 Sep – 18 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Build the proof-of-concept package",
-    text: "Turn the Tamarin learning into a product direction, a handover model and a brand system another place can challenge.",
+    title: "Build the proof of concept",
+    text: "Produce something real enough to use, price and reject before committing to the event launch.",
     tasks: [
-      "Choose the product direction or next product experiment and document the quality, maker and demand evidence behind it.",
-      "Walk through the handover with the Tamarin leads and remove work they cannot or should not own.",
-      "Write the playbook for meeting, starting with, handing over to and staying connected with a microcommunity.",
-      "Set the shared brand rules and the space each community keeps for its own name, voice, people and products.",
-      "Test whether the financial, social, operational and environmental parts can continue after central support steps back.",
+      "Agree the specification, maker role, payment, credit, approvals and ownership before production.",
+      "If granola wins, test recipes, ingredients, portion, packaging, shelf life, food safety, nutrition information and allowed claims.",
+      "Make a small batch or equivalent sample and test it with kids, parents and buyers outside the club.",
+      "Confirm unit cost, launch price, batch size, quality checks and who carries unsold stock or compliance risk.",
+      "Make a launch, revise or stop decision by 18 October.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
     ],
   },
   {
-    date: "27 – 31 Oct",
-    emoji: "📋",
+    date: "19 – 31 Oct",
+    emoji: "🏄",
     accent: "sticker-lilac",
-    title: "Approve the Tamarin pilot",
-    text: "Choose what to build and test from November to February, then give the work an owner, budget and decision gates.",
+    title: "Run the surf competition and product launch",
+    text: "Combine a Sunset Duckies surf event with the first public test of the chosen product.",
     tasks: [
-      "Present the Tamarin baseline and every assumption the exploration has not resolved.",
-      "Choose the product direction, maker route, community model and value option to test in the pilot.",
-      "Set the product, community, financial and handover evidence required by February.",
-      "Approve the monthly plan, owners, budget, safeguards and decisions that could change or stop the pilot.",
+      "Confirm the event date, surf format, venue, permissions, safety plan, roles and budget.",
+      "Prepare only the launch quantity that the proof of concept and production capacity support.",
+      "Sell or take orders at a visible price and record who buys, refuses, comes back and why.",
+      "Keep the competition enjoyable in its own right and make product participation optional.",
+      "Debrief within 48 hours and approve the November to February product, Tamarin and global-model tests.",
     ],
-    links: [],
+    links: [
+      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
+    ],
   },
 ];
 
 const pilotSteps = [
   {
     date: "November 2026",
-    title: "Build the Tamarin pilot",
-    text: "Turn the October decisions into something people can use, buy and run.",
+    title: "Learn from the launch",
+    text: "Turn the competition and launch evidence into the next version of the product and Tamarin model.",
     tasks: [
-      "Set the product specification, quality tests, price, production route and first-run budget.",
-      "Agree paid work, credit, approvals and risk with local makers and contributors.",
-      "Set the Tamarin roles, baseline measures and the responsibilities to hand over during the pilot.",
-      "Build and test prototypes before committing to the first run.",
+      "Reconcile units made, sold, sampled, returned and left, plus every event and product cost.",
+      "Review customer feedback, product failures, price objections and follow-on demand.",
+      "Revise the product, production process, price and maker agreement where the evidence requires it.",
+      "Set the second product cycle and the Tamarin responsibilities to test through January.",
     ],
   },
   {
     date: "Dec 2026 – Jan 2027",
-    title: "Run the first live test",
-    text: "Put the product and community model into real use in Tamarin and record what happens.",
+    title: "Run the second live test",
+    text: "Test whether the product and local operating model work without the launch event carrying them.",
     tasks: [
-      "Produce and release the first run without using the club story to excuse a weak product.",
-      "Track quality, demand, price objections, repeat interest, returns, production problems and actual unit economics.",
+      "Produce and sell or take orders for the next run using the revised specification and economics.",
+      "Track repeat customers, new customers, quality, price objections, returns and production problems.",
       "Track who does the local work, who makes decisions and where the pilot still depends on central help.",
       "Review the evidence monthly and change the product or operating model when the facts require it.",
     ],
@@ -260,29 +262,29 @@ const pilotSteps = [
 
 const kit = [
   {
-    emoji: "🧭",
-    title: "Brand and community model",
-    phase: "Estelle",
-    file: "/templates/brand-concept.html",
-    window: "Opens 8 Sep",
-    desc: "What Tamarin proves, how a microcommunity starts, what gets handed over, what stays shared and how value could move.",
-  },
-  {
     emoji: "✏️",
     title: "Product concept sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    window: "Opens 15 Sep",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Complete this four times: granola, first surfboard, everyday wear and surf wear.",
     desc: "One sheet per candidate: customer, product, maker route, useful life or shelf life, price, community value options and testing.",
+  },
+  {
+    emoji: "🧭",
+    title: "Brand and community model",
+    phase: "Estelle",
+    file: "/templates/brand-concept.html",
+    window: "Opens after product selection",
+    desc: "What Tamarin proves, how a microcommunity starts, what gets handed over, what stays shared and how value could move.",
   },
   {
     emoji: "💬",
     title: "Questions for parents",
     phase: "Families",
     file: "/templates/brand-parent-questionnaire.html",
-    open: true,
-    window: "Open now · closes 7 Sep",
-    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four candidates are worked up.",
+    window: "Opens 8 Sep · closes 18 Sep",
     desc: "What families buy, use and replace, what keeps them out of the water, and what they would pay for.",
   },
   {
@@ -290,9 +292,7 @@ const kit = [
     title: "Talking to the kids",
     phase: "Coaches",
     file: "/templates/brand-kid-conversations.html",
-    open: true,
-    window: "Open now · closes 7 Sep",
-    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the candidates later.",
+    window: "Opens 8 Sep · closes 18 Sep",
     desc: "What kids use, avoid and want to be seen with, then their verdict on the four candidates.",
   },
   {
@@ -300,7 +300,7 @@ const kit = [
     title: "Product clarity check",
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
-    window: "Opens 13 Oct",
+    window: "Opens 19 Sep",
     desc: "Does a buyer outside Tamarin understand the product, price, maker, community connection and claims without a sales pitch?",
   },
   {
@@ -340,19 +340,19 @@ const openNow = kit.filter((item) => item.open);
           <p class="plan-overline">Project brief</p>
           <h1>Prove it here. <span>Make it work anywhere.</span></h1>
           <p class="plan-hero-lead">
-            Build the brand and test it in Tamarin. The first exploration ends on 31 October
-            2026. The live pilot and global rollout plan are due by the end of February 2027.
+            Draft four products, interview the community, choose one and build it. The first
+            public test combines a surf competition and product launch at the end of October.
           </p>
           <p class="plan-hero-copy">
-            October produces the plan for the next four months. By February, Sunset Duckies
-            needs real product, community and financial evidence from Tamarin, plus a practical
-            plan for taking the model to the next communities.
+            Healthy granola currently leads. The interviews decide whether it advances. The
+            Tamarin test continues after the launch, and by February the evidence must support
+            a practical plan for taking the brand and community model to the next places.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>01</strong><span>Proof community</span></div>
-          <div><strong>31.10</strong><span>Exploration gate</span></div>
+          <div><strong>04</strong><span>Product concepts</span></div>
+          <div><strong>31.10</strong><span>Competition + launch</span></div>
           <div><strong>02.27</strong><span>Global rollout plan</span></div>
         </div>
       </div>
@@ -461,20 +461,20 @@ const openNow = kit.filter((item) => item.open);
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
       <div class="plan-section-head">
         <p class="plan-overline">04 / Initial exploration</p>
-        <h2>Five phases to the 31 October plan.</h2>
+        <h2>Take four products to one October launch.</h2>
         <p>
-        This work chooses what Sunset Duckies will build and test. It does not claim that the
-        product, handover or global model has already been proven.
-      </p>
+          Draft all four before the interviews begin. Choose one from evidence, build a proof
+          of concept, then test it publicly at the end-of-October surf competition.
+        </p>
     </div>
 
     <div class="plan-open-now">
       <div class="plan-open-head">
         <p class="plan-overline">Open now · closes 7 September</p>
-        <h3>Two sheets are collecting answers this week.</h3>
+        <h3>Draft the four product concepts first.</h3>
         <p>
-          Everything after this phase is built on what they say. They close with the first
-          phase on 7 September. Fill them in on a phone, or print them.
+          Complete the same sheet for all four areas. The interviews start on 8 September so
+          every person can react to the same concrete choices.
         </p>
       </div>
 
@@ -530,8 +530,8 @@ const openNow = kit.filter((item) => item.open);
       <p class="plan-overline">05 / Build and test in Tamarin</p>
       <h2>Four months from plan to proof.</h2>
       <p>
-        The October gate starts the pilot. From November 2026 to February 2027, the team builds
-        the product, tests the model in Tamarin, hands over real work and prepares the global rollout.
+        The October event starts the live pilot. From November 2026 to February 2027, the team
+        improves the product, tests repeat demand and local ownership, and prepares the global rollout.
       </p>
     </div>
 
@@ -563,16 +563,16 @@ const openNow = kit.filter((item) => item.open);
       <p class="plan-overline">06 / Decision gates</p>
       <h2>What each deadline must produce.</h2>
       <p>
-        October approves a plan for the pilot. February decides whether the evidence is strong
-        enough to take Sunset Duckies beyond Tamarin.
+        October tests the first product at a combined competition and launch. February decides
+        whether the evidence is strong enough to take Sunset Duckies beyond Tamarin.
       </p>
     </div>
 
     <div class="plan-access">
       <div class="plan-access-head">
         <p class="plan-overline">31 October 2026</p>
-        <h3>Exploration outputs</h3>
-        <p>The team leaves the exploration with a specific, costed plan for November to February.</p>
+        <h3>Launch and exploration outputs</h3>
+        <p>The team leaves October with one launched product, evidence from the event and a specific plan for November to February.</p>
       </div>
     </div>
 

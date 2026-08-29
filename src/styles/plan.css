@@ -633,6 +633,7 @@
   }
 
   .plan-open-card:first-child { border-left: 0; }
+  .plan-open-card:only-child { grid-column: 1 / -1; }
   .plan-open-card:hover { background: rgba(215, 255, 63, 0.06); }
 
   .plan-open-tag,
