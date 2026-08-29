@@ -3,9 +3,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/plan.css";
 import { site } from "../data/site";
 
-const title = `Product ideas | ${site.name}`;
+const title = `Product candidates | ${site.name}`;
 const description =
-  "Working artifact: four product ideas for Sunset Duckies — everyday wear, surf wear, a first surfboard and a granola made with Abigaelle — drilled down to the same depth and compared on the same criteria.";
+  "Working artifact: four Sunset Duckies product candidates tested against customer demand, quality, local production, economics, club impact and brand fit.";
 
 const ideas = [
   {
@@ -14,7 +14,7 @@ const ideas = [
     name: "A granola made with Abigaelle",
     depth: "Ideated",
     lead:
-      "Abigaelle is a local girl. The idea is that we make it with her rather than for her, and that her name and her share are on it from the start.",
+      "The working hypothesis is a small-batch granola developed with Abigaelle. Her role, approval, payment and use of her name have to be agreed before this becomes a real candidate.",
     fields: [
       {
         label: "The idea",
@@ -159,28 +159,36 @@ const criteria = [
     note: "Named by families in the research, not by us.",
   },
   {
-    name: "How often a family buys",
-    note: "Once every few years, or every few weeks.",
+    name: "Evidence people will buy",
+    note: "Orders, pre-orders and refusals at a tested price.",
   },
   {
-    name: "What it takes to make",
-    note: "Suppliers, minimums, approvals, storage, cash tied up.",
+    name: "The quality standard",
+    note: "A claim with a test, not an adjective.",
   },
   {
-    name: "Regulation",
-    note: "Food rules bite hardest; garments and boards less so.",
+    name: "Local production",
+    note: "Maker, work done here, imported inputs, capacity and quality control.",
   },
   {
-    name: "Price a family would pay",
-    note: "Tested against something real, not asked in the abstract.",
+    name: "Fair maker involvement",
+    note: "Payment, credit, approval and ownership agreed before launch.",
   },
   {
-    name: "What a sale returns",
-    note: "In rupees, and what a year of that actually buys.",
+    name: "Production risk",
+    note: "Rules, minimums, lead time, storage, delivery and cash tied up.",
+  },
+  {
+    name: "Economics and club return",
+    note: "Quoted unit cost, retail price, margin and fixed contribution.",
   },
   {
     name: "Would the kids use it",
     note: "The one criterion no adult can answer.",
+  },
+  {
+    name: "Can the brand grow from it",
+    note: "Distinctive enough to lead to another product or another club.",
   },
 ];
 ---
@@ -189,19 +197,19 @@ const criteria = [
   <div class="performance-plan">
     <section class="plan-section plan-ideas-hero" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">Working artifact · ideation</p>
-        <h2>Four ideas, before anyone picks one.</h2>
+        <p class="plan-overline">Working artifact · candidates</p>
+        <h2>Four candidates before one earns a pilot.</h2>
         <p>
-          Two of these have real ideas attached. Two are still headings. Nothing here is
-          decided, and the numbers are guesses until the research replaces them. The
-          <a href="/branding-plan">brand plan</a> is where they get tested and one gets chosen.
+          Two are specific enough to investigate. Two still need a product. Nothing is
+          chosen, and every guess stays marked until research, maker conversations, quotes or
+          tests replace it. The <a href="/branding-plan">project brief</a> defines the goals.
         </p>
       </div>
 
       <div class="plan-access">
         <div class="plan-access-head">
           <p class="plan-overline">How to read this</p>
-          <h3>Same questions asked of every idea.</h3>
+          <h3>The same evidence is required for every candidate.</h3>
         </div>
         <dl class="plan-access-list">
           <div>
@@ -263,9 +271,9 @@ const criteria = [
     <section id="evaluation" class="plan-section" data-reveal>
       <div class="plan-section-head">
         <p class="plan-overline">Evaluation</p>
-        <h2>The same seven questions, asked of all four.</h2>
+        <h2>The same nine tests for all four.</h2>
         <p>
-          Filled in during the research, not now. An idea that wins on paper and loses at
+          Filled in during the research, not now. A candidate that wins on paper and loses at
           training has lost.
         </p>
       </div>
@@ -295,15 +303,15 @@ const criteria = [
       </div>
 
       <p class="plan-note">
-        Scoring happens between 29 September and 12 October, with the families and the kids
-        rather than around a table. Whatever wins gets the brand built around it; the other
-        three stay on this page for later years.
+        Scoring happens between 29 September and 12 October. Families, kids, outside buyers,
+        makers and the club supply the evidence. The winner moves to pilot work; the other
+        three stay here with the reasons they did not pass.
       </p>
 
       <a class="plan-jump" href="/branding-plan">
-        <span class="plan-jump-label">Back to the plan</span>
+        <span class="plan-jump-label">Back to the project brief</span>
         <span class="plan-jump-title">How these get tested, compared and decided</span>
-        <span class="plan-jump-cta">Open the brand plan <span aria-hidden="true">→</span></span>
+        <span class="plan-jump-cta">Open the project brief <span aria-hidden="true">→</span></span>
       </a>
     </section>
   </div>

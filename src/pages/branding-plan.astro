@@ -3,49 +3,61 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/plan.css";
 import { site } from "../data/site";
 
-const title = `What do we make first? | ${site.name}`;
+const title = `The first Sunset Duckies product | ${site.name}`;
 const description =
-  "Sunset Duckies runs on dues and sponsorship, and both limit how many kids get in the water. The plan to 31 October: work up four product ideas, test them with the club, and pick the first product and the brand around it.";
+  "Choose and prove the first Sunset Duckies product by 31 October: customer demand, product quality, local production, club contribution and a clear pilot decision.";
 
-const audience = [
+const goals = [
   {
-    emoji: "🌱",
-    title: "The kids",
-    accent: "sticker-teal",
-    text: "They test everything. Look, feel and taste are their call, and what they actually use counts for more than any concept sheet.",
+    code: "G-01",
+    context: "Demand",
+    name: "A product people choose",
+    text: "Name the buyer and the problem. Test the product and price with kids, parents and people outside the club. Record refusals as well as interest.",
   },
   {
-    emoji: "🏄",
-    title: "The parents",
-    accent: "sticker-sun",
-    text: "They know what they bought, what stopped getting used and what they wish existed. Their answers name the problem in each category.",
+    code: "G-02",
+    context: "Production",
+    name: "A credible way to make it",
+    text: "Find a Mauritian maker or production route, state what must be imported, and record cost, capacity, timing, quality control, payment and credit.",
   },
   {
-    emoji: "🤝",
-    title: "The club around them",
-    accent: "sticker-pink",
-    text: "A small community that helps choose and test the product, then sees exactly what each sale gives back.",
+    code: "G-03",
+    context: "Club return",
+    name: "A number we can publish",
+    text: "Set the contribution per sale, calculate what a realistic first year could fund, and show customers what the club received and bought.",
+  },
+  {
+    code: "G-04",
+    context: "Brand",
+    name: "Rules for what comes next",
+    text: "Define what every Sunset Duckies product must earn, how makers and clubs are credited, and what the brand will refuse to sell or claim.",
   },
 ];
 
 const principles = [
   {
-    name: "Solves a real problem",
+    name: "A problem families have named",
     accent: "sticker-teal",
     emoji: "🎯",
-    text: "Start from a problem families name themselves. No problem, no product.",
+    text: "The product must fix something families currently buy around, replace too often, cannot find or cannot afford.",
   },
   {
-    name: "Built for years",
+    name: "Quality with a test",
     accent: "sticker-sun",
     emoji: "🛠️",
-    text: "Materials and construction that survive salt, sun and repeat use. Repair and hand-me-downs are part of the brief.",
+    text: "Set the material, ingredient, fit, safety, useful-life or shelf-life tests before calling the product high quality.",
   },
   {
-    name: "The club is in the price",
+    name: "A visible club contribution",
     accent: "sticker-pink",
     emoji: "🌊",
-    text: "Every product carries a fixed, visible contribution to the club: gear, sessions, events, whatever else we agree.",
+    text: "Every sale carries a stated contribution. The product page shows the amount, its use and the record behind it.",
+  },
+  {
+    name: "Local work described honestly",
+    accent: "sticker-coral",
+    emoji: "🤝",
+    text: "Name the work done in Mauritius, the imported inputs, the maker, their role and how they are paid and credited.",
   },
 ];
 
@@ -64,30 +76,30 @@ const problem = [
   },
 ];
 
-const categories = [
+const deliverables = [
   {
-    code: "01",
-    name: "Everyday wear",
-    context: "Off the water",
-    text: "Clothes for ordinary days. It has to get worn often, look good, and last long enough to justify the price.",
+    code: "D-01",
+    name: "Customer evidence",
+    context: "Demand",
+    text: "The buyer, the problem, family and kid feedback, reactions from people outside the club, the tested price and the reasons people said no.",
   },
   {
-    code: "02",
-    name: "Surf wear",
-    context: "In the water",
-    text: "Lycras, wetsuits, anything worn in the water. Fit, movement, comfort, sun, salt and growing bodies shape the brief.",
+    code: "D-02",
+    name: "Product and maker route",
+    context: "Feasibility",
+    text: "A sample or specification, quality requirements, a local maker or supplier route, quotes, minimum order, lead time, testing and compliance gaps.",
   },
   {
-    code: "03",
-    name: "Surf gear",
-    context: "Boards and equipment",
-    text: "The technical end. A first board has to be useful, durable and realistic to make, test, ship and pass on.",
+    code: "D-03",
+    name: "Economics and impact",
+    context: "Money",
+    text: "Unit cost, shipping and duties, retail price, margin, fixed club contribution, a realistic first-year scenario and the reporting method.",
   },
   {
-    code: "04",
-    name: "Surf nutrition",
-    context: "Before and after",
-    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board.",
+    code: "D-04",
+    name: "Brand and pilot brief",
+    context: "Next decision",
+    text: "The brand promise, what Sunset Duckies will not do, how makers and the club are credited, and a pilot scope with owners, budget and dates.",
   },
 ];
 
@@ -97,17 +109,14 @@ const steps = [
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
-    title: "Find the problem worth solving",
-    text: "Before anything gets designed, find out what families actually lack.",
+    title: "Find the problem and the people who can help make it",
+    text: "Finish with a short list of customer problems, club costs and local production routes worth pursuing.",
     tasks: [
-      "Ask parents what they bought in their child's first six months, what gets used every session and what stays at home.",
-      "Record what has stopped fitting, broken, turned uncomfortable or been replaced, and why.",
-      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability.",
-      "Ask what kids eat before a session and what parents pack: what gets refused, what is bought for convenience, what they wish existed.",
-      "Ask the kids what they reach for, what they avoid and what they would be proud to own.",
-      "Ask coaches which problems they see every week at training.",
-      "Ask what keeps a family out of the club: the fee, the board, the wetsuit, the drive, the time.",
-      "List the club costs a product could pay for, and price them.",
+      "Collect the parent questionnaires and kid conversations.",
+      "Record what families buy, replace, refuse, cannot find or cannot afford, and why.",
+      "Ask coaches which product and access problems they see every week.",
+      "Price the boards, wetsuits, sessions and events that more product income could fund.",
+      "Map Mauritian kitchens, textile makers, printers, shapers and other relevant producers, including what they can and cannot do.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -115,76 +124,56 @@ const steps = [
     ],
   },
   {
-    date: "8 – 14 Sep",
+    date: "8 – 21 Sep",
     emoji: "📚",
     accent: "sticker-teal",
-    title: "Learn the rules and write ours",
-    text: "What good looks like in each category, and what Sunset Duckies will hold itself to.",
+    title: "Set the rules and make the candidates concrete",
+    text: "Write one scorecard, then turn each product direction into something specific enough to test or reject.",
     tasks: [
-      "Review premium everyday wear, surf wear and surf gear for kids and family surfers: materials, sizing, useful life, repair options, prices.",
-      "Review premium breakfast and sports nutrition: ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch size, price.",
-      "Find the Mauritian food, hygiene and labelling rules that would apply to anything edible made and sold here.",
-      "Read Yvon Chouinard’s “Let My People Go Surfing” on product quality, culture and responsibility.",
-      "Read “The Future of the Responsible Company” (Chouinard and Stanley) for its tests of a legitimate product and a responsible supply chain.",
-      "Look at how purpose-led companies explain where the money goes.",
-      "Write the one page of rules: quality, useful life, customer, club contribution, accountability.",
-    ],
-    links: [],
-  },
-  {
-    date: "15 – 28 Sep",
-    emoji: "✏️",
-    accent: "sticker-sun",
-    title: "Drill down all four ideas",
-    text: "Take each category from a heading to something concrete enough to argue with.",
-    tasks: [
-      "Work up one idea per category, to the same depth, on the same sheet.",
-      "For each: who it is for, the problem it solves, what it is made of, what it costs to make and what it would sell for.",
-      "For each: what a sale returns to the club, and what that money would buy.",
-      "For each: what it takes to actually produce it here, and what could stop us.",
-      "Push the two ideas that already exist — the granola and the board — past the sketch stage.",
-      "Give everyday wear and surf wear the same treatment instead of leaving them as headings.",
-      "Mark every number that is still a guess.",
+      "Read “Let My People Go Surfing” and “The Future of the Responsible Company,” then keep the product and responsibility rules that apply here.",
+      "Set the demand, quality, local-production, price, club-return and brand tests.",
+      "Name one specific candidate in everyday wear, surf wear, surf gear and surf nutrition.",
+      "Complete the same concept sheet for each candidate and talk to a relevant maker or supplier.",
+      "Record initial cost, minimum order, lead time, compliance questions and every assumption still unsupported.",
+      "Stop a candidate as soon as it fails a non-negotiable.",
     ],
     links: [
-      { label: "Product ideas", file: "/product-ideas" },
+      { label: "Product candidates", file: "/product-ideas" },
+      { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
       { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
     ],
   },
   {
-    date: "29 Sep – 12 Oct",
+    date: "22 Sep – 12 Oct",
     emoji: "⚖️",
     accent: "sticker-pink",
-    title: "Evaluate them against each other",
-    text: "Same questions asked of all four, then a choice the club can live with.",
+    title: "Test the candidates and choose one",
+    text: "The winner needs evidence from users, buyers, makers and the club, not the highest score on paper.",
     tasks: [
-      "Score all four on the same criteria: the problem, how often families buy, what it takes to make, regulation, price, and what a sale returns.",
-      "Show the four to parents on WhatsApp and at training, in a different order each time.",
-      "Let the kids handle, wear or taste whatever there is to react to.",
-      "Ask which one they would buy, at what price, and what would stop them.",
-      "Explain the club contribution as its own number and ask whether it feels worth it.",
-      "Keep younger kids, older kids and parents separate. Do not average them.",
-      "Choose one with Estelle, the coaches and the founding families. Write down the evidence and the risks left.",
+      "Show the same candidates and prices to kids, parents and likely buyers outside the club.",
+      "Let kids handle, wear or taste something real wherever possible.",
+      "Record orders, pre-orders, refusals and price objections.",
+      "Confirm whether a local maker can meet the proposed product standard.",
+      "Choose one candidate with Estelle, the coaches and founding families, then record why it won and why the others did not.",
     ],
     links: [
-      { label: "Product ideas", file: "/product-ideas" },
+      { label: "Product candidates", file: "/product-ideas" },
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
+      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
     ],
   },
   {
     date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Test the winner and build the brand around it",
-    text: "Whether the chosen product can be made, and what it is called when it is.",
+    title: "Prove the winner can become a pilot",
+    text: "Replace the remaining assumptions with a specification or sample, a maker route, quoted economics and buyer evidence.",
     tasks: [
-      "Get a sample, a sourced reference product or a detailed prototype spec.",
-      "Talk to suppliers or kitchens: materials or ingredients, minimum order, lead time, packaging, delivery, approvals.",
-      "Build the unit economics: cost, margin, retail price and what each sale returns to the club.",
-      "Work out what that return buys in a year, and whether the number is realistic.",
-      "Decide what the brand stands for in one paragraph, and what it will not do.",
-      "Draft the name, the look and the story of where the money goes.",
-      "Show it to buyers outside the club and record pre-orders, not likes.",
+      "Prepare a sample, reference product or detailed specification with pass and fail tests.",
+      "Confirm the work done locally, imported inputs, maker payment and credit, minimum order, lead time and quality control.",
+      "Build the unit economics from quotes and calculate what a conservative first year could fund.",
+      "Write the brand promise and the claims the product has earned.",
+      "Test the product, price and contribution with buyers outside the club.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
@@ -194,32 +183,14 @@ const steps = [
     date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
-    title: "Decide",
-    text: "One product, one brand, and an honest account of what it takes.",
+    title: "Decide: build, change or stop",
+    text: "The decision pack shows what was learned, what remains risky and what a pilot would require.",
     tasks: [
-      "Name the product, the problem it solves and the evidence behind the choice.",
-      "Set the requirements the product has to meet before it ships.",
-      "Present the price, costs, margin and club contribution, with the assumptions marked.",
-      "Say what the contribution funds in year one, and whether that is realistic.",
-      "Present the brand: what it stands for, what it is called, how the money is explained.",
-      "Recommend: build, change or stop. Then scope, owners, budget and dates.",
-    ],
-    links: [],
-  },
-  {
-    date: "After 31 Oct",
-    emoji: "🛠️",
-    accent: "sticker-teal",
-    title: "Make it",
-    text: "Starts once the club approves the assessment and the budget.",
-    tasks: [
-      "Work through samples, revising until the product meets the brief.",
-      "Run real tests with kids and parents. Fix what fails and repeat.",
-      "Confirm production, minimum order, quality control, delivery and returns.",
-      "Finish the identity, packaging, product page and the explanation of where the money goes.",
-      "Keep a simple public record: sold, costs covered, surplus banked, what the club bought.",
-      "Make a limited first run and launch it through the Tamarin community.",
-      "Review before the next product or the next club.",
+      "Present the customer evidence and why the chosen product beat the alternatives.",
+      "Present the product standard, maker route, local work, testing plan and open risks.",
+      "Present the quoted economics, club contribution and first-year funding scenario.",
+      "Set the brand promise, credit rules and claims allowed at launch.",
+      "Recommend build, change or stop, with the pilot budget, owners and dates.",
     ],
     links: [],
   },
@@ -232,7 +203,7 @@ const kit = [
     phase: "Estelle",
     file: "/templates/brand-concept.html",
     window: "Opens 8 Sep",
-    desc: "Who we are building for, the product standard, why it costs what it costs and the promise to the club.",
+    desc: "The customer, product standard, local-production goal, price, club contribution and brand rules.",
   },
   {
     emoji: "✏️",
@@ -240,7 +211,7 @@ const kit = [
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
     window: "Opens 15 Sep",
-    desc: "One sheet per idea: what it is, who for, what it is made of, useful life or shelf life, price, club contribution, testing.",
+    desc: "One sheet per candidate: customer, product, maker route, useful life or shelf life, price, club contribution and testing.",
   },
   {
     emoji: "💬",
@@ -249,7 +220,7 @@ const kit = [
     file: "/templates/brand-parent-questionnaire.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four ideas are worked up.",
+    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four candidates are worked up.",
     desc: "What they have bought, what stopped getting used, what keeps families out of the club, and what they would pay for.",
   },
   {
@@ -259,8 +230,8 @@ const kit = [
     file: "/templates/brand-kid-conversations.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the ideas later.",
-    desc: "What kids use, avoid and want to be seen with, then their verdict on the four ideas.",
+    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the candidates later.",
+    desc: "What kids use, avoid and want to be seen with, then their verdict on the four candidates.",
   },
   {
     emoji: "⏱️",
@@ -296,7 +267,7 @@ const openNow = kit.filter((item) => item.open);
           height="1600"
           loading="eager"
         />
-        <figcaption>Tamarin · Mauritius · Brand development</figcaption>
+        <figcaption>Tamarin · Mauritius · Product and brand project</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
@@ -306,33 +277,33 @@ const openNow = kit.filter((item) => item.open);
         </div>
 
         <div class="plan-hero-content">
-          <p class="plan-overline">Brand development</p>
-          <h1>What do we <span>make first?</span></h1>
+          <p class="plan-overline">Project brief</p>
+          <h1>Choose and prove <span>the first product.</span></h1>
           <p class="plan-hero-lead">
-            The club runs on dues and sponsorship. Both work, and both cap how many kids get
-            in the water. A product people actually want would be a third leg.
+            By 31 October, choose one product people will pay for, show how it can be made
+            fairly in Mauritius, and prove what each sale can fund at the club.
           </p>
           <p class="plan-hero-copy">
-            Which product, and what brand around it, is what this exercise decides. Four
-            ideas get worked up to the same depth, tested with the families, and compared
-            on the same terms by 31 October.
+            The outcome is a build, change or stop recommendation backed by customer evidence,
+            a product standard, a maker route, quoted economics and a pilot plan. The current
+            product directions are hypotheses.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>04</strong><span>Ideas on the table</span></div>
+          <div><strong>04</strong><span>Project goals</span></div>
           <div><strong>01</strong><span>First product</span></div>
-          <div><strong>31.10</strong><span>Decision</span></div>
+          <div><strong>31.10</strong><span>Build / change / stop</span></div>
         </div>
       </div>
     </section>
 
-    <nav class="plan-index" aria-label="Brand development sections">
+    <nav class="plan-index" aria-label="Project brief sections">
       <a href="#problem"><span>01</span> The problem</a>
-      <a href="#the-range"><span>02</span> The ideas</a>
-      <a href="#product-standard"><span>03</span> Product standard</a>
-      <a href="#assessment"><span>04</span> The plan</a>
-      <a href="#working-documents"><span>05</span> Documents</a>
+      <a href="#goals"><span>02</span> The brief</a>
+      <a href="#product-standard"><span>03</span> Non-negotiables</a>
+      <a href="#assessment"><span>04</span> The work</a>
+      <a href="#working-documents"><span>05</span> The outputs</a>
     </nav>
 
     <section id="problem" class="plan-section plan-problem-section" data-reveal>
@@ -366,77 +337,47 @@ const openNow = kit.filter((item) => item.open);
 
     <div class="plan-divider" aria-hidden="true"></div>
 
-    <section id="the-range" class="plan-section plan-category-section" data-reveal>
+    <section id="goals" class="plan-section plan-category-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">02 / The ideas</p>
-        <h2>Four directions, none of them chosen.</h2>
+        <p class="plan-overline">02 / The brief</p>
+        <h2>Prove four things.</h2>
         <p>
-          Two already have ideas attached: a granola made with a local girl, and a first
-          surfboard. The other two are still headings. All four get worked up to the same
-          depth before any of them wins.
+          Interviews, product tests, maker conversations, quotes and orders count as evidence.
+          A polished concept on its own does not.
         </p>
       </div>
 
       <div class="plan-category-grid">
-        {categories.map((category) => (
+        {goals.map((goal) => (
           <article class="plan-category-card">
-            <div class="plan-card-code"><span>{category.code}</span><span>{category.context}</span></div>
-            <h3>{category.name}</h3>
-            <p>{category.text}</p>
+            <div class="plan-card-code"><span>{goal.code}</span><span>{goal.context}</span></div>
+            <h3>{goal.name}</h3>
+            <p>{goal.text}</p>
             <span class="plan-card-line" aria-hidden="true"></span>
           </article>
         ))}
       </div>
 
       <a class="plan-jump" href="/product-ideas">
-        <span class="plan-jump-label">Separate artifact</span>
-        <span class="plan-jump-title">The four ideas, drilled down and compared</span>
-        <span class="plan-jump-cta">Open the ideas <span aria-hidden="true">→</span></span>
+        <span class="plan-jump-label">Working hypotheses</span>
+        <span class="plan-jump-title">The product directions being tested against these goals</span>
+        <span class="plan-jump-cta">Open the candidate work <span aria-hidden="true">→</span></span>
       </a>
     </section>
-
-  <section class="plan-section plan-audience-section" data-reveal>
-    <div class="plan-section-head plan-section-head-wide">
-      <p class="plan-overline">The customer and the community</p>
-      <h2>The club decides what is worth making.</h2>
-    </div>
-
-    <div class="plan-three-grid">
-      {
-        audience.map((item, i) => (
-          <article class="plan-info-card">
-            <span class="plan-info-number">0{i + 1}</span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))
-      }
-    </div>
-
-    <p class="plan-note">
-      Whatever wins has to earn its price on its own merits first. If the kids will not
-      wear it, use it or eat it, the idea fails and we say so rather than shipping it with
-      a story attached.
-    </p>
-  </section>
 
   <div class="plan-divider" aria-hidden="true"></div>
 
   <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">03 / Product standard</p>
-      <h2>Purpose has to show up in the product.</h2>
+      <p class="plan-overline">03 / Non-negotiables</p>
+      <h2>What the product must earn.</h2>
+      <p>
+        Kids can reject the product. Buyers can reject the price. Makers can reject the
+        production plan. The club can reject the funding promise or use of its identity.
+      </p>
     </div>
-    <p class="plan-reference-copy">
-      Two books are working references:
-      <a href="https://www.patagonia.com/product/let-my-people-go-surfing-revised-paperback-book/BK067.html" target="_blank" rel="noreferrer">Let My People Go Surfing</a>
-      and
-      <a href="https://www.patagonia.com/product/the-future-of-the-responsible-company-paperback/BK235.html" target="_blank" rel="noreferrer">The Future of the Responsible Company</a>.
-      The challenge they set is practical: make a legitimate product that lasts, know how it
-      is made, respect the people around it, and build the purpose into how the company runs.
-    </p>
 
-    <div class="plan-three-grid plan-principles-grid">
+    <div class="plan-category-grid plan-principles-grid">
       {
         principles.map((principle, i) => (
           <article class="plan-info-card plan-principle-card">
@@ -449,14 +390,9 @@ const openNow = kit.filter((item) => item.open);
     </div>
 
     <p class="plan-note">
-      For food, “built for years” means ingredients we can name, honest nutrition and a shelf
-      life a small batch can hold. The other two rules stand.
-    </p>
-
-    <p class="plan-note">
-      A high price is a promise. The assessment has to name what makes it fair — materials
-      or ingredients, construction, testing, useful life — then publish what each sale
-      leaves over and what the club bought with it.
+      For food, quality means named ingredients, clear nutrition and a tested shelf life. For
+      gear and clothing, it means materials, fit and construction tested against salt, sun and
+      repeat use. The brief does not allow claims the product has not earned.
     </p>
   </section>
 
@@ -464,12 +400,11 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">04 / The plan</p>
-      <h2>From four ideas to one product.</h2>
+      <p class="plan-overline">04 / The work</p>
+      <h2>Five phases to a decision.</h2>
       <p>
-        Four ideas, worked up to the same depth and put to the families on the same terms.
-        The work to 31 October picks one, tests whether it can be made, and builds the brand
-        around it. Production starts only once the club approves it.
+        Each phase closes with evidence or a clear reason to stop. Unsupported claims stay
+        marked as assumptions in the final decision.
       </p>
     </div>
 
@@ -532,12 +467,34 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">05 / Working documents</p>
-      <h2>Evidence, recorded as we go.</h2>
+      <p class="plan-overline">05 / Required outputs</p>
+      <h2>What must exist by 31 October.</h2>
       <p>
-        The sheets that turn interviews, product ideas and buyer reactions into the
-        assessment. All of them work on a phone or printed.
+        These are the decision pack. Missing evidence stays marked as a risk; it does not
+        become a confident sentence in the final recommendation.
       </p>
+    </div>
+
+    <div class="plan-category-grid">
+      {deliverables.map((deliverable) => (
+        <article class="plan-category-card">
+          <div class="plan-card-code"><span>{deliverable.code}</span><span>{deliverable.context}</span></div>
+          <h3>{deliverable.name}</h3>
+          <p>{deliverable.text}</p>
+          <span class="plan-card-line" aria-hidden="true"></span>
+        </article>
+      ))}
+    </div>
+
+    <div class="plan-access">
+      <div class="plan-access-head">
+        <p class="plan-overline">Working documents</p>
+        <h3>The evidence goes into these sheets.</h3>
+        <p>
+          The sheets work on a phone or printed. They support the decision pack; completing
+          a sheet is not a result unless it contains evidence.
+        </p>
+      </div>
     </div>
 
     <div class="plan-document-grid">
@@ -568,11 +525,12 @@ const openNow = kit.filter((item) => item.open);
     />
     <div class="plan-decision-overlay">
       <p class="plan-overline">Decision gate / 31 October</p>
-      <h2>Which one deserves to be made?</h2>
+      <h2>Build, change or stop?</h2>
       <p>
-        The assessment ends with one product, the club's verdict on it, a price, a supplier,
-        the brand around it and the number it sends back each year. If the case holds, the
-        first run starts next.
+        The decision pack must show customer demand, a product that can meet its quality
+        standard, a fair maker route, quoted economics, a fixed club contribution and a
+        funded pilot plan. If the evidence holds, the club can approve pilot development.
+        Otherwise the product changes or stops.
       </p>
     </div>
   </section>
