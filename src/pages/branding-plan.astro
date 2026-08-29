@@ -5,13 +5,13 @@ import { site } from "../data/site";
 
 const title = `Project Molt brief | ${site.name}`;
 const description =
-  "The Sunset Duckies project from August 2026 to February 2027: choose and launch one product, test the model in Tamarin and produce a global rollout plan.";
+  "Project Molt: build Sunset Duckies into a quality-first surf brand with a real purpose, a strong community and a model that can grow globally.";
 
-const projectOutputs = [
-  { code: "01", name: "Product proof", text: "One product launched in October and tested in a second sales cycle by January." },
-  { code: "02", name: "Tamarin proof", text: "A clear record of what local people can own, run and sustain after handover." },
-  { code: "03", name: "Working economics", text: "Actual product costs, maker payment, local value, central costs and customer price." },
-  { code: "04", name: "Global rollout plan", text: "A costed plan for choosing, starting and handing over to the next communities." },
+const projectGoals = [
+  { code: "01", name: "Quality first", text: "Make products surfers choose because they are useful, well made and worth the price, even if they never hear the community story." },
+  { code: "02", name: "Purpose in the work", text: "Create paid local work and give participating communities a real role in developing, making and representing the products." },
+  { code: "03", name: "Community strength", text: "Build a committed group of surfers, families, makers and supporters who test, use, recommend and help grow the brand." },
+  { code: "04", name: "Global growth", text: "Define what stays shared and what stays local so the model can travel without turning every community into Tamarin." },
 ];
 
 const methodology = [
@@ -173,8 +173,8 @@ const templates = [
         <div class="plan-hero-content">
           <p class="plan-overline">Project Molt brief</p>
           <h1>Build here. <span>Prepare to travel.</span></h1>
-          <p class="plan-hero-lead">Choose and launch one strong product, test the brand and community model in Tamarin, and finish with a practical plan for the next communities.</p>
-          <p class="plan-hero-copy">Initial exploration ends with the competition and product launch on 31 October. The live Tamarin pilot and global rollout plan are due by 28 February 2027.</p>
+          <p class="plan-hero-lead">Build Sunset Duckies into a high-quality surf brand with a real purpose, a strong community behind it and a model that can grow beyond Tamarin.</p>
+          <p class="plan-hero-copy">Project Molt is the first build phase: choose and launch one product by 31 October, improve it through a live Tamarin pilot and finish the global rollout plan by 28 February 2027.</p>
         </div>
         <div class="plan-hero-data" aria-label="Project deadlines">
           <div><strong>NOW</strong><span>Draft four products</span></div>
@@ -185,40 +185,37 @@ const templates = [
     </section>
 
     <nav class="plan-index" aria-label="Project brief sections">
-      <a href="#outcomes"><span>01</span> Outcomes</a>
-      <a href="#method"><span>02</span> Method</a>
+      <a href="#goal"><span>01</span> Overall goal</a>
+      <a href="#goals"><span>02</span> Project goals</a>
       <a href="#exploration"><span>03</span> To October</a>
-      <a href="#pilot"><span>04</span> To February</a>
-      <a href="#delivery"><span>05</span> Delivery + templates</a>
+      <a href="#method"><span>04</span> Method</a>
+      <a href="#pilot"><span>05</span> To February</a>
+      <a href="#delivery"><span>06</span> Delivery</a>
     </nav>
 
-    <section id="outcomes" class="plan-section plan-brief-section" data-reveal>
+    <section id="goal" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / Project outcome</p>
-        <h2>What must exist by February.</h2>
-        <p>Tamarin is the first proof community. The project must produce four usable outputs, each backed by product, customer, maker and operating evidence.</p>
+        <p class="plan-overline">01 / Overall project goal</p>
+        <h2>Build a surf brand people choose for the product.</h2>
+        <p>Product quality comes first. Purpose and community give people more reason to care, contribute and stay involved.</p>
       </div>
-      <div class="plan-compact-grid">
-        {projectOutputs.map((output) => (
-          <article class="plan-compact-card"><span>{output.code}</span><h3>{output.name}</h3><p>{output.text}</p></article>
-        ))}
+      <div class="plan-goal-statement">
+        <p>Sunset Duckies will make high-quality products for surfers and surf families. It will develop them with local communities, create paid local work and give those communities a real role in the brand. Tamarin is the first proof; the model must be able to grow globally without flattening the people and identity of each place.</p>
       </div>
     </section>
 
     <div class="plan-divider" aria-hidden="true"></div>
 
-    <section id="method" class="plan-section plan-brief-section" data-reveal>
+    <section id="goals" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">02 / Method and approach</p>
-        <h2>How decisions are made.</h2>
-        <p>The team uses the same method from the first product drafts through the second live test. Evidence decides whether the work continues, changes or stops.</p>
+        <p class="plan-overline">02 / Project goals</p>
+        <h2>What Project Molt must prove.</h2>
+        <p>These goals guide every product choice, community agreement and decision about what happens after Tamarin.</p>
       </div>
-      <dl class="plan-access-list plan-method-list">
-        {methodology.map((item) => <div><dt>{item.name}</dt><dd>{item.text}</dd></div>)}
-      </dl>
-      <div class="plan-community-approach">
-        <p class="plan-overline">Community approach</p>
-        <ol>{communityApproach.map((item, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
+      <div class="plan-compact-grid">
+        {projectGoals.map((goal) => (
+          <article class="plan-compact-card"><span>{goal.code}</span><h3>{goal.name}</h3><p>{goal.text}</p></article>
+        ))}
       </div>
     </section>
 
@@ -248,9 +245,26 @@ const templates = [
 
     <div class="plan-divider" aria-hidden="true"></div>
 
+    <section id="method" class="plan-section plan-brief-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">04 / Method and approach</p>
+        <h2>How decisions are made.</h2>
+        <p>The team uses the same method from the first product drafts through the second live test. Evidence decides whether the work continues, changes or stops.</p>
+      </div>
+      <dl class="plan-access-list plan-method-list">
+        {methodology.map((item) => <div><dt>{item.name}</dt><dd>{item.text}</dd></div>)}
+      </dl>
+      <div class="plan-community-approach">
+        <p class="plan-overline">Community approach</p>
+        <ol>{communityApproach.map((item, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
+      </div>
+    </section>
+
+    <div class="plan-divider" aria-hidden="true"></div>
+
     <section id="pilot" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">04 / Phase 2 · Live Tamarin pilot</p>
+        <p class="plan-overline">05 / Phase 2 · Live Tamarin pilot</p>
         <h2>November to February.</h2>
         <p>Improve after the launch, prove repeat demand, move agreed work into local hands and turn the Tamarin evidence into the global rollout plan.</p>
       </div>
@@ -274,7 +288,7 @@ const templates = [
 
     <section id="delivery" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">05 / Delivery gates and templates</p>
+        <p class="plan-overline">06 / Delivery gates and templates</p>
         <h2>The final checklists.</h2>
         <p>A deadline is complete only when every item below exists. The template table shows which working document to use and when.</p>
       </div>

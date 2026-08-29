@@ -177,7 +177,7 @@
 
   .plan-index {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     max-width: 1400px;
     margin: 0 auto;
     border-left: 1px solid var(--plan-line);
@@ -248,6 +248,24 @@
   }
 
   .plan-brief-section .plan-section-head { margin-bottom: 3rem; }
+
+  .plan-goal-statement {
+    max-width: 1120px;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border: 1px solid var(--plan-line);
+    border-left: 4px solid var(--plan-accent);
+    background: linear-gradient(135deg, rgba(215, 255, 63, 0.075), rgba(15, 30, 37, 0.72));
+  }
+
+  .plan-goal-statement p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 2.15rem);
+    font-weight: 550;
+    letter-spacing: -0.035em;
+    line-height: 1.35;
+    color: var(--plan-text);
+  }
 
   .plan-compact-grid {
     display: grid;
