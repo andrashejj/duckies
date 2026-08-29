@@ -2,9 +2,9 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 
-const title = `Choosing the first product | ${site.name}`;
+const title = `Granola that buys boards | ${site.name}`;
 const description =
-  "Four directions: everyday wear, surf wear, surf gear, surf nutrition. We test them with the club's families and decide by 31 October which one becomes the first Sunset Duckies product.";
+  "Concept draft: a granola made with Abigaelle. Every bag covers what it costs to make, and the surplus buys community boards so local kids can join Sunset Duckies without owning gear.";
 
 const audience = [
   {
@@ -48,6 +48,48 @@ const principles = [
   },
 ];
 
+const moneyFlow = [
+  {
+    step: "01",
+    title: "The bag pays for itself",
+    text: "Ingredients, packaging, kitchen time and Abigaelle's share come out of the price first. Nothing is sold below what it costs to make.",
+  },
+  {
+    step: "02",
+    title: "The surplus buys boards",
+    text: "Whatever is left over goes to one thing only: surfboards the club owns and lends out. Not admin, not marketing.",
+  },
+  {
+    step: "03",
+    title: "The boards open places",
+    text: "Ten boards in the first year, so ten local kids can train without buying a board first.",
+  },
+];
+
+const clubAccess = [
+  {
+    label: "Families who can pay",
+    text: `The base membership stays as it is, ${site.membership.feeLabel}, and covers comps, club lycras and safety gear.`,
+  },
+  {
+    label: "Ten free places",
+    text: "Ten places held open for local kids at no fee, funded by the club rather than by their families.",
+  },
+  {
+    label: "Why the boards matter",
+    text: "Members bring their own board. A free place is only usable if there is a board to lend, which is what the granola surplus pays for.",
+  },
+];
+
+const openQuestions = [
+  "What Abigaelle wants out of this: her role, her time, her share of each bag and her name on the product.",
+  "What a bag costs to make, what it sells for, and how much surplus is left per bag.",
+  "What a community board costs, and therefore how many bags fund ten of them.",
+  "Where the granola is made, and which Mauritian kitchen, hygiene and labelling rules apply.",
+  "Who decides which kids get the ten free places, and how a family asks for one.",
+  "Whether the free places open as the boards arrive, or all at once.",
+];
+
 const categories = [
   {
     code: "01",
@@ -71,7 +113,8 @@ const categories = [
     code: "04",
     name: "Surf nutrition",
     context: "Before and after",
-    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board.",
+    start: true,
+    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board. This is where we start.",
   },
 ];
 
@@ -81,19 +124,16 @@ const steps = [
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
-    title: "Find the first real product problem",
-    text: "Start with their first six months in surfing, then the next two years.",
+    title: "Sit down with Abigaelle and the families",
+    text: "Agree what this is with the person making it, then check the idea against the club.",
     tasks: [
-      "Ask parents what they bought in their child's first six months, what gets used every session and what stays at home.",
-      "Record what has stopped fitting, broken, turned uncomfortable or been replaced, and why.",
-      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability.",
-      "Ask what the next two years bring: more sessions, bigger waves, changing bodies, independence, travel, different equipment.",
-      "List what they will buy or replace in that time, under the four headings.",
-      "Ask which item in each category they hope lasts through it.",
+      "Agree with Abigaelle what she wants out of this: her role, her time, her share of each bag and her name on the product.",
+      "Write down what she already makes, how she makes it and what she would want to change.",
       "Ask what kids eat before a session and what parents pack: what gets refused, what is bought for convenience, what they wish existed.",
-      "Ask the kids what they reach for, what they avoid and what they would be proud to own.",
-      "Ask coaches which problems they see every week at training.",
-      "List the club costs a contribution could cover: shared gear, sessions, events.",
+      "Ask the kids what they would actually eat before and after surfing, and what they would not touch.",
+      "Ask parents what they would pay for a bag, how often they would buy it and what would stop them.",
+      "Ask coaches and families who the ten free places should reach, and who should decide.",
+      "Price the boards the club would buy, and check what the club already spends on shared gear.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -104,37 +144,32 @@ const steps = [
     date: "8 – 14 Sep",
     emoji: "📚",
     accent: "sticker-teal",
-    title: "Read, compare and write down the rules",
-    text: "Turn the answers into a one-page brief.",
+    title: "Learn the rules",
+    text: "Food rules, comparable products and the standard we hold ourselves to.",
     tasks: [
-      "Read Yvon Chouinard’s “Let My People Go Surfing” on product quality, culture and responsibility.",
-      "Read “The Future of the Responsible Company” (Chouinard and Stanley) for its tests of a legitimate, long-life product and a responsible supply chain.",
-      "Review premium wear and gear for kids and family surfers: materials, sizing, useful life, repair options, prices.",
+      "Find the Mauritian food, hygiene and labelling rules for a granola made and sold here, and what a small kitchen or co-packer needs.",
       "Review premium breakfast and sports nutrition: ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch size, price.",
-      "Find the Mauritian food, hygiene and labelling rules for a granola or porridge made and sold here, and what a small kitchen or co-packer needs.",
-      "Compare the four on how often families buy, the problem each solves, production difficulty, regulation, likely price and what a sale returns to the club.",
+      "Read Yvon Chouinard’s “Let My People Go Surfing” on product quality, culture and responsibility.",
+      "Read “The Future of the Responsible Company” (Chouinard and Stanley) for its tests of a legitimate product and a responsible supply chain.",
       "Look at how purpose-led companies explain where the money goes.",
-      "Write the one page of rules: quality, useful life, customer, club contribution, accountability.",
+      "Write the one page of rules: quality, ingredients, customer, club contribution, accountability.",
+      "Note what the other three categories would need, for whenever we get to them.",
     ],
     links: [],
   },
   {
     date: "15 – 28 Sep",
-    emoji: "✏️",
+    emoji: "🥣",
     accent: "sticker-sun",
-    title: "Make one rough concept in each category",
-    text: "Four concepts at the same level of detail, so the comparison is fair.",
+    title: "Make the granola",
+    text: "Batches with Abigaelle until there is something worth putting a name on.",
     tasks: [
-      "Finish the brief: customer, problem, promise to the club.",
-      "Everyday wear: the item families named most often.",
-      "Surf wear: a long-life lycra, if the research supports it.",
-      "Surf gear: a durable first board, if the research supports it.",
-      "Nutrition: a club granola or porridge mix, if the research supports it.",
-      "Use the same concept sheet for all four.",
-      "For each one: user, use case, fit or growth, materials, expected life, repair or pass-on plan, and how it looks.",
-      "For food, swap fit, life and repair for ingredients and sourcing, nutrition per serving, allergens, shelf life, packaging, serving size.",
-      "Add a provisional retail price, cost, margin and fixed club contribution. Flag every number that still needs a supplier quote.",
-      "Keep all four equally rough, but visual enough for kids and parents to react to.",
+      "Cook batches with Abigaelle and write down every version of the recipe.",
+      "Fix the ingredient list and where each ingredient comes from, local first.",
+      "Work out nutrition per serving, allergens and serving size.",
+      "Test how long a batch holds, in what packaging, stored how.",
+      "Choose a bag size and packaging that survives a school bag and a beach.",
+      "Fill in the concept sheet, including the provisional price and the surplus per bag.",
     ],
     links: [
       { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
@@ -145,16 +180,15 @@ const steps = [
     date: "29 Sep – 12 Oct",
     emoji: "🏄",
     accent: "sticker-pink",
-    title: "Choose the product with families",
-    text: "Put the four in front of the people who would buy and use them.",
+    title: "Taste it with the club",
+    text: "The kids decide whether it is good. The parents decide whether it sells.",
     tasks: [
-      "Show the same four to parents on WhatsApp and at training.",
-      "Ask which fits their next two years, which they would buy, what they expect at that price and what would stop them.",
-      "Show the club contribution as its own number and ask whether what it funds feels worth it.",
-      "Let kids handle samples or comparable products. Record fit, comfort, look and whether they would actually use it.",
-      "Taste-test the food concept against something comparable. Check allergies and permission first, then record what they finish, leave or ask for again.",
-      "Keep younger kids, older kids and parents separate. Do not average them.",
-      "Choose one with Estelle, the coaches and the founding families. Write down the evidence and the risks left.",
+      "Run taste tests at training. Check allergies and permission with parents first.",
+      "Record what kids finish, what they leave and what they ask for again.",
+      "Try it against a comparable shop-bought product without saying which is which.",
+      "Ask parents the price question again, now with something real to taste.",
+      "Show the money flow — cost, surplus, boards — and ask whether it is clear and worth it.",
+      "Take pre-orders. Count those, not likes.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -165,16 +199,16 @@ const steps = [
     date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Check whether the first product can work",
-    text: "Push the product, price and contribution far enough to make an honest call.",
+    title: "Check it can be made and sold",
+    text: "Kitchen, costs and the board maths, far enough to make an honest call.",
     tasks: [
-      "Get a sample, a sourced reference product or a detailed prototype spec.",
-      "Talk to suppliers: materials, sampling, minimum order, production time, packaging, delivery.",
-      "For food: kitchen or co-packer, ingredient sourcing, batch size, shelf-life testing, labelling, hygiene approval, storage and delivery.",
-      "Test fit, comfort and use with the club, and define the durability testing implementation will need.",
-      "Build the unit economics: product cost, shipping, duties, margin, retail price, club contribution.",
-      "Write the one sentence customers will read: how much goes to the club, what it funds, how we report it.",
-      "Show it to likely buyers outside the founding families. Record pre-orders, not likes.",
+      "Confirm the kitchen or co-packer, batch size, hygiene approval, labelling and how it is stored and delivered.",
+      "Get ingredient sourcing and pricing, and what a bag costs at each batch size.",
+      "Build the unit economics: ingredients, packaging, kitchen time, Abigaelle’s share, retail price, surplus per bag.",
+      "Price a community board, then work out how many bags fund ten of them.",
+      "Agree Abigaelle’s share in writing before anything is sold.",
+      "Write the one sentence customers read: what the surplus buys and how we report it.",
+      "Show it to buyers outside the club and record pre-orders, not likes.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
@@ -184,15 +218,15 @@ const steps = [
     date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
-    title: "Complete the initial assessment",
-    text: "Say whether there is a real first product, and what making it properly takes.",
+    title: "Decide",
+    text: "Whether the granola holds up as a product and as a way to buy boards.",
     tasks: [
-      "Name the category, the product, the problem it solves and the evidence behind the choice.",
-      "Set the requirements: quality, fit, growth, useful life, repair and pass-on, or for food, ingredients, nutrition, allergens, shelf life and packaging.",
-      "Summarise supplier feasibility, open production risks and the testing still to do.",
-      "Present the provisional price, costs, margin and club contribution, with the assumptions marked.",
-      "Summarise what families said and what buyers outside the club would pay for.",
-      "Recommend: build, change direction or stop. Then scope, owners, budget and dates.",
+      "State the product, the problem it solves and the evidence from the club.",
+      "Set the requirements: ingredients, nutrition, allergens, shelf life, packaging.",
+      "Present the price, costs, Abigaelle’s share and surplus per bag, with assumptions marked.",
+      "Say how many bags a year ten boards needs, and whether that is realistic.",
+      "Settle the free places: how many, who decides, when they open.",
+      "Recommend: build, change or stop. Then scope, owners, budget and dates.",
     ],
     links: [],
   },
@@ -200,16 +234,15 @@ const steps = [
     date: "After 31 Oct",
     emoji: "🛠️",
     accent: "sticker-teal",
-    title: "Develop, test and launch the first product",
+    title: "First run, first boards",
     text: "Starts once the club approves the assessment and the budget.",
     tasks: [
-      "Work through supplier samples, revising materials, construction, fit and design.",
-      "Run real wear and durability tests with kids and parents, or taste, batch and shelf-life tests for food. Fix what fails and repeat until it meets the brief.",
-      "Confirm production, minimum order, quality control, delivery, returns, repair and pass-on.",
-      "Finish the identity, packaging, product page and the club-contribution explainer.",
-      "Keep a simple record: money collected, money transferred, what the club spent it on.",
+      "Finish the identity, packaging, product page and the surplus explainer.",
       "Make a limited first run and launch it through the Tamarin community.",
-      "Review quality, sell-through, returns and club impact before picking the next product or the next club.",
+      "Keep a simple public record: bags sold, costs covered, surplus banked, boards bought.",
+      "Buy boards as the surplus lands instead of waiting for all ten.",
+      "Open free places as the boards arrive, on whatever basis the club agreed.",
+      "Review taste, sell-through, surplus and how the boards get used before the next product or the next club.",
     ],
     links: [],
   },
@@ -230,7 +263,7 @@ const kit = [
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
     window: "Opens 15 Sep",
-    desc: "One sheet for any of the four: use, fit or ingredients, useful life or shelf life, price, club contribution, testing.",
+    desc: "The granola on one sheet: ingredients, nutrition, shelf life, packaging, price, surplus per bag, testing.",
   },
   {
     emoji: "💬",
@@ -239,8 +272,8 @@ const kit = [
     file: "/templates/brand-parent-questionnaire.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the concepts exist.",
-    desc: "Their first six months in surfing, the next two years, and what they want from a product that funds the club.",
+    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once there is a batch to taste.",
+    desc: "What they feed their kids around surfing, what they would pay for a bag, and what they make of the boards plan.",
   },
   {
     emoji: "🏄",
@@ -249,8 +282,8 @@ const kit = [
     file: "/templates/brand-kid-conversations.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, concepts and taste test later.",
-    desc: "What kids use, avoid and want to be seen with, then their verdict on the concepts.",
+    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the taste test later.",
+    desc: "What kids eat before and after surfing, then their verdict on the granola.",
   },
   {
     emoji: "⏱️",
@@ -258,7 +291,7 @@ const kit = [
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
     window: "Opens 13 Oct",
-    desc: "Does an outside buyer get who it is for, why it costs more and what the contribution does?",
+    desc: "Does a buyer outside the club get who it is for, why it costs what it costs and what the surplus buys?",
   },
   {
     emoji: "📸",
@@ -267,7 +300,7 @@ const kit = [
     file: "/templates/brand-photo-permission.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Signed once per child, before any photo or video is used. Needed before concept testing.",
+    now: "Signed once per child, before any photo or video is used. Needed before the taste tests.",
     desc: "Where each child may appear in product work and club communications.",
   },
 ];
@@ -286,58 +319,111 @@ const openNow = kit.filter((item) => item.open);
           height="1600"
           loading="eager"
         />
-        <figcaption>Tamarin · Mauritius · First product community</figcaption>
+        <figcaption>Tamarin · Mauritius · Concept draft</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
         <div class="plan-hero-topline">
           <span>Sunset Duckies / Product development</span>
-          <span>Assessment 2026</span>
+          <span>Concept draft · 2026</span>
         </div>
 
         <div class="plan-hero-content">
-          <p class="plan-overline">What this exercise is for</p>
-          <h1>Find the <span>first product.</span></h1>
+          <p class="plan-overline">Concept draft · first product</p>
+          <h1>Granola that <span>buys boards.</span></h1>
           <p class="plan-hero-lead">
-            One product, obsessive about quality, that solves a real problem for the club's
-            kids and families and pays the club back on every sale.
+            A granola made with Abigaelle, a local girl. Every bag covers what it costs to
+            make. The surplus buys surfboards the club owns and lends out.
           </p>
           <p class="plan-hero-copy">
-            Which of the four directions it comes from is still open. The families answer
-            that between now and 31 October. We don't.
+            Ten boards in the first year, so ten local kids can join without owning gear.
+            The brand can go three other directions later. This is the one a small club can
+            make, test and sell now.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>04</strong><span>Product categories</span></div>
-          <div><strong>01</strong><span>Core community</span></div>
-          <div><strong>31.10</strong><span>Initial assessment</span></div>
+          <div><strong>10</strong><span>Boards, year one</span></div>
+          <div><strong>10</strong><span>Free places</span></div>
+          <div><strong>31.10</strong><span>Go or no go</span></div>
         </div>
       </div>
     </section>
 
     <nav class="plan-index" aria-label="Brand development sections">
-      <a href="#product-focus"><span>01</span> Product focus</a>
-      <a href="#product-standard"><span>02</span> Product standard</a>
-      <a href="#assessment"><span>03</span> Assessment</a>
-      <a href="#working-documents"><span>04</span> Working documents</a>
+      <a href="#concept"><span>01</span> The concept</a>
+      <a href="#the-range"><span>02</span> The range</a>
+      <a href="#product-standard"><span>03</span> Product standard</a>
+      <a href="#assessment"><span>04</span> The plan</a>
+      <a href="#working-documents"><span>05</span> Documents</a>
     </nav>
 
-    <section id="product-focus" class="plan-section plan-category-section" data-reveal>
+    <section id="concept" class="plan-section plan-concept-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / Product focus</p>
-        <h2>Choose the category before the product.</h2>
+        <p class="plan-overline">01 / The concept</p>
+        <h2>Make it with Abigaelle, not for her.</h2>
         <p>
-          One rough concept per category, then compare: need, repeat use or repeat purchase,
-          growth, product life, production difficulty, price, and what each sale returns to
-          the club.
+          A draft, not a decision. It is written down so the club, the families and Abigaelle
+          can argue with it before anything gets made.
+        </p>
+      </div>
+
+      <div class="plan-three-grid">
+        {
+          moneyFlow.map((item) => (
+            <article class="plan-info-card">
+              <span class="plan-info-number">{item.step}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="plan-access">
+        <div class="plan-access-head">
+          <p class="plan-overline">Who gets to surf</p>
+          <h3>Ten free places, and the boards to make them real.</h3>
+        </div>
+        <dl class="plan-access-list">
+          {
+            clubAccess.map((item) => (
+              <div>
+                <dt>{item.label}</dt>
+                <dd>{item.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="plan-questions">
+        <p class="plan-overline">Open in this draft</p>
+        <ul>
+          {openQuestions.map((question) => <li>{question}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <div class="plan-divider" aria-hidden="true"></div>
+
+    <section id="the-range" class="plan-section plan-category-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">02 / The range</p>
+        <h2>Four directions. One of them starts.</h2>
+        <p>
+          The other three stay on the table for later years. Granola goes first because a
+          small club can actually make it, test it with the kids and sell it this year.
         </p>
       </div>
 
       <div class="plan-category-grid">
         {categories.map((category) => (
-          <article class="plan-category-card">
-            <div class="plan-card-code"><span>{category.code}</span><span>{category.context}</span></div>
+          <article class:list={["plan-category-card", category.start && "is-start"]}>
+            <div class="plan-card-code">
+              <span>{category.code}</span>
+              <span>{category.start ? "Starting here" : category.context}</span>
+            </div>
             <h3>{category.name}</h3>
             <p>{category.text}</p>
             <span class="plan-card-line" aria-hidden="true"></span>
@@ -349,7 +435,7 @@ const openNow = kit.filter((item) => item.open);
   <section class="plan-section plan-audience-section" data-reveal>
     <div class="plan-section-head plan-section-head-wide">
       <p class="plan-overline">The customer and the community</p>
-      <h2>The club decides what we make.</h2>
+      <h2>The club decides whether it is any good.</h2>
     </div>
 
     <div class="plan-three-grid">
@@ -365,9 +451,9 @@ const openNow = kit.filter((item) => item.open);
     </div>
 
     <p class="plan-note">
-      Who the product is for — which child, which parent, which surf moment — is for the
-      research to answer. Whatever it turns out to be, it earns its price on quality and
-      usefulness. Competition-performance gear sits outside this first brief.
+      The granola has to earn its price on taste and quality first. Nobody buys a bad
+      breakfast twice because the money goes somewhere good. If the kids will not eat it,
+      the concept fails and we say so.
     </p>
   </section>
 
@@ -375,7 +461,7 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">02 / Product standard</p>
+      <p class="plan-overline">03 / Product standard</p>
       <h2>Purpose has to show up in the product.</h2>
     </div>
     <p class="plan-reference-copy">
@@ -405,9 +491,9 @@ const openNow = kit.filter((item) => item.open);
     </p>
 
     <p class="plan-note">
-      A high price is a promise. The assessment has to name the materials, construction,
-      useful life, testing and service that make it fair, then set the club contribution,
-      what it funds, and how we report the money.
+      A high price is a promise. The assessment has to name the ingredients, sourcing,
+      testing and shelf life that make it fair, then publish what each bag leaves over and
+      what the club bought with it.
     </p>
   </section>
 
@@ -415,12 +501,12 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">03 / Initial assessment</p>
-      <h2>From category decision to launch brief.</h2>
+      <p class="plan-overline">04 / The plan</p>
+      <h2>From kitchen table to first run.</h2>
       <p>
-        The work to 31 October picks the product, tests the price and the contribution, and
-        checks it can be made properly. Development and production start only once the
-        assessment is approved.
+        The work to 31 October turns this draft into a real recipe, a real price and an
+        honest answer on whether the surplus buys ten boards in a year. Production starts
+        only once the club approves it.
       </p>
     </div>
 
@@ -429,7 +515,7 @@ const openNow = kit.filter((item) => item.open);
         <p class="plan-overline">Open now · closes 7 September</p>
         <h3>Three sheets are collecting answers this week.</h3>
         <p>
-          Everything after this phase is built on what they say. They close with the research
+          Everything after this phase is built on what they say. They close with the first
           phase on 7 September. Fill them in on a phone, or print them.
         </p>
       </div>
@@ -483,10 +569,10 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">04 / Working documents</p>
+      <p class="plan-overline">05 / Working documents</p>
       <h2>Evidence, recorded as we go.</h2>
       <p>
-        The sheets that turn interviews, product decisions and buyer reactions into the
+        The sheets that turn kitchen sessions, taste tests and buyer reactions into the
         assessment. All of them work on a phone or printed.
       </p>
     </div>
@@ -519,11 +605,11 @@ const openNow = kit.filter((item) => item.open);
     />
     <div class="plan-decision-overlay">
       <p class="plan-overline">Decision gate / 31 October</p>
-      <h2>Does the first product deserve to be made?</h2>
+      <h2>Does the granola buy the boards?</h2>
       <p>
-        The assessment ends with a product brief, the family evidence, the supplier picture,
-        a provisional price, the club contribution and a budget. If the case holds, building
-        it starts next.
+        The assessment ends with a recipe, the club's verdict, a kitchen, a price, the
+        surplus per bag and the number of bags ten boards needs. If the case holds, the
+        first run starts next.
       </p>
     </div>
   </section>
@@ -710,7 +796,7 @@ const openNow = kit.filter((item) => item.open);
 
   .plan-index {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     max-width: 1400px;
     margin: 0 auto;
     border-left: 1px solid var(--plan-line);
@@ -835,6 +921,95 @@ const openNow = kit.filter((item) => item.open);
   }
 
   .plan-category-card { padding-bottom: 4.5rem; }
+
+  .plan-category-card.is-start {
+    background: rgba(215, 255, 63, 0.06);
+  }
+
+  .plan-category-card.is-start .plan-card-code span:last-child { color: var(--plan-accent); }
+  .plan-category-card.is-start .plan-card-line { transform: scaleX(1); }
+
+  .plan-access {
+    margin-top: 3rem;
+    border: 1px solid var(--plan-line);
+    border-left: 3px solid var(--plan-accent);
+  }
+
+  .plan-access-head {
+    padding: 2rem;
+    border-bottom: 1px solid var(--plan-line);
+  }
+
+  .plan-access-head h3 {
+    margin: 0.75rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--plan-text);
+  }
+
+  .plan-access-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+  }
+
+  .plan-access-list > div {
+    padding: 1.75rem 2rem;
+    border-left: 1px solid var(--plan-line);
+  }
+
+  .plan-access-list > div:first-child { border-left: 0; }
+
+  .plan-access-list dt {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--plan-accent);
+  }
+
+  .plan-access-list dd {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--plan-muted);
+  }
+
+  .plan-questions {
+    max-width: 900px;
+    margin-top: 3rem;
+    padding-left: 1.4rem;
+    border-left: 2px solid var(--plan-warm);
+  }
+
+  .plan-questions ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan-questions li {
+    position: relative;
+    padding: 0 0 0 1.4rem;
+    margin-bottom: 0.7rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--plan-muted);
+  }
+
+  .plan-questions li:last-child { margin-bottom: 0; }
+
+  .plan-questions li::before {
+    position: absolute;
+    left: 0;
+    content: "?";
+    font-family: var(--font-mono);
+    color: var(--plan-warm);
+  }
 
   .plan-category-card:hover .plan-card-line { transform: scaleX(1); }
 
@@ -1171,7 +1346,11 @@ const openNow = kit.filter((item) => item.open);
     .plan-category-grid,
     .plan-three-grid,
     .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .plan-open-grid { grid-template-columns: 1fr; }
+    .plan-open-grid,
+    .plan-access-list { grid-template-columns: 1fr; }
+    .plan-access-list > div { border-top: 1px solid var(--plan-line); border-left: 0; }
+    .plan-access-list > div:first-child { border-top: 0; }
+    .plan-index { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .plan-open-card { border-top: 1px solid var(--plan-line); border-left: 0; }
     .plan-open-card:first-child { border-top: 0; }
     .plan-category-card + .plan-category-card,
