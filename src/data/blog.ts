@@ -1,4 +1,5 @@
 import type { ShareConfig } from "../lib/share-media";
+import { site } from "./site";
 
 // The club logbook. Each post's media lives in a Nextcloud public share;
 // at build time we enumerate the share (src/lib/share-media.ts) and hotlink
@@ -26,7 +27,17 @@ export interface BlogPost {
   intro: string[];
   sections: BlogPostSection[];
   outro: string;
-  media: ShareConfig & { shareUrl: string };
+  heroImage?: string;
+  heroGlyphs?: string;
+  cta: {
+    kicker: string;
+    title: string;
+    titleAccent: string;
+    body: string;
+    primary: { label: string; href: string; external?: boolean };
+    secondary?: { label: string; href: string };
+  };
+  media?: ShareConfig & { shareUrl: string };
 }
 
 export const blog = {
@@ -82,6 +93,15 @@ export const blog = {
       ],
       outro:
         'Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.',
+      heroGlyphs: "⛰️ → 🚤 → 🤿",
+      cta: {
+        kicker: "Next trip",
+        title: "Your duckie on the",
+        titleAccent: "next boat?",
+        body: "Club trips are for members, and joining is four short steps. Say hi in the WhatsApp group and we'll take it from there.",
+        primary: { label: "Join the crew", href: site.whatsappUrl, external: true },
+        secondary: { label: "How to join the club", href: "/#join" },
+      },
       media: {
         shareUrl: "https://owncloud.justnet.pl/index.php/s/jZtkwTHpCzoxHaB",
         base: "https://owncloud.justnet.pl",
@@ -90,6 +110,59 @@ export const blog = {
         // share live, so the gallery fills itself wherever the host is
         // reachable (e.g. the Vercel build).
         files: [],
+      },
+    },
+    {
+      slug: "project-molt-brand-exercise",
+      title: "Project Molt:",
+      titleAccent: "building the brand",
+      kicker: "Brand exercise · Vol. 02",
+      dateLabel: "August 2026",
+      dateISO: "2026-08-29",
+      location: "Tamarin, Mauritius",
+      excerpt:
+        "Sunset Duckies started as a surf club. Project Molt asks whether it can also become a product brand built around quality, local work and communities that can shape it for themselves.",
+      facts: [
+        { emoji: "◉", value: "4 ideas", label: "developed first" },
+        { emoji: "↘", value: "1 product", label: "chosen from evidence" },
+        { emoji: "◎", value: "31 Oct", label: "Tamarin launch" },
+        { emoji: "↗", value: "28 Feb", label: "global plan" },
+      ],
+      intro: [
+        "Sunset Duckies grew from afternoons in the water, families helping each other and kids learning to surf. We are now exploring whether that same community can build useful, high-quality products for surfers and surf families.",
+        "We are calling the exercise Project Molt. Tamarin is the first test, but the aim is a model that other surf communities can make their own rather than a copy of Mauritius dropped somewhere else.",
+      ],
+      sections: [
+        {
+          emoji: "01",
+          title: "Start with four",
+          accent: "sticker-teal",
+          body: "We will develop four product ideas to the same level, put them in front of families, kids, likely buyers and makers, then choose one from what we learn. No favourite gets a head start.",
+        },
+        {
+          emoji: "02",
+          title: "Make and launch one",
+          accent: "sticker-sun",
+          body: "The selected idea becomes a small proof of concept made with local people where possible. We will build interest before launching it alongside a surf competition at the end of October, then record what sold, what failed and what people would change.",
+        },
+        {
+          emoji: "03",
+          title: "Learn what can travel",
+          accent: "sticker-coral",
+          body: "The Tamarin pilot runs through February. By then we need real product standards, working economics, a local handover model and a plan for how another surf community could start without losing its own identity.",
+        },
+      ],
+      outro:
+        "The first job is deliberately small: make the four product ideas equally clear by 7 September. The interviews and the evidence come next.",
+      heroImage: "/media/young-rider.jpg",
+      heroGlyphs: "4 → 1 → 🌍",
+      cta: {
+        kicker: "The working brief",
+        title: "Follow",
+        titleAccent: "Project Molt",
+        body: "The project page contains the goals, deadlines, decision gates and templates we will use from the first four ideas through the Tamarin pilot.",
+        primary: { label: "Read the project brief", href: "/branding-plan" },
+        secondary: { label: "See the four product areas", href: "/product-ideas" },
       },
     },
   ] as BlogPost[],

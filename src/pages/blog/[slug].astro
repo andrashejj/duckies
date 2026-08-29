@@ -20,19 +20,19 @@ const description = post.excerpt;
 
 // Enumerated from the Nextcloud share at build time (falls back to
 // post.media.files if the share is unreachable from the build environment).
-const mediaFiles = await loadShareFiles(post.media);
+const mediaFiles = post.media ? await loadShareFiles(post.media) : [];
 const imageFiles = mediaFiles.filter((file) => !isVideo(file));
 const photos = imageFiles.map((file, i) => ({
   alt: `${post.title} ${post.titleAccent} — photo ${i + 1} of ${imageFiles.length}`,
-  thumb: sharePreviewUrl(post.media, file, 700),
-  full: sharePreviewUrl(post.media, file, 2048),
+  thumb: sharePreviewUrl(post.media!, file, 700),
+  full: sharePreviewUrl(post.media!, file, 2048),
 }));
 const clips = mediaFiles.filter(isVideo).map((file) => ({
-  src: shareDownloadUrl(post.media, file),
-  poster: sharePreviewUrl(post.media, file, 1200),
+  src: shareDownloadUrl(post.media!, file),
+  poster: sharePreviewUrl(post.media!, file, 1200),
 }));
 
-const heroImage = photos[0]?.full;
+const heroImage = post.heroImage ?? photos[0]?.full;
 const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 ---
 
@@ -58,7 +58,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
         <div class="floating">
           <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-5 py-3 shadow-[5px_5px_0_0_var(--color-ink-950)]" style="transform: rotate(7deg);">
             <p class="font-display text-lg font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
-              ⛰️ → 🚤 → 🤿
+              {post.heroGlyphs ?? "🌊"}
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
         </p>
 
         <div data-float class="mt-8 flex flex-wrap gap-3">
-          <a class="cta-secondary" href="#gallery">↓ Straight to the photos</a>
+          {post.media && <a class="cta-secondary" href="#gallery">↓ Straight to the photos</a>}
           <a class="cta-secondary" href="/blog">← All logbook pages</a>
         </div>
       </div>
@@ -164,7 +164,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
     )}
 
     <!-- ===================== GALLERY ===================== -->
-    <section id="gallery" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+    {post.media && <section id="gallery" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
       <div class="mb-9 flex flex-wrap items-end justify-between gap-5" data-reveal>
         <div class="max-w-2xl">
           <p class="section-kicker">📸 The day, in pictures</p>
@@ -207,9 +207,9 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
           ))}
         </div>
       )}
-    </section>
+    </section>}
 
-    <dialog id="post-lightbox" class="lightbox" aria-label="Photo viewer">
+    {post.media && <dialog id="post-lightbox" class="lightbox" aria-label="Photo viewer">
       <button class="lightbox-close" data-lb-close aria-label="Close gallery">✕</button>
       <button class="lightbox-nav lightbox-prev" data-lb-prev aria-label="Previous photo">‹</button>
       <figure class="lightbox-figure">
@@ -217,27 +217,24 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
       </figure>
       <button class="lightbox-nav lightbox-next" data-lb-next aria-label="Next photo">›</button>
       <p class="lightbox-count" data-lb-count></p>
-    </dialog>
+    </dialog>}
 
     <!-- ===================== CTA ===================== -->
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">
       <div class="surface-card sticker-coral p-8 md:p-12" data-reveal>
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
-            <p class="section-kicker">Next trip</p>
+            <p class="section-kicker">{post.cta.kicker}</p>
             <h2 class="section-title mt-4">
-              Your duckie on the <span class="ink-underline">next boat</span>?
+              {post.cta.title} <span class="ink-underline">{post.cta.titleAccent}</span>
             </h2>
-            <p class="body-copy mt-4 max-w-2xl">
-              Club trips are for members — and joining is four short steps. Say hi in the
-              WhatsApp group and we'll take it from there.
-            </p>
+            <p class="body-copy mt-4 max-w-2xl">{post.cta.body}</p>
           </div>
           <div class="flex flex-col gap-3">
-            <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-              Join the crew
+            <a class="cta-primary" href={post.cta.primary.href} target={post.cta.primary.external ? "_blank" : undefined} rel={post.cta.primary.external ? "noreferrer" : undefined}>
+              {post.cta.primary.label}
             </a>
-            <a class="cta-secondary" href="/#join">How to join the club</a>
+            {post.cta.secondary && <a class="cta-secondary" href={post.cta.secondary.href}>{post.cta.secondary.label}</a>}
           </div>
         </div>
       </div>
