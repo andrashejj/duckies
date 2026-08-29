@@ -85,11 +85,23 @@ const explorationSteps = [
     ],
   },
   {
-    date: "19 – 31 Oct",
+    date: "5 – 30 Oct",
+    title: "Prepare and promote the launch",
+    deliverable: "Competition ready to run, registration open and a short product launch campaign published.",
+    tasks: [
+      "Confirm the date, venue, surf format, permissions, safety plan, roles, stock and event budget before promotion starts.",
+      "Publish the event announcement and open registration. Make it clear who can enter, how to join, when to arrive and how others can attend.",
+      "Introduce the chosen product and the local work behind it, then publish the sample, price and buying or ordering details once confirmed.",
+      "Run a simple countdown through WhatsApp, social channels and participating families. Track registrations, RSVPs, questions and early product interest.",
+    ],
+    links: [],
+  },
+  {
+    date: "By 31 Oct + 48 hours",
     title: "Run the competition and launch",
     deliverable: "Completed event, 48-hour launch report and approved November-to-February plan.",
     tasks: [
-      "Confirm the date, venue, surf format, permissions, safety plan, roles, stock and event budget.",
+      "Run the competition with the schedule, roles, safety plan and product launch ready before the first heat.",
       "Launch at a visible price and record units sold, orders, refusals, product issues and customer reasons.",
       "Reconcile the event within 48 hours and decide what changes before the second product cycle.",
     ],
@@ -136,6 +148,7 @@ const pilotSteps = [
 const octoberGate = [
   "Four-product decision record",
   "Launch-ready proof of concept",
+  "Competition promotion and registration record",
   "Competition and launch report",
   "Approved November-to-February plan",
 ];
@@ -225,9 +238,9 @@ const templates = [
       <div class="plan-section-head">
         <p class="plan-overline">03 / Phase 1 · Initial exploration</p>
         <h2>Now to 31 October.</h2>
-        <p>Detail four product ideas, choose one from evidence, build the smallest useful proof and launch it at the end-of-October surf competition.</p>
+        <p>Detail four product ideas, choose one from evidence, build the smallest useful proof, build interest before the event and launch at the end-of-October surf competition.</p>
       </div>
-      <div class="plan-phase-result"><span>Due 31 October</span><strong>One launched product, a 48-hour event report and an approved plan through February.</strong></div>
+      <div class="plan-phase-result"><span>Due 31 October</span><strong>One launched product, a completed competition with a recorded audience, a 48-hour event report and an approved plan through February.</strong></div>
       <ol class="plan-timeline">
         {explorationSteps.map((step, index) => (
           <li class:list={["plan-step", step.status === "now" && "is-current"]}>
