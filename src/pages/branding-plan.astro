@@ -1,10 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/plan.css";
 import { site } from "../data/site";
 
-const title = `Granola that buys boards | ${site.name}`;
+const title = `What do we make first? | ${site.name}`;
 const description =
-  "Concept draft: a granola made with Abigaelle. Every bag covers what it costs to make, and the surplus buys community boards so local kids can join Sunset Duckies without owning gear.";
+  "Sunset Duckies runs on dues and sponsorship, and both limit how many kids get in the water. The plan to 31 October: work up four product ideas, test them with the club, and pick the first product and the brand around it.";
 
 const audience = [
   {
@@ -48,48 +49,19 @@ const principles = [
   },
 ];
 
-const moneyFlow = [
+const problem = [
   {
-    step: "01",
-    title: "The bag pays for itself",
-    text: "The idea is that ingredients, packaging, kitchen time and Abigaelle's share come out of the price first, so nothing sells below what it costs to make.",
+    title: "Two sources of money",
+    text: `The club runs on ${site.membership.feeLabel} in dues and on sponsors who cover operations. Both work, and both have a ceiling.`,
   },
   {
-    step: "02",
-    title: "The surplus buys boards",
-    text: "Whatever is left over goes to one thing rather than general funds. Boards is the current answer. More boards, wetsuits, coaching and comp travel are the alternatives to argue about.",
+    title: "Gear is the other gate",
+    text: `Members bring their own ${site.membership.bringYourOwn.join(" and ")}. A family that cannot buy those cannot really join, whatever the fee says.`,
   },
   {
-    step: "03",
-    title: "Ten boards, ten places?",
-    text: "Ten of each in the first year is a neat fit on paper. Whether free places should depend on granola sales at all is the part we are least sure about.",
+    title: "A third leg",
+    text: "Something people buy because it is good, that also pays into the club. It only works if the product stands up without the cause attached.",
   },
-];
-
-const clubAccess = [
-  {
-    label: "Families who can pay",
-    text: `The base membership stays as it is, ${site.membership.feeLabel}, and covers comps, club lycras and safety gear.`,
-  },
-  {
-    label: "Ten free places",
-    text: "The number to start from: ten places for local kids at no fee. How many, and how a family gets one, is not settled.",
-  },
-  {
-    label: "The link to test",
-    text: "Members bring their own board, so a free place is only usable if there is one to lend. That is the reasoning behind tying the two together, and it may not survive contact with the club.",
-  },
-];
-
-const openQuestions = [
-  "Whether granola is even the right shape for this, or whether the same idea works better as something else.",
-  "What Abigaelle wants out of this: her role, her time, her share of each bag and her name on the product.",
-  "What a bag costs to make, what it sells for, and how much surplus is left per bag.",
-  "What a community board costs, and therefore how many bags fund ten of them.",
-  "Where the granola is made, and which Mauritian kitchen, hygiene and labelling rules apply.",
-  "Who decides which kids get the ten free places, and how a family asks for one.",
-  "Whether the free places open as the boards arrive, all at once, or independently of the granola.",
-  "What else the surplus could buy, and why boards beat the alternatives.",
 ];
 
 const categories = [
@@ -115,8 +87,7 @@ const categories = [
     code: "04",
     name: "Surf nutrition",
     context: "Before and after",
-    start: true,
-    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board. This is where we start.",
+    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board.",
   },
 ];
 
@@ -126,18 +97,17 @@ const steps = [
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
-    title: "Sit down with Abigaelle and the families",
-    text: "Agree terms with the person making it, then hand the draft to the club and let them break it.",
+    title: "Find the problem worth solving",
+    text: "Before anything gets designed, find out what families actually lack.",
     tasks: [
-      "Agree with Abigaelle what she wants out of this: her role, her time, her share of each bag and her name on the product.",
-      "Write down what she already makes, how she makes it and what she would want to change.",
+      "Ask parents what they bought in their child's first six months, what gets used every session and what stays at home.",
+      "Record what has stopped fitting, broken, turned uncomfortable or been replaced, and why.",
+      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability.",
       "Ask what kids eat before a session and what parents pack: what gets refused, what is bought for convenience, what they wish existed.",
-      "Ask the kids what they would actually eat before and after surfing, and what they would not touch.",
-      "Ask parents what they would pay for a bag, how often they would buy it and what would stop them.",
-      "Ask coaches and families who the free places should reach, who decides, and whether they should depend on granola sales at all.",
-      "Price the boards the club would buy, and check what the club already spends on shared gear.",
-      "List what else the surplus could buy — more boards, wetsuits, coaching hours, comp travel — and say why boards win, or change it.",
-      "Show the draft around as a draft. Collect the objections rather than the compliments, then rewrite it before any cooking starts.",
+      "Ask the kids what they reach for, what they avoid and what they would be proud to own.",
+      "Ask coaches which problems they see every week at training.",
+      "Ask what keeps a family out of the club: the fee, the board, the wetsuit, the drive, the time.",
+      "List the club costs a product could pay for, and price them.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -148,70 +118,72 @@ const steps = [
     date: "8 – 14 Sep",
     emoji: "📚",
     accent: "sticker-teal",
-    title: "Learn the rules",
-    text: "Food rules, comparable products and the standard we hold ourselves to.",
+    title: "Learn the rules and write ours",
+    text: "What good looks like in each category, and what Sunset Duckies will hold itself to.",
     tasks: [
-      "Find the Mauritian food, hygiene and labelling rules for a granola made and sold here, and what a small kitchen or co-packer needs.",
+      "Review premium everyday wear, surf wear and surf gear for kids and family surfers: materials, sizing, useful life, repair options, prices.",
       "Review premium breakfast and sports nutrition: ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch size, price.",
+      "Find the Mauritian food, hygiene and labelling rules that would apply to anything edible made and sold here.",
       "Read Yvon Chouinard’s “Let My People Go Surfing” on product quality, culture and responsibility.",
       "Read “The Future of the Responsible Company” (Chouinard and Stanley) for its tests of a legitimate product and a responsible supply chain.",
       "Look at how purpose-led companies explain where the money goes.",
-      "Write the one page of rules: quality, ingredients, customer, club contribution, accountability.",
-      "Note what the other three categories would need, for whenever we get to them.",
+      "Write the one page of rules: quality, useful life, customer, club contribution, accountability.",
     ],
     links: [],
   },
   {
     date: "15 – 28 Sep",
-    emoji: "🥣",
+    emoji: "✏️",
     accent: "sticker-sun",
-    title: "Make the granola",
-    text: "Batches with Abigaelle until there is something worth putting a name on. The concept keeps moving while the recipe does.",
+    title: "Drill down all four ideas",
+    text: "Take each category from a heading to something concrete enough to argue with.",
     tasks: [
-      "Cook batches with Abigaelle and write down every version of the recipe.",
-      "Fix the ingredient list and where each ingredient comes from, local first.",
-      "Work out nutrition per serving, allergens and serving size.",
-      "Test how long a batch holds, in what packaging, stored how.",
-      "Choose a bag size and packaging that survives a school bag and a beach.",
-      "Fill in the concept sheet, including the provisional price and the surplus per bag.",
+      "Work up one idea per category, to the same depth, on the same sheet.",
+      "For each: who it is for, the problem it solves, what it is made of, what it costs to make and what it would sell for.",
+      "For each: what a sale returns to the club, and what that money would buy.",
+      "For each: what it takes to actually produce it here, and what could stop us.",
+      "Push the two ideas that already exist — the granola and the board — past the sketch stage.",
+      "Give everyday wear and surf wear the same treatment instead of leaving them as headings.",
+      "Mark every number that is still a guess.",
     ],
     links: [
-      { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
+      { label: "Product ideas", file: "/product-ideas" },
       { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
     ],
   },
   {
     date: "29 Sep – 12 Oct",
-    emoji: "🏄",
+    emoji: "⚖️",
     accent: "sticker-pink",
-    title: "Taste it with the club",
-    text: "The kids decide whether it is good. The parents decide whether it sells.",
+    title: "Evaluate them against each other",
+    text: "Same questions asked of all four, then a choice the club can live with.",
     tasks: [
-      "Run taste tests at training. Check allergies and permission with parents first.",
-      "Record what kids finish, what they leave and what they ask for again.",
-      "Try it against a comparable shop-bought product without saying which is which.",
-      "Ask parents the price question again, now with something real to taste.",
-      "Show the money flow — cost, surplus, boards — and ask whether it is clear and worth it.",
-      "Take pre-orders. Count those, not likes.",
+      "Score all four on the same criteria: the problem, how often families buy, what it takes to make, regulation, price, and what a sale returns.",
+      "Show the four to parents on WhatsApp and at training, in a different order each time.",
+      "Let the kids handle, wear or taste whatever there is to react to.",
+      "Ask which one they would buy, at what price, and what would stop them.",
+      "Explain the club contribution as its own number and ask whether it feels worth it.",
+      "Keep younger kids, older kids and parents separate. Do not average them.",
+      "Choose one with Estelle, the coaches and the founding families. Write down the evidence and the risks left.",
     ],
     links: [
+      { label: "Product ideas", file: "/product-ideas" },
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
-      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
     ],
   },
   {
     date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Check it can be made and sold",
-    text: "Kitchen, costs and the board maths, far enough to make an honest call.",
+    title: "Test the winner and build the brand around it",
+    text: "Whether the chosen product can be made, and what it is called when it is.",
     tasks: [
-      "Confirm the kitchen or co-packer, batch size, hygiene approval, labelling and how it is stored and delivered.",
-      "Get ingredient sourcing and pricing, and what a bag costs at each batch size.",
-      "Build the unit economics: ingredients, packaging, kitchen time, Abigaelle’s share, retail price, surplus per bag.",
-      "Price a community board, then work out how many bags fund ten of them.",
-      "Agree Abigaelle’s share in writing before anything is sold.",
-      "Write the one sentence customers read: what the surplus buys and how we report it.",
+      "Get a sample, a sourced reference product or a detailed prototype spec.",
+      "Talk to suppliers or kitchens: materials or ingredients, minimum order, lead time, packaging, delivery, approvals.",
+      "Build the unit economics: cost, margin, retail price and what each sale returns to the club.",
+      "Work out what that return buys in a year, and whether the number is realistic.",
+      "Decide what the brand stands for in one paragraph, and what it will not do.",
+      "Draft the name, the look and the story of where the money goes.",
       "Show it to buyers outside the club and record pre-orders, not likes.",
     ],
     links: [
@@ -223,13 +195,13 @@ const steps = [
     emoji: "📋",
     accent: "sticker-lilac",
     title: "Decide",
-    text: "Whether the granola holds up as a product and as a way to buy boards.",
+    text: "One product, one brand, and an honest account of what it takes.",
     tasks: [
-      "State the product, the problem it solves and the evidence from the club.",
-      "Set the requirements: ingredients, nutrition, allergens, shelf life, packaging.",
-      "Present the price, costs, Abigaelle’s share and surplus per bag, with assumptions marked.",
-      "Say how many bags a year ten boards needs, and whether that is realistic.",
-      "Settle the free places: how many, who decides, when they open.",
+      "Name the product, the problem it solves and the evidence behind the choice.",
+      "Set the requirements the product has to meet before it ships.",
+      "Present the price, costs, margin and club contribution, with the assumptions marked.",
+      "Say what the contribution funds in year one, and whether that is realistic.",
+      "Present the brand: what it stands for, what it is called, how the money is explained.",
       "Recommend: build, change or stop. Then scope, owners, budget and dates.",
     ],
     links: [],
@@ -238,15 +210,16 @@ const steps = [
     date: "After 31 Oct",
     emoji: "🛠️",
     accent: "sticker-teal",
-    title: "First run, first boards",
+    title: "Make it",
     text: "Starts once the club approves the assessment and the budget.",
     tasks: [
-      "Finish the identity, packaging, product page and the surplus explainer.",
+      "Work through samples, revising until the product meets the brief.",
+      "Run real tests with kids and parents. Fix what fails and repeat.",
+      "Confirm production, minimum order, quality control, delivery and returns.",
+      "Finish the identity, packaging, product page and the explanation of where the money goes.",
+      "Keep a simple public record: sold, costs covered, surplus banked, what the club bought.",
       "Make a limited first run and launch it through the Tamarin community.",
-      "Keep a simple public record: bags sold, costs covered, surplus banked, boards bought.",
-      "Buy boards as the surplus lands instead of waiting for all ten.",
-      "Open free places as the boards arrive, on whatever basis the club agreed.",
-      "Review taste, sell-through, surplus and how the boards get used before the next product or the next club.",
+      "Review before the next product or the next club.",
     ],
     links: [],
   },
@@ -267,7 +240,7 @@ const kit = [
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
     window: "Opens 15 Sep",
-    desc: "The granola on one sheet: ingredients, nutrition, shelf life, packaging, price, surplus per bag, testing.",
+    desc: "One sheet per idea: what it is, who for, what it is made of, useful life or shelf life, price, club contribution, testing.",
   },
   {
     emoji: "💬",
@@ -276,8 +249,8 @@ const kit = [
     file: "/templates/brand-parent-questionnaire.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once there is a batch to taste.",
-    desc: "What they feed their kids around surfing, what they would pay for a bag, and what they make of the boards plan.",
+    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four ideas are worked up.",
+    desc: "What they have bought, what stopped getting used, what keeps families out of the club, and what they would pay for.",
   },
   {
     emoji: "🏄",
@@ -286,8 +259,8 @@ const kit = [
     file: "/templates/brand-kid-conversations.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the taste test later.",
-    desc: "What kids eat before and after surfing, then their verdict on the granola.",
+    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the ideas later.",
+    desc: "What kids use, avoid and want to be seen with, then their verdict on the four ideas.",
   },
   {
     emoji: "⏱️",
@@ -295,7 +268,7 @@ const kit = [
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
     window: "Opens 13 Oct",
-    desc: "Does a buyer outside the club get who it is for, why it costs what it costs and what the surplus buys?",
+    desc: "Does a buyer outside the club get who it is for, why it costs what it costs and what the contribution buys?",
   },
   {
     emoji: "📸",
@@ -304,7 +277,7 @@ const kit = [
     file: "/templates/brand-photo-permission.html",
     open: true,
     window: "Open now · closes 7 Sep",
-    now: "Signed once per child, before any photo or video is used. Needed before the taste tests.",
+    now: "Signed once per child, before any photo or video is used. Needed before product testing.",
     desc: "Where each child may appear in product work and club communications.",
   },
 ];
@@ -323,60 +296,60 @@ const openNow = kit.filter((item) => item.open);
           height="1600"
           loading="eager"
         />
-        <figcaption>Tamarin · Mauritius · Concept draft</figcaption>
+        <figcaption>Tamarin · Mauritius · Brand development</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
         <div class="plan-hero-topline">
           <span>Sunset Duckies / Product development</span>
-          <span>Concept draft · 2026</span>
+          <span>Assessment 2026</span>
         </div>
 
         <div class="plan-hero-content">
-          <p class="plan-overline">Concept draft · first product</p>
-          <h1>Granola that <span>buys boards.</span></h1>
+          <p class="plan-overline">Brand development</p>
+          <h1>What do we <span>make first?</span></h1>
           <p class="plan-hero-lead">
-            The idea: a granola made with Abigaelle, a local girl. Every bag covers what it
-            costs to make, and the surplus buys surfboards the club owns and lends out.
+            The club runs on dues and sponsorship. Both work, and both cap how many kids get
+            in the water. A product people actually want would be a third leg.
           </p>
           <p class="plan-hero-copy">
-            Ten boards in the first year, and ten free places for local kids. Every number
-            here is a starting guess. The plan to 31 October is how they get argued with,
-            tested and changed.
+            Which product, and what brand around it, is what this exercise decides. Four
+            ideas get worked up to the same depth, tested with the families, and compared
+            on the same terms by 31 October.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>10</strong><span>Boards, year one</span></div>
-          <div><strong>10</strong><span>Free places</span></div>
-          <div><strong>31.10</strong><span>Go or no go</span></div>
+          <div><strong>04</strong><span>Ideas on the table</span></div>
+          <div><strong>01</strong><span>First product</span></div>
+          <div><strong>31.10</strong><span>Decision</span></div>
         </div>
       </div>
     </section>
 
     <nav class="plan-index" aria-label="Brand development sections">
-      <a href="#concept"><span>01</span> The idea</a>
-      <a href="#the-range"><span>02</span> The range</a>
+      <a href="#problem"><span>01</span> The problem</a>
+      <a href="#the-range"><span>02</span> The ideas</a>
       <a href="#product-standard"><span>03</span> Product standard</a>
       <a href="#assessment"><span>04</span> The plan</a>
       <a href="#working-documents"><span>05</span> Documents</a>
     </nav>
 
-    <section id="concept" class="plan-section plan-concept-section" data-reveal>
+    <section id="problem" class="plan-section plan-problem-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / Concept draft</p>
-        <h2>Make it with Abigaelle, not for her.</h2>
+        <p class="plan-overline">01 / The problem</p>
+        <h2>Money decides who gets in the water.</h2>
         <p>
-          A first idea, written down so it can be pulled apart. Every number here is a guess
-          until the plan tests it, and the shape may change completely.
+          Not talent, not interest. The club can only take the kids its funding and its
+          spare boards can carry, and a product is one way to change that.
         </p>
       </div>
 
       <div class="plan-three-grid">
         {
-          moneyFlow.map((item) => (
+          problem.map((item, i) => (
             <article class="plan-info-card">
-              <span class="plan-info-number">{item.step}</span>
+              <span class="plan-info-number">0{i + 1}</span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
             </article>
@@ -384,62 +357,48 @@ const openNow = kit.filter((item) => item.open);
         }
       </div>
 
-      <div class="plan-access">
-        <div class="plan-access-head">
-          <p class="plan-overline">Who gets to surf</p>
-          <h3>Ten free places, and where the boards come in.</h3>
-        </div>
-        <dl class="plan-access-list">
-          {
-            clubAccess.map((item) => (
-              <div>
-                <dt>{item.label}</dt>
-                <dd>{item.text}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </div>
-
-      <div class="plan-questions">
-        <p class="plan-overline">What the plan has to work out</p>
-        <ul>
-          {openQuestions.map((question) => <li>{question}</li>)}
-        </ul>
-      </div>
+      <p class="plan-note">
+        The trap is obvious: a mediocre product with a good cause stapled to it. Nobody
+        rebuys that. Whatever we make has to be worth buying on its own, and the money it
+        sends back to the club has to be a number we publish rather than a feeling.
+      </p>
     </section>
 
     <div class="plan-divider" aria-hidden="true"></div>
 
     <section id="the-range" class="plan-section plan-category-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">02 / The range</p>
-        <h2>Four directions. One of them starts.</h2>
+        <p class="plan-overline">02 / The ideas</p>
+        <h2>Four directions, none of them chosen.</h2>
         <p>
-          The other three stay on the table for later years. Granola goes first because a
-          small club can actually make it, test it with the kids and sell it this year.
+          Two already have ideas attached: a granola made with a local girl, and a first
+          surfboard. The other two are still headings. All four get worked up to the same
+          depth before any of them wins.
         </p>
       </div>
 
       <div class="plan-category-grid">
         {categories.map((category) => (
-          <article class:list={["plan-category-card", category.start && "is-start"]}>
-            <div class="plan-card-code">
-              <span>{category.code}</span>
-              <span>{category.start ? "Starting here" : category.context}</span>
-            </div>
+          <article class="plan-category-card">
+            <div class="plan-card-code"><span>{category.code}</span><span>{category.context}</span></div>
             <h3>{category.name}</h3>
             <p>{category.text}</p>
             <span class="plan-card-line" aria-hidden="true"></span>
           </article>
         ))}
       </div>
+
+      <a class="plan-jump" href="/product-ideas">
+        <span class="plan-jump-label">Separate artifact</span>
+        <span class="plan-jump-title">The four ideas, drilled down and compared</span>
+        <span class="plan-jump-cta">Open the ideas <span aria-hidden="true">→</span></span>
+      </a>
     </section>
 
   <section class="plan-section plan-audience-section" data-reveal>
     <div class="plan-section-head plan-section-head-wide">
       <p class="plan-overline">The customer and the community</p>
-      <h2>The club decides whether it is any good.</h2>
+      <h2>The club decides what is worth making.</h2>
     </div>
 
     <div class="plan-three-grid">
@@ -455,9 +414,9 @@ const openNow = kit.filter((item) => item.open);
     </div>
 
     <p class="plan-note">
-      The granola has to earn its price on taste and quality first. Nobody buys a bad
-      breakfast twice because the money goes somewhere good. If the kids will not eat it,
-      the concept fails and we say so.
+      Whatever wins has to earn its price on its own merits first. If the kids will not
+      wear it, use it or eat it, the idea fails and we say so rather than shipping it with
+      a story attached.
     </p>
   </section>
 
@@ -495,9 +454,9 @@ const openNow = kit.filter((item) => item.open);
     </p>
 
     <p class="plan-note">
-      A high price is a promise. The assessment has to name the ingredients, sourcing,
-      testing and shelf life that make it fair, then publish what each bag leaves over and
-      what the club bought with it.
+      A high price is a promise. The assessment has to name what makes it fair — materials
+      or ingredients, construction, testing, useful life — then publish what each sale
+      leaves over and what the club bought with it.
     </p>
   </section>
 
@@ -506,11 +465,11 @@ const openNow = kit.filter((item) => item.open);
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
       <p class="plan-overline">04 / The plan</p>
-      <h2>From kitchen table to first run.</h2>
+      <h2>From four ideas to one product.</h2>
       <p>
-        The draft above is the starting point, not the answer. The work to 31 October pulls
-        it apart with the club, rebuilds it, and turns whatever survives into a real recipe,
-        a real price and an honest number. Production starts only once the club approves it.
+        Four ideas, worked up to the same depth and put to the families on the same terms.
+        The work to 31 October picks one, tests whether it can be made, and builds the brand
+        around it. Production starts only once the club approves it.
       </p>
     </div>
 
@@ -576,7 +535,7 @@ const openNow = kit.filter((item) => item.open);
       <p class="plan-overline">05 / Working documents</p>
       <h2>Evidence, recorded as we go.</h2>
       <p>
-        The sheets that turn kitchen sessions, taste tests and buyer reactions into the
+        The sheets that turn interviews, product ideas and buyer reactions into the
         assessment. All of them work on a phone or printed.
       </p>
     </div>
@@ -609,797 +568,13 @@ const openNow = kit.filter((item) => item.open);
     />
     <div class="plan-decision-overlay">
       <p class="plan-overline">Decision gate / 31 October</p>
-      <h2>Does the granola buy the boards?</h2>
+      <h2>Which one deserves to be made?</h2>
       <p>
-        The assessment ends with a recipe, the club's verdict, a kitchen, a price, the
-        surplus per bag and the number of bags ten boards needs. If the case holds, the
+        The assessment ends with one product, the club's verdict on it, a price, a supplier,
+        the brand around it and the number it sends back each year. If the case holds, the
         first run starts next.
       </p>
     </div>
   </section>
   </div>
 </BaseLayout>
-
-<style is:global>
-  .performance-plan {
-    --plan-bg: #071015;
-    --plan-panel: #0b171d;
-    --plan-panel-raised: #0f1e25;
-    --plan-text: #f2f4ed;
-    --plan-muted: #9ba8a5;
-    --plan-line: rgba(242, 244, 237, 0.16);
-    --plan-accent: #d7ff3f;
-    --plan-warm: #ff6849;
-    overflow: hidden;
-    color: var(--plan-text);
-    background:
-      linear-gradient(rgba(242, 244, 237, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(242, 244, 237, 0.035) 1px, transparent 1px),
-      radial-gradient(circle at 82% 5%, rgba(68, 113, 109, 0.22), transparent 28rem),
-      var(--plan-bg);
-    background-size: 64px 64px, 64px 64px, auto, auto;
-  }
-
-  .performance-plan a:focus-visible {
-    outline: 2px solid var(--plan-accent);
-    outline-offset: 4px;
-  }
-
-  .plan-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    min-height: calc(100vh - 5rem);
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-media {
-    position: relative;
-    min-height: 760px;
-    overflow: hidden;
-    border-right: 1px solid var(--plan-line);
-    background: #17272d;
-  }
-
-  .plan-hero-media::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    background:
-      linear-gradient(180deg, rgba(7, 16, 21, 0.05), rgba(7, 16, 21, 0.55)),
-      linear-gradient(90deg, transparent 60%, rgba(7, 16, 21, 0.28));
-  }
-
-  .plan-hero-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.82) contrast(1.08);
-  }
-
-  .plan-hero-media figcaption {
-    position: absolute;
-    z-index: 1;
-    right: 2rem;
-    bottom: 2rem;
-    left: 2rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(242, 244, 237, 0.72);
-  }
-
-  .plan-hero-panel {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    padding: clamp(2rem, 5vw, 5rem);
-  }
-
-  .plan-hero-topline,
-  .plan-card-code,
-  .plan-document-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-hero-topline {
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-content {
-    max-width: 800px;
-    margin: auto 0;
-    padding: 4rem 0;
-  }
-
-  .plan-overline {
-    margin: 0 0 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-  }
-
-  .plan-hero h1 {
-    max-width: 9ch;
-    margin: 0;
-    font-family: var(--font-brand);
-    font-size: clamp(5rem, 8.5vw, 10rem);
-    font-weight: 400;
-    letter-spacing: 0.005em;
-    line-height: 0.82;
-    text-transform: uppercase;
-    color: var(--plan-text);
-  }
-
-  .plan-hero h1 span {
-    display: block;
-    color: var(--plan-accent);
-  }
-
-  .plan-hero-lead {
-    max-width: 690px;
-    margin: 2.25rem 0 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.2rem, 2vw, 1.75rem);
-    font-weight: 550;
-    line-height: 1.35;
-  }
-
-  .plan-hero-copy {
-    max-width: 640px;
-    margin: 1.25rem 0 0;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--plan-muted);
-  }
-
-  .plan-hero-data {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-data div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1.4rem 1.25rem;
-    border-right: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-data div:last-child { border-right: 0; }
-
-  .plan-hero-data strong {
-    font-family: var(--font-brand);
-    font-size: 2.2rem;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--plan-text);
-  }
-
-  .plan-hero-data span {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-index {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    max-width: 1400px;
-    margin: 0 auto;
-    border-left: 1px solid var(--plan-line);
-  }
-
-  .plan-index a {
-    padding: 1.25rem 1.5rem;
-    border-right: 1px solid var(--plan-line);
-    border-bottom: 1px solid var(--plan-line);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-    transition: background 180ms ease, color 180ms ease;
-  }
-
-  .plan-index a:hover {
-    color: var(--plan-text);
-    background: rgba(215, 255, 63, 0.07);
-  }
-
-  .plan-index a span { margin-right: 0.65rem; color: var(--plan-accent); }
-
-  .plan-section {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: clamp(5rem, 9vw, 9rem) clamp(1.5rem, 5vw, 5rem);
-    scroll-margin-top: 6rem;
-  }
-
-  .plan-section-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
-    gap: 2.5rem 5rem;
-    align-items: end;
-    margin-bottom: 4rem;
-  }
-
-  .plan-section-head .plan-overline { grid-column: 1 / -1; margin-bottom: -0.5rem; }
-
-  .plan-section-head h2,
-  .plan-decision h2 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 5.8vw, 6rem);
-    font-weight: 650;
-    letter-spacing: -0.055em;
-    line-height: 0.92;
-    color: var(--plan-text);
-  }
-
-  .plan-section-head > p:last-child,
-  .plan-reference-copy,
-  .plan-note {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--plan-muted);
-  }
-
-  .plan-section-head-wide h2 { grid-column: 1 / -1; }
-
-  .plan-category-grid,
-  .plan-three-grid,
-  .plan-document-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .plan-category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-  .plan-category-card,
-  .plan-info-card,
-  .plan-document-card {
-    position: relative;
-    min-height: 320px;
-    padding: 2rem;
-    border: 1px solid var(--plan-line);
-    background: linear-gradient(145deg, rgba(15, 30, 37, 0.92), rgba(8, 18, 23, 0.9));
-  }
-
-  .plan-category-card + .plan-category-card,
-  .plan-info-card + .plan-info-card,
-  .plan-document-card + .plan-document-card { border-left: 0; }
-
-  .plan-card-code span:first-child,
-  .plan-info-number { color: var(--plan-accent); }
-
-  .plan-category-card h3,
-  .plan-info-card h3,
-  .plan-document-card h3,
-  .plan-step-body h3 {
-    margin: 5.5rem 0 1rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-    font-weight: 650;
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-    color: var(--plan-text);
-  }
-
-  .plan-category-card p,
-  .plan-info-card p,
-  .plan-document-card p {
-    margin: 0;
-    line-height: 1.65;
-    color: var(--plan-muted);
-  }
-
-  .plan-card-line {
-    position: absolute;
-    right: 2rem;
-    bottom: 2rem;
-    left: 2rem;
-    height: 2px;
-    background: var(--plan-accent);
-    transform: scaleX(0.18);
-    transform-origin: left;
-    transition: transform 240ms ease;
-  }
-
-  .plan-category-card { padding-bottom: 4.5rem; }
-
-  .plan-category-card.is-start {
-    background: rgba(215, 255, 63, 0.06);
-  }
-
-  .plan-category-card.is-start .plan-card-code span:last-child { color: var(--plan-accent); }
-  .plan-category-card.is-start .plan-card-line { transform: scaleX(1); }
-
-  .plan-access {
-    margin-top: 3rem;
-    border: 1px solid var(--plan-line);
-    border-left: 3px solid var(--plan-accent);
-  }
-
-  .plan-access-head {
-    padding: 2rem;
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-access-head h3 {
-    margin: 0.75rem 0 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-    font-weight: 650;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    color: var(--plan-text);
-  }
-
-  .plan-access-list {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 0;
-  }
-
-  .plan-access-list > div {
-    padding: 1.75rem 2rem;
-    border-left: 1px solid var(--plan-line);
-  }
-
-  .plan-access-list > div:first-child { border-left: 0; }
-
-  .plan-access-list dt {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-  }
-
-  .plan-access-list dd {
-    margin: 0.9rem 0 0;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--plan-muted);
-  }
-
-  .plan-questions {
-    max-width: 900px;
-    margin-top: 3rem;
-    padding-left: 1.4rem;
-    border-left: 2px solid var(--plan-warm);
-  }
-
-  .plan-questions ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .plan-questions li {
-    position: relative;
-    padding: 0 0 0 1.4rem;
-    margin-bottom: 0.7rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--plan-muted);
-  }
-
-  .plan-questions li:last-child { margin-bottom: 0; }
-
-  .plan-questions li::before {
-    position: absolute;
-    left: 0;
-    content: "?";
-    font-family: var(--font-mono);
-    color: var(--plan-warm);
-  }
-
-  .plan-category-card:hover .plan-card-line { transform: scaleX(1); }
-
-  .plan-info-number {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-  }
-
-  .plan-info-card h3 { margin-top: 6.75rem; }
-
-  .plan-principle-card { background: rgba(215, 255, 63, 0.055); }
-
-  .plan-reference-copy { max-width: 900px; margin-bottom: 3rem; }
-
-  .plan-reference-copy a {
-    border-bottom: 1px solid var(--plan-accent);
-    color: var(--plan-text);
-  }
-
-  .plan-note {
-    max-width: 860px;
-    margin-top: 3rem;
-    padding-left: 1.4rem;
-    border-left: 2px solid var(--plan-accent);
-  }
-
-  .plan-divider {
-    max-width: 1400px;
-    height: 1px;
-    margin: 0 auto;
-    background: var(--plan-line);
-  }
-
-  .plan-timeline {
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--plan-line);
-    list-style: none;
-  }
-
-  .plan-step {
-    display: grid;
-    grid-template-columns: 230px minmax(0, 1fr);
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-step.is-current { background: rgba(215, 255, 63, 0.035); }
-
-  .plan-step-rail {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 2.25rem 2rem 2.25rem 0;
-    border-right: 1px solid var(--plan-line);
-  }
-
-  .plan-step-rail > span {
-    font-family: var(--font-brand);
-    font-size: 3.5rem;
-    font-weight: 400;
-    line-height: 1;
-    color: rgba(242, 244, 237, 0.28);
-  }
-
-  .plan-step.is-current .plan-step-rail > span { color: var(--plan-accent); }
-
-  .plan-step-rail time,
-  .plan-step-rail em {
-    margin-top: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-style: normal;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-step-rail em {
-    margin-top: 0.7rem;
-    padding: 0.4rem 0.55rem;
-    background: var(--plan-accent);
-    color: var(--plan-bg);
-  }
-
-  .plan-step-body { padding: 2.35rem 0 2.75rem 3rem; }
-  .plan-step-body h3 { max-width: 740px; margin: 0 0 0.75rem; }
-
-  .plan-step-intro {
-    max-width: 760px;
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.65;
-    color: var(--plan-muted);
-  }
-
-  .plan-step-body ul {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 2.5rem;
-    margin: 2rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .plan-step-body li {
-    position: relative;
-    padding-left: 1.15rem;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: rgba(242, 244, 237, 0.78);
-  }
-
-  .plan-step-body li::before {
-    position: absolute;
-    left: 0;
-    content: "/";
-    color: var(--plan-accent);
-  }
-
-  .plan-step-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--plan-line);
-  }
-
-  .plan-step-links a {
-    padding: 0.7rem 0.85rem;
-    border: 1px solid rgba(215, 255, 63, 0.45);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-    transition: background 180ms ease, color 180ms ease;
-  }
-
-  .plan-step-links a:hover { background: var(--plan-accent); color: var(--plan-bg); }
-
-  .plan-document-grid { gap: 1px; background: var(--plan-line); }
-
-  .plan-document-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 330px;
-    border: 0;
-    color: inherit;
-    transition: background 180ms ease, transform 180ms ease;
-  }
-
-  .plan-document-card:hover {
-    z-index: 1;
-    background: #14272f;
-    transform: translateY(-4px);
-  }
-
-  .plan-document-card h3 { margin-top: 4.5rem; }
-
-  .plan-open-now {
-    margin-bottom: 4rem;
-    border: 1px solid var(--plan-line);
-    border-left: 3px solid var(--plan-accent);
-    background: rgba(215, 255, 63, 0.05);
-  }
-
-  .plan-open-head {
-    padding: 2rem 2rem 1.5rem;
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-open-head h3 {
-    margin: 0.75rem 0 0.75rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-    font-weight: 650;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    color: var(--plan-text);
-  }
-
-  .plan-open-head p:last-child {
-    max-width: 62ch;
-    margin: 0;
-    line-height: 1.65;
-    color: var(--plan-muted);
-  }
-
-  .plan-open-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .plan-open-card {
-    display: flex;
-    flex-direction: column;
-    padding: 1.75rem 2rem 1.5rem;
-    border-left: 1px solid var(--plan-line);
-    transition: background 200ms ease;
-  }
-
-  .plan-open-card:first-child { border-left: 0; }
-  .plan-open-card:hover { background: rgba(215, 255, 63, 0.06); }
-
-  .plan-open-tag,
-  .plan-open-cta {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-  }
-
-  .plan-open-tag { color: var(--plan-muted); }
-
-  .plan-open-card h4 {
-    margin: 1rem 0 0.6rem;
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: 650;
-    letter-spacing: -0.02em;
-    color: var(--plan-text);
-  }
-
-  .plan-open-card p {
-    margin: 0 0 1.5rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--plan-muted);
-  }
-
-  .plan-open-cta {
-    margin-top: auto;
-    color: var(--plan-accent);
-  }
-
-  .plan-document-window {
-    display: inline-block;
-    align-self: flex-start;
-    margin-top: 1rem;
-    padding: 0.3rem 0.6rem;
-    border: 1px solid var(--plan-line);
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-document-window.is-open {
-    border-color: var(--plan-accent);
-    color: var(--plan-accent);
-  }
-
-  .plan-document-card h3 { margin-top: 3.25rem; }
-
-  .plan-document-open {
-    margin-top: auto;
-    padding-top: 2rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-  }
-
-  .plan-decision {
-    position: relative;
-    display: flex;
-    min-height: 760px;
-    align-items: flex-end;
-    overflow: hidden;
-    border-top: 1px solid var(--plan-line);
-    background: #102027;
-  }
-
-  .plan-decision::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    background: linear-gradient(180deg, rgba(7, 16, 21, 0.12), rgba(7, 16, 21, 0.95));
-  }
-
-  .plan-decision > img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.72) contrast(1.08);
-  }
-
-  .plan-decision-overlay {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 5rem);
-  }
-
-  .plan-decision h2 {
-    max-width: 980px;
-    font-family: var(--font-brand);
-    font-size: clamp(4rem, 8vw, 8.5rem);
-    font-weight: 400;
-    letter-spacing: 0;
-    line-height: 0.84;
-    text-transform: uppercase;
-  }
-
-  .plan-decision-overlay > p:last-child {
-    max-width: 720px;
-    margin: 2rem 0 0;
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(242, 244, 237, 0.78);
-  }
-
-  @media (max-width: 1024px) {
-    .plan-hero { grid-template-columns: 1fr; }
-    .plan-hero-media { min-height: 58vh; max-height: 680px; border-right: 0; border-bottom: 1px solid var(--plan-line); }
-    .plan-hero-panel { min-height: 660px; }
-    .plan-section-head { grid-template-columns: 1fr; }
-    .plan-section-head .plan-overline,
-    .plan-section-head-wide h2 { grid-column: auto; }
-    .plan-category-grid,
-    .plan-three-grid,
-    .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .plan-open-grid,
-    .plan-access-list { grid-template-columns: 1fr; }
-    .plan-access-list > div { border-top: 1px solid var(--plan-line); border-left: 0; }
-    .plan-access-list > div:first-child { border-top: 0; }
-    .plan-index { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .plan-open-card { border-top: 1px solid var(--plan-line); border-left: 0; }
-    .plan-open-card:first-child { border-top: 0; }
-    .plan-category-card + .plan-category-card,
-    .plan-info-card + .plan-info-card { border-left: 1px solid var(--plan-line); }
-    .plan-category-card:nth-child(even),
-    .plan-info-card:nth-child(even) { border-left: 0; }
-    .plan-step { grid-template-columns: 170px minmax(0, 1fr); }
-    .plan-step-body { padding-left: 2rem; }
-    .plan-step-body ul { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 680px) {
-    .plan-hero-media { min-height: 48vh; }
-    .plan-hero-media figcaption { right: 1.25rem; bottom: 1.25rem; left: 1.25rem; }
-    .plan-hero-panel { min-height: 650px; padding: 1.5rem; }
-    .plan-hero-topline { flex-wrap: wrap; }
-    .plan-hero h1 { font-size: clamp(4rem, 20vw, 6.2rem); }
-    .plan-hero-data div { padding: 1.1rem 0.65rem; }
-    .plan-hero-data strong { font-size: 1.75rem; }
-    .plan-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .plan-category-grid,
-    .plan-three-grid,
-    .plan-document-grid { grid-template-columns: 1fr; }
-    .plan-category-card + .plan-category-card,
-    .plan-info-card + .plan-info-card { border-top: 0; border-left: 1px solid var(--plan-line); }
-    .plan-section-head { margin-bottom: 2.75rem; }
-    .plan-section-head h2 { font-size: clamp(2.8rem, 14vw, 4rem); }
-    .plan-step { display: block; }
-    .plan-step-rail {
-      flex-direction: row;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem 0;
-      border-right: 0;
-      border-bottom: 1px solid var(--plan-line);
-    }
-    .plan-step-rail time,
-    .plan-step-rail em { margin: 0; }
-    .plan-step-body { padding: 2rem 0 2.5rem; }
-    .plan-decision { min-height: 660px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .plan-document-card,
-    .plan-card-line { transition: none; }
-    .plan-document-card:hover { transform: none; }
-  }
-</style>
