@@ -720,4 +720,24 @@ body.performance-theme::before {
   .performance-theme .site-header {
     background: #071015 !important;
   }
+
+  .performance-theme .site-header > div {
+    gap: 0.5rem;
+  }
+
+  .performance-theme .site-header > div > a:first-child > div {
+    display: none;
+  }
+
+  .performance-theme .site-header nav a {
+    display: none;
+  }
+
+  .performance-theme .site-header nav a:last-child {
+    display: inline-flex;
+  }
+
+  .performance-theme .site-header .cta-primary {
+    padding: 0.65rem 0.75rem;
+  }
 }
