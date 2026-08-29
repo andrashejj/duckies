@@ -58,7 +58,7 @@ export const site = {
     { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
     { label: "Blog", labelFull: "The Logbook", href: "/blog" },
-    { label: "Common", labelFull: "Common Water", href: "/branding-plan" },
+    { label: "Molt", labelFull: "Project Molt", href: "/branding-plan" },
   ],
   stats: [
     { value: "100%", label: "kids in the lineup" },

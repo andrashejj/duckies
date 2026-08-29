@@ -1,5 +1,5 @@
 @font-face {
-  font-family: "Common Water Anton";
+  font-family: "Project Molt Anton";
   src: url("/brand/anton-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
@@ -100,7 +100,7 @@ h1 {
   max-width: 12ch;
   margin: 22px 0 12px;
   color: var(--cw-text);
-  font-family: "Common Water Anton", "Arial Narrow", sans-serif;
+  font-family: "Project Molt Anton", "Arial Narrow", sans-serif;
   font-size: clamp(3.6rem, 9vw, 7.5rem);
   font-weight: 400;
   letter-spacing: 0.005em;
