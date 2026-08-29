@@ -51,6 +51,7 @@ const explorationSteps = [
       "Interview all founding families and participating kids using the same four concepts and prices.",
       "Interview at least five likely buyers outside the club and one relevant maker or supplier per concept.",
       "Record choices, reasons, refusals, price objections, quoted costs, minimums and lead times.",
+      "Ask whether the club story changes interest, price or the chance of buying again. Record support for the club separately from interest in the product.",
     ],
     links: [
       { label: "Parent interview", file: "/templates/brand-parent-questionnaire.html" },
@@ -63,6 +64,7 @@ const explorationSteps = [
     deliverable: "Product decision record and approved proof-of-concept brief.",
     tasks: [
       "Score all four against the same demand, quality, maker, cost, risk and brand criteria.",
+      "Keep donations, event spending and purchases made only to support the club out of the demand score.",
       "Record why one product advances and why each of the other three stops or is parked.",
       "Approve the proof-of-concept owner, budget and pass or fail tests.",
     ],
@@ -116,6 +118,8 @@ const pilotSteps = [
     deliverable: "Revised product specification, economics and second-cycle plan.",
     tasks: [
       "Reconcile every unit and all event and product costs.",
+      "Keep product revenue, product costs, competition costs and club spending as four separate totals.",
+      "Do not use product money for club equipment during the test unless it is approved and recorded as a separate contribution.",
       "Review feedback, failures, price objections and follow-on demand.",
       "Revise the product, price, production process and maker agreement where needed.",
     ],
@@ -134,9 +138,11 @@ const pilotSteps = [
   },
   {
     date: "By 28 Feb 2027",
-    title: "Decide what can travel",
-    deliverable: "Global rollout plan and recommendation for the next proof community.",
+    title: "Decide the structure and what can travel",
+    deliverable: "Club and product operating decision, global rollout plan and recommendation for the next proof community.",
     tasks: [
+      "Decide whether the club and product business remain one operation or become two connected ones. Define how they share the name and story, who makes which decisions and which money stays separate.",
+      "Set the rule for any future product contribution to club equipment or activities. Give it a named amount or formula, an approval and separate reporting.",
       "Challenge the Tamarin model with people from at least two potential communities outside Mauritius.",
       "Set the readiness test, first 90 days, local roles, handover, shared rules, economics and measures.",
       "Name the next community, sequence, team, budget, risks and decisions required to begin.",
@@ -148,6 +154,7 @@ const pilotSteps = [
 const octoberGate = [
   "Four-product decision record",
   "Launch-ready proof of concept",
+  "Pilot rules separating product, competition and club money",
   "Competition promotion and registration record",
   "Competition and launch report",
   "Approved November-to-February plan",
@@ -156,6 +163,7 @@ const octoberGate = [
 const februaryGate = [
   "Two product-cycle reports",
   "Tamarin ownership and handover record",
+  "Club and product operating and financial boundary",
   "Actual economics and product standards",
   "Costed global rollout plan",
 ];
@@ -229,6 +237,10 @@ const templates = [
         {projectGoals.map((goal) => (
           <article class="plan-compact-card"><span>{goal.code}</span><h3>{goal.name}</h3><p>{goal.text}</p></article>
         ))}
+      </div>
+      <div class="plan-phase-result">
+        <span>Open decision</span>
+        <strong>Decide whether the club and product business should remain one operation or become two connected ones. Test whether the club story helps people buy, but keep club spending, donations and friendly purchases out of the product result.</strong>
       </div>
     </section>
 
