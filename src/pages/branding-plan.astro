@@ -5,160 +5,38 @@ import { site } from "../data/site";
 
 const title = `From Tamarin to local surf communities everywhere | ${site.name}`;
 const description =
-  "The overall Sunset Duckies project from August 2026 to February 2027: initial exploration, a product launch, a live Tamarin pilot and an evidence-backed global rollout plan.";
+  "The Sunset Duckies project from August 2026 to February 2027: choose and launch one product, test the model in Tamarin and produce a global rollout plan.";
 
-const goals = [
-  {
-    code: "G-01",
-    context: "Product",
-    name: "A product with a reason to exist",
-    text: "Choose something people will pay for because it is good. Prove the customer problem, quality standard, maker route and price in Tamarin.",
-  },
-  {
-    code: "G-02",
-    context: "Local ownership",
-    name: "A community that can run without us",
-    text: "Define the local roles, decisions, assets and routines, then show how Sunset Duckies steps back without the activity or relationships collapsing.",
-  },
-  {
-    code: "G-03",
-    context: "Value",
-    name: "Decide how value moves",
-    text: "Compare local paid work, a contribution per sale, revenue share, a shared fund and hybrids. Choose the model after the product economics and community needs are known.",
-  },
-  {
-    code: "G-04",
-    context: "Brand",
-    name: "A model another place can use",
-    text: "By February 2027, turn the Tamarin evidence into a rollout plan covering readiness, start-up support, handover, brand rules, economics and the ongoing relationship.",
-  },
-];
-
-const communityStages = [
-  {
-    name: "Meet the community",
-    accent: "sticker-teal",
-    emoji: "🎯",
-    text: "Start with an existing local group, a trusted local lead, a real place and a reason to gather. Sunset Duckies does not arrive with a ready-made club.",
-  },
-  {
-    name: "Start something together",
-    accent: "sticker-sun",
-    emoji: "🛠️",
-    text: "Agree the first useful activity, product or event with the people who will run it. Set roles, safeguarding, money, credit and what Sunset Duckies supplies.",
-  },
-  {
-    name: "Hand over the work",
-    accent: "sticker-pink",
-    emoji: "🌊",
-    text: "Move the schedule, decisions, relationships, assets, accounts and approvals to local hands. Handover starts at the beginning, not after dependency has formed.",
-  },
-  {
-    name: "Stay connected",
-    accent: "sticker-coral",
-    emoji: "🤝",
-    text: "The community keeps its name, people and voice while using the shared brand rules. The wider network shares products, learning and proof without centralising local decisions.",
-  },
-];
-
-const problem = [
-  {
-    title: "A real place to learn",
-    text: "Tamarin already has kids, families, coaches, surf sessions, relationships and access problems. The concept starts with reality rather than a brand workshop.",
-  },
-  {
-    title: "Products carry the brand",
-    text: "High-quality products can create paid local work, reach buyers outside the community and make the people and place behind them visible.",
-  },
-  {
-    title: "The test is whether it travels",
-    text: "Mauritius proves the first version. The useful result is a model another local surf community can adapt, own and sustain without becoming a Sunset Duckies franchise.",
-  },
+const projectOutputs = [
+  { code: "01", name: "Product proof", text: "One product launched in October and tested in a second sales cycle by January." },
+  { code: "02", name: "Tamarin proof", text: "A clear record of what local people can own, run and sustain after handover." },
+  { code: "03", name: "Working economics", text: "Actual product costs, maker payment, local value, central costs and customer price." },
+  { code: "04", name: "Global rollout plan", text: "A costed plan for choosing, starting and handing over to the next communities." },
 ];
 
 const methodology = [
-  {
-    name: "Compare like with like",
-    text: "Use the same concept sheet, level of detail and provisional price for all four products. Rotate the order in interviews so the first option does not win by default.",
-  },
-  {
-    name: "Test behaviour and constraints",
-    text: "Record choices, refusals, price objections, maker costs and production limits. The October launch adds real sales, orders and product failures.",
-  },
-  {
-    name: "Require evidence before the next phase",
-    text: "Each phase ends with a required output and a launch, revise or stop decision. Start with the smallest useful batch, then test repeat demand in a second cycle.",
-  },
+  { name: "Compare fairly", text: "Draft all four products with the same sheet, detail and provisional price. Rotate their order in interviews." },
+  { name: "Test behaviour", text: "Record choices, refusals, price objections, maker quotes, production limits, sales and repeat orders." },
+  { name: "Require evidence", text: "Every phase ends with a named deliverable and a continue, revise or stop decision." },
 ];
 
-const octoberDeliverables = [
-  {
-    code: "D-01",
-    name: "Product decision record",
-    context: "Four down to one",
-    text: "Four complete concepts, the interview evidence, the scoring and a clear record of why one product advanced and three did not.",
-  },
-  {
-    code: "D-02",
-    name: "A real proof of concept",
-    context: "Chosen product",
-    text: "A small run or launch-ready sample with a product specification, quality tests, maker agreement, production route, price and unit economics.",
-  },
-  {
-    code: "D-03",
-    name: "Competition and launch evidence",
-    context: "End of October",
-    text: "The surf event, product launch, sales or orders, customer feedback, product failures, event costs and a short post-event decision record.",
-  },
-  {
-    code: "D-04",
-    name: "November to February plan",
-    context: "Next live tests",
-    text: "Monthly milestones, owners, budget, product and community tests, decision gates and the evidence required for the global rollout plan.",
-  },
+const communityApproach = [
+  "Start with an existing local group",
+  "Agree roles and the first useful work",
+  "Move decisions and assets into local hands",
+  "Stay connected through shared brand rules",
 ];
 
-const pilotOutcomes = [
-  {
-    code: "P-01",
-    name: "A product tested twice",
-    context: "Product proof",
-    text: "The October launch followed by another meaningful sales or order cycle, with evidence on quality, demand, price, repeat interest and production reliability.",
-  },
-  {
-    code: "P-02",
-    name: "A Tamarin model that works",
-    context: "Community proof",
-    text: "Evidence of what local people can own and run, what Sunset Duckies still needs to provide and where handover does or does not work.",
-  },
-  {
-    code: "P-03",
-    name: "Economics and standards",
-    context: "Brand proof",
-    text: "Actual product economics, local paid work, central costs, quality rules, safeguards and environmental claims supported by the pilot.",
-  },
-  {
-    code: "P-04",
-    name: "A global rollout plan",
-    context: "Next communities",
-    text: "Where to go next, how to choose a community, how to start and hand over, what support and budget are required, and what every new place must measure.",
-  },
-];
-
-const steps = [
+const explorationSteps = [
   {
     date: "28 Aug – 7 Sep",
-    emoji: "✏️",
-    accent: "sticker-teal",
     status: "now",
-    title: "Draft all four product concepts",
-    text: "Make each area concrete enough for a parent, child, buyer or maker to understand and compare.",
+    title: "Draft four product concepts",
+    deliverable: "Four completed product concept sheets at the same level of detail.",
     tasks: [
-      "Complete the same concept sheet for surf nutrition, surf gear, everyday wear and surf wear.",
-      "Name the specific product, customer, problem, quality promise, likely price and maker route in each area.",
-      "Work the healthy granola up as the leading hypothesis while keeping it open to rejection.",
-      "Ask one relevant maker or supplier in each area what would make the concept slow, expensive or unrealistic.",
-      "Prepare the same four concepts and questions for every interview.",
+      "Name the product, customer, problem, quality promise, provisional price and maker route for each area.",
+      "Develop healthy granola as the leading hypothesis while keeping it open to rejection.",
+      "Get an initial feasibility check from one relevant maker or supplier per concept.",
     ],
     links: [
       { label: "Four product areas", file: "/product-ideas" },
@@ -167,52 +45,40 @@ const steps = [
   },
   {
     date: "8 – 18 Sep",
-    emoji: "🗣️",
-    accent: "sticker-teal",
-    title: "Interview against the same four",
-    text: "Let the interviews change the concepts and show which one people would use, buy and support.",
+    title: "Run the interviews",
+    deliverable: "Interview log and one comparison table covering all four products.",
     tasks: [
-      "Interview kids and parents using the same four concepts, pictures, descriptions and provisional prices.",
-      "Ask likely buyers outside the club what they understand, would buy and would reject.",
-      "Ask local makers what they can produce, at what quality, volume, cost and lead time.",
-      "Record choices, reasons, price objections and refusals instead of collecting general enthusiasm.",
-      "Revise each concept only when the interviews expose a specific problem.",
+      "Interview all founding families and participating kids using the same four concepts and prices.",
+      "Interview at least five likely buyers outside the club and one relevant maker or supplier per concept.",
+      "Record choices, reasons, refusals, price objections, quoted costs, minimums and lead times.",
     ],
     links: [
-      { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
-      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
+      { label: "Parent interview", file: "/templates/brand-parent-questionnaire.html" },
+      { label: "Kid interview", file: "/templates/brand-kid-conversations.html" },
     ],
   },
   {
     date: "19 – 25 Sep",
-    emoji: "⚖️",
-    accent: "sticker-pink",
-    title: "Narrow four products down to one",
-    text: "Choose the product that has the strongest combined case for customers, quality, production and brand fit.",
+    title: "Choose one product",
+    deliverable: "Product decision record and approved proof-of-concept brief.",
     tasks: [
       "Score all four against the same demand, quality, maker, cost, risk and brand criteria.",
-      "Choose one with the kids, parents, makers and project leads represented in the decision.",
-      "Treat granola as the expected winner only if its evidence is stronger than the other three.",
-      "Record why the winner advanced and why each other concept stopped or was parked.",
-      "Write the proof-of-concept brief, budget, owner and pass or fail tests.",
+      "Record why one product advances and why each of the other three stops or is parked.",
+      "Approve the proof-of-concept owner, budget and pass or fail tests.",
     ],
     links: [
-      { label: "Product candidates", file: "/product-ideas" },
+      { label: "Comparison table", file: "/product-ideas#evaluation" },
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
     ],
   },
   {
     date: "26 Sep – 18 Oct",
-    emoji: "🧪",
-    accent: "sticker-coral",
     title: "Build the proof of concept",
-    text: "Produce something real enough to use, price and reject before committing to the event launch.",
+    deliverable: "Launch-ready small batch or sample, product specification and unit economics.",
     tasks: [
-      "Agree the specification, maker role, payment, credit, approvals and ownership before production.",
-      "If granola wins, test recipes, ingredients, portion, packaging, shelf life, food safety, nutrition information and allowed claims.",
-      "Make a small batch or equivalent sample and test it with kids, parents and buyers outside the club.",
-      "Confirm unit cost, launch price, batch size, quality checks and who carries unsold stock or compliance risk.",
-      "Make a launch, revise or stop decision by 18 October.",
+      "Agree the maker role, payment, credit, approval, production method and quality checks.",
+      "If granola wins, test recipe, ingredients, portion, packaging, shelf life, food safety, nutrition information and permitted claims.",
+      "Test the sample, confirm launch quantity and price, then make a launch, revise or stop decision.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
@@ -220,476 +86,208 @@ const steps = [
   },
   {
     date: "19 – 31 Oct",
-    emoji: "🏄",
-    accent: "sticker-lilac",
-    title: "Run the surf competition and product launch",
-    text: "Combine a Sunset Duckies surf event with the first public test of the chosen product.",
+    title: "Run the competition and launch",
+    deliverable: "Completed event, 48-hour launch report and approved November-to-February plan.",
     tasks: [
-      "Confirm the event date, surf format, venue, permissions, safety plan, roles and budget.",
-      "Prepare only the launch quantity that the proof of concept and production capacity support.",
-      "Sell or take orders at a visible price and record who buys, refuses, comes back and why.",
-      "Keep the competition enjoyable in its own right and make product participation optional.",
-      "Debrief within 48 hours and approve the November to February product, Tamarin and global-model tests.",
+      "Confirm the date, venue, surf format, permissions, safety plan, roles, stock and event budget.",
+      "Launch at a visible price and record units sold, orders, refusals, product issues and customer reasons.",
+      "Reconcile the event within 48 hours and decide what changes before the second product cycle.",
     ],
-    links: [
-      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
-    ],
+    links: [],
   },
 ];
 
 const pilotSteps = [
   {
     date: "November 2026",
-    title: "Learn from the launch",
-    text: "Turn the competition and launch evidence into the next version of the product and Tamarin model.",
+    title: "Improve after the launch",
+    deliverable: "Revised product specification, economics and second-cycle plan.",
     tasks: [
-      "Reconcile units made, sold, sampled, returned and left, plus every event and product cost.",
-      "Review customer feedback, product failures, price objections and follow-on demand.",
-      "Revise the product, production process, price and maker agreement where the evidence requires it.",
-      "Set the second product cycle and the Tamarin responsibilities to test through January.",
+      "Reconcile every unit and all event and product costs.",
+      "Review feedback, failures, price objections and follow-on demand.",
+      "Revise the product, price, production process and maker agreement where needed.",
     ],
+    links: [{ label: "Brand and community model", file: "/templates/brand-concept.html" }],
   },
   {
     date: "Dec 2026 – Jan 2027",
-    title: "Run the second live test",
-    text: "Test whether the product and local operating model work without the launch event carrying them.",
+    title: "Run the second product cycle",
+    deliverable: "Second-cycle report and Tamarin handover record.",
     tasks: [
-      "Produce and sell or take orders for the next run using the revised specification and economics.",
-      "Track repeat customers, new customers, quality, price objections, returns and production problems.",
-      "Track who does the local work, who makes decisions and where the pilot still depends on central help.",
-      "Review the evidence monthly and change the product or operating model when the facts require it.",
+      "Produce and sell or take orders using the revised specification and economics.",
+      "Track repeat and new customers, quality, returns, production reliability and margin.",
+      "Move agreed roles and decisions to local people and record where central help is still required.",
     ],
+    links: [{ label: "Brand and community model", file: "/templates/brand-concept.html" }],
   },
   {
-    date: "February 2027",
-    title: "Decide what is ready to travel",
-    text: "Use the live test to improve the model, test the handover and write the global rollout plan.",
+    date: "By 28 Feb 2027",
+    title: "Decide what can travel",
+    deliverable: "Global rollout plan and recommendation for the next proof community.",
     tasks: [
-      "Revise the product, production process, price or value model using the first-run evidence.",
-      "Move the agreed roles, assets, accounts, approvals and relationships to the Tamarin leads.",
-      "Challenge the model with people from at least two potential communities outside Mauritius.",
-      "Set the community readiness test, first 90 days, local roles, handover test and ongoing brand relationship.",
-      "Set the shared brand rules, product standards, safeguards, data, credit, economics and measures required everywhere.",
-      "Recommend the next community, sequence, team, budget and decisions needed to begin rollout.",
+      "Challenge the Tamarin model with people from at least two potential communities outside Mauritius.",
+      "Set the readiness test, first 90 days, local roles, handover, shared rules, economics and measures.",
+      "Name the next community, sequence, team, budget, risks and decisions required to begin.",
     ],
+    links: [{ label: "Brand and community model", file: "/templates/brand-concept.html" }],
   },
 ];
 
-const kit = [
-  {
-    emoji: "✏️",
-    title: "Product concept sheet",
-    phase: "Estelle",
-    file: "/templates/brand-direction-sheet.html",
-    open: true,
-    window: "Open now · closes 7 Sep",
-    now: "Complete this four times: granola, first surfboard, everyday wear and surf wear.",
-    desc: "One sheet per candidate: customer, product, maker route, useful life or shelf life, price, community value options and testing.",
-  },
-  {
-    emoji: "🧭",
-    title: "Brand and community model",
-    phase: "Estelle",
-    file: "/templates/brand-concept.html",
-    window: "Opens after product selection",
-    desc: "What Tamarin proves, how a microcommunity starts, what gets handed over, what stays shared and how value could move.",
-  },
-  {
-    emoji: "💬",
-    title: "Questions for parents",
-    phase: "Families",
-    file: "/templates/brand-parent-questionnaire.html",
-    window: "Opens 8 Sep · closes 18 Sep",
-    desc: "What families buy, use and replace, what keeps them out of the water, and what they would pay for.",
-  },
-  {
-    emoji: "🏄",
-    title: "Talking to the kids",
-    phase: "Coaches",
-    file: "/templates/brand-kid-conversations.html",
-    window: "Opens 8 Sep · closes 18 Sep",
-    desc: "What kids use, avoid and want to be seen with, then their verdict on the four candidates.",
-  },
-  {
-    emoji: "⏱️",
-    title: "Product clarity check",
-    phase: "Testing",
-    file: "/templates/brand-stranger-test.html",
-    window: "Opens 19 Sep",
-    desc: "Does a buyer outside Tamarin understand the product, price, maker, community connection and claims without a sales pitch?",
-  },
-  {
-    emoji: "📸",
-    title: "Photo permission",
-    phase: "Safeguarding",
-    file: "/templates/brand-photo-permission.html",
-    window: "Before public photos or video",
-    desc: "Consent for using a child's image in product work or club communications. Complete it when content will be used publicly.",
-  },
+const octoberGate = [
+  "Four-product decision record",
+  "Launch-ready proof of concept",
+  "Competition and launch report",
+  "Approved November-to-February plan",
 ];
 
-const openNow = kit.filter((item) => item.open);
+const februaryGate = [
+  "Two product-cycle reports",
+  "Tamarin ownership and handover record",
+  "Actual economics and product standards",
+  "Costed global rollout plan",
+];
+
+const templates = [
+  { when: "Now · by 7 Sep", name: "Product concept sheet", use: "Complete once for each of the four products.", file: "/templates/brand-direction-sheet.html" },
+  { when: "8–18 Sep", name: "Parent interview", use: "Record buying history and compare all four concepts.", file: "/templates/brand-parent-questionnaire.html" },
+  { when: "8–18 Sep", name: "Kid interview", use: "Record what kids would use, reject and change.", file: "/templates/brand-kid-conversations.html" },
+  { when: "19 Sep–18 Oct", name: "Product clarity check", use: "Test whether an outside buyer understands the product and price.", file: "/templates/brand-stranger-test.html" },
+  { when: "Nov–Feb", name: "Brand and community model", use: "Record local ownership, handover, shared rules and rollout decisions.", file: "/templates/brand-concept.html" },
+  { when: "Before public media", name: "Photo permission", use: "Supporting consent document, used only when a child's image will be published.", file: "/templates/brand-photo-permission.html" },
+];
 ---
 
 <BaseLayout title={title} description={description} variant="performance">
   <div class="performance-plan">
     <section class="plan-hero">
       <figure class="plan-hero-media" data-float>
-        <img
-          src="/media/young-rider.jpg"
-          alt="A young surfer riding a wave at sunset in Tamarin"
-          width="1200"
-          height="1600"
-          loading="eager"
-        />
+        <img src="/media/young-rider.jpg" alt="A young surfer riding a wave at sunset in Tamarin" width="1200" height="1600" loading="eager" />
         <figcaption>Tamarin · Mauritius · First proof community</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
         <div class="plan-hero-topline">
-          <span>Sunset Duckies / Community and product model</span>
-          <span>Overall project / Aug 2026 – Feb 2027</span>
+          <span>Sunset Duckies / Brand project</span>
+          <span>Aug 2026 – Feb 2027</span>
         </div>
-
         <div class="plan-hero-content">
           <p class="plan-overline">Overall project brief</p>
-          <h1>Build the brand here. <span>Prepare it to travel.</span></h1>
-          <p class="plan-hero-lead">
-            This brief covers the full project from August 2026 to February 2027: build a
-            high-quality product, test the brand and community model in Tamarin, and finish
-            with a plan for taking Sunset Duckies to the next places.
-          </p>
-          <p class="plan-hero-copy">
-            The project starts with initial exploration. By the end of October, draft four
-            products, interview, choose one, build a proof of concept and launch it at a surf
-            competition. From November to February, test repeat demand, economics, local
-            ownership and handover in Tamarin.
-          </p>
+          <h1>Build here. <span>Prepare to travel.</span></h1>
+          <p class="plan-hero-lead">Choose and launch one strong product, test the brand and community model in Tamarin, and finish with a practical plan for the next communities.</p>
+          <p class="plan-hero-copy">Initial exploration ends with the competition and product launch on 31 October. The live Tamarin pilot and global rollout plan are due by 28 February 2027.</p>
         </div>
-
-        <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>08–02</strong><span>Overall project</span></div>
-          <div><strong>31.10</strong><span>Initial phase ends</span></div>
-          <div><strong>02.27</strong><span>Global rollout plan</span></div>
+        <div class="plan-hero-data" aria-label="Project deadlines">
+          <div><strong>NOW</strong><span>Draft four products</span></div>
+          <div><strong>31.10</strong><span>Launch + pilot plan</span></div>
+          <div><strong>28.02</strong><span>Global rollout plan</span></div>
         </div>
       </div>
     </section>
 
     <nav class="plan-index" aria-label="Project brief sections">
-      <a href="#problem"><span>01</span> Overall project</a>
-      <a href="#goals"><span>02</span> Project goals</a>
-      <a href="#product-standard"><span>03</span> Community model</a>
-      <a href="#assessment"><span>04</span> Initial exploration</a>
-      <a href="#pilot"><span>05</span> Live pilot</a>
-      <a href="#working-documents"><span>06</span> Decision gates</a>
+      <a href="#outcomes"><span>01</span> Outcomes</a>
+      <a href="#method"><span>02</span> Method</a>
+      <a href="#exploration"><span>03</span> To October</a>
+      <a href="#pilot"><span>04</span> To February</a>
+      <a href="#delivery"><span>05</span> Delivery + templates</a>
     </nav>
 
-    <section id="problem" class="plan-section plan-problem-section" data-reveal>
+    <section id="outcomes" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / Overall project</p>
-        <h2>Tamarin is the first proof, not the limit.</h2>
-        <p>
-          The project uses one real community to build and test the first version. It covers
-          the product, local ownership, economics, handover and the path to the next communities.
-        </p>
+        <p class="plan-overline">01 / Project outcome</p>
+        <h2>What must exist by February.</h2>
+        <p>Tamarin is the first proof community. The project must produce four usable outputs, each backed by product, customer, maker and operating evidence.</p>
       </div>
-
-      <div class="plan-three-grid">
-        {
-          problem.map((item, i) => (
-            <article class="plan-info-card">
-              <span class="plan-info-number">0{i + 1}</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))
-        }
+      <div class="plan-compact-grid">
+        {projectOutputs.map((output) => (
+          <article class="plan-compact-card"><span>{output.code}</span><h3>{output.name}</h3><p>{output.text}</p></article>
+        ))}
       </div>
-
-      <p class="plan-note">
-        The product has to stand up without the story attached. The community model has to
-        stand up after Sunset Duckies steps back. Tamarin is where both claims get tested.
-      </p>
     </section>
 
     <div class="plan-divider" aria-hidden="true"></div>
 
-    <section id="goals" class="plan-section plan-category-section" data-reveal>
+    <section id="method" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">02 / Project goals</p>
-        <h2>Four results by February 2027.</h2>
-        <p>
-          The initial exploration chooses what to test. The full project must produce product
-          evidence, a Tamarin operating model, working economics and a global rollout plan.
-        </p>
+        <p class="plan-overline">02 / Method and approach</p>
+        <h2>How decisions are made.</h2>
+        <p>The team uses the same method from the first product drafts through the second live test. Evidence decides whether the work continues, changes or stops.</p>
       </div>
-
-      <div class="plan-category-grid">
-        {goals.map((goal) => (
-          <article class="plan-category-card">
-            <div class="plan-card-code"><span>{goal.code}</span><span>{goal.context}</span></div>
-            <h3>{goal.name}</h3>
-            <p>{goal.text}</p>
-            <span class="plan-card-line" aria-hidden="true"></span>
-          </article>
-        ))}
+      <dl class="plan-access-list plan-method-list">
+        {methodology.map((item) => <div><dt>{item.name}</dt><dd>{item.text}</dd></div>)}
+      </dl>
+      <div class="plan-community-approach">
+        <p class="plan-overline">Community approach</p>
+        <ol>{communityApproach.map((item, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
       </div>
-
-      <a class="plan-jump" href="/product-ideas">
-        <span class="plan-jump-label">Product thread</span>
-        <span class="plan-jump-title">The four product candidates being tested in Tamarin</span>
-        <span class="plan-jump-cta">Open the product work <span aria-hidden="true">→</span></span>
-      </a>
     </section>
 
-  <div class="plan-divider" aria-hidden="true"></div>
+    <div class="plan-divider" aria-hidden="true"></div>
 
-  <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
-    <div class="plan-section-head">
-      <p class="plan-overline">03 / Community lifecycle</p>
-      <h2>Start locally. Hand over deliberately.</h2>
-      <p>
-        Sunset Duckies brings a shared name, product and brand tools, learning and initial
-        support. Local people keep authority over their community, relationships and voice.
-      </p>
-    </div>
-
-    <div class="plan-category-grid plan-principles-grid">
-      {
-        communityStages.map((stage, i) => (
-          <article class="plan-info-card plan-principle-card">
-            <span class="plan-info-number">C-0{i + 1}</span>
-            <h3>{stage.name}</h3>
-            <p>{stage.text}</p>
-          </article>
-        ))
-      }
-    </div>
-
-    <p class="plan-note">
-      Sustainability means the local group can keep going, the central brand can afford its
-      role, makers and contributors are paid fairly, and products meet a quality and environmental
-      standard. The assessment has to show how each part works, not label the model sustainable.
-    </p>
-  </section>
-
-  <div class="plan-divider" aria-hidden="true"></div>
-
-  <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
+    <section id="exploration" class="plan-section plan-brief-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">04 / Phase 1 · Initial exploration</p>
-        <h2>Take four products to one October launch.</h2>
-        <p>
-          Draft all four before the interviews begin. Choose one from evidence, build a proof
-          of concept, then test it publicly at the end-of-October surf competition.
-        </p>
-    </div>
-
-    <div class="plan-open-now">
-      <div class="plan-open-head">
-        <p class="plan-overline">Open now · closes 7 September</p>
-        <h3>Draft the four product concepts first.</h3>
-        <p>
-          Complete the same sheet for all four areas. The interviews start on 8 September so
-          every person can react to the same concrete choices.
-        </p>
+        <p class="plan-overline">03 / Phase 1 · Initial exploration</p>
+        <h2>Now to 31 October.</h2>
+        <p>Draft four products, choose one from evidence, build the smallest useful proof and launch it at the end-of-October surf competition.</p>
       </div>
-
-      <div class="plan-open-grid">
-        {
-          openNow.map((item) => (
-            <a href={item.file} target="_blank" rel="noreferrer" class="plan-open-card">
-              <span class="plan-open-tag">{item.phase}</span>
-              <h4>{item.title}</h4>
-              <p>{item.now}</p>
-              <span class="plan-open-cta">Open sheet ↗</span>
-            </a>
-          ))
-        }
-      </div>
-    </div>
-
-    <div class="plan-access plan-method">
-      <div class="plan-access-head">
-        <p class="plan-overline">Method and approach</p>
-        <h3>How decisions are made.</h3>
-        <p>
-          The same method runs through the timeline, from the four product drafts to the second
-          product cycle in Tamarin.
-        </p>
-      </div>
-      <dl class="plan-access-list">
-        {
-          methodology.map((item) => (
-            <div>
-              <dt>{item.name}</dt>
-              <dd>{item.text}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </div>
-
-    <ol class="plan-timeline">
-      {
-        steps.map((step, index) => (
+      <div class="plan-phase-result"><span>Due 31 October</span><strong>One launched product, a 48-hour event report and an approved plan through February.</strong></div>
+      <ol class="plan-timeline">
+        {explorationSteps.map((step, index) => (
           <li class:list={["plan-step", step.status === "now" && "is-current"]}>
-            <div class="plan-step-rail">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <time>{step.date}</time>
-              {step.status === "now" && <em>Current phase</em>}
-            </div>
+            <div class="plan-step-rail"><span>{String(index + 1).padStart(2, "0")}</span><time>{step.date}</time>{step.status === "now" && <em>Do this now</em>}</div>
             <div class="plan-step-body">
               <h3>{step.title}</h3>
-              <p class="plan-step-intro">{step.text}</p>
-              <ul>
-                {step.tasks.map((task) => <li>{task}</li>)}
-              </ul>
-              {step.links.length > 0 && (
-                <div class="plan-step-links">
-                  {step.links.map((link) => (
-                    <a href={link.file} target="_blank" rel="noreferrer">
-                      {link.label} <span aria-hidden="true">↗</span>
-                    </a>
-                  ))}
-                </div>
-              )}
+              <p class="plan-step-deliverable"><span>Deliverable</span>{step.deliverable}</p>
+              <ul>{step.tasks.map((task) => <li>{task}</li>)}</ul>
+              {step.links.length > 0 && <div class="plan-step-links">{step.links.map((link) => <a href={link.file} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div>}
             </div>
           </li>
-        ))
-      }
-    </ol>
-  </section>
+        ))}
+      </ol>
+    </section>
 
-  <div class="plan-divider" aria-hidden="true"></div>
+    <div class="plan-divider" aria-hidden="true"></div>
 
-  <section id="pilot" class="plan-section plan-assessment-section" data-reveal>
-    <div class="plan-section-head">
-      <p class="plan-overline">05 / Phase 2 · Live Tamarin pilot</p>
-      <h2>Four months from plan to proof.</h2>
-      <p>
-        The October event starts the live pilot. From November 2026 to February 2027, the team
-        improves the product, tests repeat demand and local ownership, and prepares the global rollout.
-      </p>
-    </div>
-
-    <ol class="plan-timeline plan-pilot-timeline">
-      {
-        pilotSteps.map((step, index) => (
+    <section id="pilot" class="plan-section plan-brief-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">04 / Phase 2 · Live Tamarin pilot</p>
+        <h2>November to February.</h2>
+        <p>Improve after the launch, prove repeat demand, move agreed work into local hands and turn the Tamarin evidence into the global rollout plan.</p>
+      </div>
+      <div class="plan-phase-result"><span>Due 28 February</span><strong>Two product cycles, tested local ownership, actual economics and a costed rollout plan.</strong></div>
+      <ol class="plan-timeline">
+        {pilotSteps.map((step, index) => (
           <li class="plan-step">
-            <div class="plan-step-rail">
-              <span>P{String(index + 1).padStart(2, "0")}</span>
-              <time>{step.date}</time>
-            </div>
+            <div class="plan-step-rail"><span>P{String(index + 1).padStart(2, "0")}</span><time>{step.date}</time></div>
             <div class="plan-step-body">
               <h3>{step.title}</h3>
-              <p class="plan-step-intro">{step.text}</p>
-              <ul>
-                {step.tasks.map((task) => <li>{task}</li>)}
-              </ul>
+              <p class="plan-step-deliverable"><span>Deliverable</span>{step.deliverable}</p>
+              <ul>{step.tasks.map((task) => <li>{task}</li>)}</ul>
+              <div class="plan-step-links">{step.links.map((link) => <a href={link.file} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div>
             </div>
           </li>
-        ))
-      }
-    </ol>
-  </section>
+        ))}
+      </ol>
+    </section>
 
-  <div class="plan-divider" aria-hidden="true"></div>
+    <div class="plan-divider" aria-hidden="true"></div>
 
-  <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
-    <div class="plan-section-head">
-      <p class="plan-overline">06 / Decision gates</p>
-      <h2>What each deadline must produce.</h2>
-      <p>
-        October tests the first product at a combined competition and launch. February decides
-        whether the evidence is strong enough to take Sunset Duckies beyond Tamarin.
-      </p>
-    </div>
-
-    <div class="plan-access">
-      <div class="plan-access-head">
-        <p class="plan-overline">31 October 2026</p>
-        <h3>Launch and exploration outputs</h3>
-        <p>The team leaves October with one launched product, evidence from the event and a specific plan for November to February.</p>
+    <section id="delivery" class="plan-section plan-brief-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">05 / Delivery gates and templates</p>
+        <h2>The final checklists.</h2>
+        <p>A deadline is complete only when every item below exists. The template table shows which working document to use and when.</p>
       </div>
-    </div>
-
-    <div class="plan-category-grid">
-      {octoberDeliverables.map((deliverable) => (
-        <article class="plan-category-card">
-          <div class="plan-card-code"><span>{deliverable.code}</span><span>{deliverable.context}</span></div>
-          <h3>{deliverable.name}</h3>
-          <p>{deliverable.text}</p>
-          <span class="plan-card-line" aria-hidden="true"></span>
-        </article>
-      ))}
-    </div>
-
-    <div class="plan-access">
-      <div class="plan-access-head">
-        <p class="plan-overline">28 February 2027</p>
-        <h3>Pilot outcomes</h3>
-        <p>The team finishes with Tamarin evidence and a rollout plan another team can price and execute.</p>
+      <div class="plan-gates">
+        <article class="plan-gate"><time>31 October 2026</time><h3>Initial exploration complete</h3><ul>{octoberGate.map((item) => <li>{item}</li>)}</ul></article>
+        <article class="plan-gate"><time>28 February 2027</time><h3>Tamarin pilot complete</h3><ul>{februaryGate.map((item) => <li>{item}</li>)}</ul></article>
       </div>
-    </div>
-
-    <div class="plan-category-grid">
-      {pilotOutcomes.map((outcome) => (
-        <article class="plan-category-card">
-          <div class="plan-card-code"><span>{outcome.code}</span><span>{outcome.context}</span></div>
-          <h3>{outcome.name}</h3>
-          <p>{outcome.text}</p>
-          <span class="plan-card-line" aria-hidden="true"></span>
-        </article>
-      ))}
-    </div>
-
-    <div class="plan-access">
-      <div class="plan-access-head">
-        <p class="plan-overline">Working documents</p>
-        <h3>The evidence goes into these sheets.</h3>
-        <p>
-          The sheets work on a phone or printed. They support the decision pack; completing
-          a sheet is not a result unless it contains evidence.
-        </p>
+      <div class="plan-template-wrap">
+        <table class="plan-template-table">
+          <thead><tr><th scope="col">When</th><th scope="col">Template</th><th scope="col">Use it for</th></tr></thead>
+          <tbody>{templates.map((item) => <tr><td>{item.when}</td><td><a href={item.file} target="_blank" rel="noreferrer">{item.name} ↗</a></td><td>{item.use}</td></tr>)}</tbody>
+        </table>
       </div>
-    </div>
-
-    <div class="plan-document-grid">
-      {
-        kit.map((item, index) => (
-          <a href={item.file} target="_blank" rel="noreferrer" class="plan-document-card">
-            <div class="plan-document-meta">
-              <span>DOC-{String(index + 1).padStart(2, "0")}</span>
-              <span>{item.phase}</span>
-            </div>
-            <span class:list={["plan-document-window", item.open && "is-open"]}>{item.window}</span>
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
-            <span class="plan-document-open">Open document ↗</span>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
-  <section class="plan-decision" data-reveal>
-    <img
-      src="/media/board-lineup.jpg"
-      alt="Young surfers and their boards gathered on the beach at sunset"
-      width="1600"
-      height="1067"
-      loading="lazy"
-    />
-    <div class="plan-decision-overlay">
-      <p class="plan-overline">Pilot gate / 28 February 2027</p>
-      <h2>What is ready to travel?</h2>
-      <p>
-        The global plan must show what Tamarin proved, what Sunset Duckies owns, what each local
-        community controls, how a community starts and takes over, how the economics work, and
-        what the next place still needs to prove.
-      </p>
-    </div>
-  </section>
+    </section>
   </div>
 </BaseLayout>
