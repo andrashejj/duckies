@@ -1,0 +1,310 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/plan.css";
+import { site } from "../data/site";
+
+const title = `Product ideas | ${site.name}`;
+const description =
+  "Working artifact: four product ideas for Sunset Duckies — everyday wear, surf wear, a first surfboard and a granola made with Abigaelle — drilled down to the same depth and compared on the same criteria.";
+
+const ideas = [
+  {
+    code: "01",
+    category: "Surf nutrition",
+    name: "A granola made with Abigaelle",
+    depth: "Ideated",
+    lead:
+      "Abigaelle is a local girl. The idea is that we make it with her rather than for her, and that her name and her share are on it from the start.",
+    fields: [
+      {
+        label: "The idea",
+        text: "A breakfast and recovery granola, sold in bags, made in small batches with Abigaelle.",
+      },
+      {
+        label: "Who for",
+        text: "Families around the club who already buy breakfast every few weeks, and kids eating before or after a session.",
+      },
+      {
+        label: "What it takes",
+        text: "A kitchen or co-packer, ingredient sourcing, hygiene approval, labelling and packaging that survives a school bag. Cheaper and quicker to trial than a garment or a board.",
+      },
+      {
+        label: "Where the money goes",
+        text: "Ingredients, packaging, kitchen time and Abigaelle's share come out of the price first. The surplus buys surfboards the club owns and lends out — ten in the first year is the number to aim at, alongside ten free places for local kids.",
+      },
+      {
+        label: "The link to test",
+        text: "Members bring their own board, so a free place is only usable if there is one to lend. That is the reasoning for tying boards and places together, and it may not survive contact with the club.",
+      },
+    ],
+    unknowns: [
+      "What Abigaelle wants: her role, her time, her share of each bag, her name on the product.",
+      "What a bag costs to make, what it sells for, and the surplus left per bag.",
+      "What a community board costs, and therefore how many bags fund ten.",
+      "Who decides which kids get the free places, and how a family asks for one.",
+      "What else the surplus could buy, and why boards beat wetsuits, coaching or comp travel.",
+    ],
+  },
+  {
+    code: "02",
+    category: "Surf gear",
+    name: "A first surfboard",
+    depth: "Sketch",
+    lead:
+      "The technical end of the range, and the piece of gear that most often decides whether a kid can join at all.",
+    fields: [
+      {
+        label: "The idea",
+        text: "A durable first board for kids learning in Tamarin, built to be handed down rather than outgrown and replaced.",
+      },
+      {
+        label: "Who for",
+        text: "Families buying a first board, and the club itself, which needs boards to lend to kids who do not have one.",
+      },
+      {
+        label: "What it takes",
+        text: "The hardest of the four to produce, test, transport and store. Highest price, slowest cycle, most capital tied up per unit.",
+      },
+      {
+        label: "Where the money goes",
+        text: "Not worked out. A board sold at a family price could carry a contribution, or the club could subsidise boards rather than sell them.",
+      },
+      {
+        label: "The tension",
+        text: "It solves the gear barrier most directly and is the least realistic thing for a small club to make first. Worth drilling into precisely because those two pull against each other.",
+      },
+    ],
+    unknowns: [
+      "Whether we make boards, commission them, or buy them well.",
+      "What a first board should cost a family here, and what that leaves.",
+      "Whether a shaper locally would work with the club.",
+      "How a hand-me-down scheme would actually run.",
+    ],
+  },
+  {
+    code: "03",
+    category: "Everyday wear",
+    name: "Not yet ideated",
+    depth: "Heading only",
+    lead:
+      "Clothes for ordinary days, off the water. No concrete idea attached yet, which is a gap to close rather than a verdict.",
+    fields: [
+      {
+        label: "The idea",
+        text: "Open. The research should name the item families keep buying, then this becomes a specific product rather than a category.",
+      },
+      {
+        label: "Who for",
+        text: "Kids and parents, worn on days with no surfing in them. The widest audience of the four and the least specific problem.",
+      },
+      {
+        label: "What it takes",
+        text: "Sizing across growing kids, minimum orders, stock sitting in boxes. Easy to design, easy to get wrong, easy to end up with unsold sizes.",
+      },
+      {
+        label: "Where the money goes",
+        text: "Not worked out. Highest margin per unit of the soft goods, if it sells.",
+      },
+      {
+        label: "The risk",
+        text: "This is the category a club drifts into by default: a logo on a t-shirt. It only earns its place if it solves something the research actually surfaced.",
+      },
+    ],
+    unknowns: [
+      "Which item families name most often.",
+      "Whether anyone outside the club would buy it.",
+      "How to avoid sizing waste at small volumes.",
+    ],
+  },
+  {
+    code: "04",
+    category: "Surf wear",
+    name: "Not yet ideated",
+    depth: "Heading only",
+    lead:
+      "Worn in the water: lycras, wetsuits, anything that has to survive salt, sun and a growing body.",
+    fields: [
+      {
+        label: "The idea",
+        text: "Open. A long-life lycra is the obvious candidate, but nothing has been worked up.",
+      },
+      {
+        label: "Who for",
+        text: "Every kid in the club already wears one, and the club buys club lycras out of dues today.",
+      },
+      {
+        label: "What it takes",
+        text: "Technical fabric, fit across sizes, minimum orders. Harder than food, easier than a board.",
+      },
+      {
+        label: "Where the money goes",
+        text: "Not worked out. The club already spends here, so a product could cut a cost as well as raise money.",
+      },
+      {
+        label: "The angle",
+        text: "The only category where the club is already a customer of itself. Worth checking whether that changes the maths.",
+      },
+    ],
+    unknowns: [
+      "What the club currently spends on lycras, and with whom.",
+      "Whether growth-friendly fit is real or a marketing line.",
+      "Minimum order against the size of the club.",
+    ],
+  },
+];
+
+const criteria = [
+  {
+    name: "The problem it solves",
+    note: "Named by families in the research, not by us.",
+  },
+  {
+    name: "How often a family buys",
+    note: "Once every few years, or every few weeks.",
+  },
+  {
+    name: "What it takes to make",
+    note: "Suppliers, minimums, approvals, storage, cash tied up.",
+  },
+  {
+    name: "Regulation",
+    note: "Food rules bite hardest; garments and boards less so.",
+  },
+  {
+    name: "Price a family would pay",
+    note: "Tested against something real, not asked in the abstract.",
+  },
+  {
+    name: "What a sale returns",
+    note: "In rupees, and what a year of that actually buys.",
+  },
+  {
+    name: "Would the kids use it",
+    note: "The one criterion no adult can answer.",
+  },
+];
+---
+
+<BaseLayout title={title} description={description} variant="performance">
+  <div class="performance-plan">
+    <section class="plan-section plan-ideas-hero" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">Working artifact · ideation</p>
+        <h2>Four ideas, before anyone picks one.</h2>
+        <p>
+          Two of these have real ideas attached. Two are still headings. Nothing here is
+          decided, and the numbers are guesses until the research replaces them. The
+          <a href="/branding-plan">brand plan</a> is where they get tested and one gets chosen.
+        </p>
+      </div>
+
+      <div class="plan-access">
+        <div class="plan-access-head">
+          <p class="plan-overline">How to read this</p>
+          <h3>Same questions asked of every idea.</h3>
+        </div>
+        <dl class="plan-access-list">
+          <div>
+            <dt>Ideated</dt>
+            <dd>Worked up far enough to argue with. Still a draft.</dd>
+          </div>
+          <div>
+            <dt>Sketch</dt>
+            <dd>A direction and a tension, no detail underneath it yet.</dd>
+          </div>
+          <div>
+            <dt>Heading only</dt>
+            <dd>A category with nothing in it. The gap is the point.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="plan-divider" aria-hidden="true"></div>
+
+    {
+      ideas.map((idea) => (
+        <section class="plan-section plan-idea" data-reveal>
+          <div class="plan-idea-head">
+            <div class="plan-card-code">
+              <span>{idea.code}</span>
+              <span>{idea.category}</span>
+            </div>
+            <h2>{idea.name}</h2>
+            <p class="plan-idea-lead">{idea.lead}</p>
+            <span class:list={["plan-idea-depth", idea.depth === "Ideated" && "is-full"]}>
+              {idea.depth}
+            </span>
+          </div>
+
+          <dl class="plan-idea-fields">
+            {
+              idea.fields.map((field) => (
+                <div>
+                  <dt>{field.label}</dt>
+                  <dd>{field.text}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <div class="plan-questions">
+            <p class="plan-overline">Unknown</p>
+            <ul>
+              {idea.unknowns.map((unknown) => <li>{unknown}</li>)}
+            </ul>
+          </div>
+        </section>
+      ))
+    }
+
+    <div class="plan-divider" aria-hidden="true"></div>
+
+    <section id="evaluation" class="plan-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">Evaluation</p>
+        <h2>The same seven questions, asked of all four.</h2>
+        <p>
+          Filled in during the research, not now. An idea that wins on paper and loses at
+          training has lost.
+        </p>
+      </div>
+
+      <div class="plan-matrix-scroll">
+        <table class="plan-matrix">
+          <thead>
+            <tr>
+              <th scope="col">Criterion</th>
+              {ideas.map((idea) => <th scope="col">{idea.category}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              criteria.map((criterion) => (
+                <tr>
+                  <th scope="row">
+                    {criterion.name}
+                    <span>{criterion.note}</span>
+                  </th>
+                  {ideas.map(() => <td aria-label="Not yet assessed">—</td>)}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="plan-note">
+        Scoring happens between 29 September and 12 October, with the families and the kids
+        rather than around a table. Whatever wins gets the brand built around it; the other
+        three stay on this page for later years.
+      </p>
+
+      <a class="plan-jump" href="/branding-plan">
+        <span class="plan-jump-label">Back to the plan</span>
+        <span class="plan-jump-title">How these get tested, compared and decided</span>
+        <span class="plan-jump-cta">Open the brand plan <span aria-hidden="true">→</span></span>
+      </a>
+    </section>
+  </div>
+</BaseLayout>

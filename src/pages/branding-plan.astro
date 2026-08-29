@@ -1,50 +1,66 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/plan.css";
 import { site } from "../data/site";
 
-const title = `A product brand for surf families | ${site.name}`;
+const title = `What do we make first? | ${site.name}`;
 const description =
-  "The plan for Sunset Duckies: premium products for growing kids and everyday surf families — everyday wear, surf wear, surf gear and surf nutrition — with a contribution from every sale going back to the club.";
+  "Sunset Duckies runs on dues and sponsorship, and both limit how many kids get in the water. The plan to 31 October: work up four product ideas, test them with the club, and pick the first product and the brand around it.";
 
 const audience = [
   {
     emoji: "🌱",
-    title: "Kids who grow",
+    title: "The kids",
     accent: "sticker-teal",
-    text: "Gear designed around changing bodies, regular use and the possibility of passing it on when a child outgrows it.",
+    text: "They test everything. Look, feel and taste are their call, and what they actually use counts for more than any concept sheet.",
   },
   {
     emoji: "🏄",
-    title: "Mums and dads who surf",
+    title: "The parents",
     accent: "sticker-sun",
-    text: "Reliable, good-looking products for family surf life: school mornings, weekend sessions, holidays and time in the water together.",
+    text: "They know what they bought, what stopped getting used and what they wish existed. Their answers name the problem in each category.",
   },
   {
     emoji: "🤝",
     title: "The club around them",
     accent: "sticker-pink",
-    text: "A close community that helps choose and test the products, then sees exactly what each product gives back to the club.",
+    text: "A small community that helps choose and test the product, then sees exactly what each sale gives back.",
   },
 ];
 
 const principles = [
   {
-    name: "Designed for growth",
+    name: "Solves a real problem",
     accent: "sticker-teal",
-    emoji: "📏",
-    text: "Use fit, adjustment and sizing carefully so a child gets more useful time from the product.",
+    emoji: "🎯",
+    text: "Start from a problem families name themselves. No problem, no product.",
   },
   {
     name: "Built for years",
     accent: "sticker-sun",
     emoji: "🛠️",
-    text: "Choose materials and construction for salt, sun and repeat use. Repair and hand-me-down life are part of the brief.",
+    text: "Materials and construction that survive salt, sun and repeat use. Repair and hand-me-downs are part of the brief.",
   },
   {
     name: "The club is in the price",
     accent: "sticker-pink",
     emoji: "🌊",
-    text: "Every product includes a fixed, visible club contribution for equipment, sessions, events and other agreed club costs.",
+    text: "Every product carries a fixed, visible contribution to the club: gear, sessions, events, whatever else we agree.",
+  },
+];
+
+const problem = [
+  {
+    title: "Two sources of money",
+    text: `The club runs on ${site.membership.feeLabel} in dues and on sponsors who cover operations. Both work, and both have a ceiling.`,
+  },
+  {
+    title: "Gear is the other gate",
+    text: `Members bring their own ${site.membership.bringYourOwn.join(" and ")}. A family that cannot buy those cannot really join, whatever the fee says.`,
+  },
+  {
+    title: "A third leg",
+    text: "Something people buy because it is good, that also pays into the club. It only works if the product stands up without the cause attached.",
   },
 ];
 
@@ -53,47 +69,45 @@ const categories = [
     code: "01",
     name: "Everyday wear",
     context: "Off the water",
-    text: "Clothes kids and parents choose for ordinary days. The test is repeated use, a strong look and enough useful life to justify the price.",
+    text: "Clothes for ordinary days. It has to get worn often, look good, and last long enough to justify the price.",
   },
   {
     code: "02",
     name: "Surf wear",
     context: "In the water",
-    text: "Lycra, wetsuit and other products worn while surfing. Fit, movement, comfort, sun, salt and growth shape the brief.",
+    text: "Lycras, wetsuits, anything worn in the water. Fit, movement, comfort, sun, salt and growing bodies shape the brief.",
   },
   {
     code: "03",
     name: "Surf gear",
     context: "Boards and equipment",
-    text: "The technical end of the range. A first board must be useful, durable and realistic to produce, test, transport and pass on.",
+    text: "The technical end. A first board has to be useful, durable and realistic to make, test, ship and pass on.",
   },
   {
     code: "04",
     name: "Surf nutrition",
     context: "Before and after",
-    text: "Breakfast and recovery food for surf mornings: granola, porridge and similar. Bought again every few weeks, and quicker to make and test than a garment or a board.",
+    text: "Granola, porridge, breakfast and recovery food. Families rebuy it every few weeks, and a batch is quicker to make and test than a garment or a board.",
   },
 ];
 
 const steps = [
   {
-    date: "August",
+    date: "28 Aug – 7 Sep",
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
-    title: "Find the first real product problem",
-    text: "Look at their first six months in surfing, then ask how they expect their surfing and equipment needs to change over the next two years.",
+    title: "Find the problem worth solving",
+    text: "Before anything gets designed, find out what families actually lack.",
     tasks: [
-      "Ask parents which surf products they bought during their child's first six months, what gets used every session and what already stays at home.",
-      "Record anything that has already stopped fitting, broken, become uncomfortable or been replaced, and why.",
-      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability or something else.",
-      "Ask families what they expect the next two years to bring: more sessions, bigger waves, changing bodies, more independence, travel or different equipment.",
-      "List what they think they will buy or replace during those two years under four headings: everyday wear, surf wear, surf gear and surf nutrition.",
-      "Ask which item in each category they hope could last through most of that change.",
-      "Ask what kids eat before an afternoon or early session and what parents pack for training, including what gets refused, what is bought for convenience and what they wish existed.",
-      "Talk to the kids about the gear they reach for, the gear they avoid and what they would be proud to wear or use.",
-      "Ask coaches which product problems they see repeatedly at training.",
-      "List the club costs a product contribution could pay for, including shared gear, sessions and events.",
+      "Ask parents what they bought in their child's first six months, what gets used every session and what stays at home.",
+      "Record what has stopped fitting, broken, turned uncomfortable or been replaced, and why.",
+      "Ask what is hard about buying for growing kids: fit, comfort, durability, style, price, availability.",
+      "Ask what kids eat before a session and what parents pack: what gets refused, what is bought for convenience, what they wish existed.",
+      "Ask the kids what they reach for, what they avoid and what they would be proud to own.",
+      "Ask coaches which problems they see every week at training.",
+      "Ask what keeps a family out of the club: the fee, the board, the wetsuit, the drive, the time.",
+      "List the club costs a product could pay for, and price them.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -101,115 +115,111 @@ const steps = [
     ],
   },
   {
-    date: "By 6 Sep",
+    date: "8 – 14 Sep",
     emoji: "📚",
     accent: "sticker-teal",
-    title: "Read, compare and write down the rules",
-    text: "Turn the research into a short product and purpose brief for Sunset Duckies.",
+    title: "Learn the rules and write ours",
+    text: "What good looks like in each category, and what Sunset Duckies will hold itself to.",
     tasks: [
-      "Read “Let My People Go Surfing” by Yvon Chouinard and note what it says about product quality, culture and responsibility.",
-      "Read “The Future of the Responsible Company” by Yvon Chouinard and Vincent Stanley and note its tests for a legitimate, long-life product and a responsible supply chain.",
-      "Review premium everyday wear, surf wear and surf gear for growing children and family surfers. Record materials, sizing, useful life, repair options and prices.",
-      "Review premium breakfast and sports nutrition for children and active families. Record ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch sizes and prices.",
-      "Find out which Mauritian food production, hygiene and labelling rules would apply to a granola or porridge made and sold locally, and what a small kitchen or co-packer would need.",
-      "Compare the four categories on how often a family buys, the problem each one solves, production difficulty and regulation, likely price and the amount a sale could return to the club.",
-      "Look at purpose-led product companies and record how they explain where the money goes.",
-      "Write one page of Sunset Duckies rules covering quality, useful life, customer, club contribution and community accountability.",
+      "Review premium everyday wear, surf wear and surf gear for kids and family surfers: materials, sizing, useful life, repair options, prices.",
+      "Review premium breakfast and sports nutrition: ingredients, sugar and protein per serving, allergens, shelf life, packaging, batch size, price.",
+      "Find the Mauritian food, hygiene and labelling rules that would apply to anything edible made and sold here.",
+      "Read Yvon Chouinard’s “Let My People Go Surfing” on product quality, culture and responsibility.",
+      "Read “The Future of the Responsible Company” (Chouinard and Stanley) for its tests of a legitimate product and a responsible supply chain.",
+      "Look at how purpose-led companies explain where the money goes.",
+      "Write the one page of rules: quality, useful life, customer, club contribution, accountability.",
     ],
     links: [],
   },
   {
-    date: "By 20 Sep",
+    date: "15 – 28 Sep",
     emoji: "✏️",
     accent: "sticker-sun",
-    title: "Make one rough concept in each category",
-    text: "Compare everyday wear, surf wear, surf gear and surf nutrition before choosing where Sunset Duckies should start.",
+    title: "Drill down all four ideas",
+    text: "Take each category from a heading to something concrete enough to argue with.",
     tasks: [
-      "Complete the product and purpose brief with the customer, the problem and the promise to the club.",
-      "Make one everyday-wear concept, using the item families name most often.",
-      "Make one surf-wear concept, such as a long-life lycra if the research supports it.",
-      "Make one surf-gear concept, such as a durable first surfboard if the research supports it.",
-      "Make one nutrition concept, such as a club granola or porridge mix if the research supports it.",
-      "Fill in the same product concept sheet for all four categories.",
-      "For every concept, define the user, use case, fit or growth idea, materials, expected life, repair or pass-on plan and product look.",
-      "For the nutrition concept, replace fit, life and repair with ingredients and sourcing, nutrition per serving, allergens, shelf life, packaging and serving size.",
-      "Add a provisional retail price, product cost, margin and fixed club contribution. Mark every number that still needs a supplier quote.",
-      "Show all four at the same rough level, with enough visual detail for kids and parents to react to them.",
+      "Work up one idea per category, to the same depth, on the same sheet.",
+      "For each: who it is for, the problem it solves, what it is made of, what it costs to make and what it would sell for.",
+      "For each: what a sale returns to the club, and what that money would buy.",
+      "For each: what it takes to actually produce it here, and what could stop us.",
+      "Push the two ideas that already exist — the granola and the board — past the sketch stage.",
+      "Give everyday wear and surf wear the same treatment instead of leaving them as headings.",
+      "Mark every number that is still a guess.",
     ],
     links: [
-      { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
+      { label: "Product ideas", file: "/product-ideas" },
       { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
     ],
   },
   {
-    date: "21 Sep – 4 Oct",
-    emoji: "🏄",
+    date: "29 Sep – 12 Oct",
+    emoji: "⚖️",
     accent: "sticker-pink",
-    title: "Choose the product with families",
-    text: "Put the four concepts in front of the people who would buy and use them.",
+    title: "Evaluate them against each other",
+    text: "Same questions asked of all four, then a choice the club can live with.",
     tasks: [
-      "Show the same four concepts to parents in WhatsApp and at training.",
-      "Ask which category fits their next two years, which product they need, what they would expect at the proposed price and what would stop them buying it.",
-      "Explain the club contribution as a separate number and ask whether the use of that money feels clear and worthwhile.",
-      "Let kids handle comparable products or samples. Record reactions to fit, comfort, look and whether they would choose to use it.",
-      "For the nutrition concept, run a taste test with a comparable product. Check allergies and permission with parents first, and record what kids finish, what they leave and what they ask for again.",
-      "Compare answers from younger kids, older kids and parents instead of averaging them together.",
-      "Choose one product with Estelle, the coaches and founding families, then write down the evidence and the remaining risks.",
+      "Score all four on the same criteria: the problem, how often families buy, what it takes to make, regulation, price, and what a sale returns.",
+      "Show the four to parents on WhatsApp and at training, in a different order each time.",
+      "Let the kids handle, wear or taste whatever there is to react to.",
+      "Ask which one they would buy, at what price, and what would stop them.",
+      "Explain the club contribution as its own number and ask whether it feels worth it.",
+      "Keep younger kids, older kids and parents separate. Do not average them.",
+      "Choose one with Estelle, the coaches and the founding families. Write down the evidence and the risks left.",
     ],
     links: [
+      { label: "Product ideas", file: "/product-ideas" },
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
-      { label: "Talking to the kids", file: "/templates/brand-kid-conversations.html" },
     ],
   },
   {
-    date: "5 Oct – 1 Nov",
+    date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Check whether the first product can work",
-    text: "Test the product, price and contribution far enough to make an honest implementation decision.",
+    title: "Test the winner and build the brand around it",
+    text: "Whether the chosen product can be made, and what it is called when it is.",
     tasks: [
-      "Prepare a sample, sourced reference product or detailed prototype specification for the chosen concept.",
-      "Get supplier conversations or quotes for materials, sampling, minimum order, production time, packaging and delivery.",
-      "If the chosen product is food, confirm the kitchen or co-packer, ingredient sourcing, batch size, shelf-life testing, labelling, hygiene approval and how it will be stored and delivered.",
-      "Test fit, comfort and use with the club. Define what durability testing will be required during implementation.",
-      "Build provisional unit economics showing product cost, shipping, duties, margin, retail price and the club contribution.",
-      "Write the one-sentence explanation customers will see: how much goes to the club, what it can fund and how Sunset Duckies will report it.",
-      "Show the product and price to likely buyers outside the founding families and record purchase or pre-order interest without treating likes as demand.",
+      "Get a sample, a sourced reference product or a detailed prototype spec.",
+      "Talk to suppliers or kitchens: materials or ingredients, minimum order, lead time, packaging, delivery, approvals.",
+      "Build the unit economics: cost, margin, retail price and what each sale returns to the club.",
+      "Work out what that return buys in a year, and whether the number is realistic.",
+      "Decide what the brand stands for in one paragraph, and what it will not do.",
+      "Draft the name, the look and the story of where the money goes.",
+      "Show it to buyers outside the club and record pre-orders, not likes.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
     ],
   },
   {
-    date: "1 Nov",
+    date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
-    title: "Complete the initial assessment",
-    text: "Decide whether there is a credible first product and define the work required to make it properly.",
+    title: "Decide",
+    text: "One product, one brand, and an honest account of what it takes.",
     tasks: [
-      "Name the chosen category and first product, the customer problem it solves and the evidence behind the choice.",
-      "Set the quality, fit, growth, useful-life, repair and pass-on requirements, or for a food product the ingredients, nutrition, allergen, shelf-life and packaging requirements.",
-      "Summarise supplier feasibility, open production risks and the testing still required.",
-      "Present the provisional price, costs, margin and club contribution, with assumptions clearly marked.",
-      "Summarise family feedback and outside purchase interest.",
-      "Recommend whether to implement, change direction or stop, then set the proposed scope, owners, budget and dates.",
+      "Name the product, the problem it solves and the evidence behind the choice.",
+      "Set the requirements the product has to meet before it ships.",
+      "Present the price, costs, margin and club contribution, with the assumptions marked.",
+      "Say what the contribution funds in year one, and whether that is realistic.",
+      "Present the brand: what it stands for, what it is called, how the money is explained.",
+      "Recommend: build, change or stop. Then scope, owners, budget and dates.",
     ],
     links: [],
   },
   {
-    date: "After 1 Nov",
+    date: "After 31 Oct",
     emoji: "🛠️",
     accent: "sticker-teal",
-    title: "Develop, test and launch the first product",
-    text: "Implementation begins after the club approves the assessment and its budget.",
+    title: "Make it",
+    text: "Starts once the club approves the assessment and the budget.",
     tasks: [
-      "Develop supplier samples and revise the materials, construction, fit and design.",
-      "Run real wear and durability tests with kids and parents, or taste, batch and shelf-life tests for a food product, then fix failures and repeat until the product meets the brief.",
-      "Confirm production, minimum order, quality control, delivery, returns, repair and pass-on arrangements.",
-      "Finish the identity, packaging, product page and customer explanation of the club contribution.",
-      "Set up a simple record showing money collected, money transferred and what the club used it for.",
-      "Make a limited first production run and launch it through the core Tamarin community.",
-      "Review product quality, sell-through, returns and club impact before choosing the next product or another local club.",
+      "Work through samples, revising until the product meets the brief.",
+      "Run real tests with kids and parents. Fix what fails and repeat.",
+      "Confirm production, minimum order, quality control, delivery and returns.",
+      "Finish the identity, packaging, product page and the explanation of where the money goes.",
+      "Keep a simple public record: sold, costs covered, surplus banked, what the club bought.",
+      "Make a limited first run and launch it through the Tamarin community.",
+      "Review before the next product or the next club.",
     ],
     links: [],
   },
@@ -221,44 +231,58 @@ const kit = [
     title: "Product and purpose brief",
     phase: "Estelle",
     file: "/templates/brand-concept.html",
-    desc: "Defines the family we are building for, the product standard, the reason for the premium price and the promise to the club.",
+    window: "Opens 8 Sep",
+    desc: "Who we are building for, the product standard, why it costs what it costs and the promise to the club.",
   },
   {
     emoji: "✏️",
     title: "Product concept sheet",
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
-    desc: "The same practical sheet for an everyday-wear, surf-wear, surf-gear or nutrition idea: use, fit or ingredients, useful life or shelf life, price, club contribution and testing.",
+    window: "Opens 15 Sep",
+    desc: "One sheet per idea: what it is, who for, what it is made of, useful life or shelf life, price, club contribution, testing.",
   },
   {
     emoji: "💬",
     title: "Questions for parents",
     phase: "Families",
     file: "/templates/brand-parent-questionnaire.html",
-    desc: "Covers their first six months in surfing, the changes they expect over the next two years and what they want from a premium product that funds the club.",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four ideas are worked up.",
+    desc: "What they have bought, what stopped getting used, what keeps families out of the club, and what they would pay for.",
   },
   {
     emoji: "🏄",
     title: "Talking to the kids",
     phase: "Coaches",
     file: "/templates/brand-kid-conversations.html",
-    desc: "A run sheet for learning which gear kids use, avoid and want to be seen with, then testing product concepts with them.",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Coaches run these at training, one child at a time. Sections 1 and 2 now, the ideas later.",
+    desc: "What kids use, avoid and want to be seen with, then their verdict on the four ideas.",
   },
   {
     emoji: "⏱️",
     title: "Product clarity check",
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
-    desc: "Checks whether an outside buyer understands who the product is for, why it costs more and what the club contribution does.",
+    window: "Opens 13 Oct",
+    desc: "Does a buyer outside the club get who it is for, why it costs what it costs and what the contribution buys?",
   },
   {
     emoji: "📸",
     title: "Photo permission",
     phase: "Families",
     file: "/templates/brand-photo-permission.html",
-    desc: "A clear record of whether and where each child may appear in product development and Sunset Duckies communications.",
+    open: true,
+    window: "Open now · closes 7 Sep",
+    now: "Signed once per child, before any photo or video is used. Needed before product testing.",
+    desc: "Where each child may appear in product work and club communications.",
   },
 ];
+
+const openNow = kit.filter((item) => item.open);
 ---
 
 <BaseLayout title={title} description={description} variant="performance">
@@ -272,7 +296,7 @@ const kit = [
           height="1600"
           loading="eager"
         />
-        <figcaption>Tamarin · Mauritius · First product community</figcaption>
+        <figcaption>Tamarin · Mauritius · Brand development</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
@@ -282,43 +306,74 @@ const kit = [
         </div>
 
         <div class="plan-hero-content">
-          <p class="plan-overline">Premium products for surf families</p>
-          <h1>Products for <span>kids who grow.</span></h1>
+          <p class="plan-overline">Brand development</p>
+          <h1>What do we <span>make first?</span></h1>
           <p class="plan-hero-lead">
-            High-quality products for children and the mums and dads who surf with them.
-            Designed to look good, work hard and stay useful for as long as possible.
+            The club runs on dues and sponsorship. Both work, and both cap how many kids get
+            in the water. A product people actually want would be a third leg.
           </p>
           <p class="plan-hero-copy">
-            The first decision is where to start: everyday wear, surf wear, surf gear or surf
-            nutrition. The
-            price will reflect the materials, construction, testing and a fixed contribution
-            to the club.
+            Which product, and what brand around it, is what this exercise decides. Four
+            ideas get worked up to the same depth, tested with the families, and compared
+            on the same terms by 31 October.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>04</strong><span>Product categories</span></div>
-          <div><strong>01</strong><span>Core community</span></div>
-          <div><strong>01.11</strong><span>Initial assessment</span></div>
+          <div><strong>04</strong><span>Ideas on the table</span></div>
+          <div><strong>01</strong><span>First product</span></div>
+          <div><strong>31.10</strong><span>Decision</span></div>
         </div>
       </div>
     </section>
 
     <nav class="plan-index" aria-label="Brand development sections">
-      <a href="#product-focus"><span>01</span> Product focus</a>
-      <a href="#product-standard"><span>02</span> Product standard</a>
-      <a href="#assessment"><span>03</span> Assessment</a>
-      <a href="#working-documents"><span>04</span> Working documents</a>
+      <a href="#problem"><span>01</span> The problem</a>
+      <a href="#the-range"><span>02</span> The ideas</a>
+      <a href="#product-standard"><span>03</span> Product standard</a>
+      <a href="#assessment"><span>04</span> The plan</a>
+      <a href="#working-documents"><span>05</span> Documents</a>
     </nav>
 
-    <section id="product-focus" class="plan-section plan-category-section" data-reveal>
+    <section id="problem" class="plan-section plan-problem-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / Product focus</p>
-        <h2>Choose the category before the product.</h2>
+        <p class="plan-overline">01 / The problem</p>
+        <h2>Money decides who gets in the water.</h2>
         <p>
-          We will develop one equally rough concept in each category, then compare need,
-          repeat use or repeat purchase, growth, product life, production difficulty, price
-          and the contribution each sale could return to the club.
+          Not talent, not interest. The club can only take the kids its funding and its
+          spare boards can carry, and a product is one way to change that.
+        </p>
+      </div>
+
+      <div class="plan-three-grid">
+        {
+          problem.map((item, i) => (
+            <article class="plan-info-card">
+              <span class="plan-info-number">0{i + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="plan-note">
+        The trap is obvious: a mediocre product with a good cause stapled to it. Nobody
+        rebuys that. Whatever we make has to be worth buying on its own, and the money it
+        sends back to the club has to be a number we publish rather than a feeling.
+      </p>
+    </section>
+
+    <div class="plan-divider" aria-hidden="true"></div>
+
+    <section id="the-range" class="plan-section plan-category-section" data-reveal>
+      <div class="plan-section-head">
+        <p class="plan-overline">02 / The ideas</p>
+        <h2>Four directions, none of them chosen.</h2>
+        <p>
+          Two already have ideas attached: a granola made with a local girl, and a first
+          surfboard. The other two are still headings. All four get worked up to the same
+          depth before any of them wins.
         </p>
       </div>
 
@@ -332,12 +387,18 @@ const kit = [
           </article>
         ))}
       </div>
+
+      <a class="plan-jump" href="/product-ideas">
+        <span class="plan-jump-label">Separate artifact</span>
+        <span class="plan-jump-title">The four ideas, drilled down and compared</span>
+        <span class="plan-jump-cta">Open the ideas <span aria-hidden="true">→</span></span>
+      </a>
     </section>
 
   <section class="plan-section plan-audience-section" data-reveal>
     <div class="plan-section-head plan-section-head-wide">
       <p class="plan-overline">The customer and the community</p>
-      <h2>Everyday surf life, made better.</h2>
+      <h2>The club decides what is worth making.</h2>
     </div>
 
     <div class="plan-three-grid">
@@ -353,10 +414,9 @@ const kit = [
     </div>
 
     <p class="plan-note">
-      The customer is the child learning to surf, the parent fitting in a morning session and
-      the family buying gear that has to survive sun, salt, sand and hand-me-down life. The
-      product has to earn a premium price through its quality and usefulness.
-      Competition-performance gear sits outside this first brief.
+      Whatever wins has to earn its price on its own merits first. If the kids will not
+      wear it, use it or eat it, the idea fails and we say so rather than shipping it with
+      a story attached.
     </p>
   </section>
 
@@ -364,17 +424,16 @@ const kit = [
 
   <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">02 / Product standard</p>
+      <p class="plan-overline">03 / Product standard</p>
       <h2>Purpose has to show up in the product.</h2>
     </div>
     <p class="plan-reference-copy">
-      Two books are working references for the assessment:
+      Two books are working references:
       <a href="https://www.patagonia.com/product/let-my-people-go-surfing-revised-paperback-book/BK067.html" target="_blank" rel="noreferrer">Let My People Go Surfing</a>
       and
       <a href="https://www.patagonia.com/product/the-future-of-the-responsible-company-paperback/BK235.html" target="_blank" rel="noreferrer">The Future of the Responsible Company</a>.
-      Their useful challenge for Sunset Duckies is practical: make a legitimate product that
-      lasts, understand how it is made, respect the people around the business and make the
-      purpose part of how the company operates.
+      The challenge they set is practical: make a legitimate product that lasts, know how it
+      is made, respect the people around it, and build the purpose into how the company runs.
     </p>
 
     <div class="plan-three-grid plan-principles-grid">
@@ -390,15 +449,14 @@ const kit = [
     </div>
 
     <p class="plan-note">
-      A food product reads the first two rules differently: growth becomes what a child will
-      actually eat before a session, and long life becomes ingredients we can name, honest
-      nutrition and a shelf life a small batch can hold. The third rule does not change.
+      For food, “built for years” means ingredients we can name, honest nutrition and a shelf
+      life a small batch can hold. The other two rules stand.
     </p>
 
     <p class="plan-note">
-      A premium price is a promise. The assessment has to define the materials, construction,
-      useful life, testing and service that make the price fair. It also has to choose a clear
-      club contribution, state what it funds and set up a simple way to report the money.
+      A high price is a promise. The assessment has to name what makes it fair — materials
+      or ingredients, construction, testing, useful life — then publish what each sale
+      leaves over and what the club bought with it.
     </p>
   </section>
 
@@ -406,13 +464,37 @@ const kit = [
 
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">03 / Initial assessment</p>
-      <h2>From category decision to launch brief.</h2>
+      <p class="plan-overline">04 / The plan</p>
+      <h2>From four ideas to one product.</h2>
       <p>
-        The work through 1 November chooses the first product, tests the price and club
-        contribution, and checks whether it can be made properly. Development, wear testing
-        and production begin only after the assessment is approved.
+        Four ideas, worked up to the same depth and put to the families on the same terms.
+        The work to 31 October picks one, tests whether it can be made, and builds the brand
+        around it. Production starts only once the club approves it.
       </p>
+    </div>
+
+    <div class="plan-open-now">
+      <div class="plan-open-head">
+        <p class="plan-overline">Open now · closes 7 September</p>
+        <h3>Three sheets are collecting answers this week.</h3>
+        <p>
+          Everything after this phase is built on what they say. They close with the first
+          phase on 7 September. Fill them in on a phone, or print them.
+        </p>
+      </div>
+
+      <div class="plan-open-grid">
+        {
+          openNow.map((item) => (
+            <a href={item.file} target="_blank" rel="noreferrer" class="plan-open-card">
+              <span class="plan-open-tag">{item.phase}</span>
+              <h4>{item.title}</h4>
+              <p>{item.now}</p>
+              <span class="plan-open-cta">Open sheet ↗</span>
+            </a>
+          ))
+        }
+      </div>
     </div>
 
     <ol class="plan-timeline">
@@ -450,11 +532,11 @@ const kit = [
 
   <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">04 / Working documents</p>
+      <p class="plan-overline">05 / Working documents</p>
       <h2>Evidence, recorded as we go.</h2>
       <p>
-        These sheets turn interviews, product decisions and outside-buyer reactions into a
-        usable assessment. Each one works on a phone and can also be printed.
+        The sheets that turn interviews, product ideas and buyer reactions into the
+        assessment. All of them work on a phone or printed.
       </p>
     </div>
 
@@ -466,6 +548,7 @@ const kit = [
               <span>DOC-{String(index + 1).padStart(2, "0")}</span>
               <span>{item.phase}</span>
             </div>
+            <span class:list={["plan-document-window", item.open && "is-open"]}>{item.window}</span>
             <h3>{item.title}</h3>
             <p>{item.desc}</p>
             <span class="plan-document-open">Open document ↗</span>
@@ -484,604 +567,14 @@ const kit = [
       loading="lazy"
     />
     <div class="plan-decision-overlay">
-      <p class="plan-overline">Decision gate / 01 November</p>
-      <h2>Does the first product deserve to be made?</h2>
+      <p class="plan-overline">Decision gate / 31 October</p>
+      <h2>Which one deserves to be made?</h2>
       <p>
-        The initial assessment ends with a product brief, family evidence, supplier picture,
-        provisional price, club contribution and implementation budget. If the case is strong,
-        the work of developing, testing and launching it starts next.
+        The assessment ends with one product, the club's verdict on it, a price, a supplier,
+        the brand around it and the number it sends back each year. If the case holds, the
+        first run starts next.
       </p>
     </div>
   </section>
   </div>
 </BaseLayout>
-
-<style is:global>
-  .performance-plan {
-    --plan-bg: #071015;
-    --plan-panel: #0b171d;
-    --plan-panel-raised: #0f1e25;
-    --plan-text: #f2f4ed;
-    --plan-muted: #9ba8a5;
-    --plan-line: rgba(242, 244, 237, 0.16);
-    --plan-accent: #d7ff3f;
-    --plan-warm: #ff6849;
-    overflow: hidden;
-    color: var(--plan-text);
-    background:
-      linear-gradient(rgba(242, 244, 237, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(242, 244, 237, 0.035) 1px, transparent 1px),
-      radial-gradient(circle at 82% 5%, rgba(68, 113, 109, 0.22), transparent 28rem),
-      var(--plan-bg);
-    background-size: 64px 64px, 64px 64px, auto, auto;
-  }
-
-  .performance-plan a:focus-visible {
-    outline: 2px solid var(--plan-accent);
-    outline-offset: 4px;
-  }
-
-  .plan-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    min-height: calc(100vh - 5rem);
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-media {
-    position: relative;
-    min-height: 760px;
-    overflow: hidden;
-    border-right: 1px solid var(--plan-line);
-    background: #17272d;
-  }
-
-  .plan-hero-media::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    background:
-      linear-gradient(180deg, rgba(7, 16, 21, 0.05), rgba(7, 16, 21, 0.55)),
-      linear-gradient(90deg, transparent 60%, rgba(7, 16, 21, 0.28));
-  }
-
-  .plan-hero-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.82) contrast(1.08);
-  }
-
-  .plan-hero-media figcaption {
-    position: absolute;
-    z-index: 1;
-    right: 2rem;
-    bottom: 2rem;
-    left: 2rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(242, 244, 237, 0.72);
-  }
-
-  .plan-hero-panel {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    padding: clamp(2rem, 5vw, 5rem);
-  }
-
-  .plan-hero-topline,
-  .plan-card-code,
-  .plan-document-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-hero-topline {
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-content {
-    max-width: 800px;
-    margin: auto 0;
-    padding: 4rem 0;
-  }
-
-  .plan-overline {
-    margin: 0 0 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-  }
-
-  .plan-hero h1 {
-    max-width: 9ch;
-    margin: 0;
-    font-family: var(--font-brand);
-    font-size: clamp(5rem, 8.5vw, 10rem);
-    font-weight: 400;
-    letter-spacing: 0.005em;
-    line-height: 0.82;
-    text-transform: uppercase;
-    color: var(--plan-text);
-  }
-
-  .plan-hero h1 span {
-    display: block;
-    color: var(--plan-accent);
-  }
-
-  .plan-hero-lead {
-    max-width: 690px;
-    margin: 2.25rem 0 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.2rem, 2vw, 1.75rem);
-    font-weight: 550;
-    line-height: 1.35;
-  }
-
-  .plan-hero-copy {
-    max-width: 640px;
-    margin: 1.25rem 0 0;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--plan-muted);
-  }
-
-  .plan-hero-data {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-data div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1.4rem 1.25rem;
-    border-right: 1px solid var(--plan-line);
-  }
-
-  .plan-hero-data div:last-child { border-right: 0; }
-
-  .plan-hero-data strong {
-    font-family: var(--font-brand);
-    font-size: 2.2rem;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--plan-text);
-  }
-
-  .plan-hero-data span {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-index {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    max-width: 1400px;
-    margin: 0 auto;
-    border-left: 1px solid var(--plan-line);
-  }
-
-  .plan-index a {
-    padding: 1.25rem 1.5rem;
-    border-right: 1px solid var(--plan-line);
-    border-bottom: 1px solid var(--plan-line);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-    transition: background 180ms ease, color 180ms ease;
-  }
-
-  .plan-index a:hover {
-    color: var(--plan-text);
-    background: rgba(215, 255, 63, 0.07);
-  }
-
-  .plan-index a span { margin-right: 0.65rem; color: var(--plan-accent); }
-
-  .plan-section {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: clamp(5rem, 9vw, 9rem) clamp(1.5rem, 5vw, 5rem);
-    scroll-margin-top: 6rem;
-  }
-
-  .plan-section-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
-    gap: 2.5rem 5rem;
-    align-items: end;
-    margin-bottom: 4rem;
-  }
-
-  .plan-section-head .plan-overline { grid-column: 1 / -1; margin-bottom: -0.5rem; }
-
-  .plan-section-head h2,
-  .plan-decision h2 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 5.8vw, 6rem);
-    font-weight: 650;
-    letter-spacing: -0.055em;
-    line-height: 0.92;
-    color: var(--plan-text);
-  }
-
-  .plan-section-head > p:last-child,
-  .plan-reference-copy,
-  .plan-note {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--plan-muted);
-  }
-
-  .plan-section-head-wide h2 { grid-column: 1 / -1; }
-
-  .plan-category-grid,
-  .plan-three-grid,
-  .plan-document-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .plan-category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-  .plan-category-card,
-  .plan-info-card,
-  .plan-document-card {
-    position: relative;
-    min-height: 320px;
-    padding: 2rem;
-    border: 1px solid var(--plan-line);
-    background: linear-gradient(145deg, rgba(15, 30, 37, 0.92), rgba(8, 18, 23, 0.9));
-  }
-
-  .plan-category-card + .plan-category-card,
-  .plan-info-card + .plan-info-card,
-  .plan-document-card + .plan-document-card { border-left: 0; }
-
-  .plan-card-code span:first-child,
-  .plan-info-number { color: var(--plan-accent); }
-
-  .plan-category-card h3,
-  .plan-info-card h3,
-  .plan-document-card h3,
-  .plan-step-body h3 {
-    margin: 5.5rem 0 1rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-    font-weight: 650;
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-    color: var(--plan-text);
-  }
-
-  .plan-category-card p,
-  .plan-info-card p,
-  .plan-document-card p {
-    margin: 0;
-    line-height: 1.65;
-    color: var(--plan-muted);
-  }
-
-  .plan-card-line {
-    position: absolute;
-    right: 2rem;
-    bottom: 2rem;
-    left: 2rem;
-    height: 2px;
-    background: var(--plan-accent);
-    transform: scaleX(0.18);
-    transform-origin: left;
-    transition: transform 240ms ease;
-  }
-
-  .plan-category-card { padding-bottom: 4.5rem; }
-
-  .plan-category-card:hover .plan-card-line { transform: scaleX(1); }
-
-  .plan-info-number {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-  }
-
-  .plan-info-card h3 { margin-top: 6.75rem; }
-
-  .plan-principle-card { background: rgba(215, 255, 63, 0.055); }
-
-  .plan-reference-copy { max-width: 900px; margin-bottom: 3rem; }
-
-  .plan-reference-copy a {
-    border-bottom: 1px solid var(--plan-accent);
-    color: var(--plan-text);
-  }
-
-  .plan-note {
-    max-width: 860px;
-    margin-top: 3rem;
-    padding-left: 1.4rem;
-    border-left: 2px solid var(--plan-accent);
-  }
-
-  .plan-divider {
-    max-width: 1400px;
-    height: 1px;
-    margin: 0 auto;
-    background: var(--plan-line);
-  }
-
-  .plan-timeline {
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--plan-line);
-    list-style: none;
-  }
-
-  .plan-step {
-    display: grid;
-    grid-template-columns: 230px minmax(0, 1fr);
-    border-bottom: 1px solid var(--plan-line);
-  }
-
-  .plan-step.is-current { background: rgba(215, 255, 63, 0.035); }
-
-  .plan-step-rail {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 2.25rem 2rem 2.25rem 0;
-    border-right: 1px solid var(--plan-line);
-  }
-
-  .plan-step-rail > span {
-    font-family: var(--font-brand);
-    font-size: 3.5rem;
-    font-weight: 400;
-    line-height: 1;
-    color: rgba(242, 244, 237, 0.28);
-  }
-
-  .plan-step.is-current .plan-step-rail > span { color: var(--plan-accent); }
-
-  .plan-step-rail time,
-  .plan-step-rail em {
-    margin-top: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-style: normal;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--plan-muted);
-  }
-
-  .plan-step-rail em {
-    margin-top: 0.7rem;
-    padding: 0.4rem 0.55rem;
-    background: var(--plan-accent);
-    color: var(--plan-bg);
-  }
-
-  .plan-step-body { padding: 2.35rem 0 2.75rem 3rem; }
-  .plan-step-body h3 { max-width: 740px; margin: 0 0 0.75rem; }
-
-  .plan-step-intro {
-    max-width: 760px;
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.65;
-    color: var(--plan-muted);
-  }
-
-  .plan-step-body ul {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 2.5rem;
-    margin: 2rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .plan-step-body li {
-    position: relative;
-    padding-left: 1.15rem;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: rgba(242, 244, 237, 0.78);
-  }
-
-  .plan-step-body li::before {
-    position: absolute;
-    left: 0;
-    content: "/";
-    color: var(--plan-accent);
-  }
-
-  .plan-step-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--plan-line);
-  }
-
-  .plan-step-links a {
-    padding: 0.7rem 0.85rem;
-    border: 1px solid rgba(215, 255, 63, 0.45);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-    transition: background 180ms ease, color 180ms ease;
-  }
-
-  .plan-step-links a:hover { background: var(--plan-accent); color: var(--plan-bg); }
-
-  .plan-document-grid { gap: 1px; background: var(--plan-line); }
-
-  .plan-document-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 330px;
-    border: 0;
-    color: inherit;
-    transition: background 180ms ease, transform 180ms ease;
-  }
-
-  .plan-document-card:hover {
-    z-index: 1;
-    background: #14272f;
-    transform: translateY(-4px);
-  }
-
-  .plan-document-card h3 { margin-top: 4.5rem; }
-
-  .plan-document-open {
-    margin-top: auto;
-    padding-top: 2rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--plan-accent);
-  }
-
-  .plan-decision {
-    position: relative;
-    display: flex;
-    min-height: 760px;
-    align-items: flex-end;
-    overflow: hidden;
-    border-top: 1px solid var(--plan-line);
-    background: #102027;
-  }
-
-  .plan-decision::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    background: linear-gradient(180deg, rgba(7, 16, 21, 0.12), rgba(7, 16, 21, 0.95));
-  }
-
-  .plan-decision > img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.72) contrast(1.08);
-  }
-
-  .plan-decision-overlay {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 5rem);
-  }
-
-  .plan-decision h2 {
-    max-width: 980px;
-    font-family: var(--font-brand);
-    font-size: clamp(4rem, 8vw, 8.5rem);
-    font-weight: 400;
-    letter-spacing: 0;
-    line-height: 0.84;
-    text-transform: uppercase;
-  }
-
-  .plan-decision-overlay > p:last-child {
-    max-width: 720px;
-    margin: 2rem 0 0;
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(242, 244, 237, 0.78);
-  }
-
-  @media (max-width: 1024px) {
-    .plan-hero { grid-template-columns: 1fr; }
-    .plan-hero-media { min-height: 58vh; max-height: 680px; border-right: 0; border-bottom: 1px solid var(--plan-line); }
-    .plan-hero-panel { min-height: 660px; }
-    .plan-section-head { grid-template-columns: 1fr; }
-    .plan-section-head .plan-overline,
-    .plan-section-head-wide h2 { grid-column: auto; }
-    .plan-category-grid,
-    .plan-three-grid,
-    .plan-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .plan-category-card + .plan-category-card,
-    .plan-info-card + .plan-info-card { border-left: 1px solid var(--plan-line); }
-    .plan-category-card:nth-child(even),
-    .plan-info-card:nth-child(even) { border-left: 0; }
-    .plan-step { grid-template-columns: 170px minmax(0, 1fr); }
-    .plan-step-body { padding-left: 2rem; }
-    .plan-step-body ul { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 680px) {
-    .plan-hero-media { min-height: 48vh; }
-    .plan-hero-media figcaption { right: 1.25rem; bottom: 1.25rem; left: 1.25rem; }
-    .plan-hero-panel { min-height: 650px; padding: 1.5rem; }
-    .plan-hero-topline { flex-wrap: wrap; }
-    .plan-hero h1 { font-size: clamp(4rem, 20vw, 6.2rem); }
-    .plan-hero-data div { padding: 1.1rem 0.65rem; }
-    .plan-hero-data strong { font-size: 1.75rem; }
-    .plan-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .plan-category-grid,
-    .plan-three-grid,
-    .plan-document-grid { grid-template-columns: 1fr; }
-    .plan-category-card + .plan-category-card,
-    .plan-info-card + .plan-info-card { border-top: 0; border-left: 1px solid var(--plan-line); }
-    .plan-section-head { margin-bottom: 2.75rem; }
-    .plan-section-head h2 { font-size: clamp(2.8rem, 14vw, 4rem); }
-    .plan-step { display: block; }
-    .plan-step-rail {
-      flex-direction: row;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem 0;
-      border-right: 0;
-      border-bottom: 1px solid var(--plan-line);
-    }
-    .plan-step-rail time,
-    .plan-step-rail em { margin: 0; }
-    .plan-step-body { padding: 2rem 0 2.5rem; }
-    .plan-decision { min-height: 660px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .plan-document-card,
-    .plan-card-line { transition: none; }
-    .plan-document-card:hover { transform: none; }
-  }
-</style>
