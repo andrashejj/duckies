@@ -351,6 +351,8 @@
     border-left: 3px solid var(--plan-accent);
   }
 
+  .plan-method { margin: 0 0 4rem; }
+
   .plan-access-head {
     padding: 2rem;
     border-bottom: 1px solid var(--plan-line);

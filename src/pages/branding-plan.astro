@@ -76,6 +76,21 @@ const problem = [
   },
 ];
 
+const methodology = [
+  {
+    name: "Compare like with like",
+    text: "Use the same concept sheet, level of detail and provisional price for all four products. Rotate the order in interviews so the first option does not win by default.",
+  },
+  {
+    name: "Test behaviour and constraints",
+    text: "Record choices, refusals, price objections, maker costs and production limits. The October launch adds real sales, orders and product failures.",
+  },
+  {
+    name: "Require evidence before the next phase",
+    text: "Each phase ends with a required output and a launch, revise or stop decision. Start with the smallest useful batch, then test repeat demand in a second cycle.",
+  },
+];
+
 const octoberDeliverables = [
   {
     code: "D-01",
@@ -492,6 +507,27 @@ const openNow = kit.filter((item) => item.open);
           ))
         }
       </div>
+    </div>
+
+    <div class="plan-access plan-method">
+      <div class="plan-access-head">
+        <p class="plan-overline">Method and approach</p>
+        <h3>How decisions are made.</h3>
+        <p>
+          The same method runs through the timeline, from the four product drafts to the second
+          product cycle in Tamarin.
+        </p>
+      </div>
+      <dl class="plan-access-list">
+        {
+          methodology.map((item) => (
+            <div>
+              <dt>{item.name}</dt>
+              <dd>{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </div>
 
     <ol class="plan-timeline">
