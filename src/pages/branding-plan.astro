@@ -3,103 +3,103 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/plan.css";
 import { site } from "../data/site";
 
-const title = `The first Sunset Duckies product | ${site.name}`;
+const title = `From Tamarin to local surf communities everywhere | ${site.name}`;
 const description =
-  "Choose and prove the first Sunset Duckies product by 31 October: customer demand, product quality, local production, club contribution and a clear pilot decision.";
+  "Use Tamarin as the proof of concept for a global Sunset Duckies brand: high-quality products, locally owned surf microcommunities, a clear handover and a model that can sustain itself.";
 
 const goals = [
   {
     code: "G-01",
-    context: "Demand",
-    name: "A product people choose",
-    text: "Name the buyer and the problem. Test the product and price with kids, parents and people outside the club. Record refusals as well as interest.",
+    context: "Product",
+    name: "A product with a reason to exist",
+    text: "Choose something people will pay for because it is good. Prove the customer problem, quality standard, maker route and price in Tamarin.",
   },
   {
     code: "G-02",
-    context: "Production",
-    name: "A credible way to make it",
-    text: "Find a Mauritian maker or production route, state what must be imported, and record cost, capacity, timing, quality control, payment and credit.",
+    context: "Local ownership",
+    name: "A community that can run without us",
+    text: "Define the local roles, decisions, assets and routines, then show how Sunset Duckies steps back without the activity or relationships collapsing.",
   },
   {
     code: "G-03",
-    context: "Club return",
-    name: "A number we can publish",
-    text: "Set the contribution per sale, calculate what a realistic first year could fund, and show customers what the club received and bought.",
+    context: "Value",
+    name: "Decide how value moves",
+    text: "Compare local paid work, a contribution per sale, revenue share, a shared fund and hybrids. Choose the model after the product economics and community needs are known.",
   },
   {
     code: "G-04",
     context: "Brand",
-    name: "Rules for what comes next",
-    text: "Define what every Sunset Duckies product must earn, how makers and clubs are credited, and what the brand will refuse to sell or claim.",
+    name: "A model another place can use",
+    text: "Write the readiness test, start-up support, handover, brand rules and ongoing relationship so another surf microcommunity can adapt the model without copying Tamarin.",
   },
 ];
 
-const principles = [
+const communityStages = [
   {
-    name: "A problem families have named",
+    name: "Meet the community",
     accent: "sticker-teal",
     emoji: "🎯",
-    text: "The product must fix something families currently buy around, replace too often, cannot find or cannot afford.",
+    text: "Start with an existing local group, a trusted local lead, a real place and a reason to gather. Sunset Duckies does not arrive with a ready-made club.",
   },
   {
-    name: "Quality with a test",
+    name: "Start something together",
     accent: "sticker-sun",
     emoji: "🛠️",
-    text: "Set the material, ingredient, fit, safety, useful-life or shelf-life tests before calling the product high quality.",
+    text: "Agree the first useful activity, product or event with the people who will run it. Set roles, safeguarding, money, credit and what Sunset Duckies supplies.",
   },
   {
-    name: "A visible club contribution",
+    name: "Hand over the work",
     accent: "sticker-pink",
     emoji: "🌊",
-    text: "Every sale carries a stated contribution. The product page shows the amount, its use and the record behind it.",
+    text: "Move the schedule, decisions, relationships, assets, accounts and approvals to local hands. Handover starts at the beginning, not after dependency has formed.",
   },
   {
-    name: "Local work described honestly",
+    name: "Stay connected",
     accent: "sticker-coral",
     emoji: "🤝",
-    text: "Name the work done in Mauritius, the imported inputs, the maker, their role and how they are paid and credited.",
+    text: "The community keeps its name, people and voice while using the shared brand rules. The wider network shares products, learning and proof without centralising local decisions.",
   },
 ];
 
 const problem = [
   {
-    title: "Two sources of money",
-    text: `The club runs on ${site.membership.feeLabel} in dues and on sponsors who cover operations. Both work, and both have a ceiling.`,
+    title: "A real place to learn",
+    text: "Tamarin already has kids, families, coaches, surf sessions, relationships and access problems. The concept starts with reality rather than a brand workshop.",
   },
   {
-    title: "Gear is the other gate",
-    text: `Members bring their own ${site.membership.bringYourOwn.join(" and ")}. A family that cannot buy those cannot really join, whatever the fee says.`,
+    title: "Products carry the brand",
+    text: "High-quality products can create paid local work, reach buyers outside the community and make the people and place behind them visible.",
   },
   {
-    title: "A third leg",
-    text: "Something people buy because it is good, that also pays into the club. It only works if the product stands up without the cause attached.",
+    title: "The test is whether it travels",
+    text: "Mauritius proves the first version. The useful result is a model another local surf community can adapt, own and sustain without becoming a Sunset Duckies franchise.",
   },
 ];
 
 const deliverables = [
   {
     code: "D-01",
-    name: "Customer evidence",
-    context: "Demand",
-    text: "The buyer, the problem, family and kid feedback, reactions from people outside the club, the tested price and the reasons people said no.",
+    name: "Mauritius proof record",
+    context: "Proof of concept",
+    text: "What already exists in Tamarin, what Sunset Duckies adds, what local people own, what can be handed over and what remains unproven.",
   },
   {
     code: "D-02",
-    name: "Product and maker route",
-    context: "Feasibility",
-    text: "A sample or specification, quality requirements, a local maker or supplier route, quotes, minimum order, lead time, testing and compliance gaps.",
+    name: "Microcommunity playbook",
+    context: "Start to handover",
+    text: "The readiness test, first contact, local lead, start-up support, decisions, safeguarding, assets, handover and relationship after handover.",
   },
   {
     code: "D-03",
-    name: "Economics and impact",
-    context: "Money",
-    text: "Unit cost, shipping and duties, retail price, margin, fixed club contribution, a realistic first-year scenario and the reporting method.",
+    name: "Product and value model",
+    context: "Economics",
+    text: "The product direction, maker route, quoted economics and a decision on how paid local work, community benefit and the global brand fit together.",
   },
   {
     code: "D-04",
-    name: "Brand and pilot brief",
-    context: "Next decision",
-    text: "The brand promise, what Sunset Duckies will not do, how makers and the club are credited, and a pilot scope with owners, budget and dates.",
+    name: "Global brand system",
+    context: "Sustainability",
+    text: "What stays common, what each community controls, rights and credit, measures of community health, central costs and the brief for the next proof community.",
   },
 ];
 
@@ -109,14 +109,14 @@ const steps = [
     emoji: "🗣️",
     accent: "sticker-teal",
     status: "now",
-    title: "Find the problem and the people who can help make it",
-    text: "Finish with a short list of customer problems, club costs and local production routes worth pursuing.",
+    title: "Document how Tamarin works now",
+    text: "Show the people, relationships, routines and assets that already make the first community real, including where it still depends on outside help.",
     tasks: [
       "Collect the parent questionnaires and kid conversations.",
-      "Record what families buy, replace, refuse, cannot find or cannot afford, and why.",
-      "Ask coaches which product and access problems they see every week.",
-      "Price the boards, wetsuits, sessions and events that more product income could fund.",
-      "Map Mauritian kitchens, textile makers, printers, shapers and other relevant producers, including what they can and cannot do.",
+      "Map the kids, families, coaches, local leads, makers, places, activities and existing responsibilities.",
+      "Record which decisions and tasks already sit locally and which still rely on Sunset Duckies or one individual.",
+      "Record the product and access problems families and coaches see, without assuming how product money should solve them.",
+      "Map Mauritian kitchens, textile makers, printers, shapers and other relevant producers, including their limits.",
     ],
     links: [
       { label: "Questions for parents", file: "/templates/brand-parent-questionnaire.html" },
@@ -127,34 +127,32 @@ const steps = [
     date: "8 – 21 Sep",
     emoji: "📚",
     accent: "sticker-teal",
-    title: "Set the rules and make the candidates concrete",
-    text: "Write one scorecard, then turn each product direction into something specific enough to test or reject.",
+    title: "Design the community lifecycle",
+    text: "Define what Sunset Duckies does from first contact to handover, and what a local community must bring and own.",
     tasks: [
       "Read “Let My People Go Surfing” and “The Future of the Responsible Company,” then keep the product and responsibility rules that apply here.",
-      "Set the demand, quality, local-production, price, club-return and brand tests.",
-      "Name one specific candidate in everyday wear, surf wear, surf gear and surf nutrition.",
-      "Complete the same concept sheet for each candidate and talk to a relevant maker or supplier.",
-      "Record initial cost, minimum order, lead time, compliance questions and every assumption still unsupported.",
-      "Stop a candidate as soon as it fails a non-negotiable.",
+      "Write the readiness test for a new microcommunity: local lead, real group, safe place, time, trust and a reason to start.",
+      "Define what Sunset Duckies may supply at the start and what the local community supplies from day one.",
+      "Separate shared brand decisions from local decisions about people, activities, stories, money and approvals.",
+      "List the roles, assets, accounts, knowledge and relationships that must move into local hands.",
+      "Define what staying connected means after handover, without turning the community into a centrally managed chapter.",
     ],
     links: [
-      { label: "Product candidates", file: "/product-ideas" },
-      { label: "Product and purpose brief", file: "/templates/brand-concept.html" },
-      { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
+      { label: "Brand and community model", file: "/templates/brand-concept.html" },
     ],
   },
   {
     date: "22 Sep – 12 Oct",
     emoji: "⚖️",
     accent: "sticker-pink",
-    title: "Test the candidates and choose one",
-    text: "The winner needs evidence from users, buyers, makers and the club, not the highest score on paper.",
+    title: "Test the product and value options in Tamarin",
+    text: "Use the proof community to test what people want, what can be made and how value could stay local or support the wider model.",
     tasks: [
-      "Show the same candidates and prices to kids, parents and likely buyers outside the club.",
-      "Let kids handle, wear or taste something real wherever possible.",
-      "Record orders, pre-orders, refusals and price objections.",
-      "Confirm whether a local maker can meet the proposed product standard.",
-      "Choose one candidate with Estelle, the coaches and founding families, then record why it won and why the others did not.",
+      "Turn the four product directions into specific candidates and test them with kids, parents and buyers outside the community.",
+      "Confirm what local makers can produce, at what quality, volume, cost and level of ownership.",
+      "Compare paid local work, a fixed contribution, revenue share, a shared fund and hybrid value models using the same unit economics.",
+      "Record who carries stock, compliance and financial risk under each option.",
+      "Show the community model to people from another local surf community and record what would not translate.",
     ],
     links: [
       { label: "Product candidates", file: "/product-ideas" },
@@ -166,14 +164,14 @@ const steps = [
     date: "13 – 26 Oct",
     emoji: "🧪",
     accent: "sticker-coral",
-    title: "Prove the winner can become a pilot",
-    text: "Replace the remaining assumptions with a specification or sample, a maker route, quoted economics and buyer evidence.",
+    title: "Build the proof-of-concept package",
+    text: "Turn the Tamarin learning into a product direction, a handover model and a brand system another place can challenge.",
     tasks: [
-      "Prepare a sample, reference product or detailed specification with pass and fail tests.",
-      "Confirm the work done locally, imported inputs, maker payment and credit, minimum order, lead time and quality control.",
-      "Build the unit economics from quotes and calculate what a conservative first year could fund.",
-      "Write the brand promise and the claims the product has earned.",
-      "Test the product, price and contribution with buyers outside the club.",
+      "Choose the product direction or next product experiment and document the quality, maker and demand evidence behind it.",
+      "Walk through the handover with the Tamarin leads and remove work they cannot or should not own.",
+      "Write the playbook for meeting, starting with, handing over to and staying connected with a microcommunity.",
+      "Set the shared brand rules and the space each community keeps for its own name, voice, people and products.",
+      "Test whether the financial, social, operational and environmental parts can continue after central support steps back.",
     ],
     links: [
       { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
@@ -183,14 +181,14 @@ const steps = [
     date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
-    title: "Decide: build, change or stop",
-    text: "The decision pack shows what was learned, what remains risky and what a pilot would require.",
+    title: "Decide what can travel",
+    text: "Separate what Tamarin proved from what is still a local assumption, then decide what to test with the next microcommunity.",
     tasks: [
-      "Present the customer evidence and why the chosen product beat the alternatives.",
-      "Present the product standard, maker route, local work, testing plan and open risks.",
-      "Present the quoted economics, club contribution and first-year funding scenario.",
-      "Set the brand promise, credit rules and claims allowed at launch.",
-      "Recommend build, change or stop, with the pilot budget, owners and dates.",
+      "Present the Mauritius proof record and the parts that remain unproven.",
+      "Present the community lifecycle, handover test and split between shared and local decisions.",
+      "Present the product direction and choose the value model to test next, rather than assuming a club contribution.",
+      "Present the brand rules, safeguarding, credit, data and approval rules, and the sustainability checks.",
+      "Recommend the next proof community, what Sunset Duckies would provide, the local roles required, budget and dates.",
     ],
     links: [],
   },
@@ -199,11 +197,11 @@ const steps = [
 const kit = [
   {
     emoji: "🧭",
-    title: "Product and purpose brief",
+    title: "Brand and community model",
     phase: "Estelle",
     file: "/templates/brand-concept.html",
     window: "Opens 8 Sep",
-    desc: "The customer, product standard, local-production goal, price, club contribution and brand rules.",
+    desc: "What Tamarin proves, how a microcommunity starts, what gets handed over, what stays shared and how value could move.",
   },
   {
     emoji: "✏️",
@@ -211,7 +209,7 @@ const kit = [
     phase: "Estelle",
     file: "/templates/brand-direction-sheet.html",
     window: "Opens 15 Sep",
-    desc: "One sheet per candidate: customer, product, maker route, useful life or shelf life, price, club contribution and testing.",
+    desc: "One sheet per candidate: customer, product, maker route, useful life or shelf life, price, community value options and testing.",
   },
   {
     emoji: "💬",
@@ -221,7 +219,7 @@ const kit = [
     open: true,
     window: "Open now · closes 7 Sep",
     now: "Every founding family fills one in. Parts 1 and 2 now, part 3 once the four candidates are worked up.",
-    desc: "What they have bought, what stopped getting used, what keeps families out of the club, and what they would pay for.",
+    desc: "What families buy, use and replace, what keeps them out of the water, and what they would pay for.",
   },
   {
     emoji: "🏄",
@@ -239,7 +237,7 @@ const kit = [
     phase: "Testing",
     file: "/templates/brand-stranger-test.html",
     window: "Opens 13 Oct",
-    desc: "Does a buyer outside the club get who it is for, why it costs what it costs and what the contribution buys?",
+    desc: "Does a buyer outside Tamarin understand the product, price, maker, community connection and claims without a sales pitch?",
   },
   {
     emoji: "📸",
@@ -267,52 +265,52 @@ const openNow = kit.filter((item) => item.open);
           height="1600"
           loading="eager"
         />
-        <figcaption>Tamarin · Mauritius · Product and brand project</figcaption>
+        <figcaption>Tamarin · Mauritius · First proof community</figcaption>
       </figure>
 
       <div class="plan-hero-panel" data-float>
         <div class="plan-hero-topline">
-          <span>Sunset Duckies / Product development</span>
+          <span>Sunset Duckies / Community and product model</span>
           <span>Assessment 2026</span>
         </div>
 
         <div class="plan-hero-content">
           <p class="plan-overline">Project brief</p>
-          <h1>Choose and prove <span>the first product.</span></h1>
+          <h1>Prove it here. <span>Make it work anywhere.</span></h1>
           <p class="plan-hero-lead">
-            By 31 October, choose one product people will pay for, show how it can be made
-            fairly in Mauritius, and prove what each sale can fund at the club.
+            Tamarin is the first proof. Build a product people want, learn how Sunset Duckies
+            helps a local surf microcommunity start, and hand the work over to local people.
           </p>
           <p class="plan-hero-copy">
-            The outcome is a build, change or stop recommendation backed by customer evidence,
-            a product standard, a maker route, quoted economics and a pilot plan. The current
-            product directions are hypotheses.
+            By 31 October, separate what worked because it is Tamarin from what another place
+            could use. The output is a product direction, a community playbook, a value model
+            and the shared rules of a global brand.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
-          <div><strong>04</strong><span>Project goals</span></div>
-          <div><strong>01</strong><span>First product</span></div>
-          <div><strong>31.10</strong><span>Build / change / stop</span></div>
+          <div><strong>01</strong><span>Proof community</span></div>
+          <div><strong>04</strong><span>Community stages</span></div>
+          <div><strong>31.10</strong><span>Global model decision</span></div>
         </div>
       </div>
     </section>
 
     <nav class="plan-index" aria-label="Project brief sections">
-      <a href="#problem"><span>01</span> The problem</a>
+      <a href="#problem"><span>01</span> Proof of concept</a>
       <a href="#goals"><span>02</span> The brief</a>
-      <a href="#product-standard"><span>03</span> Non-negotiables</a>
+      <a href="#product-standard"><span>03</span> Community model</a>
       <a href="#assessment"><span>04</span> The work</a>
       <a href="#working-documents"><span>05</span> The outputs</a>
     </nav>
 
     <section id="problem" class="plan-section plan-problem-section" data-reveal>
       <div class="plan-section-head">
-        <p class="plan-overline">01 / The problem</p>
-        <h2>Money decides who gets in the water.</h2>
+        <p class="plan-overline">01 / Proof of concept</p>
+        <h2>Tamarin is the first proof, not the limit.</h2>
         <p>
-          Not talent, not interest. The club can only take the kids its funding and its
-          spare boards can carry, and a product is one way to change that.
+          Build with one real community, record what happens and turn the useful parts into a
+          model. Another place should be able to adapt it without pretending to be Mauritius.
         </p>
       </div>
 
@@ -329,9 +327,8 @@ const openNow = kit.filter((item) => item.open);
       </div>
 
       <p class="plan-note">
-        The trap is obvious: a mediocre product with a good cause stapled to it. Nobody
-        rebuys that. Whatever we make has to be worth buying on its own, and the money it
-        sends back to the club has to be a number we publish rather than a feeling.
+        The product has to stand up without the story attached. The community model has to
+        stand up after Sunset Duckies steps back. Tamarin is where both claims get tested.
       </p>
     </section>
 
@@ -340,10 +337,10 @@ const openNow = kit.filter((item) => item.open);
     <section id="goals" class="plan-section plan-category-section" data-reveal>
       <div class="plan-section-head">
         <p class="plan-overline">02 / The brief</p>
-        <h2>Prove four things.</h2>
+        <h2>Answer four questions.</h2>
         <p>
-          Interviews, product tests, maker conversations, quotes and orders count as evidence.
-          A polished concept on its own does not.
+          Product tests, maker quotes, role handovers, community decisions and a challenge from
+          another place count as evidence. A polished global concept does not.
         </p>
       </div>
 
@@ -359,9 +356,9 @@ const openNow = kit.filter((item) => item.open);
       </div>
 
       <a class="plan-jump" href="/product-ideas">
-        <span class="plan-jump-label">Working hypotheses</span>
-        <span class="plan-jump-title">The product directions being tested against these goals</span>
-        <span class="plan-jump-cta">Open the candidate work <span aria-hidden="true">→</span></span>
+        <span class="plan-jump-label">Product thread</span>
+        <span class="plan-jump-title">The four product candidates being tested in Tamarin</span>
+        <span class="plan-jump-cta">Open the product work <span aria-hidden="true">→</span></span>
       </a>
     </section>
 
@@ -369,30 +366,30 @@ const openNow = kit.filter((item) => item.open);
 
   <section id="product-standard" class="plan-section plan-standard-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">03 / Non-negotiables</p>
-      <h2>What the product must earn.</h2>
+      <p class="plan-overline">03 / Community lifecycle</p>
+      <h2>Start locally. Hand over deliberately.</h2>
       <p>
-        Kids can reject the product. Buyers can reject the price. Makers can reject the
-        production plan. The club can reject the funding promise or use of its identity.
+        Sunset Duckies brings a shared name, product and brand tools, learning and initial
+        support. Local people keep authority over their community, relationships and voice.
       </p>
     </div>
 
     <div class="plan-category-grid plan-principles-grid">
       {
-        principles.map((principle, i) => (
+        communityStages.map((stage, i) => (
           <article class="plan-info-card plan-principle-card">
-            <span class="plan-info-number">P-0{i + 1}</span>
-            <h3>{principle.name}</h3>
-            <p>{principle.text}</p>
+            <span class="plan-info-number">C-0{i + 1}</span>
+            <h3>{stage.name}</h3>
+            <p>{stage.text}</p>
           </article>
         ))
       }
     </div>
 
     <p class="plan-note">
-      For food, quality means named ingredients, clear nutrition and a tested shelf life. For
-      gear and clothing, it means materials, fit and construction tested against salt, sun and
-      repeat use. The brief does not allow claims the product has not earned.
+      Sustainability means the local group can keep going, the central brand can afford its
+      role, makers and contributors are paid fairly, and products meet a quality and environmental
+      standard. The assessment has to show how each part works, not label the model sustainable.
     </p>
   </section>
 
@@ -401,10 +398,10 @@ const openNow = kit.filter((item) => item.open);
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
       <p class="plan-overline">04 / The work</p>
-      <h2>Five phases to a decision.</h2>
+      <h2>Five phases from proof to model.</h2>
       <p>
-        Each phase closes with evidence or a clear reason to stop. Unsupported claims stay
-        marked as assumptions in the final decision.
+        Each phase separates local fact from a rule another community could use. Unsupported
+        claims stay marked as assumptions.
       </p>
     </div>
 
@@ -470,8 +467,8 @@ const openNow = kit.filter((item) => item.open);
       <p class="plan-overline">05 / Required outputs</p>
       <h2>What must exist by 31 October.</h2>
       <p>
-        These are the decision pack. Missing evidence stays marked as a risk; it does not
-        become a confident sentence in the final recommendation.
+        These four pieces make up the concept. Missing evidence stays marked as a Tamarin
+        assumption or a question for the next proof community.
       </p>
     </div>
 
@@ -525,12 +522,11 @@ const openNow = kit.filter((item) => item.open);
     />
     <div class="plan-decision-overlay">
       <p class="plan-overline">Decision gate / 31 October</p>
-      <h2>Build, change or stop?</h2>
+      <h2>What can travel?</h2>
       <p>
-        The decision pack must show customer demand, a product that can meet its quality
-        standard, a fair maker route, quoted economics, a fixed club contribution and a
-        funded pilot plan. If the evidence holds, the club can approve pilot development.
-        Otherwise the product changes or stops.
+        The final concept names what Sunset Duckies owns, what local communities own, how a
+        community starts, what gets handed over, how the product and value models work, and
+        what the next place still needs to prove.
       </p>
     </div>
   </section>
