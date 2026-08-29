@@ -5,7 +5,7 @@ import { site } from "../data/site";
 
 const title = `From Tamarin to local surf communities everywhere | ${site.name}`;
 const description =
-  "Use Tamarin as the proof of concept for a global Sunset Duckies brand: high-quality products, locally owned surf microcommunities, a clear handover and a model that can sustain itself.";
+  "A plan to build the Sunset Duckies brand, test its product and community model in Tamarin, and produce an evidence-backed global rollout plan by February 2027.";
 
 const goals = [
   {
@@ -30,7 +30,7 @@ const goals = [
     code: "G-04",
     context: "Brand",
     name: "A model another place can use",
-    text: "Write the readiness test, start-up support, handover, brand rules and ongoing relationship so another surf microcommunity can adapt the model without copying Tamarin.",
+    text: "By February 2027, turn the Tamarin evidence into a rollout plan covering readiness, start-up support, handover, brand rules, economics and the ongoing relationship.",
   },
 ];
 
@@ -76,30 +76,57 @@ const problem = [
   },
 ];
 
-const deliverables = [
+const octoberDeliverables = [
   {
     code: "D-01",
-    name: "Mauritius proof record",
-    context: "Proof of concept",
-    text: "What already exists in Tamarin, what Sunset Duckies adds, what local people own, what can be handed over and what remains unproven.",
+    name: "Tamarin baseline",
+    context: "What exists now",
+    text: "The people, routines, assets, costs, product needs and dependencies that already shape the first community.",
   },
   {
     code: "D-02",
-    name: "Microcommunity playbook",
-    context: "Start to handover",
-    text: "The readiness test, first contact, local lead, start-up support, decisions, safeguarding, assets, handover and relationship after handover.",
+    name: "Chosen hypotheses",
+    context: "What to test",
+    text: "A product direction, maker route, community lifecycle and value model selected for testing, with rejected options and open assumptions recorded.",
   },
   {
     code: "D-03",
-    name: "Product and value model",
-    context: "Economics",
-    text: "The product direction, maker route, quoted economics and a decision on how paid local work, community benefit and the global brand fit together.",
+    name: "Pilot delivery plan",
+    context: "November to February",
+    text: "Monthly milestones, owners, budget, product tests, community work, decision gates and the evidence expected by February 2027.",
   },
   {
     code: "D-04",
-    name: "Global brand system",
-    context: "Sustainability",
-    text: "What stays common, what each community controls, rights and credit, measures of community health, central costs and the brief for the next proof community.",
+    name: "Approval to continue",
+    context: "31 October gate",
+    text: "A clear recommendation on what to build in Tamarin, what it will cost and which assumptions could still stop or change the work.",
+  },
+];
+
+const pilotOutcomes = [
+  {
+    code: "P-01",
+    name: "A product tested in the market",
+    context: "Product proof",
+    text: "At least one real product run tested for quality, demand, price, repeat interest, production reliability and customer response.",
+  },
+  {
+    code: "P-02",
+    name: "A Tamarin model that works",
+    context: "Community proof",
+    text: "Evidence of what local people can own and run, what Sunset Duckies still needs to provide and where handover does or does not work.",
+  },
+  {
+    code: "P-03",
+    name: "Economics and standards",
+    context: "Brand proof",
+    text: "Actual product economics, local paid work, central costs, quality rules, safeguards and environmental claims supported by the pilot.",
+  },
+  {
+    code: "P-04",
+    name: "A global rollout plan",
+    context: "Next communities",
+    text: "Where to go next, how to choose a community, how to start and hand over, what support and budget are required, and what every new place must measure.",
   },
 ];
 
@@ -181,16 +208,53 @@ const steps = [
     date: "27 – 31 Oct",
     emoji: "📋",
     accent: "sticker-lilac",
-    title: "Decide what can travel",
-    text: "Separate what Tamarin proved from what is still a local assumption, then decide what to test with the next microcommunity.",
+    title: "Approve the Tamarin pilot",
+    text: "Choose what to build and test from November to February, then give the work an owner, budget and decision gates.",
     tasks: [
-      "Present the Mauritius proof record and the parts that remain unproven.",
-      "Present the community lifecycle, handover test and split between shared and local decisions.",
-      "Present the product direction and choose the value model to test next, rather than assuming a club contribution.",
-      "Present the brand rules, safeguarding, credit, data and approval rules, and the sustainability checks.",
-      "Recommend the next proof community, what Sunset Duckies would provide, the local roles required, budget and dates.",
+      "Present the Tamarin baseline and every assumption the exploration has not resolved.",
+      "Choose the product direction, maker route, community model and value option to test in the pilot.",
+      "Set the product, community, financial and handover evidence required by February.",
+      "Approve the monthly plan, owners, budget, safeguards and decisions that could change or stop the pilot.",
     ],
     links: [],
+  },
+];
+
+const pilotSteps = [
+  {
+    date: "November 2026",
+    title: "Build the Tamarin pilot",
+    text: "Turn the October decisions into something people can use, buy and run.",
+    tasks: [
+      "Set the product specification, quality tests, price, production route and first-run budget.",
+      "Agree paid work, credit, approvals and risk with local makers and contributors.",
+      "Set the Tamarin roles, baseline measures and the responsibilities to hand over during the pilot.",
+      "Build and test prototypes before committing to the first run.",
+    ],
+  },
+  {
+    date: "Dec 2026 – Jan 2027",
+    title: "Run the first live test",
+    text: "Put the product and community model into real use in Tamarin and record what happens.",
+    tasks: [
+      "Produce and release the first run without using the club story to excuse a weak product.",
+      "Track quality, demand, price objections, repeat interest, returns, production problems and actual unit economics.",
+      "Track who does the local work, who makes decisions and where the pilot still depends on central help.",
+      "Review the evidence monthly and change the product or operating model when the facts require it.",
+    ],
+  },
+  {
+    date: "February 2027",
+    title: "Decide what is ready to travel",
+    text: "Use the live test to improve the model, test the handover and write the global rollout plan.",
+    tasks: [
+      "Revise the product, production process, price or value model using the first-run evidence.",
+      "Move the agreed roles, assets, accounts, approvals and relationships to the Tamarin leads.",
+      "Challenge the model with people from at least two potential communities outside Mauritius.",
+      "Set the community readiness test, first 90 days, local roles, handover test and ongoing brand relationship.",
+      "Set the shared brand rules, product standards, safeguards, data, credit, economics and measures required everywhere.",
+      "Recommend the next community, sequence, team, budget and decisions needed to begin rollout.",
+    ],
   },
 ];
 
@@ -271,27 +335,27 @@ const openNow = kit.filter((item) => item.open);
       <div class="plan-hero-panel" data-float>
         <div class="plan-hero-topline">
           <span>Sunset Duckies / Community and product model</span>
-          <span>Assessment 2026</span>
+          <span>Proof programme / Aug 2026 – Feb 2027</span>
         </div>
 
         <div class="plan-hero-content">
           <p class="plan-overline">Project brief</p>
           <h1>Prove it here. <span>Make it work anywhere.</span></h1>
           <p class="plan-hero-lead">
-            Tamarin is the first proof. Build a product people want, learn how Sunset Duckies
-            helps a local surf microcommunity start, and hand the work over to local people.
+            Build the brand and test it in Tamarin. The first exploration ends on 31 October
+            2026. The live pilot and global rollout plan are due by the end of February 2027.
           </p>
           <p class="plan-hero-copy">
-            By 31 October, separate what worked because it is Tamarin from what another place
-            could use. The output is a product direction, a community playbook, a value model
-            and the shared rules of a global brand.
+            October produces the plan for the next four months. By February, Sunset Duckies
+            needs real product, community and financial evidence from Tamarin, plus a practical
+            plan for taking the model to the next communities.
           </p>
         </div>
 
         <div class="plan-hero-data" aria-label="Project facts">
           <div><strong>01</strong><span>Proof community</span></div>
-          <div><strong>04</strong><span>Community stages</span></div>
-          <div><strong>31.10</strong><span>Global model decision</span></div>
+          <div><strong>31.10</strong><span>Exploration gate</span></div>
+          <div><strong>02.27</strong><span>Global rollout plan</span></div>
         </div>
       </div>
     </section>
@@ -300,8 +364,9 @@ const openNow = kit.filter((item) => item.open);
       <a href="#problem"><span>01</span> Proof of concept</a>
       <a href="#goals"><span>02</span> The brief</a>
       <a href="#product-standard"><span>03</span> Community model</a>
-      <a href="#assessment"><span>04</span> The work</a>
-      <a href="#working-documents"><span>05</span> The outputs</a>
+      <a href="#assessment"><span>04</span> To 31 October</a>
+      <a href="#pilot"><span>05</span> To February 2027</a>
+      <a href="#working-documents"><span>06</span> The outputs</a>
     </nav>
 
     <section id="problem" class="plan-section plan-problem-section" data-reveal>
@@ -396,12 +461,12 @@ const openNow = kit.filter((item) => item.open);
   <div class="plan-divider" aria-hidden="true"></div>
 
   <section id="assessment" class="plan-section plan-assessment-section" data-reveal>
-    <div class="plan-section-head">
-      <p class="plan-overline">04 / The work</p>
-      <h2>Five phases from proof to model.</h2>
-      <p>
-        Each phase separates local fact from a rule another community could use. Unsupported
-        claims stay marked as assumptions.
+      <div class="plan-section-head">
+        <p class="plan-overline">04 / Initial exploration</p>
+        <h2>Five phases to the 31 October plan.</h2>
+        <p>
+        This work chooses what Sunset Duckies will build and test. It does not claim that the
+        product, handover or global model has already been proven.
       </p>
     </div>
 
@@ -462,22 +527,82 @@ const openNow = kit.filter((item) => item.open);
 
   <div class="plan-divider" aria-hidden="true"></div>
 
-  <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
+  <section id="pilot" class="plan-section plan-assessment-section" data-reveal>
     <div class="plan-section-head">
-      <p class="plan-overline">05 / Required outputs</p>
-      <h2>What must exist by 31 October.</h2>
+      <p class="plan-overline">05 / Build and test in Tamarin</p>
+      <h2>Four months from plan to proof.</h2>
       <p>
-        These four pieces make up the concept. Missing evidence stays marked as a Tamarin
-        assumption or a question for the next proof community.
+        The October gate starts the pilot. From November 2026 to February 2027, the team builds
+        the product, tests the model in Tamarin, hands over real work and prepares the global rollout.
       </p>
     </div>
 
+    <ol class="plan-timeline plan-pilot-timeline">
+      {
+        pilotSteps.map((step, index) => (
+          <li class="plan-step">
+            <div class="plan-step-rail">
+              <span>P{String(index + 1).padStart(2, "0")}</span>
+              <time>{step.date}</time>
+            </div>
+            <div class="plan-step-body">
+              <h3>{step.title}</h3>
+              <p class="plan-step-intro">{step.text}</p>
+              <ul>
+                {step.tasks.map((task) => <li>{task}</li>)}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <div class="plan-divider" aria-hidden="true"></div>
+
+  <section id="working-documents" class="plan-section plan-documents-section" data-reveal>
+    <div class="plan-section-head">
+      <p class="plan-overline">06 / Decision gates</p>
+      <h2>What each deadline must produce.</h2>
+      <p>
+        October approves a plan for the pilot. February decides whether the evidence is strong
+        enough to take Sunset Duckies beyond Tamarin.
+      </p>
+    </div>
+
+    <div class="plan-access">
+      <div class="plan-access-head">
+        <p class="plan-overline">31 October 2026</p>
+        <h3>Exploration outputs</h3>
+        <p>The team leaves the exploration with a specific, costed plan for November to February.</p>
+      </div>
+    </div>
+
     <div class="plan-category-grid">
-      {deliverables.map((deliverable) => (
+      {octoberDeliverables.map((deliverable) => (
         <article class="plan-category-card">
           <div class="plan-card-code"><span>{deliverable.code}</span><span>{deliverable.context}</span></div>
           <h3>{deliverable.name}</h3>
           <p>{deliverable.text}</p>
+          <span class="plan-card-line" aria-hidden="true"></span>
+        </article>
+      ))}
+    </div>
+
+    <div class="plan-access">
+      <div class="plan-access-head">
+        <p class="plan-overline">28 February 2027</p>
+        <h3>Pilot outcomes</h3>
+        <p>The team finishes with Tamarin evidence and a rollout plan another team can price and execute.</p>
+      </div>
+    </div>
+
+    <div class="plan-category-grid">
+      {pilotOutcomes.map((outcome) => (
+        <article class="plan-category-card">
+          <div class="plan-card-code"><span>{outcome.code}</span><span>{outcome.context}</span></div>
+          <h3>{outcome.name}</h3>
+          <p>{outcome.text}</p>
           <span class="plan-card-line" aria-hidden="true"></span>
         </article>
       ))}
@@ -521,11 +646,11 @@ const openNow = kit.filter((item) => item.open);
       loading="lazy"
     />
     <div class="plan-decision-overlay">
-      <p class="plan-overline">Decision gate / 31 October</p>
-      <h2>What can travel?</h2>
+      <p class="plan-overline">Pilot gate / 28 February 2027</p>
+      <h2>What is ready to travel?</h2>
       <p>
-        The final concept names what Sunset Duckies owns, what local communities own, how a
-        community starts, what gets handed over, how the product and value models work, and
+        The global plan must show what Tamarin proved, what Sunset Duckies owns, what each local
+        community controls, how a community starts and takes over, how the economics work, and
         what the next place still needs to prove.
       </p>
     </div>
