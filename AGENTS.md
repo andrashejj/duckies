@@ -10,10 +10,10 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 - `/blog` — club logbook (posts live in `src/data/blog.ts`, e.g. `/blog/le-morne-reef-tour`)
 
 ## Commands
-- `npm install`
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
+- `pnpm install`
+- `pnpm dev`
+- `pnpm build`
+- `pnpm preview`
 
 ## Notes
 - Shared copy and data lives in `src/data/site.ts`.

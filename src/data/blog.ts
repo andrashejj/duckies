@@ -46,6 +46,64 @@ export const blog = {
     "Field notes from the club — trips, comps, and the days that didn't fit the Monday/Friday rhythm.",
   posts: [
     {
+      slug: "new-semester-2026",
+      title: "We're back:",
+      titleAccent: "new semester, new rules",
+      kicker: "Club update · Vol. 03",
+      dateLabel: "September 2026",
+      dateISO: "2026-09-03",
+      location: "Tamarin, Mauritius",
+      excerpt:
+        "One open kickoff, semester membership, one parent from every family in the water, Estelle joining the brand work, and a competition planned for October.",
+      facts: [
+        { emoji: "🌅", value: "11 Sep", label: "kickoff · 4-6pm · open to all" },
+        { emoji: "🦆", value: "Rs 3k / 5k", label: "one kid / family · semester" },
+        { emoji: "🌊", value: "1 parent", label: "every family · in the water" },
+        { emoji: "🏆", value: "October", label: "next competition planned" },
+      ],
+      intro: [
+        "Hope you had a great summer. We missed you soo much. Looking down, I think my belly could also use some training :D. So let's get down to business.",
+      ],
+      sections: [
+        {
+          emoji: "01",
+          title: "Membership is a commitment",
+          accent: "sticker-teal",
+          body: "Membership is Rs 3,000 per semester for one child, or Rs 5,000 for a family. The fee is part of a commitment from all of us: we take the club seriously, and we need the duckies and parents to do the same. After the kickoff, our regular Monday and Friday training from 4-6pm will be for members only.",
+        },
+        {
+          emoji: "02",
+          title: "Everyone is invited on 11 September",
+          accent: "sticker-sun",
+          body: "We are starting the semester with a kickoff on Friday 11 September from 4-6pm. This session is open to everyone, and it can be the free first session for new duckies. We had too many gnarly situations last semester, so every family must have at least one parent or guardian in the water for the full session, including that first one. We will share the final details in the WhatsApp group.",
+        },
+        {
+          emoji: "03",
+          title: "Estelle is joining the brand crew",
+          accent: "sticker-coral",
+          body: "Estelle, the daughter of a good friend of mine from Switzerland, is travelling to Mauritius for an internship with Sunset Duckies. Yes, we are officially importing Swiss talent :D. She will help us take the brand to the next level and contact everyone who joins the club.",
+        },
+        {
+          emoji: "04",
+          title: "A competition is coming in October",
+          accent: "sticker-lilac",
+          body: "We are planning the next Sunset Duckies competition for October. The date and format are still being worked out, and we will share them as soon as they are ready.",
+        },
+      ],
+      outro:
+        "For now, save Friday 11 September. If you join the club, expect a hello from Estelle too.",
+      heroImage: "/media/sunset-training.jpg",
+      heroGlyphs: "🌅 → 🦆 → 🏆",
+      cta: {
+        kicker: "Kickoff + membership",
+        title: "Come back to the",
+        titleAccent: "water",
+        body: "Join the WhatsApp group for the kickoff details. Everyone who joins the club will also hear from Estelle during her internship.",
+        primary: { label: "Open the WhatsApp group", href: site.whatsappUrl, external: true },
+        secondary: { label: "How membership works", href: "/#how-to-join" },
+      },
+    },
+    {
       slug: "le-morne-reef-tour",
       title: "Duckies on tour:",
       titleAccent: "the Le Morne reef",

@@ -13,13 +13,13 @@ export const site = {
     alt: "Andras and a young Sunset Duckie hoisting their boards overhead under a Tamarin Bay blue sky.",
   },
   membership: {
-    annualFeeMur: 5000,
-    annualFeeUsdApprox: 100,
-    feeLabel: "Rs 5,000 / year",
-    feeLabelLong: "Rs 5,000 / year (~$100 USD)",
+    oneChildFeeMur: 3000,
+    familyFeeMur: 5000,
+    feeLabel: "Rs 3,000 one kid · Rs 5,000 family",
+    feeLabelLong: "Rs 3,000 for one child or Rs 5,000 for a family, per semester",
     bringYourOwn: ["surfboard", "wetsuit"],
     fundingNote:
-      "Dues cover comps, club lycras, and safety gear so the focus stays on surfing.",
+      "Dues support regular training, club lycras, and safety gear so the focus stays on surfing.",
   },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
@@ -382,15 +382,15 @@ export const site = {
     kicker: "★ Before you join — read this once",
     headline: "It's a club. Not a lesson.",
     intro:
-      "Sunset Duckies is a volunteer-run club, not a surf school. Nobody is on the payroll, nobody is in the water with your kid. Three things every family needs to be clear on before joining:",
+      "Sunset Duckies is a volunteer-run club, not a surf school. Nobody is on the payroll, and the club does not provide one-on-one water supervision. Three things every family needs to be clear on before joining:",
     rules: [
       {
         title: "BYO surfboard + wetsuit",
-        text: "Every kid brings their own board and wetsuit, every session. We don't rent, lend, or store gear. No board, no surf.",
+        text: "New duckies may borrow or share a board for their free first session. After that, every kid brings their own board and wetsuit. We don't rent, lend, or store gear.",
       },
       {
-        title: "Parents stay responsible",
-        text: "Your child, your call. A parent or guardian stays on the beach or in the water with their kid for the whole session. The club does not take legal responsibility for what happens in the ocean.",
+        title: "One parent gets wet",
+        text: "Every family must have at least one parent or guardian in the water for the full session, including a new duckie's free first session. We had too many gnarly situations last semester to continue with parents watching only from the beach.",
       },
       {
         title: "Coach trains, doesn't babysit",
@@ -421,7 +421,7 @@ export const site = {
     kicker: "★ How to join · 4 steps",
     headline: "How to join the club, in four steps.",
     intro:
-      "We're volunteer-run, no online portal. The path is short: meet the crew on WhatsApp, sign the waiver, try a couple of sessions, then make it official. Email anything signed straight to Andras.",
+      "We're volunteer-run, no online portal. The path is short: meet the crew on WhatsApp, sign the waiver, take one free first session, then make it official before joining regular training. Email anything signed straight to Andras.",
     steps: [
       {
         id: "whatsapp",
@@ -472,10 +472,10 @@ export const site = {
       {
         id: "try",
         accent: "sticker-lilac",
-        tag: "Step 03 · come paddle",
-        title: "Try a few training sessions.",
+        tag: "Step 03 · meet us in the water",
+        title: "Take your free first session.",
         body:
-          "Monday and Friday, 4–6pm in Tamarin Bay. A parent stays on-site (beach or water). One or two trial sessions without a board are fine — after that we want kids on their own surfboard (rentable across the road) and in a wetsuit for the winter months.",
+          "The semester kickoff on Friday 11 September from 4-6pm is open to everyone and can be a new duckie's free first session. At least one parent or guardian from every family must join in the water for the full session. After the free first session, regular Monday and Friday training is for members only.",
         actions: [
           {
             label: "See the weekly rhythm",
@@ -484,7 +484,7 @@ export const site = {
             external: false,
           },
         ],
-        footnote: "First time? Message on WhatsApp before you come so we can spot you.",
+        footnote: "Joining later in the semester? Message us before your free first session.",
       },
       {
         id: "register",
@@ -492,7 +492,7 @@ export const site = {
         tag: "Step 04 · make it official",
         title: "Join the club.",
         body:
-          "Once you know you're in, fill the club registration form and email it to Andras. Annual dues are Rs 5,000 — covers a custom club rashie with your kid's name, two coached sessions a week, safety cover at trainings, the club WhatsApp, and end-of-season certificates. Competitions like the Cup are ticketed separately.",
+          "Once you know you're in, fill the club registration form and email it to Andras. Membership is Rs 3,000 per semester for one child, or Rs 5,000 for a family. It covers regular Monday and Friday training; competitions like the Cup are ticketed separately.",
         actions: [
           {
             label: "Open club registration form",
@@ -521,7 +521,7 @@ export const site = {
       "Surfing carries inherent risk — waves, rocks, board contact, marine life, sun.",
       "The club is volunteer-run. Safety measures are in place, but participation is at your own risk.",
       "Your kid can swim confidently in open water — waves up to ~2 m and currents, agreed with the head coach.",
-      "A parent or guardian stays on-site every session, watching from the beach or joining in the water — never a drop-off.",
+      "Every family has at least one parent or guardian in the water for the full session, including a new duckie's free first session.",
       "Coaches may make reasonable medical decisions in an emergency if you can't be reached.",
       "Photo / video opt-in is your choice, ticked on the form.",
     ],

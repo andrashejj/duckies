@@ -16,10 +16,10 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 
 ## Commands
 
-- `npm install`
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
+- `pnpm install`
+- `pnpm dev`
+- `pnpm build`
+- `pnpm preview`
 
 ## Notes
 

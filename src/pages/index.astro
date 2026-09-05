@@ -64,7 +64,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
       <div data-float class="mb-6">
         <span class="eyebrow-badge">
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
-          Registration open · 2026 season
+          Kickoff · Friday 11 September · 4-6pm
         </span>
       </div>
 
@@ -118,6 +118,58 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           </p>
         </div>
       ))}
+    </div>
+  </section>
+
+  <!-- ===================== SEMESTER UPDATE ===================== -->
+  <section id="semester-update" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] py-16 text-white lg:py-20">
+    <div class="absolute inset-0 opacity-35" aria-hidden="true" style="background-image: radial-gradient(circle at 10% 15%, var(--color-coral-500), transparent 38%), radial-gradient(circle at 90% 85%, var(--color-teal-500), transparent 42%);"></div>
+    <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:gap-14">
+        <div data-reveal>
+          <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-sun-500)]">New semester · September 2026</p>
+          <h2 class="mt-5 font-display text-4xl font-black leading-[0.95] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl" style="font-variation-settings: 'wdth' 114; font-weight: 750;">
+            Start with one free session, then <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1; font-weight: 500;">commit</span>.
+          </h2>
+          <p class="mt-6 max-w-xl text-base leading-7 text-white/82 sm:text-lg sm:leading-8">
+            We take this club seriously. Membership asks the same commitment from the duckies and their parents: show up, get in the water, and help keep the session safe.
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2" data-reveal>
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-sun-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-coral-500)]">
+            <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">Open kickoff</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">Friday 11 September</p>
+            <p class="mt-2 text-sm leading-6">4-6pm. Everyone is welcome. A new duckie's first session is free.</p>
+          </div>
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-teal-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-sun-500)]">
+            <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">Semester membership</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">Rs 3,000 / Rs 5,000</p>
+            <p class="mt-2 text-sm leading-6">One child / family. Regular Monday and Friday training is members-only after the kickoff.</p>
+          </div>
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-coral-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-teal-500)] sm:col-span-2">
+            <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">The water rule</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">At least one parent from every family gets wet.</p>
+            <p class="mt-2 max-w-2xl text-sm leading-6">We had too many gnarly situations last semester. A parent or guardian must be in the water for the full session, including a new duckie's free first one.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-9 grid gap-5 border-t border-white/25 pt-7 sm:grid-cols-2" data-reveal>
+        <div>
+          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-sun-500)]">Swiss talent incoming</p>
+          <p class="mt-2 max-w-xl text-sm leading-6 text-white/78">Estelle is travelling from Switzerland for an internship with Sunset Duckies. She will contact every family that joins the club.</p>
+        </div>
+        <div>
+          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-sun-500)]">Next competition</p>
+          <p class="mt-2 max-w-xl text-sm leading-6 text-white/78">We are planning it for October. The date and format are still being worked out.</p>
+        </div>
+      </div>
+
+      <div class="mt-9 flex flex-wrap gap-3" data-reveal>
+        <a class="cta-primary" href="/blog/new-semester-2026">Read the full semester update</a>
+        <a class="cta-secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">Join the WhatsApp group</a>
+      </div>
     </div>
   </section>
 
@@ -259,7 +311,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           <div class="flex flex-wrap gap-2 pt-1">
             <span class="chip">BYO surfboard</span>
             <span class="chip">BYO wetsuit</span>
-            <span class="chip">Parents responsible</span>
+            <span class="chip">One parent in the water</span>
             <span class="chip">No drop-off</span>
           </div>
         </div>
@@ -407,7 +459,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
         </div>
 
         <p class="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
-          ↑ <a href="#how-it-works" class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">How the club works</a> — BYO board + wetsuit, parents responsible.
+          ↑ <a href="#how-it-works" class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">How the club works</a> — BYO board + wetsuit, one parent in the water.
         </p>
       </div>
 
@@ -486,13 +538,10 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
 
           <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
             <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
-              Annual dues
+              Semester membership
             </p>
-            <p class="mt-2 flex items-baseline gap-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+            <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
               {site.membership.feeLabel}
-              <span class="font-mono text-[0.7rem] font-normal uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
-                ≈ ${site.membership.annualFeeUsdApprox} USD
-              </span>
             </p>
             <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
               {site.membership.fundingNote}
