@@ -10,10 +10,10 @@ const money=(n:number, decimals=0)=>`Rs ${n.toLocaleString("en-GB",{minimumFract
 const pretty=(n:number)=>n.toLocaleString("en-GB",{maximumFractionDigits:1});
 const colors=["#b6c956","#df986a","#ad78a0","#ebbf51","#71a79a","#a5a099"];
 const taglines={basic:"The everyday mix",sports:"After the session",champ:"A little more generous"};
-function Field({label,value,onChange,suffix,step=1,min=0,max=1_000_000}:{label:string;value:number;onChange:(n:number)=>void;suffix?:string;step?:number;min?:number;max?:number}) {
+function Field({label,displayLabel=label,value,onChange,suffix,step=1,min=0,max=1_000_000}:{label:string;displayLabel?:string;value:number;onChange:(n:number)=>void;suffix?:string;step?:number;min?:number;max?:number}) {
   const [text,setText]=useState(String(value));
   useEffect(()=>{setText(String(value));},[value]);
-  return <label className="g-field"><span>{label}</span><span className="g-input-unit"><input aria-label={label} type="number" min={min} max={max} step={step} value={text} onChange={e=>{const raw=e.target.value;setText(raw);if(raw!==""&&Number.isFinite(Number(raw)))onChange(Number(raw));}} onBlur={()=>{if(text==="")setText(String(value));}}/>{suffix&&<small>{suffix}</small>}</span></label>;
+  return <label className="g-field"><span>{displayLabel}</span><span className="g-input-unit"><input aria-label={label} type="number" min={min} max={max} step={step} value={text} onChange={e=>{const raw=e.target.value;setText(raw);if(raw!==""&&Number.isFinite(Number(raw)))onChange(Number(raw));}} onBlur={()=>{if(text==="")setText(String(value));}}/>{suffix&&<small>{suffix}</small>}</span></label>;
 }
 
 export default function GranolaSimulator() {
@@ -126,11 +126,24 @@ export default function GranolaSimulator() {
         <section className="g-editor-section"><div className="g-section-title"><span>01 / THE MIX</span><b>Recipe & ingredients</b></div>
           <div className="g-recipe-meta"><label className="g-field"><span>Pack name</span><input aria-label="Pack name" maxLength={60} value={recipe.name} onChange={e=>change("name",e.target.value)}/></label><Field label="Finished pack" value={recipe.packGrams} suffix="g" min={1} onChange={v=>change("packGrams",v)}/><Field label="Baking yield" value={recipe.yieldPercent} suffix="%" min={1} max={100} step={0.25} onChange={v=>change("yieldPercent",v)}/></div>
           <label className="g-field g-note"><span>Recipe notes</span><textarea aria-label="Recipe notes" maxLength={1000} rows={2} value={recipe.note} onChange={e=>change("note",e.target.value)}/></label>
-          <p className="g-explain">Mix grams set the proportions. We scale the mix to your finished pack and baking yield. Shelf quantities are in grams; for oil, use its weight equivalent.</p>
+          <p className="g-explain">Enter what you buy, then how much you use in your mix. Mix amounts set the proportions; we scale them to your finished pack and baking yield. For oil, use its weight in grams.</p>
           <div className="g-ingredient-list">{recipe.ingredients.map((item,index)=><div className="g-ingredient" key={item.id}>
             <div className="g-ingredient-heading"><i style={{background:colors[index%colors.length]}}/><label className="g-field"><span className="g-sr-only">Ingredient {index+1} name</span><input aria-label={`Ingredient ${index+1} name`} maxLength={80} value={item.name} onChange={e=>ingredient(index,"name",e.target.value)}/></label><button type="button" className="g-remove" aria-label={`Remove ${item.name||"ingredient"}`} disabled={recipe.ingredients.length===1} onClick={()=>change("ingredients",recipe.ingredients.filter((_,i)=>i!==index))}>×</button></div>
-            <div className="g-ingredient-values"><Field label={`${item.name} mix grams`} value={item.grams} suffix="g" step={1} onChange={v=>ingredient(index,"grams",v)}/><Field label={`${item.name} shelf quantity`} value={item.packSize} suffix="g" min={0.01} step={0.01} onChange={v=>ingredient(index,"packSize",v)}/><Field label={`${item.name} shelf price`} value={item.packPrice} suffix="Rs" step={0.01} onChange={v=>ingredient(index,"packPrice",v)}/><div className="g-row-total"><span>Per finished pack</span><strong>{result?money(result.rows[index].cost,2):"—"}</strong><small>{result?`${pretty(result.rows[index].input)} g input`:"—"}</small></div></div>
-            <label className="g-source"><span>Source / assumption</span><input aria-label={`${item.name} source`} maxLength={500} value={item.source} onChange={e=>ingredient(index,"source",e.target.value)}/></label>
+            <div className="g-ingredient-values">
+              <fieldset className="g-ingredient-group g-shop-group">
+                <legend>At the shop</legend>
+                <div className="g-ingredient-fields">
+                  <Field label={`${item.name} shelf quantity`} displayLabel="Shelf quantity" value={item.packSize} suffix="g" min={0.01} step={0.01} onChange={v=>ingredient(index,"packSize",v)}/>
+                  <Field label={`${item.name} shelf price`} displayLabel="Shelf price" value={item.packPrice} suffix="Rs" step={0.01} onChange={v=>ingredient(index,"packPrice",v)}/>
+                </div>
+                <label className="g-source"><span>Source / assumption</span><input aria-label={`${item.name} source`} maxLength={500} value={item.source} onChange={e=>ingredient(index,"source",e.target.value)}/></label>
+              </fieldset>
+              <fieldset className="g-ingredient-group g-mix-group">
+                <legend>In your mix</legend>
+                <Field label={`${item.name} amount in mix`} displayLabel="Amount in mix" value={item.grams} suffix="g" step={1} onChange={v=>ingredient(index,"grams",v)}/>
+                <div className="g-row-total"><span>Cost per finished pack<small>{result?`${pretty(result.rows[index].input)} g of ${item.name}`:"—"}</small></span><strong>{result?money(result.rows[index].cost,2):"—"}</strong></div>
+              </fieldset>
+            </div>
             <IngredientNutrition item={item} onChange={nutrition=>change("ingredients",recipe.ingredients.map((row,i)=>i===index?{...row,nutrition}:row))}/>
           </div>)}</div>
           <button type="button" className="g-add" disabled={recipe.ingredients.length>=40} onClick={()=>change("ingredients",[...recipe.ingredients,{id:crypto.randomUUID(),name:"New ingredient",grams:10,packSize:100,packPrice:0,source:"Price to confirm"}])}>+ Add ingredient</button>

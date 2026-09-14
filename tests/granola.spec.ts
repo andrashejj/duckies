@@ -231,9 +231,9 @@ test("nutrition UI edits references; AI previews apply, undo and reject stale re
   await page.reload();await expect(app.getByLabel('Nutrition serving size',{exact:true})).toHaveValue('60');
   const ask=app.getByRole('button',{name:'Suggest recipe experiments'});await expect(ask).toBeEnabled();await ask.click();
   const review=app.getByLabel('AI recipe suggestions',{exact:true});await expect(review).toBeVisible();
-  await review.getByRole('button',{name:'Try this in the editor'}).click();await expect(app.getByLabel('Honey mix grams',{exact:true})).toHaveValue('30');
+  await review.getByRole('button',{name:'Try this in the editor'}).click();await expect(app.getByLabel('Honey amount in mix',{exact:true})).toHaveValue('30');
   await expect(review.getByRole('button',{name:'Try this in the editor'})).toBeDisabled();
-  await review.getByRole('button',{name:'Undo experiment'}).click();await expect(app.getByLabel('Honey mix grams',{exact:true})).toHaveValue('45');
+  await review.getByRole('button',{name:'Undo experiment'}).click();await expect(app.getByLabel('Honey amount in mix',{exact:true})).toHaveValue('45');
   await app.getByLabel('Selling price',{exact:true}).fill('450');await expect(review.getByRole('button',{name:'Try this in the editor'})).toBeDisabled();
   await expect(review).toContainText('recipe has changed');
   await page.setViewportSize({width:390,height:844});await app.getByLabel('Nutrition and AI adviser',{exact:true}).scrollIntoViewIfNeeded();
