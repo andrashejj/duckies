@@ -52,7 +52,6 @@ export const site = {
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
     { label: "Blog", labelFull: "The Logbook", href: "/blog" },
     { label: "Branding", labelFull: "Branding", href: "/branding-plan" },
-    { label: "Members", labelFull: "Member sign-in", href: "/login" },
   ],
   stats: [
     { value: "100%", label: "kids in the lineup" },
