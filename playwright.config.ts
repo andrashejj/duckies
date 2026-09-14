@@ -26,7 +26,7 @@ export default defineConfig({
     command: "pnpm exec astro dev --host 127.0.0.1 --port 4329",
     url: "http://127.0.0.1:4329/login",
     reuseExistingServer: false,
-    env: { NODE_ENV: "development", DUCKIES_TEST_SERVER: "1", NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import=${resolve("tests/intercept-mail.mjs")}` },
+    env: { NODE_ENV: "development", DUCKIES_TEST_SERVER: "1", OPENAI_API_KEY: "duckies-test-ai-intercepted", NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import=${resolve("tests/intercept-mail.mjs")} --import=${resolve("tests/intercept-ai.mjs")}` },
     timeout: 120000,
   },
 });

@@ -1,4 +1,8 @@
 ---
+import BrandingTeaser from "../components/BrandingTeaser.astro";
+import BrandingToolbar from "../components/BrandingToolbar.astro";
+export const prerender=false;
+const approved=Astro.locals.branding?.canView??false;
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/plan.css";
 import { site } from "../data/site";
@@ -194,7 +198,8 @@ const criteria = [
 ];
 ---
 
-<BaseLayout title={title} description={description} variant="performance">
+<BaseLayout title={approved?title:"Project Molt | Sunset Duckies"} description={approved?description:"A surf brand taking shape in Tamarin. Request access to join the working group."} variant="performance">
+  {approved?<><BrandingToolbar/>
   <div class="performance-plan">
     <section class="plan-section plan-ideas-hero" data-reveal>
       <div class="plan-section-head">
@@ -317,4 +322,5 @@ const criteria = [
       </a>
     </section>
   </div>
+</>:<BrandingTeaser/>}
 </BaseLayout>

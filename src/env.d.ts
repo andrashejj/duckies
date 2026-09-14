@@ -3,5 +3,6 @@ declare namespace App {
   interface Locals {
     session: import("./lib/session").SharedSession;
     isAdmin: boolean;
+    branding?: import("./lib/server/branding").BrandingAccess;
   }
 }

@@ -1,0 +1,15 @@
+---
+import BrandingAccess from "./react/BrandingAccess";
+import "../styles/branding-access.css";
+const access=Astro.locals.branding;
+---
+<section class="b-teaser">
+  <div class="b-teaser-intro">
+    <p class="b-kicker">Sunset Duckies / Project Molt</p>
+    <h1>Made here.<br/>Built <em>together.</em></h1>
+    <p class="b-lead">A surf brand taking shape in Tamarin. Useful products, paid local work and a community with a say in what comes next.</p>
+    <div class="b-teaser-photo"><img src="/media/young-rider.jpg" alt="A young surfer riding a wave in Tamarin" width="1200" height="1600"/><span>Tamarin, Mauritius · Work in progress</span></div>
+    <p class="b-private-note">The working plans, recipes and numbers are shared by invitation. Join the conversation.</p>
+  </div>
+  <BrandingAccess client:load email={access?.email??null} status={access?.entry?.status??null} verified={Boolean(access?.entry?.verified_at)} />
+</section>

@@ -33,8 +33,8 @@ export function getAuthOptions() {
       storeOTP: "hashed",
       rateLimit: { window: 60, max: 3 },
       async sendVerificationOTP({ email, otp, type }) {
-        // Shop customers may view their own reservations. Club membership
-        // is still checked separately on every kids-list request.
+        // Branding requesters and shop customers can verify their identity.
+        // Branding approval and club membership are checked separately.
         if (type !== "sign-in" || !(await canSignIn(email))) return;
         await sendMail({
           to: email,

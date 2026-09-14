@@ -40,8 +40,12 @@ import "../styles/members.css";
   let email = "";
 
   const requestedPath = new URLSearchParams(window.location.search).get("next");
-  const destination = requestedPath && /^\/(account|admin|members)(\/|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
+  const destination = requestedPath && /^\/(account|admin|members|branding-plan|product-ideas)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
     ? requestedPath : null;
+  if (destination?.startsWith("/branding-plan") || destination?.startsWith("/product-ideas")) {
+    document.querySelector(".section-kicker")!.textContent="Project Molt / Private workspace";
+    document.querySelector(".body-copy")!.textContent="Sign in with your approved email. We’ll send a six-digit code.";
+  }
   authClient.getSession().then(({ data }) => {
     if (data) void finishSignIn();
   }).catch(() => {});

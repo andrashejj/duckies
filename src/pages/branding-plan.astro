@@ -1,5 +1,10 @@
 ---
+import BrandingTeaser from "../components/BrandingTeaser.astro";
+import BrandingToolbar from "../components/BrandingToolbar.astro";
+export const prerender=false;
+const approved=Astro.locals.branding?.canView??false;
 import BaseLayout from "../layouts/BaseLayout.astro";
+import GranolaBusinessCase from "../components/GranolaBusinessCase.astro";
 import "../styles/plan.css";
 import { site } from "../data/site";
 
@@ -178,7 +183,8 @@ const templates = [
 ];
 ---
 
-<BaseLayout title={title} description={description} variant="performance">
+<BaseLayout title={approved?title:"Project Molt | Sunset Duckies"} description={approved?description:"A surf brand taking shape in Tamarin. Request access to join the working group."} variant="performance">
+  {approved?<><BrandingToolbar/>
   <div class="performance-plan">
     <section class="plan-hero">
       <figure class="plan-hero-media" data-float>
@@ -212,6 +218,7 @@ const templates = [
       <a href="#method"><span>04</span> Method</a>
       <a href="#pilot"><span>05</span> To February</a>
       <a href="#delivery"><span>06</span> Delivery</a>
+      <a href="#granola-business-case"><span>07</span> Granola economics</a>
     </nav>
 
     <section id="goal" class="plan-section plan-brief-section" data-reveal>
@@ -328,5 +335,14 @@ const templates = [
         </table>
       </div>
     </section>
+    <div class="plan-divider" aria-hidden="true"></div>
+    <GranolaBusinessCase />
   </div>
+</>:<BrandingTeaser/>}
 </BaseLayout>
+
+<style>
+  @media (min-width: 1025px) {
+    .plan-index { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+import "../styles/branding-access.css";
+const access=Astro.locals.branding;
+---
+<nav class="b-toolbar" aria-label="Branding workspace"><a href="/branding-plan">Project Molt / Private workspace</a><span>{access?.email}</span>{access?.owner&&<a href="/branding-plan/access">Manage access →</a>}<button class="b-link" id="branding-signout">Sign out</button></nav>
+<script>
+import { authClient } from "../lib/auth-client";
+document.querySelector<HTMLButtonElement>("#branding-signout")?.addEventListener("click",async event=>{
+ const button=event.currentTarget as HTMLButtonElement;button.disabled=true;
+ try{const {error}=await authClient.signOut();if(error)throw error;window.location.assign("/branding-plan");}catch{button.textContent="Retry sign out";button.disabled=false;}
+});
+</script>

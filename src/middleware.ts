@@ -1,6 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { getSession, isAdmin } from "./lib/session";
 import { json, sameOrigin } from "./lib/server/http";
+import { getBrandingAccess } from "./lib/server/branding";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
@@ -8,9 +9,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const account = /^\/account(\/|$)/.test(path);
   const members = /^\/members(\/|$)/.test(path);
   const reservation = path === "/api/reserve";
-  const privateResponse = /^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
+  const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
+  const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
+  const granolaAPI=/^\/api\/granola(?:\/|$)/.test(path);
+  const privateResponse = brandingPage||brandingTemplate||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
+    if(brandingPage||brandingTemplate||granolaAPI){
+      try{context.locals.branding=await getBrandingAccess(context.request);}
+      catch{return json({error:"Branding access is temporarily unavailable. Please retry."},503);}
+      if(!context.locals.branding.canView){
+        if(granolaAPI)return json({error:context.locals.branding.session?"Branding access requires approval.":"Please sign in to access the branding workspace."},context.locals.branding.session?403:401);
+        if(brandingTemplate)return context.redirect("/branding-plan");
+      }
+    }
     if (admin || account || members || reservation) {
       try {
         context.locals.session = await getSession(context.request);
