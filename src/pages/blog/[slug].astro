@@ -2,6 +2,9 @@
 import { site } from "../../data/site";
 import { blog } from "../../data/blog";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import LogbookIllustration from "../../components/LogbookIllustration.astro";
+import LogbookGif from "../../components/LogbookGif.astro";
+import "../../styles/logbook.css";
 import {
   isVideo,
   loadShareFiles,
@@ -32,63 +35,27 @@ const clips = mediaFiles.filter(isVideo).map((file) => ({
   poster: sharePreviewUrl(post.media!, file, 1200),
 }));
 
-const heroImage = post.heroImage ?? photos[0]?.full;
+const heroImage = post.cover?.src ?? post.heroImage ?? photos[0]?.full;
 const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 ---
 
-<BaseLayout title={title} description={description} image={ogImage} imageAlt={`${post.title} ${post.titleAccent}`}>
+<BaseLayout title={title} description={description} image={ogImage} imageAlt={post.cover?.alt ?? `${post.title} ${post.titleAccent}`} imageWidth={post.cover ? 1536 : undefined} imageHeight={post.cover ? 1024 : undefined}>
   <!-- ===================== HERO ===================== -->
   <article>
-    <section class="relative isolate overflow-hidden">
-      <div class="absolute inset-0 -z-10">
-        <div class="absolute inset-0 bg-[var(--color-ink-950)]"></div>
-        {heroImage && (
-          <img
-            src={heroImage}
-            alt=""
-            class="h-full w-full object-cover opacity-50"
-            aria-hidden="true"
-            onerror="this.remove()"
-          />
-        )}
-        <div class="absolute inset-0 bg-[linear-gradient(150deg,rgba(11,22,32,0.88)_0%,rgba(7,201,182,0.4)_55%,rgba(255,210,63,0.5)_100%)]"></div>
-      </div>
-
-      <div class="pointer-events-none absolute -right-3 top-28 hidden lg:block" aria-hidden="true">
-        <div class="floating">
-          <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-5 py-3 shadow-[5px_5px_0_0_var(--color-ink-950)]" style="transform: rotate(7deg);">
-            <p class="font-display text-lg font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
-              {post.heroGlyphs ?? "🌊"}
-            </p>
-          </div>
+    <section class="logbook-hero mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+      <div class="logbook-hero-grid">
+        <div>
+          <a class="section-kicker no-underline" href="/blog">← The Logbook</a>
+          <p class="mt-7 font-mono text-xs uppercase tracking-widest">{post.kicker}</p>
+          <h1 class="font-display mt-5">
+            {post.title}
+            <span class="font-accent italic text-[var(--color-coral-500)]">{post.titleAccent}</span>
+          </h1>
+          <p class="body-copy mt-6">{post.excerpt}</p>
+          <p class="mt-6 font-mono text-xs leading-6 uppercase tracking-wider">{post.dateLabel} · {post.location}</p>
+          {post.media && <a class="cta-secondary mt-6" href="#gallery">↓ The trip, in photos</a>}
         </div>
-      </div>
-
-      <div class="relative mx-auto flex min-h-[66vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-18 sm:pt-32 lg:px-10 lg:pb-20 lg:pt-36">
-        <div data-float class="mb-5 flex flex-wrap items-center gap-3">
-          <span class="eyebrow-badge">{post.kicker}</span>
-          <span class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-white/80">
-            {post.dateLabel} · 📍 {post.location}
-          </span>
-        </div>
-
-        <h1
-          data-float
-          class="font-display max-w-4xl text-white"
-          style="font-size: clamp(2.5rem, 7.5vw, 5.8rem); line-height: 0.92; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 600;"
-        >
-          {post.title}
-          <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">{post.titleAccent}</span>
-        </h1>
-
-        <p data-float class="mt-6 max-w-3xl text-base leading-7 text-white/90 sm:text-lg sm:leading-8">
-          {post.excerpt}
-        </p>
-
-        <div data-float class="mt-8 flex flex-wrap gap-3">
-          {post.media && <a class="cta-secondary" href="#gallery">↓ Straight to the photos</a>}
-          <a class="cta-secondary" href="/blog">← All logbook pages</a>
-        </div>
+        {post.cover ? <LogbookIllustration image={post.cover} eager /> : heroImage && <img src={heroImage} alt={`${post.title} ${post.titleAccent}`} width="1536" height="1024" class="rounded-xl" />}
       </div>
     </section>
 
@@ -122,16 +89,20 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
       <div class="mt-12 grid gap-6 md:grid-cols-2">
         {post.sections.map((section, i) => (
-          <div class:list={["surface-card p-7 md:p-8", section.accent, i % 2 === 0 ? "tilt-left" : "tilt-right"]} data-reveal>
+          <Fragment>
+          <div class:list={["surface-card p-7 md:p-8", section.accent, i % 2 === 0 ? "tilt-left" : "tilt-right", post.sections.length % 2 === 1 && i === post.sections.length - 1 && "md:col-span-2"]} data-reveal>
             <div class="flex items-center gap-3">
               <span class="text-3xl" aria-hidden="true">{section.emoji}</span>
               <h2 class="section-title" style="font-size: clamp(1.4rem, 2.4vw, 1.9rem);">{section.title}</h2>
             </div>
             <p class="body-copy mt-4">{section.body}</p>
           </div>
+          {i === 1 && post.storyImage && <div class="logbook-story-art" data-reveal><LogbookIllustration image={post.storyImage} /></div>}
+          </Fragment>
         ))}
       </div>
 
+      {post.gif && <LogbookGif gif={post.gif} />}
       <div class="mt-12 max-w-3xl" data-reveal>
         <p class="body-copy text-lg leading-8">{post.outro}</p>
       </div>
@@ -149,12 +120,11 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
               <video
                 src={clip.src}
                 poster={clip.poster}
-                autoplay
                 muted
                 loop
                 playsinline
                 controls
-                preload="auto"
+                preload="none"
                 class="aspect-video w-full"
               ></video>
             </div>
@@ -218,6 +188,8 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
       <button class="lightbox-nav lightbox-next" data-lb-next aria-label="Next photo">›</button>
       <p class="lightbox-count" data-lb-count></p>
     </dialog>}
+
+    {post.cover && <p class="logbook-art-credit mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-10">Illustrations created for Sunset Duckies with AI. {post.media && "The trip gallery contains the club’s original photos and videos."}</p>}
 
     <!-- ===================== CTA ===================== -->
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">

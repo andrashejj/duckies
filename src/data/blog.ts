@@ -7,6 +7,23 @@ import { site } from "./site";
 // regenerate it with `bash scripts/list-share-media.sh <token>` on a network
 // that can reach owncloud.justnet.pl and paste the output.
 
+export interface BlogIllustration {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+export interface BlogGif {
+  src: string;
+  poster: string;
+  alt: string;
+  caption: string;
+  sourceUrl: string;
+  credit: string;
+  width: number;
+  height: number;
+}
+
 export interface BlogPostSection {
   emoji: string;
   title: string;
@@ -28,6 +45,9 @@ export interface BlogPost {
   sections: BlogPostSection[];
   outro: string;
   heroImage?: string;
+  cover?: BlogIllustration;
+  storyImage?: BlogIllustration;
+  gif?: BlogGif;
   heroGlyphs?: string;
   cta: {
     kicker: string;
@@ -92,7 +112,25 @@ export const blog = {
       ],
       outro:
         "For now, save Friday 11 September. If you join the club, expect a hello from Estelle too.",
-      heroImage: "/media/sunset-training.jpg",
+      cover: {
+        src: "/media/logbook/semester-cover.webp",
+        alt: "Illustration of surf families carrying colourful boards into Tamarin Bay at sunset.",
+        caption: "Back to the bay. Boards under arms, parents in the water.",
+      },
+      storyImage: {
+        src: "/media/logbook/semester-water.webp",
+        alt: "Illustration of a parent beside a child riding a small wave on a yellow surfboard.",
+        caption: "Small waves. A steady hand. One parent from every family, in the water.",
+      },
+      gif: {
+        src: "/media/logbook/surfing-duck.gif",
+        poster: "/media/logbook/surfing-duck-poster.webp",
+        alt: "A yellow cartoon duck surfing a little wave.",
+        caption: "Current mood: back on the board.",
+        sourceUrl: "https://tenor.com/view/duck-surfing-gif-11348510",
+        credit: "Duck Surfing · Tenor",
+        width: 240, height: 240,
+      },
       heroGlyphs: "🌅 → 🦆 → 🏆",
       cta: {
         kicker: "Kickoff + membership",
@@ -151,6 +189,16 @@ export const blog = {
       ],
       outro:
         'Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.',
+      cover: {
+        src: "/media/logbook/reef-cover.webp",
+        alt: "Illustration of a small boat crossing the turquoise lagoon beneath Le Morne Brabant.",
+        caption: "A different kind of school run: south along the coast, towards Le Morne.",
+      },
+      storyImage: {
+        src: "/media/logbook/reef-underwater.webp",
+        alt: "Illustrated view above and below the lagoon: snorkellers, parrotfish and coral beneath Le Morne.",
+        caption: "Masks on, eyes open. A whole other world just below the surface.",
+      },
       heroGlyphs: "⛰️ → 🚤 → 🤿",
       cta: {
         kicker: "Next trip",
@@ -212,7 +260,25 @@ export const blog = {
       ],
       outro:
         "The first job is deliberately small: make the four product ideas equally clear by 7 September. The interviews and the evidence come next.",
-      heroImage: "/media/young-rider.jpg",
+      cover: {
+        src: "/media/logbook/molt-cover.webp",
+        alt: "Illustration of a beachside worktable with fabric, product sketches, oats, a bottle and a yellow duck.",
+        caption: "The workbench stage. A few ideas, some rough samples, plenty to find out.",
+      },
+      storyImage: {
+        src: "/media/logbook/molt-workshop.webp",
+        alt: "Illustration of people stitching fabric, sketching and comparing product samples around a shared table.",
+        caption: "Make something small. Put it in someone's hands. Listen.",
+      },
+      gif: {
+        src: "/media/logbook/thinking-duck.gif",
+        poster: "/media/logbook/thinking-duck-poster.webp",
+        alt: "A cartoon duck raises an eyebrow, thinking it over.",
+        caption: "When someone says they already know which idea will win.",
+        sourceUrl: "https://tenor.com/view/huh-raised-eyebrow-hm-think-chris-p-duck-gif-11545850",
+        credit: "Chris P. Duck · via Tenor",
+        width: 498, height: 280,
+      },
       heroGlyphs: "4 → 1 → 🌍",
       cta: {
         kicker: "The working brief",

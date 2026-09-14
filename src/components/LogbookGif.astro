@@ -1,0 +1,36 @@
+---
+import type { BlogGif } from "../data/blog";
+interface Props { gif: BlogGif; }
+const { gif } = Astro.props;
+---
+<figure class="logbook-gif" data-logbook-gif>
+  <div class="logbook-gif-picture">
+    <img src={gif.poster} data-animation={gif.src} data-poster={gif.poster}
+      alt={gif.alt} width={gif.width} height={gif.height} loading="lazy" decoding="async" />
+  </div>
+  <figcaption>
+    <span class="section-kicker">A little intermission</span>
+    <p class="font-accent">{gif.caption}</p>
+    <button type="button" class="member-text-button" aria-pressed="false" hidden>▶ Play GIF</button>
+    <a href={gif.sourceUrl} target="_blank" rel="noreferrer">{gif.credit} ↗</a>
+  </figcaption>
+</figure>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-logbook-gif]").forEach(figure => {
+    const img = figure.querySelector("img")!;
+    const button = figure.querySelector("button")!;
+    button.hidden = false;
+    button.addEventListener("click", () => {
+      const playing = button.getAttribute("aria-pressed") !== "true";
+      img.src = playing ? img.dataset.animation! : img.dataset.poster!;
+      button.setAttribute("aria-pressed", String(playing));
+      button.textContent = playing ? "■ Stop GIF" : "▶ Play GIF";
+    });
+    img.addEventListener("error", () => {
+      img.src = img.dataset.poster!;
+      button.disabled = true;
+      button.setAttribute("aria-pressed", "false");
+      button.textContent = "GIF unavailable — open source below";
+    }, { once: true });
+  });
+</script>

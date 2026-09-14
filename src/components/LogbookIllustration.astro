@@ -1,0 +1,12 @@
+---
+import type { BlogIllustration } from "../data/blog";
+interface Props { image: BlogIllustration; eager?: boolean; }
+const { image, eager = false } = Astro.props;
+---
+<figure class="logbook-illustration">
+  <img src={image.src} alt={image.alt} width="1536" height="1024"
+    srcset={`${image.src.replace('.webp', '-small.webp')} 768w, ${image.src} 1536w`}
+    sizes={eager ? "(min-width: 1024px) 55vw, 100vw" : "(min-width: 1024px) 1100px, 100vw"}
+    loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : "auto"} decoding="async" />
+  <figcaption>{image.caption}</figcaption>
+</figure>
