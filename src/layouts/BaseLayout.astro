@@ -55,9 +55,9 @@ const absoluteImage = new URL(image, siteOrigin).toString();
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImage} />
     <meta name="twitter:image:alt" content={imageAlt} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png?v=duckies-20260914" />
+    <link rel="icon" href="/favicon.ico?v=duckies-20260914" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=duckies-20260914" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -130,9 +130,10 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a href="/login" class="text-sm font-semibold underline underline-offset-4">Member sign-in</a></div>
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
           <div class="space-y-5">
-            <p class="section-title" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">
-              {site.name}
-            </p>
+            <a href="/" class="inline-flex items-center gap-4">
+              <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="64" height="64" loading="lazy" class="h-16 w-16 shrink-0 rounded-full" />
+              <span class="section-title" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">{site.name}</span>
+            </a>
             <p class="body-copy max-w-2xl">
               {variant === "performance"
                 ? "High-quality products built with local surf communities. Tamarin is the first proof; each community keeps its place, people and voice inside a shared global brand."
