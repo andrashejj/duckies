@@ -22,22 +22,22 @@ const description =
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 ---
 
-<BaseLayout title={title} description={description} page="home" image="/media/surf/hero-wave.webp" imageAlt="A powerful teal wave curling into a sunlit barrel." imageWidth={1672} imageHeight={941}>
+<BaseLayout title={title} description={description} page="home" image="/media/surf/grom-hero.webp" imageAlt="A young surfer carving a clean teal wave." imageWidth={1672} imageHeight={941}>
   <!-- ===================== HERO ===================== -->
-  <section class="relative isolate overflow-hidden">
+  <section class="grom-hero relative isolate overflow-hidden bg-[var(--color-ink-950)]">
     <div class="absolute inset-0 -z-10">
       <img
         data-hero-image
-        src="/media/surf/hero-wave.webp"
-        alt="A powerful teal wave curling into a sunlit barrel."
+        src="/media/surf/grom-hero.webp"
+        alt="A young surfer carving a clean teal wave."
         width="1672" height="941"
         fetchpriority="high" loading="eager"
-        class="h-full w-full object-cover object-[60%_center]"
+        class="h-full w-full object-cover object-[76%_center]"
       />
-      <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,22,32,0.65)_0%,rgba(11,22,32,0.12)_65%),linear-gradient(0deg,rgba(11,22,32,0.72)_0%,transparent_75%)]"></div>
+      <div class="hero-shade absolute inset-0 bg-[linear-gradient(90deg,rgba(11,22,32,0.65)_0%,rgba(11,22,32,0.12)_65%),linear-gradient(0deg,rgba(11,22,32,0.72)_0%,transparent_75%)]"></div>
     </div>
 
-    <div class="relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
+    <div class="hero-copy relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
       <div data-float class="mb-6">
         <span class="eyebrow-badge">
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
@@ -657,6 +657,12 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 </BaseLayout>
 
 <style>
+  @media (max-width: 639px) {
+    .grom-hero [data-hero-image] { height: 360px; object-position: 76% center; }
+    .grom-hero .hero-copy { padding-top: 320px; }
+    .grom-hero .hero-shade { background: linear-gradient(180deg, transparent 220px, var(--color-ink-950) 360px); }
+  }
+
   .sponsor-strip { border-top: 2px solid var(--color-ink-950); border-bottom: 1px solid var(--color-ink-950); padding: 1.75rem 0 2rem; }
   .sponsor-strip h2 { font: .7rem var(--font-mono); letter-spacing: .18em; text-transform: uppercase; text-align: center; }
   .sponsor-logos { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2rem; align-items: center; margin-top: 1.5rem; padding: 0; }
