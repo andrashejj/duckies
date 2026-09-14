@@ -13,11 +13,13 @@ export const ingredientSchema = z.object({
   id: z.string().min(1).max(80), name: z.string().trim().min(1).max(80),
   grams: number(100_000), packSize: number(100_000).positive(), packPrice: number(),
   source: z.string().max(500),
+  discountPercent: number(100).optional(), sourcingCost: number().optional(),
   nutrition: nutritionSchema.nullable().optional(),
 });
 export const costSchema = z.object({
   id: z.string().min(1).max(80), name: z.string().trim().min(1).max(80),
-  amount: number(), basis: z.enum(["pack", "batch", "month"]),
+  amount: number(), basis: z.enum(["pack", "batch", "month", "sold"]),
+  calculation: z.enum(["money", "labour"]).optional(),
 });
 export const recipeSchema = z.object({
   name: z.string().trim().min(1).max(60), note: z.string().max(1000),
@@ -25,6 +27,7 @@ export const recipeSchema = z.object({
   servingGrams: number(10_000).positive().optional(),
   ingredients: z.array(ingredientSchema).min(1).max(40),
   costs: z.array(costSchema).max(30),
+  batchCostMode: z.enum(["proportional", "whole"]).optional(),
   batchPacks: number(10_000).int().min(1), batchHours: number(1000), hourlyCost: number(100_000),
   wastePercent: number(100), price: number(100_000), feePercent: number(100), retailerPercent: number(100),
   monthlyPacks: number(100_000).int(), sellThroughPercent: number(100),
@@ -43,29 +46,65 @@ export type Revision = { version: number; recipe: Recipe; createdAt: string };
 
 // Quantities describe a reference mix. Scale all ingredients proportionally to
 // the requested finished pack weight and measured yield, without inventing mass.
-export function calculate(recipe: Recipe) {
+export function calculate(recipe: Recipe, { includeBreakEven = true } = {}) {
   const inputGrams = recipe.ingredients.reduce((sum, i) => sum + i.grams, 0);
-  const scale = inputGrams > 0 && recipe.yieldPercent > 0 ? recipe.packGrams / (inputGrams * recipe.yieldPercent / 100) : 0;
-  const rows = recipe.ingredients.map(i => ({ ...i, input: i.grams * scale, cost: i.packSize > 0 ? i.grams * scale / i.packSize * i.packPrice : 0 }));
+  const scale = recipe.packGrams / (inputGrams * recipe.yieldPercent / 100);
+  const rows = recipe.ingredients.map(i => {
+    const landedPrice = i.packPrice * (1 - (i.discountPercent ?? 0) / 100) + (i.sourcingCost ?? 0);
+    return { ...i, input: i.grams * scale, landedPrice, cost: i.grams * scale / i.packSize * landedPrice };
+  });
   const ingredients = rows.reduce((sum, i) => sum + i.cost, 0);
   const waste = ingredients * recipe.wastePercent / 100;
+  const costRows = recipe.costs.map(c => ({ ...c, rate: c.amount * (c.calculation === "labour" ? recipe.hourlyCost : 1) }));
+  const sumBasis = (basis: OtherCost["basis"]) => costRows.filter(c => c.basis === basis).reduce((sum, c) => sum + c.rate, 0);
+  const perPack = sumBasis("pack"), perBatch = sumBasis("batch"), perSold = sumBasis("sold");
+  const overhead = sumBasis("month");
   const labour = recipe.batchHours * recipe.hourlyCost / recipe.batchPacks;
-  const otherPerPack = recipe.costs.reduce((sum, c) => sum + (c.basis === "pack" ? c.amount : c.basis === "batch" ? c.amount / recipe.batchPacks : 0), 0);
-  const overhead = recipe.costs.filter(c => c.basis === "month").reduce((sum, c) => sum + c.amount, 0);
+  const otherPerPack = perPack + perBatch / recipe.batchPacks;
+  // Unit economics use a full reference batch. Monthly economics pay for the
+  // selected batch policy, including the unused capacity of the final batch.
   const production = ingredients + waste + labour + otherPerPack;
   const retained = 1 - (recipe.feePercent + recipe.retailerPercent) / 100;
-  const selling = recipe.price * (1 - retained);
-  const contribution = recipe.price * retained - production;
+  const selling = recipe.price * (1 - retained) + perSold;
+  const contribution = recipe.price - selling - production;
   const margin = recipe.price > 0 ? contribution / recipe.price * 100 : null;
+  const batchesAt = (packs: number) => recipe.batchCostMode === "whole" ? Math.ceil(packs / recipe.batchPacks) : packs / recipe.batchPacks;
+  const productionAt = (packs: number) => packs * (ingredients + waste + perPack) + batchesAt(packs) * (recipe.batchHours * recipe.hourlyCost + perBatch);
+  const profitAt = (packs: number) => {
+    const sold = Math.floor(packs * recipe.sellThroughPercent / 100);
+    return sold * recipe.price - (productionAt(packs) + sold * selling + overhead);
+  };
+  const batches = batchesAt(recipe.monthlyPacks);
   const sold = Math.floor(recipe.monthlyPacks * recipe.sellThroughPercent / 100);
   const revenue = sold * recipe.price;
-  const monthlyCost = recipe.monthlyPacks * production + sold * selling + overhead;
-  const effectiveContribution = recipe.sellThroughPercent / 100 * recipe.price * retained - production;
-  const breakEvenProduced = effectiveContribution > 0 ? Math.ceil(overhead / effectiveContribution) : null;
-  const targetPrice = retained > 0.3 ? production / (retained - 0.3) : null;
+  const monthlyProduction = productionAt(recipe.monthlyPacks);
+  const monthlySelling = sold * selling;
+  const monthlyCost = monthlyProduction + monthlySelling + overhead;
+  const effectiveContribution = recipe.sellThroughPercent / 100 * (recipe.price * retained - perSold) - production;
+  // Scan whole packs, not a rounded continuous approximation: sell-through
+  // rounds down and starting another batch can temporarily reduce profit.
+  let breakEvenProduced: number | null = null;
+  if (includeBreakEven) {
+    if (profitAt(0) >= 0) breakEvenProduced = 0;
+    else if (effectiveContribution > 0) {
+      const lowerBound = Math.max(1, Math.floor(overhead / effectiveContribution));
+      for (let packs = lowerBound; packs <= 100_000; packs++) {
+        if (profitAt(packs) >= 0) { breakEvenProduced = packs; break; }
+      }
+    }
+  }
+  const breakEvenPrice = sold > 0 && retained > 0 ? (monthlyProduction + sold * perSold + overhead) / (sold * retained) : null;
+  const targetPrice = retained > 0.3 ? (production + perSold) / (retained - 0.3) : null;
+  const monthlyRows = costRows.map(c => ({ ...c, monthly: c.rate * (c.basis === "pack" ? recipe.monthlyPacks : c.basis === "batch" ? batches : c.basis === "sold" ? sold : 1) }));
+  const productionHours = batches * recipe.batchHours;
+  const otherHours = monthlyRows.filter(c => c.calculation === "labour").reduce((sum, c) => sum + c.amount * (c.basis === "pack" ? recipe.monthlyPacks : c.basis === "batch" ? batches : c.basis === "sold" ? sold : 1), 0);
   return { rows, inputGrams, scale, ingredients, waste, labour, otherPerPack, overhead, production, selling,
-    contribution, margin, sold, revenue, monthlyCost, monthlyProfit: revenue - monthlyCost,
-    breakEvenProduced, targetPrice, productionHours: recipe.monthlyPacks / recipe.batchPacks * recipe.batchHours };
+    contribution, margin, sold, unsold: recipe.monthlyPacks - sold, revenue, monthlyCost, monthlyProfit: revenue - monthlyCost,
+    breakEvenProduced, breakEvenPrice, targetPrice, productionHours, totalPaidHours: productionHours + otherHours,
+    batches, monthlyProduction, monthlySelling, monthlyRows,
+    monthlyIngredients: recipe.monthlyPacks * ingredients, monthlyWaste: recipe.monthlyPacks * waste,
+    monthlyLabour: productionHours * recipe.hourlyCost, monthlyFees: sold * recipe.price * (1 - retained),
+  };
 }
 
 const baseIngredients: Ingredient[] = [
@@ -77,13 +116,13 @@ const baseIngredients: Ingredient[] = [
   {id:"seasoning",name:"Cinnamon + salt",grams:2,packSize:2,packPrice:2,source:"Allowance"},
 ];
 const common = {
-  packGrams:300, yieldPercent:93.75, batchPacks:20, batchHours:5, hourlyCost:200,
+  packGrams:300, yieldPercent:93.75, batchCostMode:"whole" as const, batchPacks:20, batchHours:5, hourlyCost:200,
   wastePercent:5, feePercent:2, retailerPercent:0, monthlyPacks:100, sellThroughPercent:100,
   costs:[
     {id:"pouch",name:"Pouch + label",amount:20,basis:"pack"},
     {id:"energy",name:"Energy + cleaning",amount:160,basis:"batch"},
     {id:"shopping",name:"Shopping transport",amount:140,basis:"batch"},
-    {id:"admin",name:"Order handling + admin",amount:2000,basis:"month"},
+    {id:"admin",name:"Order handling + admin",amount:10,basis:"month",calculation:"labour"},
     {id:"wear",name:"Equipment wear + overhead",amount:1000,basis:"month"},
   ] as OtherCost[],
 };

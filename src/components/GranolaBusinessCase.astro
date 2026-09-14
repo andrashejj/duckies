@@ -1,188 +1,47 @@
 ---
 import GranolaSimulator from "./react/GranolaSimulator";
-// Retail price snapshot researched 14 September 2026. Unquoted inputs are
-// deliberately marked as allowances. This is a pilot model, not a recipe spec.
-const fx = 47; // Planning conversion only; not a claimed current FX quote.
-const price = 350;
-const batchPacks = 20;
-const hoursPerBatch = 5;
-const hourlyCost = 200;
-const monthlyOverhead = 3000;
-const feeRate = 0.02;
+// Historical research only. Live economics are calculated in granola.ts.
 const ingredients = [
-  { name: "Oats", grams: 180, cost: 180 * 82 / 500, shelf: "Bokomo Morning Oats · Rs 82 / 500 g", note: "Winners listing; test flake size and crunch in the bake.", url: "https://www.winners.mu/cereales" },
-  { name: "Almonds", grams: 30, cost: 30 * 365 / 200, shelf: "Seeberger almonds · Rs 365 / 200 g", note: "Winners listing; premium branded supermarket pack.", url: "https://www.winners.mu/seeberger-almonds-200g" },
-  { name: "Raisins", grams: 45, cost: 45 * 175 / 250, shelf: "Melissa raisins · Rs 175 / 250 g", note: "Winners listing; add after baking.", url: "https://www.winners.mu/melissa--raisin-sec-250g" },
-  { name: "Honey", grams: 45, cost: 45 * 250 / 500, shelf: "Allowance · Rs 250 / 500 g", note: "Historical anchor: Tropic Rs 193 regular price in Intermart’s Nov–Dec 2025 brochure. Budget raised to Rs 250; current shelf price unverified.", url: "https://intermartmauritius.com/wp-content/uploads/2025/11/INTERMART-BROCHURE-FROM-25-NOV-TO-15-DEC-2025.pdf" },
-  { name: "Sunflower oil", grams: 18, cost: 18 / 0.92 * 96 / 1000, shelf: "Sunlife sunflower oil · Rs 96 / litre", note: "Winners listing; 18 g ≈ 19.6 ml, assuming 0.92 g/ml.", url: "https://www.winners.mu/category/products?categoryId=151&pagenumber=4" },
-  { name: "Cinnamon + salt", grams: 2, cost: 2, shelf: "Allowance · Rs 2 per pack", note: "Small seasoning allowance; replace with actual quantities and receipt prices.", url: null },
-];
-const rawTotal = ingredients.reduce((sum, item) => sum + item.cost, 0);
-const materials = Math.ceil(rawTotal);
-const loss = Math.ceil(materials * 0.05);
-const labour = hoursPerBatch * hourlyCost / batchPacks;
-const costs = [
-  { name: "Ingredients", amount: materials, basis: "Recipe below, rounded up to a whole rupee." },
-  { name: "Extra ingredient waste", amount: loss, basis: "5% allowance, rounded up; separate from moisture lost in baking." },
-  { name: "Paid local labour", amount: labour, basis: "5 paid person-hours × Rs 200 ÷ 20 packs." },
-  { name: "Pouch + label", amount: 20, basis: "Allowance for a food-grade, sealable pouch and a simple label; supplier quote pending." },
-  { name: "Energy + cleaning", amount: 8, basis: "Rs 160 per batch; kitchen measurement pending." },
-  { name: "Shopping transport", amount: 7, basis: "Rs 140 allocated per batch; shopping time is in the labour allowance." },
-];
-const productionCost = costs.reduce((sum, item) => sum + item.amount, 0);
-const variableCost = productionCost + price * feeRate;
-const contribution = price - variableCost;
-const cash = (amount: number, decimals = 0) => `Rs ${amount.toLocaleString("en-GB", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
-const usd = (amount: number) => `$${(amount / fx).toFixed(2)}`;
-const scenarios = [
-  { name: "Costed supermarket recipe", materials, labour },
-  { name: "Ingredients cost 20% more", materials: Math.ceil(materials * 1.2), labour },
-  { name: "Only 10 packs in 5 paid hours", materials, labour: hourlyCost * hoursPerBatch / 10 },
-  { name: "Original $5 ingredient estimate", materials: fx * 5, labour },
+  { name: "Oats", shelf: "Bokomo Morning Oats · Rs 82 / 500 g", note: "Winners listing; test flake size and crunch in the bake.", url: "https://www.winners.mu/cereales" },
+  { name: "Almonds", shelf: "Seeberger almonds · Rs 365 / 200 g", note: "Winners listing; premium branded supermarket pack.", url: "https://www.winners.mu/seeberger-almonds-200g" },
+  { name: "Raisins", shelf: "Melissa raisins · Rs 175 / 250 g", note: "Winners listing; add after baking.", url: "https://www.winners.mu/melissa--raisin-sec-250g" },
+  { name: "Honey", shelf: "Allowance · Rs 250 / 500 g", note: "Historical anchor: Tropic Rs 193 regular price in Intermart’s Nov–Dec 2025 brochure. Budget raised to Rs 250; current shelf price unverified.", url: "https://intermartmauritius.com/wp-content/uploads/2025/11/INTERMART-BROCHURE-FROM-25-NOV-TO-15-DEC-2025.pdf" },
+  { name: "Sunflower oil", shelf: "Sunlife sunflower oil · Rs 96 / litre", note: "Winners listing; 18 g ≈ 19.6 ml, assuming 0.92 g/ml.", url: "https://www.winners.mu/category/products?categoryId=151&pagenumber=4" },
+  { name: "Cinnamon + salt", shelf: "Allowance · Rs 2 per pack", note: "Small seasoning allowance; replace with actual quantities and receipt prices.", url: null },
 ];
 ---
-
 <section id="granola-business-case" class="plan-section plan-brief-section granola-case" aria-labelledby="granola-title">
   <div class="plan-section-head">
-    <p class="plan-overline">07 / Granola business case · 14 September 2026</p>
+    <p class="plan-overline">07 / Granola business case</p>
     <h2 id="granola-title">The granola kitchen.</h2>
-    <p>Develop your own granola types. Add a recipe or copy an existing mix, work through the costs and save the versions worth making.</p>
+    <p>Change the recipe, supplier prices, paid time or sales assumptions. Follow the effect on each pack and the whole month, then save the version worth testing.</p>
   </div>
-
   <GranolaSimulator client:load />
   <details class="granola-research">
-    <summary>Research &amp; original cost assumptions <span>Supermarket sources · 14 September 2026</span></summary>
-  <div class="verdict">
-    <p class="plan-overline">The working answer</p>
-    <p><strong>$5 looks high for ingredients alone.</strong> This oat, almond and raisin recipe comes to about {cash(materials)} ({usd(materials)}) in ingredients. Including making, packing and selling it brings the estimate to {cash(variableCost)} ({usd(variableCost)}) per pack.</p>
-    <p>Test a direct price of {cash(price)} ({usd(price)}). That leaves {cash(contribution)} per sold pack to cover monthly overhead and profit. The recipe, production speed and willingness to pay still need proving.</p>
-  </div>
-
-  <dl class="numbers">
-    <div><dt>Ingredients / pack</dt><dd>{cash(materials)}<small>{usd(materials)}</small></dd></div>
-    <div><dt>Cost including selling</dt><dd>{cash(variableCost)}<small>{usd(variableCost)}</small></dd></div>
-    <div><dt>Trial direct price</dt><dd>{cash(price)}<small>{usd(price)}</small></dd></div>
-    <div><dt>Contribution / pack</dt><dd>{cash(contribution)}<small>{(contribution / price * 100).toFixed(1)}% of sales, before overhead</small></dd></div>
-  </dl>
-  <p class="small-print">All Rs amounts are Mauritian rupees. USD uses a planning conversion of Rs 47 = $1, not a live exchange-rate quote. Online listings were checked on 14 September 2026; they are not confirmed Tamarin shelf prices or stock reservations. No wholesale discount is assumed.</p>
-
-  <h3>What goes into the pack</h3>
-  <p>Illustrative input: 320 g per pack, or 6.4 kg for 20 packs. Assume 6 kg of cooled, saleable granola after baking: a 93.75% yield. The extra 20 g covers moisture loss; it is already included in ingredient cost. Weigh the cooled batch before accepting this yield. This is a costing recipe, not a tested formula or a nutrition claim.</p>
-  <div class="table-scroll" tabindex="0" role="region" aria-label="Ingredient costs and supermarket sources">
-    <table>
-      <caption>Ingredient cost for one finished 300 g pack</caption>
-      <thead><tr><th scope="col">Ingredient</th><th scope="col">Input</th><th scope="col">Retail basis / source</th><th scope="col">Cost</th></tr></thead>
-      <tbody>{ingredients.map((item) => <tr>
-        <th scope="row">{item.name}</th><td>{item.grams} g</td>
-        <td>{item.url ? <a href={item.url} target="_blank" rel="noreferrer">{item.shelf} ↗</a> : item.shelf}<small>{item.note}</small></td>
-        <td>{cash(item.cost, 2)}</td>
-      </tr>)}</tbody>
-      <tfoot><tr><th scope="row" colspan="3">Total consumed · budget rounded up to {cash(materials)}</th><td>{cash(rawTotal, 2)}</td></tr></tfoot>
-    </table>
-  </div>
-  <p>Oats and almonds are the big choices. <a href="https://www.scotthomedelivery.mu/products/jungle-cooking-oats-1kg" target="_blank" rel="noreferrer">Scott lists Jungle whole-grain rolled oats at Rs 145/kg</a>, a useful cross-check on ordinary oat prices. At the other end, <a href="https://mantrafoods.mu/collections/cereals-breakfast-foods" target="_blank" rel="noreferrer">Mantra lists organic rolled oats at Rs 375/454 g</a>. Using those organic oats in this same recipe puts ingredients at roughly Rs 262 ($5.57). So the original $5 estimate is plausible for premium sourcing, but it should not be our default.</p>
-
-  <h3>Pay for the work, even in our own kitchen</h3>
-  <div class="table-scroll" tabindex="0" role="region" aria-label="Making and selling costs">
-    <table>
-      <caption>Base case · 20 saleable packs per batch</caption>
-      <thead><tr><th scope="col">Cost per pack</th><th scope="col">Budget</th><th scope="col">Assumption</th></tr></thead>
-      <tbody>{costs.map((item) => <tr><th scope="row">{item.name}</th><td>{cash(item.amount)}</td><td>{item.basis}</td></tr>)}
-        <tr><th scope="row">Payment / selling fee</th><td>{cash(price * feeRate)}</td><td>2% of the Rs 350 direct price; allowance, not a provider quote.</td></tr>
-      </tbody>
-      <tfoot><tr><th scope="row">Total variable cost</th><td>{cash(variableCost)}</td><td>Before monthly overhead and tax.</td></tr></tfoot>
-    </table>
-  </div>
-  <p>Rs 200 per paid person-hour is a planning allowance: Rs 160 in wages plus Rs 40 reserved for employment costs, leave and bonus. It is not a local wage quote or a statutory calculation. <a href="https://www.mra.mu/employers/new-employer" target="_blank" rel="noreferrer">MRA’s employer guidance</a> confirms that payroll contributions need budgeting; agree the actual employment arrangement before using a final rate.</p>
-  <p>The five hours cover shopping, preparation, oven supervision, packing and cleaning, including any founder doing that work. Two people working together count as two person-hours per hour. Existing kitchen and oven mean no extra rent or oven purchase in this pilot. A 6 kg output may need several oven loads: time a complete batch.</p>
-
-  <h3>Does the selling price leave enough?</h3>
-  <p><a href="https://www.winners.mu/cereales" target="_blank" rel="noreferrer">Winners lists BA crunchy muesli at Rs 149/300 g and a premium almond granola at Rs 545.50/300 g</a>. These are price reference points, not identical products. Rs 350 sits well above everyday supermarket cereal; taste, texture and repeat purchases must justify that premium.</p>
-  <div class="table-scroll" tabindex="0" role="region" aria-label="Direct sale price comparison">
-    <table>
-      <caption>Same recipe and costs · direct sales</caption>
-      <thead><tr><th scope="col">Price / pack</th><th scope="col">Contribution / pack</th><th scope="col">Contribution margin</th></tr></thead>
-      <tbody>{[300, 325, 350, 375].map((p) => {
-        const c = p * (1 - feeRate) - productionCost;
-        return <tr><th scope="row">{cash(p)}</th><td>{cash(c, 2)}</td><td>{(c / p * 100).toFixed(1)}%</td></tr>;
-      })}</tbody>
-    </table>
-  </div>
-  <p>Start with prepaid orders and collection. If a shop keeps 30% of a Rs 350 shelf price, our revenue is only Rs 245. Against {cash(productionCost)} production cost, that leaves Rs 9 before delivery, fees and overhead. A retail channel needs different economics.</p>
-
-  <h3>A small monthly business</h3>
-  <p>Allow {cash(monthlyOverhead)} a month: Rs 2,000 for ten hours of order handling and administration, plus Rs 1,000 for equipment wear and miscellaneous overhead. These are assumptions. At {cash(price)}, break-even is {Math.ceil(monthlyOverhead / contribution)} sold packs a month. Figures below assume everything produced is sold and collected.</p>
-  <div class="table-scroll" tabindex="0" role="region" aria-label="Monthly sales scenarios">
-    <table>
-      <caption>Monthly illustration at Rs 350 per pack · before tax and setup costs</caption>
-      <thead><tr><th scope="col">Packs sold</th><th scope="col">Revenue</th><th scope="col">Paid production hours</th><th scope="col">Surplus after Rs 3,000 overhead</th></tr></thead>
-      <tbody>{[40, 100, 200].map((packs) => <tr><th scope="row">{packs}</th><td>{cash(packs * price)}</td><td>{packs / batchPacks * hoursPerBatch}</td><td>{cash(packs * contribution - monthlyOverhead)}</td></tr>)}</tbody>
-    </table>
-  </div>
-  <p>At 100 packs, that is 30 kg a month, 25 paid production hours and {cash(100 * contribution - monthlyOverhead)} left after the stated overhead. It is a small part-time business at this volume. The 200-pack case assumes the same productivity and overhead; confirm kitchen capacity and sales workload before treating it as a forecast.</p>
-
-  <h3>What could change the answer</h3>
-  <div class="table-scroll" tabindex="0" role="region" aria-label="Ingredient and labour sensitivity">
-    <table>
-      <caption>Sensitivity at Rs 350 · same packaging, utilities and transport allowances</caption>
-      <thead><tr><th scope="col">Scenario</th><th scope="col">Variable cost</th><th scope="col">Contribution</th><th scope="col">Margin</th></tr></thead>
-      <tbody>{scenarios.map((s) => {
-        const cost = s.materials + Math.ceil(s.materials * 0.05) + s.labour + 20 + 8 + 7 + price * feeRate;
-        return <tr><th scope="row">{s.name}</th><td>{cash(cost)}</td><td>{cash(price - cost)}</td><td>{((price - cost) / price * 100).toFixed(1)}%</td></tr>;
-      })}</tbody>
-    </table>
-  </div>
-  <p>If ingredients really cost $5 (Rs 235), a direct price of about Rs 490 is needed for a 30% contribution margin under these assumptions. If just 90 of 100 produced packs sell, with the rest written off, the base monthly surplus falls to Rs 4,270. Unsold finished stock is not covered by the 5% ingredient-waste allowance.</p>
-
-  <div class="next-batch">
-    <p class="plan-overline">The next useful test</p>
-    <h3>Cost one batch. Sell twenty packs. Ask for the second order.</h3>
-    <p>Plan roughly Rs 6,000 of working cash for the first 20 packs: about Rs 4,720 in production costs, Rs 140 in selling fees and a buffer for buying whole supermarket packs. Unused ingredients remain inventory; the first shopping bill is not all consumed by that batch.</p>
-    <ol>
-      <li>Buy the actual ingredients and pouches. Record pack sizes, receipt prices and leftovers; replace the honey and packaging allowances first.</li>
-      <li>Weigh the cooled yield and log every paid hour, oven load and pack. Aim for ingredients below Rs 150 and variable cost below Rs 245 per sold pack.</li>
-      <li>Test Rs 350 with 20 paid orders, including buyers outside the club. Record refusals, then check for paid repeat orders within four weeks. Set a pilot target of at least five repeat buyers.</li>
-    </ol>
-    <p>Setup equipment such as a sealer or scales, shelf-life testing, any required kitchen approvals, insurance and tax are not priced here. Get those amounts before committing a launch budget; any kitchen alterations would change the case. Customer delivery is paid separately by the buyer. No club contribution is included: granola revenue pays for making and selling granola.</p>
-  </div>
+    <summary>Ingredient research &amp; sources <span>Historical supermarket snapshot · 14 September 2026</span></summary>
+    <p>These listings informed the starter mixes. They are not live quotes or confirmed Tamarin stock. Update the source, shelf quantity and price in the editor when you get a supplier quote. Honey, seasoning, packaging and operating expenses include planning allowances.</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Ingredient supermarket sources">
+      <table><caption>Original source notes · current costs come from your draft above</caption><thead><tr><th scope="col">Ingredient</th><th scope="col">Retail reference</th><th scope="col">What to check</th></tr></thead>
+        <tbody>{ingredients.map(item=><tr><th scope="row">{item.name}</th><td>{item.url?<a href={item.url} target="_blank" rel="noreferrer">{item.shelf} ↗</a>:item.shelf}</td><td>{item.note}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <p>Alternative oat sources from the same research: <a href="https://www.scotthomedelivery.mu/products/jungle-cooking-oats-1kg" target="_blank" rel="noreferrer">Scott / Jungle rolled oats</a> and <a href="https://mantrafoods.mu/collections/cereals-breakfast-foods" target="_blank" rel="noreferrer">Mantra / organic oats</a>. Enter the quoted size, price, discount and allocated freight to compare them in your recipe.</p>
+    <p>Measure the cooled yield and everyone's paid time, including shopping, oven supervision, packing and cleaning. Two people working for one hour count as two paid hours. The loaded hourly rate is a planning input; replace it with the full cost of your actual employment arrangement.</p>
+    <p>The monthly result covers the operating costs entered in the draft. Add rent, insurance or other recurring expenses as cost rows when applicable. Setup equipment, kitchen alterations, testing, tax and any club contribution need separate amounts before deciding on a launch budget. Buying whole supplier packs also requires cash for ingredients left in inventory.</p>
+    <p>Cost a measured batch, take paid orders, and record repeat purchases. A price change does not tell us how demand will change: update volume and sell-through using what customers actually do.</p>
   </details>
 </section>
-
 <style>
-  .granola-case { scroll-margin-top: 8rem; }
+  .granola-case { scroll-margin-top:8rem; }
   .granola-research > summary { cursor:pointer; padding:1.5rem 0; font-family:var(--font-display); font-size:1.6rem; color:var(--plan-text); border-top:1px solid var(--plan-line); }
   .granola-research > summary span { display:block; margin-top:.5rem; font-family:var(--font-mono); font-size:.65rem; color:var(--plan-muted); }
   .granola-research > p { max-width:85ch; color:var(--plan-muted); line-height:1.75; margin:1.25rem 0; }
-  .granola-case > p, .verdict p, .next-batch p, .next-batch li { max-width: 85ch; color: var(--plan-muted); font-size: 1rem; line-height: 1.75; }
-  .granola-case > p { margin: 1.25rem 0; }
-  .granola-case a { color: var(--plan-text); text-decoration: underline; text-underline-offset: 0.2em; }
-  .granola-case a:hover { color: var(--plan-accent); }
-  .granola-case h3 { margin: 3rem 0 1rem; color: var(--plan-text); font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; }
-  .verdict { padding: clamp(1.4rem, 3vw, 2.5rem); border-left: 3px solid var(--plan-accent); background: linear-gradient(120deg, rgba(215,255,63,0.09), transparent); }
-  .verdict p + p { margin-top: 1rem; }
-  .verdict strong { color: var(--plan-text); }
-  .numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 2rem 0 1rem; border-top: 1px solid var(--plan-line); border-bottom: 1px solid var(--plan-line); }
-  .numbers > div { padding: 1.5rem 1rem; }
-  .numbers dt { font-family: var(--font-mono); font-size: 0.7rem; color: var(--plan-muted); }
-  .numbers dd { margin: 0.7rem 0 0; color: var(--plan-accent); font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem); }
-  .numbers small { display: block; margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; color: var(--plan-muted); }
-  .granola-case .small-print { font-size: 0.85rem; }
-  .table-scroll { max-width: 100%; overflow-x: auto; margin: 1.5rem 0; }
-  .table-scroll:focus-visible { outline: 2px solid var(--plan-accent); outline-offset: 4px; }
-  table { width: 100%; min-width: 620px; border-collapse: collapse; text-align: left; font-size: 0.92rem; line-height: 1.5; }
-  caption { text-align: left; padding-bottom: 0.8rem; color: var(--plan-muted); font-size: 0.8rem; }
-  th, td { padding: 1rem; border-bottom: 1px solid var(--plan-line); vertical-align: top; }
-  thead th { font-family: var(--font-mono); color: var(--plan-accent); font-size: 0.72rem; font-weight: 500; }
-  tbody th { font-weight: 500; color: var(--plan-text); }
-  td { color: var(--plan-muted); font-variant-numeric: tabular-nums; }
-  td:last-child { white-space: normal; }
-  td small { display: block; max-width: 55ch; margin-top: 0.35rem; font-size: 0.78rem; color: var(--plan-muted); }
-  tfoot { background: rgba(215,255,63,0.06); }
-  tfoot th, tfoot td { color: var(--plan-text); }
-  .next-batch { margin-top: 3rem; padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--plan-line); background: var(--plan-panel); }
-  .next-batch h3 { margin-top: 1rem; }
-  .next-batch p { margin: 1rem 0; }
-  .next-batch ol { padding-left: 1.25rem; list-style: decimal; }
-  .next-batch li { padding-left: 0.5rem; margin: 0.75rem 0; }
-  @media (max-width: 700px) { .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); } .numbers > div { padding: 1.2rem 0.5rem; } }
+  .granola-case a { color:var(--plan-text); text-decoration:underline; text-underline-offset:.2em; }
+  .table-scroll { max-width:100%; overflow-x:auto; margin:1.5rem 0; }
+  table { width:100%; min-width:620px; border-collapse:collapse; text-align:left; font-size:.9rem; line-height:1.5; }
+  caption { text-align:left; padding-bottom:.8rem; color:var(--plan-muted); font-size:.8rem; }
+  th,td { padding:1rem; border-bottom:1px solid var(--plan-line); vertical-align:top; }
+  thead th { color:var(--plan-accent); font-family:var(--font-mono); font-size:.72rem; }
+  tbody th { color:var(--plan-text); }
+  td { color:var(--plan-muted); }
 </style>

@@ -240,28 +240,115 @@ test("nutrition UI edits references; AI previews apply, undo and reject stale re
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test("scenario graphs include ten packs, losses and prices below 280 without changing the draft until applied",async({page})=>{
+test("scenario changes update the whole draft immediately on desktop and mobile",async({page})=>{
   await signIn(page.request,'parent@example.com');
   await page.goto('/branding-plan#granola-business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   const explorer=app.getByLabel('Business scenario explorer',{exact:true});
-  await expect(explorer.getByLabel('Scenario packs per month',{exact:true})).toHaveValue('10');
-  await expect(explorer.locator('.g-scenario-result')).toContainText('Rs -1,913');
-  await expect(explorer.locator('.g-scenario-threshold')).toContainText('28 packs');
-  await expect(explorer.locator('.g-small-batch')).toContainText('2.5 paid hours');
-  await explorer.screenshot({path:'test-results/granola-scenario-desktop.png'});
-  await expect(app.getByLabel('Packs produced monthly',{exact:true})).toHaveValue('100');
-  await explorer.getByRole('button',{name:'Use 10 packs / month in this draft'}).click();
+  await expect(explorer.getByLabel('Scenario packs per month',{exact:true})).toHaveValue('100');
+  await explorer.getByRole('button',{name:'10 packs',exact:true}).click();
   await expect(app.getByLabel('Packs produced monthly',{exact:true})).toHaveValue('10');
-  await expect(app.locator('.g-month > strong')).toHaveText('Rs -1,913');
+  await expect(app.locator('.g-month > strong')).toHaveText('Rs -2,563');
+  await expect(explorer.locator('.g-scenario-result')).toContainText('Rs -2,563');
+  await expect(explorer.locator('.g-scenario-threshold')).toContainText('33 packs');
   await explorer.getByRole('button',{name:'Selling price',exact:true}).click();
   await explorer.getByRole('button',{name:'Rs 200',exact:true}).click();
-  await expect(explorer.getByLabel('Scenario selling price',{exact:true})).toHaveValue('200');
-  await expect(explorer.locator('.g-scenario-result')).toContainText('Rs -3,383');
-  await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('350');
+  await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('200');
+  await expect(app.locator('.g-month > strong')).toHaveText('Rs -4,033');
+  await explorer.getByRole('button',{name:'Hourly labour',exact:true}).click();
+  await explorer.getByLabel('Scenario hourly labour cost',{exact:true}).fill('300');
+  await expect(app.getByLabel('Loaded hourly cost',{exact:true})).toHaveValue('300');
+  await expect(app.locator('.g-month > strong')).toHaveText('Rs -5,533');
+  const ledger=app.getByLabel('Monthly cost breakdown',{exact:true});
+  await expect(ledger.locator('div').filter({has:page.locator('dt',{hasText:'Order handling + admin'})})).toContainText('Rs 3,000.00');
+  await app.getByLabel('Batch costing',{exact:true}).selectOption('proportional');
+  await expect(app.locator('.g-month > strong')).toHaveText('Rs -4,633');
   await explorer.getByRole('button',{name:'Packs per month',exact:true}).click();
   await explorer.getByRole('button',{name:'0 packs',exact:true}).click();
-  await expect(explorer.locator('.g-scenario-result')).toContainText('Rs -3,000');
+  await expect(app.locator('.g-month > strong')).toHaveText('Rs -4,000');
   await page.setViewportSize({width:390,height:844});
+  await explorer.screenshot({path:'test-results/granola-dynamic-mobile.png'});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test("monthly ledger reconciles sourcing, batch costs, paid admin and sold-only costs",()=>{
+  const recipe=starterRecipe('basic');
+  recipe.monthlyPacks=33;recipe.sellThroughPercent=80;recipe.hourlyCost=300;
+  recipe.ingredients[0]={...recipe.ingredients[0],discountPercent:20,sourcingCost:10};
+  recipe.costs.push({id:'dispatch',name:'Dispatch',amount:0.1,calculation:'labour',basis:'sold'});
+  const c=calculate(recipe);
+  expect(c.rows[0].landedPrice).toBeCloseTo(75.6,8);
+  expect(c.rows[0].cost).toBeCloseTo(180/500*75.6,8);
+  expect(c.sold).toBe(26);expect(c.unsold).toBe(7);expect(c.batches).toBe(2);
+  expect(c.productionHours).toBe(10);expect(c.totalPaidHours).toBe(22.6);
+  expect(c.overhead).toBe(4000);
+  const expectedCosts=33*c.ingredients*1.05+10*300+33*20+2*(160+140)+10*300+1000+26*30+26*350*.02;
+  expect(c.monthlyCost).toBeCloseTo(expectedCosts,8);
+  expect(c.monthlyProfit).toBeCloseTo(26*350-expectedCosts,8);
+  expect(c.monthlyIngredients+c.monthlyWaste+c.monthlyLabour+c.monthlyFees+c.monthlyRows.reduce((sum,row)=>sum+row.monthly,0)).toBeCloseTo(c.monthlyCost,8);
+  expect(calculate({...recipe,price:c.breakEvenPrice!}).monthlyProfit).toBeCloseTo(0,7);
+  expect(calculate({...recipe,monthlyPacks:0}).monthlyCost).toBe(4000);
+  expect(calculate({...recipe,hourlyCost:0}).totalPaidHours).toBe(22.6);
+});
+
+test("break-even is the first non-negative whole-pack result, including rounded sell-through and batch jumps",()=>{
+  for(const batchCostMode of ['whole','proportional'] as const) for(const sellThroughPercent of [100,90,73,51]) {
+    const recipe={...starterRecipe('basic'),batchCostMode,sellThroughPercent,price:650};
+    const c=calculate(recipe);expect(c.breakEvenProduced).not.toBeNull();
+    expect(calculate({...recipe,monthlyPacks:c.breakEvenProduced!}).monthlyProfit).toBeGreaterThanOrEqual(0);
+    for(let monthlyPacks=0;monthlyPacks<c.breakEvenProduced!;monthlyPacks++) expect(calculate({...recipe,monthlyPacks},{includeBreakEven:false}).monthlyProfit).toBeLessThan(0);
+  }
+  const recipe=starterRecipe('basic');
+  expect(calculate({...recipe,monthlyPacks:41}).monthlyProfit).toBeLessThan(calculate({...recipe,monthlyPacks:40}).monthlyProfit);
+  expect(calculate({...recipe,sellThroughPercent:0}).breakEvenPrice).toBeNull();
+  expect(calculate({...recipe,feePercent:100}).breakEvenPrice).toBeNull();
+  expect(calculate({...recipe,costs:[],hourlyCost:0}).breakEvenProduced).toBe(0);
+  const old={...recipe,batchCostMode:undefined,costs:recipe.costs.map(c=>c.id==='admin'?{...c,amount:2000,calculation:undefined}:c)};
+  expect(recipeSchema.safeParse(old).success).toBe(true);
+  expect(calculate({...old,monthlyPacks:10}).productionHours).toBe(2.5);
+  expect(calculate({...old,hourlyCost:500}).overhead).toBe(3000);
+  for(const patch of [{batchCostMode:'invalid'},{ingredients:[{...recipe.ingredients[0],discountPercent:101}]},{ingredients:[{...recipe.ingredients[0],sourcingCost:-1}]},{costs:[{...recipe.costs[0],calculation:'invalid'}]}]) expect(recipeSchema.safeParse({...recipe,...patch}).success).toBe(false);
+});
+
+test("sourcing and monthly assumptions change every result and survive save and reload",async({page})=>{
+  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan#granola-business-case');
+  const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
+  await app.getByLabel('Oats supplier discount',{exact:true}).fill('20');
+  await app.getByLabel('Oats sourcing cost',{exact:true}).fill('10');
+  await app.getByLabel('Oats source',{exact:true}).fill('Supplier quote for delivered oats');
+  await app.getByLabel('Loaded hourly cost',{exact:true}).fill('300');
+  await app.getByLabel('Order handling + admin basis',{exact:true}).selectOption('sold');
+  await app.getByLabel('Order handling + admin amount',{exact:true}).fill('0.1');
+  const recipe=starterRecipe('basic');recipe.hourlyCost=300;
+  recipe.ingredients[0]={...recipe.ingredients[0],discountPercent:20,sourcingCost:10,source:'Supplier quote for delivered oats'};
+  recipe.costs[3]={...recipe.costs[3],basis:'sold',amount:0.1};
+  const expected=`Rs ${calculate(recipe).monthlyProfit.toLocaleString('en-GB',{maximumFractionDigits:0})}`;
+  await expect(app.locator('.g-month > strong')).toHaveText(expected);
+  await expect(app.locator('.g-scenario-result > strong')).toContainText(expected);
+  await expect(app.getByRole('row').filter({has:page.getByRole('rowheader',{name:'Monthly result',exact:true})})).toContainText(expected);
+  await app.getByRole('button',{name:'Save version'}).click();await expect(app.getByRole('status')).toContainText('version 1');
+  await page.reload();await expect(app).toHaveAttribute('aria-busy','false');
+  await expect(app.getByLabel('Oats supplier discount',{exact:true})).toHaveValue('20');
+  await expect(app.getByLabel('Oats sourcing cost',{exact:true})).toHaveValue('10');
+  await expect(app.getByLabel('Order handling + admin basis',{exact:true})).toHaveValue('sold');
+  await expect(app.getByLabel('Order handling + admin calculation',{exact:true})).toHaveValue('labour');
+  await expect(app.locator('.g-month > strong')).toHaveText(expected);
+  await page.setViewportSize({width:1440,height:1000});
+  await app.locator('.g-results').screenshot({path:'test-results/granola-dynamic-desktop.png'});
+});
+
+
+test("price, supplier size, recipe proportions, overhead and fees have the expected financial effects",()=>{
+  const recipe=starterRecipe('basic'),base=calculate(recipe);
+  expect(calculate({...recipe,price:400}).monthlyProfit-base.monthlyProfit).toBeCloseTo(100*50*.98,8);
+  expect(calculate({...recipe,hourlyCost:300}).monthlyProfit-base.monthlyProfit).toBeCloseTo(-35*100,8);
+  const bulk={...recipe,ingredients:recipe.ingredients.map(i=>i.id==='oats'?{...i,packSize:1000}:i)};
+  expect(calculate(bulk).monthlyProfit-base.monthlyProfit).toBeCloseTo(base.rows[0].cost/2*1.05*100,8);
+  const changedMix={...recipe,ingredients:recipe.ingredients.map(i=>i.id==='almonds'?{...i,grams:60}:i)};
+  const inputCost=changedMix.ingredients.reduce((sum,i)=>sum+i.grams/i.packSize*i.packPrice,0);
+  const expectedPerPack=inputCost*300/(350*.9375);
+  expect(calculate(changedMix).ingredients).toBeCloseTo(expectedPerPack,8);
+  const rent={...recipe,costs:[...recipe.costs,{id:'rent',name:'Rent',amount:1500,basis:'month' as const}]};
+  expect(calculate(rent).monthlyProfit-base.monthlyProfit).toBeCloseTo(-1500,8);
+  expect(calculate({...recipe,feePercent:3,retailerPercent:10}).monthlyProfit-base.monthlyProfit).toBeCloseTo(-35000*.11,8);
 });

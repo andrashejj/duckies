@@ -272,7 +272,20 @@
 .g-scenario-result > span { font-size:.66rem; color:#c5d3b7; }
 .g-scenario-result strong { font-family:var(--font-display); font-size:1.9rem; font-weight:500; color:#d7ff3f; }
 .g-scenario-result strong small { font-family:var(--font-sans); font-size:.65rem; color:#c5d3b7; }
-.g-scenario-apply { background:#dbe4bd; color:#20382f; padding:.7rem; width:100%; border:0; border-radius:3px; font-size:.68rem; }
 .g-scenarios .g-small-batch { border-left:2px solid #d5ae77; padding-left:.7rem; color:#e1cbaa; }
 .g-scenarios :is(button,input):focus-visible { outline-color:#d7ff3f; }
 @media(max-width:520px) { .g-scenario-input input { font-size:16px; } }
+
+/* Inputs and ledger share the same monthly model. */
+.g-sourcing-fields { margin-top:.85rem; }
+.g-batch-policy { margin-bottom:1rem; }
+.g-cost-entry { padding-bottom:1rem; border-bottom:1px solid var(--g-line); }
+.g-cost-calculation { display:flex; align-items:end; justify-content:space-between; gap:.8rem; margin-top:.7rem; }
+.g-cost-calculation > span { flex-shrink:0; font-size:.7rem; padding-bottom:.6rem; font-variant-numeric:tabular-nums; }
+.g-monthly-ledger small { display:block; font-size:.55rem; line-height:1.5; margin-top:.2rem; }
+.g-monthly-ledger dd { flex-shrink:0; }
+.g-ledger-total { border-top:1px solid #64765c; margin-top:.5rem; padding-top:.8rem!important; }
+.granola-studio .g-edit-costs { display:inline-block; margin:.8rem 0; color:#d7ff3f; font-size:.7rem; text-underline-offset:3px; }
+#granola-other-costs, #granola-kitchen { scroll-margin-top:125px; }
+.g-scenario-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media(max-width:520px) { .g-cost-calculation { align-items:start; flex-direction:column; } }
