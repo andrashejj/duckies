@@ -1,7 +1,8 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { emailOTP } from "better-auth/plugins";
-import { findMember, getDatabase } from "./db";
+import { canSignIn, findMember, getDatabase } from "./db";
+import { sendMail } from "./email";
 
 export function getAuthOptions() {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -20,7 +21,7 @@ export function getAuthOptions() {
     rateLimit: { enabled: true, storage: "database", window: 60, max: 60 },
     hooks: {
       before: createAuthMiddleware(async (ctx) => {
-        if (ctx.path === "/sign-in/email-otp" && !(await findMember(ctx.body?.email ?? ""))) {
+        if (ctx.path === "/sign-in/email-otp" && !(await canSignIn(ctx.body?.email ?? ""))) {
           throw new APIError("UNAUTHORIZED", { message: "Unable to sign in. Check your code or contact the club." });
         }
       }),
@@ -32,24 +33,14 @@ export function getAuthOptions() {
       storeOTP: "hashed",
       rateLimit: { window: 60, max: 3 },
       async sendVerificationOTP({ email, otp, type }) {
-        // Keep the same outward response for unknown emails. Only approved
-        // addresses receive a code; membership is checked again at sign-in.
-        if (type !== "sign-in" || !(await findMember(email))) return;
-        const apiKey = process.env.RESEND_API_KEY;
-        const from = process.env.EMAIL_FROM;
-        if (!apiKey || !from) throw new Error("Configure RESEND_API_KEY and EMAIL_FROM.");
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            from,
-            to: [email],
-            subject: "Your Sunset Duckies sign-in code",
-            text: `Your Sunset Duckies sign-in code is ${otp}. It expires in 10 minutes. If you didn't request this, you can ignore this email.`,
-          }),
-          signal: AbortSignal.timeout(10000),
+        // Shop customers may view their own reservations. Club membership
+        // is still checked separately on every kids-list request.
+        if (type !== "sign-in" || !(await canSignIn(email))) return;
+        await sendMail({
+          to: email,
+          subject: "Your Sunset Duckies sign-in code",
+          text: `Your Sunset Duckies sign-in code is ${otp}. It expires in 10 minutes. If you didn't request this, you can ignore this email.`,
         });
-        if (!response.ok) throw new Error("The sign-in email could not be sent.");
       },
     })],
   } satisfies BetterAuthOptions;

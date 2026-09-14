@@ -11,13 +11,19 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check",
+    "check": "astro check && tsc --noEmit",
     "db:migrate": "tsx scripts/db-migrate.ts",
     "member": "tsx scripts/member.ts",
-    "test": "playwright test"
+    "test": "playwright test",
+    "db:generate": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@astrojs/react": "^5.0.7",
     "@astrojs/vercel": "^10.0.8",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.4",
     "better-auth": "^1.7.4",
@@ -25,13 +31,19 @@
     "motion": "^12.38.0",
     "pg": "^8.23.0",
     "qrcode": "^1.5.4",
-    "tailwindcss": "^4.2.2"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4.6.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@playwright/test": "^1.63.0",
     "@types/pg": "^8.23.1",
     "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "prisma": "^7.10.0",
     "tsx": "^4.23.13",
     "typescript": "^5.9.3"
   }

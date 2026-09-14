@@ -23,3 +23,9 @@ export async function findMember(email: string): Promise<Member | null> {
   );
   return result.rows[0] ?? null;
 }
+
+export async function canSignIn(email: string) {
+  if (await findMember(email)) return true;
+  const result = await getDatabase().query('SELECT 1 FROM "Order" WHERE email = $1 LIMIT 1', [email.trim().toLowerCase()]);
+  return result.rowCount !== 0;
+}

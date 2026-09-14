@@ -1,0 +1,17 @@
+# Sunset Duckies deployment
+
+Deploy the club, members area, reservation shop, and admin panel as one Vercel Astro app. They share Better Auth sessions and one PostgreSQL database.
+
+1. Provision a dedicated PostgreSQL database and set `DUCKIES_DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and `EMAIL_FROM` in the target environment. `BETTER_AUTH_URL` must be the exact HTTPS origin. Add `EMAIL_ADMIN_NOTIFY` for shop alerts.
+2. Install with `pnpm install --frozen-lockfile`; postinstall generates the Prisma query client without requiring a live database.
+3. With the target environment loaded, run `pnpm db:migrate`. This creates auth tables and applies the versioned club/shop SQL. It does not seed products or assign access.
+4. Approve an organiser with `pnpm member add you@example.com organiser`. Existing approved members use the same login for the shop and kids list.
+5. Optionally run `pnpm db:seed` to restore the original product concepts as drafts. Review them in `/admin` before setting a drop live.
+6. Run `pnpm check` and `pnpm build`, then deploy using the existing Vercel workflow. For tests, use the separate `TEST_DATABASE_URL` described in README.md.
+7. Verify the deployed `/shop`, a live product, guest reservation and receipt, customer email-code login, organiser administration, and unauthenticated rejection from `/api/kids`. Confirm actual email delivery with the configured sender.
+
+Use a separate preview database and a stable preview origin. Never point preview tests at production. Public club content stays prerendered; authenticated API responses, order receipts, accounts, and admin pages disable browser/CDN caching. Private receipt links also disable referrer forwarding.
+
+The legacy Auth.js/Google configuration is obsolete. Do not set `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, or `AUTH_SECRET` for this app. Do not use `DATABASE_URL`, `DIRECT_URL`, `prisma db push`, or the old `db:deploy` command. All runtime queries use `DUCKIES_DATABASE_URL`; checked-in SQL is applied by `pnpm db:migrate`.
+
+If an old shop database contains real data, keep it intact. The migration command refuses legacy uppercase `User` tables. Review an export/import and user-ID mapping into the shared backend before switching traffic; this code change does not import or alter any live legacy database.

@@ -1,4 +1,7 @@
+import { shop } from "./shop";
+
 export const site = {
+  shop,
   name: "Sunset Duckies",
   shortName: "Sunset Duckies",
   url: "https://sunsetduckies.com",
@@ -54,6 +57,7 @@ export const site = {
     },
   ],
   navigation: [
+    { label: "Shop", labelFull: "Shop", href: "/shop" },
     { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
     { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },

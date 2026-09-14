@@ -10,6 +10,7 @@ process.env.BETTER_AUTH_URL = "http://127.0.0.1:4329";
 process.env.BETTER_AUTH_SECRET = "duckies-local-tests-only-not-a-production-secret";
 process.env.RESEND_API_KEY = "duckies-test-email-intercepted";
 process.env.EMAIL_FROM = "Duckies Tests <test@example.com>";
+process.env.EMAIL_ADMIN_NOTIFY = "organiser@example.com";
 process.env.DUCKIES_TEST_MAIL_FILE = resolve("test-results/mail.jsonl");
 
 export default defineConfig({
@@ -23,7 +24,7 @@ export default defineConfig({
     command: "pnpm exec astro dev --host 127.0.0.1 --port 4329",
     url: "http://127.0.0.1:4329/login",
     reuseExistingServer: false,
-    env: { NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import=${resolve("tests/intercept-mail.mjs")}` },
+    env: { NODE_ENV: "development", DUCKIES_TEST_SERVER: "1", NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import=${resolve("tests/intercept-mail.mjs")}` },
     timeout: 120000,
   },
 });

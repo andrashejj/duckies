@@ -10,6 +10,7 @@ const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
   if (String(input) === "https://api.resend.com/emails") {
     const mail = JSON.parse(init.body);
+    if (mail.to.includes("delivery-failure@example.com")) return Response.json({ error: "Test delivery failure" }, { status: 503 });
     mkdirSync(dirname(process.env.DUCKIES_TEST_MAIL_FILE), { recursive: true });
     appendFileSync(process.env.DUCKIES_TEST_MAIL_FILE, JSON.stringify(mail) + "\n", { mode: 0o600 });
     return Response.json({ id: "test-email" });
