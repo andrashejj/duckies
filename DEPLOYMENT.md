@@ -3,7 +3,7 @@
 Deploy the club, members area, reservation shop, and admin panel as one Vercel Astro app. They share Better Auth sessions and one PostgreSQL database.
 
 1. Provision a dedicated PostgreSQL database and set `DUCKIES_DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and `EMAIL_FROM` in the target environment. `BETTER_AUTH_URL` must be the exact HTTPS origin. Add `EMAIL_ADMIN_NOTIFY` for shop alerts.
-2. Install with `pnpm install --frozen-lockfile`; postinstall generates the Prisma query client without requiring a live database.
+2. Install with `pnpm install --frozen-lockfile`; postinstall generates the Prisma query client without requiring a live database. The build command also generates it because Vercel can restore cached dependencies without rerunning postinstall.
 3. With the target environment loaded, run `pnpm db:migrate`. This creates auth tables and applies the versioned club/shop SQL. It does not seed products or assign access.
 4. Approve an organiser with `pnpm member add you@example.com organiser`. Existing approved members use the same login for the shop and kids list.
 5. Optionally run `pnpm db:seed` to restore the original product concepts as drafts. Review them in `/admin` before setting a drop live.
