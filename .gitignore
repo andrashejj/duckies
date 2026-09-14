@@ -32,3 +32,4 @@ src/generated/prisma/
 
 # Private local development database, keys and import files
 .local-data/
+.env.local

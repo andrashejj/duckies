@@ -58,7 +58,7 @@ Better Auth owns the `user`, `session`, `account`, and `verification` tables. Pr
 
 Run `pnpm db:seed` to add the original eight product concepts and their images to a **draft** Drop 001. Re-running it preserves edits and other products; it never publishes, resets prices, or archives unrelated products. Sign in as an organiser, review the sizes, prices, stock, and descriptions at `/admin`, then mark the drop live when it is ready. Current pickup copy uses Monday/Friday sessions.
 
-Migrations are recorded in `club_migration` and run under a database lock. An old Auth.js database with an uppercase `User` table is deliberately rejected before changes: existing shop data requires a reviewed export/import into the shared database, including mapping old user IDs to the Better Auth users. No legacy or production database has been migrated by this implementation.
+Migrations are recorded in `club_migration` and run under a database lock. An old Auth.js database with an uppercase `User` table is deliberately rejected before changes: existing shop data requires a reviewed export/import into the shared database, including mapping old user IDs to the Better Auth users. Legacy shop data is not imported automatically. Production uses a dedicated database provisioned for the shared backend.
 
 ## Deployment
 
@@ -105,7 +105,7 @@ Removing a child archives them. Records remain accessible from **Archived kids a
 
 For trusted local administrative imports, `scripts/import-kid.ts` reads a private JSON file with `name`, `contactName`, `contactPhone`, and `payment: { term, status, amountMur, note }` (for example, `term: "2026-S2"`). This is a local operator command, not an HTTP endpoint, and records the action as Andras. Keep real child / payment import files outside Git (for example `.local-data/`). It does not invent a legal-guardian relationship, date of birth, payment amount/date, or signature. Repeating the same import avoids duplicate payment events.
 
-Local development data for this checkout is in the ignored `.local-data/postgres` PostgreSQL cluster on `127.0.0.1:54329`; `duckies_dev` contains development records and `duckies_test` is reserved for destructive tests. Start/stop this cluster with your PostgreSQL `pg_ctl -D "$PWD/.local-data/postgres"` commands; do not run Docker Compose on the same port concurrently. These local records are not production data and must be deliberately imported when deploying.
+Local development data for this checkout is in the ignored `.local-data/postgres` PostgreSQL cluster on `127.0.0.1:54329`; `duckies_dev` contains development records and `duckies_test` is reserved for destructive tests. Start/stop this cluster with your PostgreSQL `pg_ctl -D "$PWD/.local-data/postgres"` commands; do not run Docker Compose on the same port concurrently. Local and production databases are separate. The supplied payment record has been deliberately imported into production; future local changes do not sync automatically.
 
 ## Semester payments and profile photos
 
@@ -116,3 +116,5 @@ Only **andras@hejj.xyz** can add semesters, make one current, or change payments
 Organisers can upload, replace, or remove a child's profile photo. Guardians can optionally upload one through their private registration link; it becomes the profile photo only when they complete signing. Photos remain private to organisers, separate from the signed waiver and publication/media consent. Regular members and shop customers cannot retrieve them. This provides a profile photo for future social features without publishing children's images now.
 
 Uploads accept JPEG, PNG, or WebP up to 4 MiB and 20 megapixels. The server validates and re-encodes each image as a 512-pixel square WebP, removing original metadata; original uploads are not retained. Photos and pending registration uploads use the same PostgreSQL database and backup policy as club records. Removing or replacing a photo does not alter a signed waiver. Completed links cannot upload again; expired and revoked links are rejected, and their pending uploads are cleaned up on a subsequent guardian photo update.
+
+Production is the Vercel project `sunsetduckies` in `andras-projects-f72091f7`, using `https://www.sunsetduckies.com` as the authentication origin. Its dedicated Neon database is `sunsetduckies-production` in Frankfurt, connected only to the production environment. September 2026 fees are MUR 3,000 per child / MUR 5,000 per family in both databases and public copy. Production auth and waiver keys are separate from local development. Private operator configuration and key backups for this checkout are under the ignored `.local-data/` directory; never commit or upload it.
