@@ -84,3 +84,25 @@ Tests reset that database, apply migrations, and run the real Astro server on po
 
 - Project media used by the site lives in `public/media`.
 - Use the Node version in `.nvmrc` and the pnpm version pinned in `package.json`.
+
+## Child registration, signed waivers, and payments
+
+The organiser's kids overview includes date of birth / age, multiple legal guardians, emergency contact, medical notes, rashie details, media consent, swimming / gear / parent-in-water acknowledgements, signed waiver, and semester payment status. Regular club members continue to receive only the basic name list. Shop-only accounts receive neither roster nor family details. The active semester and waiver version live in `src/lib/registration/policy.ts`; review these explicitly before a new semester or policy change.
+
+For each child, choose **Generate registration link**, then **Copy link** or **Send via WhatsApp**. The latter opens a message for you to send; the app does not send WhatsApp messages itself. Links use 256-bit random tokens, with only their hashes stored in the database. Tokens travel in the URL fragment, not query strings or page requests, so link previews and ordinary server access logs do not receive them. The invitation expires after 14 days. Generating another link revokes prior links; the organiser can also revoke a link directly. Do not log request Authorization headers or signing bodies in external infrastructure.
+
+The guardian opens `/register`, supplies the child and family details, reads the existing club waiver, makes an explicit yes/no media choice, and signs with their typed name (optionally adding a drawing). No login or automatic club membership is granted. Safety acknowledgements and electronic-signature consent must be affirmative. A signature authorises one immutable submission; another link is needed for corrections. The original signed record remains available. Registration cannot alter payment status.
+
+Signed records store the exact registration and waiver text, version, server UTC time, link issue time, supplied guardian identity, browser user agent, IP address, typed/drawn signature, and PDF bytes in the **same PostgreSQL database**. The PDF and canonical payload have SHA-256 hashes sealed with an Ed25519 application key. The club's seal is a detached record-integrity signature, not an embedded PDF certificate signature, a DocuSign identity verification, or a guarantee about legal enforceability. The guardian's identity is self-declared and possession of the invitation link is the authentication factor. The waiver wording is carried over from the existing club form, not newly legally reviewed.
+
+Set `WAIVER_SIGNING_PRIVATE_KEY` (base64 PKCS8 DER Ed25519 key; generation command in `.env.example`) before generating invitations. Back up this key and the database securely, enable your database provider's encryption and backup retention, and restrict production SQL access. Signed rows and payment events reject SQL UPDATE/DELETE via triggers; the database owner still controls its own infrastructure. Key rotation works for future signatures because each record retains its verification public key. Organisers can download the exact stored PDF and JSON signature record; the guardian's link allows downloads for one hour after signing. Verify an exported pair with:
+
+```sh
+pnpm exec tsx scripts/verify-waiver.ts signed-waiver.pdf signature-record.json
+```
+
+Removing a child archives them. Records remain accessible from **Archived kids and signed records**. Corrections append a new signed version. Payment changes append a dated history entry and require a verified organiser session for **andras@hejj.xyz**; other organisers cannot change either membership payment status or mark shop orders paid. Amounts can remain unknown and every change requires a note. A reported payment is not automatic bank reconciliation.
+
+For trusted local administrative imports, `scripts/import-kid.ts` reads a private JSON file with `name`, `contactName`, `contactPhone`, and `payment: { status, amountMur, note }`. This is a local operator command, not an HTTP endpoint, and records the action as Andras. Keep real child / payment import files outside Git (for example `.local-data/`). It does not invent a legal-guardian relationship, date of birth, payment amount/date, or signature. Repeating the same import avoids duplicate payment events.
+
+Local development data for this checkout is in the ignored `.local-data/postgres` PostgreSQL cluster on `127.0.0.1:54329`; `duckies_dev` contains development records and `duckies_test` is reserved for destructive tests. Start/stop this cluster with your PostgreSQL `pg_ctl -D "$PWD/.local-data/postgres"` commands; do not run Docker Compose on the same port concurrently. These local records are not production data and must be deliberately imported when deploying.

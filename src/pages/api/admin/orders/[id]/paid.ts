@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { markOrderPaid } from "../../../../../lib/admin-orders";
 
+import { canManagePayments } from "../../../../../lib/registration/schema";
+
 export const prerender = false;
 
 const schema = z.object({
@@ -14,6 +16,7 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
   if (!userId) {
     return Response.json({ ok: false, error: "Unauthenticated." }, { status: 401 });
   }
+  if (!canManagePayments(locals.session!.user.email)) return Response.json({ ok: false, error: "Only Andras can change payment status." }, { status: 403 });
   const orderId = params.id;
   if (!orderId) {
     return Response.json({ ok: false, error: "Missing reservation id." }, { status: 400 });

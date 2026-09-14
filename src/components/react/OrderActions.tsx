@@ -6,6 +6,7 @@ type Props = {
   orderId: string;
   currentStatus: Status;
   isPaid: boolean;
+  canManagePayments: boolean;
   nextStatuses: Status[];
   statusLabel: Record<Status, string>;
 };
@@ -14,6 +15,7 @@ export default function OrderActions({
   orderId,
   currentStatus,
   isPaid,
+  canManagePayments,
   nextStatuses,
   statusLabel,
 }: Props) {
@@ -72,13 +74,13 @@ export default function OrderActions({
     }
   }
 
-  const canMarkPaid = !isPaid && currentStatus !== "CANCELLED";
+  const canMarkPaid = canManagePayments && !isPaid && currentStatus !== "CANCELLED";
   const hasTransitions = nextStatuses.length > 0;
 
   if (!hasTransitions && !canMarkPaid) {
     return (
       <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
-        Done — terminal status, cash collected.
+        No status changes available.
       </p>
     );
   }

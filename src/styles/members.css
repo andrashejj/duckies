@@ -29,3 +29,22 @@
   [data-members]:not([hidden]) { animation: crew-arrive 350ms ease-out both; }
   @keyframes crew-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 }
+.registration-page { background: radial-gradient(ellipse at top right, #ffd23f55, transparent 45%), var(--color-cream-soft); color: var(--color-ink-950); }
+.registration-sheet { max-width: 850px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+.registration-panel { border: 2px solid var(--color-ink-950); border-radius: 1.25rem; padding: 1.5rem; margin-top: 1.5rem; background: var(--color-cream-soft); box-shadow: 4px 4px 0 var(--color-ink-950); line-height: 1.65; }
+.registration-panel legend { font-family: var(--font-mono); font-size: 0.8rem; background: var(--color-sun-500); border: 1px solid var(--color-ink-950); border-radius: 1rem; padding: .3rem .75rem; }
+.registration-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.member-form textarea, .member-form select { width:100%; min-width:0; border:2px solid var(--color-ink-950); border-radius:.75rem; background:var(--color-cream-soft); padding:.8rem; font:inherit; }
+.registration-check { display:flex; align-items:flex-start; gap:.8rem; font-weight:400!important; }
+.member-form .registration-check input { width:1.25rem; height:1.25rem; padding:0; margin-top:.25rem; flex-shrink:0; accent-color:var(--color-teal-500); }
+.guardian-fields { border-top:1px dashed var(--color-ink-950); padding-top:1rem; }
+#signature-pad { width:100%; max-width:660px; height:auto; aspect-ratio:3; border:2px dashed var(--color-ink-950); border-radius:.75rem; touch-action:none; background:white; }
+.registration-page [hidden] { display:none!important; }
+.duckie-details { flex-basis:100%; min-width:0; }
+.duckie-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin:1rem 0; }
+.duckie-facts dt { font-family:var(--font-mono); font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; }
+.duckie-facts dd { margin-top:.35rem; overflow-wrap:anywhere; line-height:1.6; }
+.duckie-actions { flex-wrap:wrap; }
+.duckie-share, .duckie-payment, .duckie-history { margin-top:1rem; padding:1rem; border:1px solid var(--color-ink-950); border-radius:.75rem; }
+.duckie-share input { font-size:.8rem; }
+@media(max-width:600px) { .registration-grid,.duckie-facts { grid-template-columns:1fr; } .registration-panel { padding:1.1rem; } }

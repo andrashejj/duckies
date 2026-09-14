@@ -1,0 +1,154 @@
+---
+export const prerender = false;
+import "../styles/global.css";
+import "../styles/members.css";
+import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
+---
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><meta name="referrer" content="no-referrer" /><title>Private registration | Sunset Duckies</title></head>
+<body class="registration-page">
+  <main class="registration-sheet">
+    <a href="/" class="section-kicker">Sunset Duckies · Tamarin Bay</a>
+    <h1 class="section-title mt-6">Ready for the <span class="font-accent italic">water.</span></h1>
+    <p class="mt-4 body-copy">One child, one form. A parent or legal guardian can complete and sign this registration without an account.</p>
+    <p id="registration-status" class="member-status" role="status" aria-live="polite">Opening your private invitation…</p>
+    <section id="signed-result" hidden class="registration-panel">
+      <h2 class="section-title text-2xl!">Signed and safely stored.</h2>
+      <p>Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour. Contact the club if you need a copy later or want to correct anything.</p>
+      <div class="flex flex-wrap gap-4"><button id="download-waiver" class="cta-primary" type="button">Download signed waiver</button><button id="download-audit" class="member-text-button" type="button">Download signature record</button></div>
+    </section>
+    <form id="registration-form" data-waiver-version={WAIVER_VERSION} class="member-form" hidden>
+      <p id="invitation-label" class="registration-panel"></p>
+      <fieldset class="registration-panel member-form">
+        <legend>01 · The surfer</legend>
+        <label>Child’s full name<input name="childName" required maxlength="80" autocomplete="name" /></label>
+        <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
+        <div class="registration-grid">
+          <label>Division<select aria-label="Division" name="division" required><option value="">Choose…</option><option value="duckling">Duckling — coach pushes me in</option><option value="duck">Duck — I paddle myself</option></select></label>
+          <label>Membership<select aria-label="Membership" name="membership" required><option value="">Choose…</option><option value="child">One child · Rs 3,000 / semester</option><option value="family">Family · Rs 5,000 / semester</option></select></label>
+          <label>Rashie size<select aria-label="Rashie size" name="rashieSize" required><option value="">Choose…</option><option>XS (3–4)</option><option>S (5–6)</option><option>M (7–8)</option><option>L (9–10)</option><option>XL (11–12)</option><option>Discuss size with the club</option></select></label>
+          <label>Name on the rashie<input name="rashieName" required maxlength="80" /></label>
+        </div>
+        <label>Medical conditions, allergies or medication<textarea name="medicalNotes" maxlength="2000" rows="3" placeholder="Write none if there is nothing to flag."></textarea></label>
+        <p class="text-sm">These details are available to club organisers. Please tell the head coach if anything changes.</p>
+      </fieldset>
+      <fieldset class="registration-panel member-form">
+        <legend>02 · Legal guardians</legend>
+        <p>The first guardian listed signs this form. You can add other legal guardians below.</p>
+        <div id="guardians" class="member-form"></div>
+        <button id="add-guardian" type="button" class="member-text-button justify-self-start">Add another legal guardian</button>
+      </fieldset>
+      <fieldset class="registration-panel member-form">
+        <legend>03 · Emergency contact</legend>
+        <p>Choose someone we can reach if the guardian in the water is unavailable.</p>
+        <label>Emergency contact name<input name="emergencyName" required maxlength="120" /></label>
+        <div class="registration-grid"><label>Relationship to child<input name="emergencyRelationship" required maxlength="60" /></label><label>Emergency number<input name="emergencyPhone" type="tel" required maxlength="40" placeholder="+230 …" /></label></div>
+      </fieldset>
+      <fieldset class="registration-panel member-form">
+        <legend>04 · Read the waiver</legend>
+        <h2 class="font-display text-2xl">{waiver.title}</h2><p>{waiver.introduction}</p>
+        <h3 class="font-bold">I acknowledge that:</h3><ul class="list-disc pl-5 space-y-3">{waiver.acknowledgements.map(text => <li>{text}</li>)}</ul>
+        <h3 class="font-bold">I agree to:</h3><ul class="list-disc pl-5 space-y-3">{waiver.agreements.map(text => <li>{text}</li>)}</ul>
+        <label class="registration-check"><input name="waiverAccepted" type="checkbox" required />I have read and accept the waiver above.</label>
+        <label class="registration-check"><input name="parentInWater" type="checkbox" required />At least one parent or guardian from our family will be in the water for the full session, including the free first session.</label>
+        <label class="registration-check"><input name="swimming" type="checkbox" required />My child can swim confidently in open water, including waves up to around 2 m and currents, as agreed with the head coach.</label>
+        <p class="text-sm">If you cannot confirm this, speak with the head coach before signing.</p>
+        <label class="registration-check"><input name="gear" type="checkbox" required />{waiver.gear}</label>
+      </fieldset>
+      <fieldset class="registration-panel member-form">
+        <legend>05 · Photos and video</legend>
+        <p>Both answers are fine. This choice does not affect your child’s membership.</p>
+        <label class="registration-check"><input name="media" type="radio" value="yes" required />{waiver.mediaYes}</label>
+        <label class="registration-check"><input name="media" type="radio" value="no" required />{waiver.mediaNo}</label>
+      </fieldset>
+      <fieldset class="registration-panel member-form">
+        <legend>06 · Your signature</legend>
+        <p>Check the details above before signing. The club keeps the submitted details, exact waiver wording, your choices and signature as a permanent signed record. Corrections create a new record.</p>
+        <label>Type your full name to sign<input name="signerName" required maxlength="120" autocomplete="name" /></label>
+        <p class="text-sm">Use the name of the first legal guardian listed above. Your typed name is your electronic signature.</p>
+        <label for="signature-pad">Draw your signature (optional)</label>
+        <canvas id="signature-pad" width="660" height="220" tabindex="0" aria-label="Optional drawn signature. You can use your typed signature instead."></canvas>
+        <button id="clear-signature" type="button" class="member-text-button justify-self-start">Clear drawing</button>
+        <label class="registration-check"><input name="electronicConsent" type="checkbox" required />{waiver.electronic}</label>
+        <p class="text-sm">Your signing time, browser details and IP address are kept in the private audit record. This link does not independently verify your identity.</p>
+        <button type="submit" class="cta-primary justify-self-start">Sign and submit</button>
+      </fieldset>
+    </form>
+    <p class="mt-8 text-sm">Sunset Duckies · Monday + Friday, 4–6pm · Tamarin Bay</p>
+  </main>
+</body>
+</html>
+<script>
+  const token = new URLSearchParams(location.hash.slice(1)).get("token") ?? "";
+  const form = document.querySelector<HTMLFormElement>("#registration-form")!;
+  const status = document.querySelector<HTMLElement>("#registration-status")!;
+  const result = document.querySelector<HTMLElement>("#signed-result")!;
+  let version = "";
+  let signature: [number, number][][] = [];
+  let current: [number, number][] | null = null;
+  let submitting = false;
+  const headers = { Authorization: `Bearer ${token}` };
+  function addGuardian() {
+    const container = document.querySelector<HTMLElement>("#guardians")!;
+    const index = container.children.length;
+    if (index >= 4) return;
+    const block = document.createElement("fieldset"); block.className = "guardian-fields member-form";
+    const legend = document.createElement("legend"); legend.textContent = `Legal guardian ${index + 1}`; block.append(legend);
+    for (const [key, labelText, type, max] of [["name", "Full name", "text", 120], ["relationship", "Relationship", "text", 60], ["phone", "Phone", "tel", 40], ["email", "Email", "email", 200]] as const) {
+      const label = document.createElement("label"); label.textContent = `${labelText} · guardian ${index + 1}`;
+      const input = document.createElement("input"); input.name = `guardian-${index}-${key}`; input.dataset.field = key; input.type = type; input.required = true; input.maxLength = max;
+      label.append(input); block.append(label);
+    }
+    if (index > 0) { const remove = document.createElement("button"); remove.type = "button"; remove.className = "member-text-button"; remove.textContent = "Remove this guardian"; remove.onclick = () => { block.remove(); document.querySelector<HTMLButtonElement>("#add-guardian")!.disabled = false; }; block.append(remove); }
+    container.append(block); document.querySelector<HTMLButtonElement>("#add-guardian")!.disabled = container.children.length >= 4;
+  }
+  addGuardian(); document.querySelector("#add-guardian")!.addEventListener("click", addGuardian);
+  const canvas = document.querySelector<HTMLCanvasElement>("#signature-pad")!;
+  const ctx = canvas.getContext("2d")!; ctx.strokeStyle = "#0b1620"; ctx.lineWidth = 3; ctx.lineCap = "round";
+  function point(event: PointerEvent): [number, number] { const bounds = canvas.getBoundingClientRect(); return [Math.min(1, Math.max(0, (event.clientX-bounds.left)/bounds.width)), Math.min(1, Math.max(0, (event.clientY-bounds.top)/bounds.height))]; }
+  canvas.addEventListener("pointerdown", event => { if (signature.length >= 30) return; canvas.setPointerCapture(event.pointerId); current = [point(event)]; });
+  canvas.addEventListener("pointermove", event => { if (!current || current.length >= 600) return; const last = current[current.length-1]; const p = point(event); current.push(p); ctx.beginPath(); ctx.moveTo(last[0]*660,last[1]*220); ctx.lineTo(p[0]*660,p[1]*220); ctx.stroke(); });
+  function endStroke() { if (current && current.length > 1) signature.push(current); current = null; }
+  canvas.addEventListener("pointerup", endStroke); canvas.addEventListener("pointercancel", endStroke);
+  document.querySelector("#clear-signature")!.addEventListener("click", () => { signature=[]; current=null; ctx.clearRect(0,0,660,220); });
+  function completed(canDownload: boolean) { form.hidden=true; result.hidden=false; document.querySelector<HTMLButtonElement>("#download-waiver")!.hidden = !canDownload; document.querySelector<HTMLButtonElement>("#download-audit")!.hidden = !canDownload; status.textContent = canDownload ? "Registration complete. Thank you." : "Already signed. Ask the club for a saved copy."; result.scrollIntoView({ behavior: "smooth" }); }
+  async function load() {
+    if (!token) { status.textContent = "Open the individual invitation link sent by the club to register your child."; return; }
+    try {
+      const response = await fetch("/api/registration", { headers, cache: "no-store" }); const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      version = form.dataset.waiverVersion ?? "";
+      if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
+      if (data.completedAt) { completed(Boolean(data.canDownload)); return; }
+      (form.elements.namedItem("childName") as HTMLInputElement).value = data.childName;
+      document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
+      status.textContent=""; form.hidden=false;
+    } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again."; }
+  }
+  form.addEventListener("submit", async event => {
+    event.preventDefault(); if (submitting) return; submitting=true;
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!; submit.disabled=true;
+    const values = new FormData(form);
+    const body: Record<string, unknown> = { version, signature };
+    for (const key of ["childName","dateOfBirth","division","membership","rashieSize","rashieName","medicalNotes","emergencyName","emergencyRelationship","emergencyPhone","media","signerName"]) body[key] = values.get(key);
+    for (const key of ["waiverAccepted","parentInWater","swimming","gear","electronicConsent"]) body[key] = values.get(key) === "on";
+    body.guardians = Array.from(document.querySelectorAll(".guardian-fields")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input")).map(input => [input.dataset.field, input.value])));
+    status.textContent="Saving your signed registration…";
+    try {
+      const response = await fetch("/api/registration", { method:"POST", headers:{ ...headers, "Content-Type":"application/json" }, body:JSON.stringify(body) }); const data=await response.json();
+      if (response.status===409) { await load(); return; }
+      if (!response.ok) throw new Error(data.error);
+      completed(true);
+    } catch(error) { status.textContent = error instanceof Error ? error.message : "Couldn't save your registration. Please try again."; status.scrollIntoView({ behavior: "smooth" }); }
+    finally { submitting=false; submit.disabled=false; }
+  });
+  async function download(audit=false) {
+    try { const response = await fetch(`/api/registration/document${audit ? "?format=audit" : ""}`, { headers, cache:"no-store" });
+      if (!response.ok) throw new Error((await response.json()).error);
+      const url=URL.createObjectURL(await response.blob()); const a=document.createElement("a"); a.href=url; a.download=`sunset-duckies-signed-waiver.${audit ? "json" : "pdf"}`; a.click(); setTimeout(()=>URL.revokeObjectURL(url),10000);
+    } catch(error) { status.textContent=error instanceof Error ? error.message : "Download failed."; }
+  }
+  document.querySelector("#download-waiver")!.addEventListener("click",()=>void download()); document.querySelector("#download-audit")!.addEventListener("click",()=>void download(true));
+  void load();
+</script>

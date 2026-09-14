@@ -78,7 +78,7 @@ test("organiser CRUD persists, validates input, and rejects cross-origin writes"
   expect((await request.patch(`/api/kids/${kid.id}`, { data: { name: "Zoë" }, headers: { origin } })).status()).toBe(200);
   expect((await request.delete(`/api/kids/${kid.id}`, { headers: { origin } })).status()).toBe(200);
   expect((await request.get("/api/kids")).ok()).toBe(true);
-  expect((await db.query("SELECT * FROM club_kid")).rowCount).toBe(0);
+  expect((await db.query("SELECT * FROM club_kid WHERE archived_at IS NULL")).rowCount).toBe(0);
 });
 
 test("revoked membership and expired sessions immediately lose access", async ({ request }) => {

@@ -1,5 +1,6 @@
 ---
 export const prerender = false;
+import { canManagePayments } from "../../../lib/registration/schema";
 import OrderActions from "../../../components/react/OrderActions";
 import OrderNoteForm from "../../../components/react/OrderNoteForm";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
@@ -199,6 +200,7 @@ const eventTypeColor: Record<string, string> = {
             orderId={order.id}
             currentStatus={order.status}
             isPaid={order.paidAt !== null}
+            canManagePayments={canManagePayments(Astro.locals.session!.user.email)}
             nextStatuses={nextStatuses}
             statusLabel={STATUS_LABEL}
           />

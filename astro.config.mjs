@@ -9,7 +9,7 @@ import { site } from './src/data/site';
 // https://astro.build/config
 export default defineConfig({
   site: site.url,
-  adapter: vercel(),
+  adapter: vercel({ includeFiles: ["src/assets/NotoSans-Regular.ttf", "src/assets/NotoSans-LICENSE.txt"] }),
   integrations: [react()],
   vite: {
     cacheDir: process.env.DUCKIES_TEST_SERVER ? ".astro/vite-test" : undefined,

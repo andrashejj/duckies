@@ -24,6 +24,7 @@ import "../styles/members.css";
       <input id="kid-name" name="name" required maxlength="80" autocomplete="off" aria-describedby="kid-name-help" placeholder="Name at the club" />
       <button class="cta-primary" type="submit">Add to the lineup</button>
     </form>
+    <a data-archived-kids hidden href="/admin/kids/archived" class="member-text-button mt-6 inline-block">Archived kids and signed records</a>
     <p data-roster-status class="member-status" role="status" aria-live="polite"></p>
   </div>
 </section>
@@ -31,9 +32,11 @@ import "../styles/members.css";
 
 <script>
   import { authClient } from "../lib/auth-client";
+  import { kidOverview } from "../lib/registration/overview";
+  import type { OrganiserKid } from "../lib/registration/records";
 
   type Kid = { id: string; name: string };
-  type Roster = { member: { email: string; role: "member" | "organiser" }; kids: Kid[] };
+  type Roster = { member: { email: string; role: "member" | "organiser"; canManagePayments?: boolean }; termLabel: string; kids: Kid[] };
   const section = document.querySelector<HTMLElement>("[data-members]")!;
   const list = section.querySelector<HTMLUListElement>("[data-roster]")!;
   const form = section.querySelector<HTMLFormElement>("[data-add-kid]")!;
@@ -122,7 +125,7 @@ import "../styles/members.css";
           finally { save.disabled = false; }
         });
         const remove = button("Remove", async () => {
-          if (!window.confirm(`Remove ${kid.name} from the kids list?`)) return;
+          if (!window.confirm(`Archive ${kid.name} from the kids list? Signed waivers and payment history will be kept.`)) return;
           remove.disabled = true;
           try { await mutate(`/api/kids/${kid.id}`, "DELETE"); }
           catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't remove this duckie."; }
@@ -131,13 +134,15 @@ import "../styles/members.css";
         remove.setAttribute("aria-label", `Remove ${kid.name}`);
         actions.append(editButton, remove);
         row.append(actions, edit);
+        row.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), loadRoster, message => { status.textContent = message; }));
       }
       list.append(row);
     });
     section.querySelector("[data-member-email]")!.textContent = data.member.email;
-    section.querySelector("[data-roster-count]")!.textContent = `${data.kids.length} ${data.kids.length === 1 ? "duckie" : "duckies"} in the lineup`;
+    section.querySelector("[data-roster-count]")!.textContent = `${data.kids.length} ${data.kids.length === 1 ? "duckie" : "duckies"} in the lineup · ${data.termLabel}`;
     section.querySelector<HTMLElement>("[data-empty]")!.hidden = data.kids.length > 0;
     form.hidden = data.member.role !== "organiser";
+    section.querySelector<HTMLElement>("[data-archived-kids]")!.hidden = data.member.role !== "organiser";
   }
 
   async function loadRoster() {

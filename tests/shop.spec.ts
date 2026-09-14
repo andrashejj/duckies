@@ -129,8 +129,12 @@ test("organiser session governs catalogue administration, stock cancellation, pa
   expect((await request.post(`/api/admin/orders/${saved.orderId}/transition`, { data: { to: "CONFIRMED", adminNote: "INTERNAL-TEST-NOTE" }, headers: { origin } })).status()).toBe(200);
   const mail = await readFile(process.env.DUCKIES_TEST_MAIL_FILE!, "utf8");
   expect(mail).not.toContain("INTERNAL-TEST-NOTE");
+  expect((await request.post(`/api/admin/orders/${saved.orderId}/paid`, { data: {}, headers: { origin } })).status()).toBe(403);
+  await db.query("INSERT INTO club_member (email,role) VALUES ('andras@hejj.xyz','organiser')");
+  await signIn(request, "andras@hejj.xyz");
   const paid = await Promise.all([1, 2].map(() => request.post(`/api/admin/orders/${saved.orderId}/paid`, { data: {}, headers: { origin } })));
   expect(paid.map(response => response.status()).sort()).toEqual([200, 400]);
+  await signIn(request, organiser);
   const cancel = () => request.post(`/api/admin/orders/${saved.orderId}/transition`, { data: { to: "CANCELLED", sendEmail: false }, headers: { origin } });
   const cancellations = await Promise.all([cancel(), cancel()]);
   expect(cancellations.map(response => response.status()).sort()).toEqual([200, 400]);

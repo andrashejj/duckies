@@ -3,14 +3,18 @@ import { getMemberSession } from "../../../lib/server/auth";
 import { getDatabase } from "../../../lib/server/db";
 import { json, parseName, sameOrigin } from "../../../lib/server/http";
 
+import { organiserRoster } from "../../../lib/registration/records";
+import { canManagePayments } from "../../../lib/registration/schema";
+import { TERM_LABEL } from "../../../lib/registration/policy";
+
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request }) => {
   try {
     const member = await getMemberSession(request.headers);
     if (!member) return json({ error: "Please sign in with a club-approved email address." }, 401);
-    const { rows: kids } = await getDatabase().query("SELECT id, name FROM club_kid ORDER BY lower(name), id");
-    return json({ member: { email: member.email, role: member.role }, kids });
+    const kids = member.role === "organiser" ? await organiserRoster() : (await getDatabase().query("SELECT id, name FROM club_kid WHERE archived_at IS NULL ORDER BY lower(name), id")).rows;
+    return json({ member: { email: member.email, role: member.role, canManagePayments: member.role === "organiser" && canManagePayments(member.email) }, termLabel: TERM_LABEL, kids });
   } catch {
     console.error("Duckies roster read failed. Check database configuration and migrations.");
     return json({ error: "The kids list is temporarily unavailable. Please try again." }, 503);

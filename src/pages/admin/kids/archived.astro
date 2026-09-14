@@ -1,0 +1,19 @@
+---
+export const prerender = false;
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getDatabase } from "../../../lib/server/db";
+const { rows } = await getDatabase().query(`SELECT k.id,k.name,k.archived_at,
+  (SELECT coalesce(json_agg(json_build_object('id',w.id,'signedAt',w.signed_at,'term',w.term) ORDER BY w.signed_at DESC),'[]') FROM club_signed_waiver w WHERE w.kid_id=k.id) AS waivers,
+  (SELECT coalesce(json_agg(json_build_object('status',p.status,'note',p.note,'amount',p.amount_mur,'term',p.term) ORDER BY p.recorded_at DESC),'[]') FROM club_payment_event p WHERE p.kid_id=k.id) AS payments
+  FROM club_kid k WHERE k.archived_at IS NOT NULL ORDER BY archived_at DESC`);
+---
+<AdminLayout title="Archived kids">
+  <h1 class="section-title">Archived kids</h1>
+  <p class="body-copy mt-4">Signed records and payment history are retained when a child leaves the active list.</p>
+  <a class="member-text-button" href="/#our-duckies">Back to the active kids list</a>
+  {rows.length === 0 && <p class="mt-8">No archived kids.</p>}
+  {rows.map(kid => <section class="surface-card p-6 mt-6"><h2 class="font-display text-2xl">{kid.name}</h2>
+    <ul>{kid.waivers.map((w: any) => <li class="mt-3"><a class="underline" href={`/api/waivers/${w.id}`}>{w.term} · {new Date(w.signedAt).toLocaleDateString()} · Signed PDF</a> · <a class="underline" href={`/api/waivers/${w.id}?format=audit`}>Signature record</a></li>)}</ul>
+    <ul>{kid.payments.map((p: any) => <li class="mt-3">{p.term} · {p.status} · {p.amount === null ? "Amount not recorded" : `Rs ${p.amount}`} · {p.note}</li>)}</ul>
+  </section>)}
+</AdminLayout>

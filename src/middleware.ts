@@ -8,7 +8,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const account = /^\/account(\/|$)/.test(path);
   const members = /^\/members(\/|$)/.test(path);
   const reservation = path === "/api/reserve";
-  const privateResponse = /^\/(api|admin|account|orders|members)(\/|$)/.test(path);
+  const privateResponse = /^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
     if (admin || account || members || reservation) {
@@ -40,6 +40,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     response.headers.set("Vary", "Cookie");
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
     response.headers.set("Referrer-Policy", "no-referrer");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("Content-Security-Policy", "frame-ancestors 'none'");
   }
   return response;
 });
