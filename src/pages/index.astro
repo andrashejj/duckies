@@ -659,72 +659,47 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
   </section>
 
   <!-- ===================== SPONSORS ===================== -->
-  <section id="sponsors" class="mx-auto max-w-7xl px-6 pb-24 pt-8 lg:px-10">
-    <div class="surface-card p-8 md:p-10">
-      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-        <div data-reveal class="space-y-5">
-          <p class="section-kicker">Sponsors</p>
-          <h2 class="section-title">
-            Become a <span class="ink-underline">founding</span> sponsor.
-          </h2>
-          <p class="body-copy max-w-2xl">
-            A founding sponsor helps the club run bigger comp days, fund club lycras, and offer
-            scholarships for kids who otherwise couldn't paddle out.
-          </p>
-          <a
-            class="cta-primary"
-            href={site.sponsorContactUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Become a founding sponsor
-          </a>
-        </div>
-
-        <div class="grid gap-5">
-          {site.sponsors.map((sponsor, i) => (
-            <article class:list={[
-              "surface-card overflow-hidden",
-              i % 2 === 0 ? "sticker-sun" : "sticker-teal",
-            ]} data-reveal>
-              {"image" in sponsor && sponsor.image && (
-                <div class="border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-deep)]">
-                  <img
-                    src={sponsor.image}
-                    alt={`${sponsor.name} website social preview`}
-                    class="h-44 w-full object-cover object-center"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div class="flex items-start justify-between gap-4 p-6">
-                <div class="min-w-0">
-                  {sponsor.logo && (
-                    <img
-                      src={sponsor.logo}
-                      alt={sponsor.logoAlt}
-                      class="mb-4 h-8 w-auto max-w-[12rem] object-contain"
-                      loading="lazy"
-                    />
-                  )}
-                  <p class="font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
-                    {sponsor.name}
-                  </p>
-                  <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{sponsor.blurb}</p>
-                </div>
-                <a
-                  href={sponsor.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  class="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)] underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 transition hover:text-[var(--color-coral-500)]"
-                >
-                  Visit →
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+  <section id="sponsors" aria-labelledby="sponsors-title" class="mx-auto max-w-7xl px-6 pb-20 pt-8 lg:px-10">
+    <div class="sponsor-strip">
+      <h2 id="sponsors-title">Backed by</h2>
+      <ul class="sponsor-logos" aria-label="Club sponsors">
+        {site.sponsors.map(sponsor => {
+          const Tag = sponsor.href ? "a" : "span";
+          return (
+            <li>
+              <Tag href={sponsor.href ?? undefined} target={sponsor.href ? "_blank" : undefined} rel={sponsor.href ? "noreferrer" : undefined} class="sponsor-logo">
+                {sponsor.logo ? (
+                  <img src={sponsor.logo} alt={sponsor.name} loading="lazy" width="180" height="48" />
+                ) : sponsor.wordmark === "nbk" ? (
+                  <span class="sponsor-nbk" role="img" aria-label={sponsor.name}>NBK<span>LABS</span></span>
+                ) : (
+                  <span class="sponsor-andras" role="img" aria-label={sponsor.name}>A<span class="sponsor-dot">·</span>H<small>andrashejj.com</small></span>
+                )}
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .sponsor-strip { border-top: 2px solid var(--color-ink-950); border-bottom: 1px solid var(--color-ink-950); padding: 1.75rem 0 2rem; }
+  .sponsor-strip h2 { font: .7rem var(--font-mono); letter-spacing: .18em; text-transform: uppercase; text-align: center; }
+  .sponsor-logos { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2rem; align-items: center; margin-top: 1.5rem; padding: 0; }
+  .sponsor-logo { display: flex; align-items: center; justify-content: center; min-height: 64px; color: var(--color-ink-950); }
+  .sponsor-logo img { display: block; width: 100%; max-width: 155px; height: 44px; object-fit: contain; }
+  .sponsor-logo:focus-visible { outline: 3px solid var(--color-teal-600); outline-offset: 6px; border-radius: .25rem; }
+  a.sponsor-logo:hover { opacity: .65; }
+  .sponsor-nbk { font-family: var(--font-display); font-size: 2rem; font-weight: 750; letter-spacing: -.06em; line-height: 1; }
+  .sponsor-nbk > span { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .16em; margin-left: .5rem; }
+  .sponsor-andras { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1; text-align: center; }
+  .sponsor-dot { color: var(--color-coral-500); font-style: italic; }
+  .sponsor-andras small { display: block; margin-top: .45rem; font: .6rem var(--font-mono); letter-spacing: .03em; }
+  @media (max-width: 640px) {
+    .sponsor-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; }
+    .sponsor-logos li:last-child { grid-column: 1 / -1; }
+    .sponsor-logo img { max-width: 132px; height: 38px; }
+  }
+</style>

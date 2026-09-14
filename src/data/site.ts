@@ -38,23 +38,11 @@ export const site = {
     },
   ],
   sponsors: [
-    {
-      name: "NBK Labs",
-      href: "https://nbklabs.com",
-      logo: "/media/nbk-labs-logo.svg",
-      logoAlt: "NBK Labs live site wordmark",
-      blurb:
-        "Backs the club's operations so we stay reliable, low-overhead, and focused on the kids in the water.",
-    },
-    {
-      name: "Motif",
-      href: "https://chatwithmotif.com",
-      logo: "/media/motif-logo.svg",
-      logoAlt: "Motif logo",
-      image: "/media/motif-og.png",
-      blurb:
-        "Backs the visibility and storytelling that help grow a local surf community for kids.",
-    },
+    { name: "Pier", href: "https://www.pierwallet.com/", logo: "/media/pier-logo.svg", wordmark: null },
+    { name: "Motif", href: "https://chatwithmotif.com", logo: "/media/motif-logo.svg", wordmark: null },
+    { name: "NBK Labs", href: null, logo: null, wordmark: "nbk" },
+    { name: "Flipp", href: "https://www.flippapp.ai/", logo: "/media/flipp-logo.svg", wordmark: null },
+    { name: "andrashejj.com", href: "https://www.andrashejj.com/", logo: null, wordmark: "andras" },
   ],
   navigation: [
     { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup", children: [
