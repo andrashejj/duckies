@@ -131,10 +131,12 @@ test("mobile organiser can sign in, add, edit, remove, and sign out", async ({ p
   await expect(page.locator("[data-members]")).toBeVisible();
   await expect(page.locator("[data-empty]")).toBeVisible();
   const unsafeName = '<img src=x onerror="alert(1)">';
+  await page.locator("[data-add-panel] > summary").click();
   await page.getByLabel("Add a duckie", { exact: true }).fill(unsafeName);
   await page.getByRole("button", { name: "Add to the lineup" }).click();
   await expect(page.locator(".duckie-name")).toHaveText(unsafeName);
   expect(await page.locator("[data-roster] img").count()).toBe(0);
+  await page.locator(".duckie-summary").click();
   await page.getByRole("button", { name: `Edit ${unsafeName}`, exact: true }).click();
   await page.getByLabel("Name at the club", { exact: true }).fill("Test Duckie");
   await page.getByRole("button", { name: "Save", exact: true }).click();
@@ -168,4 +170,57 @@ test("public HTML never embeds roster names; read-only members have no editor", 
   await page.evaluate(() => window.dispatchEvent(new Event("pageshow")));
   await expect(page.locator("[data-members]")).toBeHidden();
   await expect(page.locator("[data-roster]")).toBeEmpty();
+});
+
+test("30-kid roster stays compact, filters contacts and keeps open drafts", async ({ page }) => {
+  await signIn(page.request, organiser);
+  const roster = await (await page.request.get("/api/kids")).json();
+  // Browser-only sample lineup; never add demonstration children to the club database.
+  roster.kids = Array.from({ length: 30 }, (_, index) => ({
+    id: `sample-${index}`, name: `Sample Duckie ${String(index + 1).padStart(2, "0")}`,
+    age: index < 15 ? 8 : null, photoVersion: null, contactName: `Contact ${index + 1}`, contactPhone: `555${index}`,
+    registration: index < 15 ? {
+      dateOfBirth: "2018-01-01", guardians: [{ name: `Guardian ${index + 1}`, relationship: "Parent", phone: `123${index}`, email: "sample@example.com" }],
+      emergencyName: "Emergency contact", emergencyRelationship: "Parent", emergencyPhone: "999999",
+      media: index < 10 ? "yes" : "no", parentInWater: true, signerName: "Sample Parent", medicalNotes: "", rashieSize: "S", rashieName: "Sample", membership: "child",
+    } : null,
+    waiverId: index < 15 ? `waiver-${index}` : null, signedAt: index < 15 ? "2026-09-01" : null,
+    payment: index < 20 ? { status: "paid", amountMur: 3000, note: "Sample", recordedAt: "2026-09-01" } : null, link: null,
+  }));
+  await page.route("**/api/kids", route => route.fulfill({ json: roster }));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await expect(page.locator(".duckie-row")).toHaveCount(30);
+  await expect(page.locator(".duckie-profile[open]")).toHaveCount(0);
+  expect((await page.locator(".duckie-row").first().boundingBox())!.height).toBeLessThan(85);
+  await page.locator("[data-members]").screenshot({ path: "test-results/roster-30-desktop.png" });
+  const filter = page.getByLabel("Show", { exact: true });
+  for (const [value, count] of [["unpaid", 10], ["unsigned", 15], ["no-media", 20], ["water", 15]] as const) {
+    await filter.selectOption(value);
+    await expect(page.locator(".duckie-row:visible")).toHaveCount(count);
+    await expect(page.locator("[data-roster-count]")).toContainText(`${count} of 30`);
+  }
+  await filter.selectOption("all");
+  await page.getByLabel("Search the lineup").fill("Guardian 2");
+  await expect(page.locator(".duckie-row:visible")).toHaveCount(1);
+  const summary = page.locator(".duckie-row:visible > details > summary");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".duckie-profile[open]")).toHaveCount(1);
+  await page.getByRole("button", { name: "Edit Sample Duckie 02", exact: true }).click();
+  await page.locator(".duckie-profile[open]").getByLabel("Name at the club", { exact: true }).fill("Unsaved draft");
+  await page.getByLabel("Search the lineup").fill("no such kid");
+  await expect(page.locator("[data-no-matches]")).toBeVisible();
+  await page.getByLabel("Search the lineup").fill("5551");
+  await expect(page.locator(".duckie-profile[open]").getByLabel("Name at the club", { exact: true })).toHaveValue("Unsaved draft");
+  await expect(page.locator(".duckie-profile[open]")).toHaveCount(1);
+  await page.getByLabel("Search the lineup").fill("");
+  await page.locator(".duckie-profile[open] > summary").click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator("[data-roster]").evaluate(element => element.scrollIntoView({ block: "start", behavior: "instant" }));
+  await page.screenshot({ path: "test-results/roster-30-mobile.png" });
+  await page.locator(".duckie-summary").first().click();
+  await expect(page.getByRole("button", { name: "Generate registration link" }).first()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

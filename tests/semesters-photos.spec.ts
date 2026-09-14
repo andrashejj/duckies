@@ -385,6 +385,7 @@ test("mobile owner creates a semester, records payment and uploads an avatar", a
   await expect(
     page.getByRole("combobox", { name: "Payment semester", exact: true }),
   ).toHaveValue(newTerm.id);
+  await page.locator(".duckie-summary").click();
   await page
     .getByRole("button", { name: "Update payment", exact: true })
     .click();

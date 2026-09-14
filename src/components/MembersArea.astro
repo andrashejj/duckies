@@ -16,15 +16,29 @@ import "../styles/members.css";
       </div>
     </div>
     <div data-semester-controls hidden class="mt-8"></div>
-    <p data-roster-count class="mt-8 font-mono text-xs uppercase tracking-widest"></p>
+    <div class="roster-toolbar member-form">
+      <label>Search the lineup<input data-roster-search type="search" placeholder="Kid, guardian or phone…" autocomplete="off" /></label>
+      <label data-roster-filter-label hidden>Show<select data-roster-filter aria-label="Show">
+        <option value="all">All kids</option>
+        <option value="unpaid">Unpaid this semester</option>
+        <option value="unsigned">Waiver not signed</option>
+        <option value="no-media">No media consent</option>
+        <option value="water">Parent in water not acknowledged</option>
+      </select></label>
+    </div>
+    <p data-roster-count role="status" aria-live="polite" class="mt-4 font-mono text-xs uppercase tracking-widest"></p>
+    <div data-roster-head hidden class="roster-columns roster-head" aria-hidden="true"><span>Duckie</span><span>Age</span><span>Legal guardians</span><span>Waiver</span><span>Media</span><span>Parent in water</span><span>Payment</span></div>
     <ul data-roster class="duckies-roster" aria-label="Club kids"></ul>
     <p data-empty hidden class="mt-6 text-lg">The lineup is taking shape. The club will add the kids here soon.</p>
+    <p data-no-matches hidden class="mt-6">No kids match. Try another name or filter.</p>
+    <details data-add-panel hidden class="roster-add"><summary>Add a duckie</summary>
     <form data-add-kid hidden class="member-form mt-8 max-w-lg rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] p-5">
       <label for="kid-name">Add a duckie</label>
       <p id="kid-name-help" class="text-sm leading-6">Use the name they go by at the club. A first name and surname initial works well.</p>
       <input id="kid-name" name="name" required maxlength="80" autocomplete="off" aria-describedby="kid-name-help" placeholder="Name at the club" />
       <button class="cta-primary" type="submit">Add to the lineup</button>
     </form>
+    </details>
     <a data-archived-kids hidden href="/admin/kids/archived" class="member-text-button mt-6 inline-block">Archived kids and signed records</a>
     <p data-roster-status class="member-status" role="status" aria-live="polite"></p>
   </div>
@@ -35,6 +49,7 @@ import "../styles/members.css";
   import { semesterControls } from "../lib/registration/semester-controls";
   import type { Semester } from "../lib/registration/semesters";
   import { authClient } from "../lib/auth-client";
+  import { rosterCells, rosterSearch, matchesRosterFilter } from "../lib/registration/roster";
   import { kidOverview } from "../lib/registration/overview";
   import type { OrganiserKid } from "../lib/registration/records";
 
@@ -46,6 +61,9 @@ import "../styles/members.css";
   const status = section.querySelector<HTMLElement>("[data-roster-status]")!;
   const loadError = document.querySelector<HTMLElement>("[data-member-load-error]")!;
   const memberLinks = document.querySelectorAll<HTMLAnchorElement>("[data-member-link]");
+  const search = section.querySelector<HTMLInputElement>("[data-roster-search]")!;
+  const filter = section.querySelector<HTMLSelectElement>("[data-roster-filter]")!;
+  let currentRoster: Roster | null = null;
   let selectedTerm = "";
   let generation = 0;
   let lastRoster = "";
@@ -53,6 +71,7 @@ import "../styles/members.css";
   function clearRoster() {
     generation++;
     lastRoster = "";
+    currentRoster = null;
     section.hidden = true;
     list.replaceChildren();
     section.querySelector("[data-semester-controls]")!.replaceChildren();
@@ -88,29 +107,63 @@ import "../styles/members.css";
     return true;
   }
 
+  function filterRoster() {
+    if (!currentRoster) return;
+    const query = search.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    currentRoster.kids.forEach((kid, index) => {
+      const organiser = currentRoster!.member.role === "organiser";
+      const matches = rosterSearch(kid, organiser).includes(query) && (!organiser || matchesRosterFilter(kid as OrganiserKid, filter.value));
+      (list.children[index] as HTMLElement).hidden = !matches;
+      if (matches) visible++;
+    });
+    const total = currentRoster.kids.length;
+    section.querySelector("[data-roster-count]")!.textContent = `${visible === total ? total : `${visible} of ${total}`} ${total === 1 ? "duckie" : "duckies"} in the lineup · ${currentRoster.termLabel}`;
+    section.querySelector<HTMLElement>("[data-no-matches]")!.hidden = visible > 0 || total === 0;
+  }
+  search.addEventListener("input", filterRoster);
+  filter.addEventListener("change", filterRoster);
+
   function render(data: Roster) {
+    const expanded = new Set(Array.from(list.querySelectorAll<HTMLDetailsElement>("details[data-kid-id][open]")).map(row => row.dataset.kidId));
+    const focusedKid = document.activeElement?.closest("[data-kid-id]")?.getAttribute("data-kid-id");
+    currentRoster = data;
     list.replaceChildren();
+    const organiser = data.member.role === "organiser";
+    section.querySelector<HTMLElement>("[data-roster-head]")!.hidden = !organiser;
+    section.querySelector<HTMLElement>("[data-roster-filter-label]")!.hidden = !organiser;
     const controls = section.querySelector<HTMLElement>("[data-semester-controls]")!;
     controls.hidden = data.member.role !== "organiser";
     controls.replaceChildren();
     if (!controls.hidden) controls.append(semesterControls(data.semesters, data.term, Boolean(data.member.canManagePayments), async id => { selectedTerm = id; await loadRoster(); }, message => { status.textContent = message; }));
-    data.kids.forEach((kid, index) => {
+    data.kids.forEach((kid) => {
       const row = document.createElement("li");
       row.className = "duckie-row";
-      const number = document.createElement("span");
-      number.className = "duckie-number";
-      number.setAttribute("aria-hidden", "true");
-      number.textContent = String(index + 1).padStart(2, "0");
+      const profile = document.createElement("details");
+      profile.className = "duckie-profile";
+      profile.dataset.kidId = kid.id;
+      profile.open = expanded.has(kid.id);
+      const summary = document.createElement("summary");
+      summary.className = "roster-columns duckie-summary";
+      summary.setAttribute("aria-label", `${kid.name}, details`);
+      const identity = document.createElement("span");
+      identity.className = "duckie-identity";
       const name = document.createElement("span");
       name.className = "duckie-name";
       name.textContent = kid.name;
-      row.append(number);
-      if (data.member.role === "organiser") {
+      if (organiser) {
         const photo = (kid as OrganiserKid).photoVersion;
-        if (photo) { const img = document.createElement("img"); img.className = "duckie-avatar"; img.alt = `${kid.name}'s profile photo`; img.width = 64; img.height = 64; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; row.append(img); }
-        else { const placeholder = document.createElement("span"); placeholder.className = "duckie-avatar duckie-avatar-empty"; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); row.append(placeholder); }
-      }
-      row.append(name);
+        if (photo) { const img = document.createElement("img"); img.className = "duckie-avatar"; img.alt = `${kid.name}'s profile photo`; img.width = 36; img.height = 36; img.loading = "lazy"; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; identity.append(img); }
+        else { const placeholder = document.createElement("span"); placeholder.className = "duckie-avatar duckie-avatar-empty"; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); identity.append(placeholder); }
+        const chevron = document.createElement("span");
+        chevron.className = "duckie-chevron";
+        chevron.textContent = "›";
+        chevron.setAttribute("aria-hidden", "true");
+        identity.append(name, chevron);
+        summary.append(identity, ...rosterCells(kid as OrganiserKid));
+        profile.append(summary);
+        row.append(profile);
+      } else { identity.append(name); row.append(identity); }
       if (data.member.role === "organiser") {
         const actions = document.createElement("div");
         actions.className = "duckie-actions";
@@ -148,15 +201,20 @@ import "../styles/members.css";
         });
         remove.setAttribute("aria-label", `Remove ${kid.name}`);
         actions.append(editButton, remove);
-        row.append(actions, edit);
-        row.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), data.term, loadRoster, message => { status.textContent = message; }));
+        const panel = document.createElement("div");
+        panel.className = "duckie-panel";
+        panel.append(actions, edit);
+        panel.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), data.term, loadRoster, message => { status.textContent = message; }));
+        profile.append(panel);
       }
       list.append(row);
+      if (focusedKid === kid.id) summary.focus();
     });
     section.querySelector("[data-member-email]")!.textContent = data.member.email;
-    section.querySelector("[data-roster-count]")!.textContent = `${data.kids.length} ${data.kids.length === 1 ? "duckie" : "duckies"} in the lineup · ${data.termLabel}`;
+    filterRoster();
     section.querySelector<HTMLElement>("[data-empty]")!.hidden = data.kids.length > 0;
     form.hidden = data.member.role !== "organiser";
+    section.querySelector<HTMLElement>("[data-add-panel]")!.hidden = form.hidden;
     section.querySelector<HTMLElement>("[data-archived-kids]")!.hidden = data.member.role !== "organiser";
   }
 

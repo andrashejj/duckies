@@ -428,6 +428,7 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   ).toBe(true);
   await signIn(page.request, owner);
   await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.locator(".duckie-summary").click();
   await expect(
     page.getByText("NO CONSENT — exclude or blur", { exact: true }),
   ).toBeVisible();
