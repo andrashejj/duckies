@@ -57,12 +57,14 @@ export const site = {
     },
   ],
   navigation: [
-    { label: "Shop", labelFull: "Shop", href: "/shop" },
-    { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup" },
-    { label: "Vol. 02", labelFull: "Cup · Vol. 02", href: "/sunset-duckies-cup-vol-2" },
+    { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup", children: [
+      { label: "Vol. 01 · The first Cup", href: "/sunset-duckies-cup" },
+      { label: "Vol. 02 · The next edition", href: "/sunset-duckies-cup-vol-2" },
+    ] },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
     { label: "Blog", labelFull: "The Logbook", href: "/blog" },
-    { label: "Molt", labelFull: "Project Molt", href: "/branding-plan" },
+    { label: "Branding", labelFull: "Branding", href: "/branding-plan" },
+    { label: "Members", labelFull: "Member sign-in", href: "/login" },
   ],
   stats: [
     { value: "100%", label: "kids in the lineup" },

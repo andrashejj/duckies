@@ -8,7 +8,7 @@ import "../styles/members.css";
   <section class="member-login mx-auto max-w-xl px-6 py-16 sm:py-24">
     <p class="section-kicker">For our surf families</p>
     <h1 class="section-title mt-4">Back with the <span class="font-accent italic">crew.</span></h1>
-    <p class="body-copy mt-6">Sign in to see your reservations or the club’s members area. We’ll email you a six-digit code — no password to remember.</p>
+    <p class="body-copy mt-6">Sign in to the club’s members area to see the duckies. We’ll email you a six-digit code — no password to remember.</p>
     <div class="surface-card mt-8 p-6 sm:p-8">
       <form id="email-form" class="member-form">
         <label for="email">Your email address</label>
@@ -16,7 +16,7 @@ import "../styles/members.css";
         <button class="cta-primary" type="submit">Email me a code</button>
       </form>
       <form id="code-form" class="member-form" hidden>
-        <p id="code-help" class="text-sm leading-6">If you’ve reserved something or your email is on the club list, a code is on its way. It’s valid for 10 minutes.</p>
+        <p id="code-help" class="text-sm leading-6">If your email has access, a code is on its way. It’s valid for 10 minutes.</p>
         <label for="code">Your six-digit code</label>
         <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required aria-describedby="code-help" />
         <button class="cta-primary" type="submit">Sign in</button>
@@ -25,7 +25,7 @@ import "../styles/members.css";
       <p id="login-status" class="member-status" role="status" aria-live="polite"></p>
       <noscript><p class="mt-4">Please enable JavaScript to sign in.</p></noscript>
     </div>
-    <p class="mt-7 text-sm leading-6">Use the email from your reservation or your club-approved email address. Need club access? <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">Contact the club on WhatsApp.</a></p>
+    <p class="mt-7 text-sm leading-6">Use your club-approved email address. Need club access? <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">Contact the club on WhatsApp.</a></p>
   </section>
 </BaseLayout>
 

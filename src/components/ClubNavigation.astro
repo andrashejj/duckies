@@ -1,0 +1,51 @@
+---
+import { site } from "../data/site";
+const currentPath = Astro.url.pathname;
+---
+<nav aria-label="Club navigation" class="club-nav order-3 flex w-full shrink-0 items-center justify-between gap-0.5 sm:order-none sm:w-auto sm:gap-2">
+  {site.navigation.map(item => "children" in item ? (
+    <details class="cup-menu" data-cup-menu>
+      <summary class="nav-item">
+        <span class="sm:hidden">{item.label}</span>
+        <span class="hidden sm:inline">{item.labelFull}</span>
+        <span class="cup-chevron" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cup-editions">
+        <p>Two editions. One Cup.</p>
+        {item.children.map(edition => <a href={edition.href} aria-current={currentPath === edition.href ? "page" : undefined}>{edition.label}</a>)}
+      </div>
+    </details>
+  ) : (
+    <a class="nav-item" href={item.href} aria-current={currentPath === item.href ? "page" : undefined}>
+      <span class="sm:hidden">{item.label}</span>
+      <span class="hidden sm:inline">{item.labelFull}</span>
+    </a>
+  ))}
+</nav>
+<style>
+  .nav-item { display: flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .375rem .5rem; font-family: var(--font-display); font-size: .72rem; font-weight: 600; color: var(--color-ink-950); text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .nav-item:hover, .nav-item[aria-current="page"], .cup-menu[open] summary { background: var(--color-sun-500); }
+  .nav-item:focus-visible, .cup-editions a:focus-visible { outline: 3px solid var(--color-coral-500); outline-offset: 3px; }
+  .cup-menu { position: relative; }
+  .cup-menu summary { list-style: none; }
+  .cup-menu summary::-webkit-details-marker { display: none; }
+  .cup-chevron { font-family: var(--font-sans); }
+  .cup-menu[open] .cup-chevron { transform: rotate(180deg); }
+  .cup-editions { position: absolute; top: calc(100% + .7rem); left: 0; z-index: 60; width: min(17rem, calc(100vw - 2rem)); padding: .65rem; border: 2px solid var(--color-ink-950); border-radius: .8rem; background: var(--color-cream-soft); box-shadow: 5px 5px 0 var(--color-ink-950); }
+  .cup-editions p { padding: .5rem .6rem; font-family: var(--font-mono); font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; }
+  .cup-editions a { display: block; padding: .75rem .6rem; border-radius: .4rem; font-size: .85rem; font-weight: 600; text-decoration: none; }
+  .cup-editions a:hover, .cup-editions a[aria-current="page"] { background: var(--color-sun-500); }
+  @media (min-width: 640px) { .nav-item { padding: .5rem .75rem; font-size: .875rem; } }
+</style>
+<script>
+  const cupMenu = document.querySelector<HTMLDetailsElement>("[data-cup-menu]");
+  document.addEventListener("click", event => {
+    if (cupMenu?.open && event.target instanceof Node && !cupMenu.contains(event.target)) cupMenu.open = false;
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && cupMenu?.open) {
+      cupMenu.open = false;
+      cupMenu.querySelector("summary")?.focus();
+    }
+  });
+</script>
