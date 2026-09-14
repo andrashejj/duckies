@@ -71,7 +71,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
   <body class:list={["min-h-screen antialiased", variant === "performance" && "performance-theme"]}>
     <div class="page-shell">
       <header class="site-header border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]/92 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 sm:flex-nowrap sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
           <a href="/" class="group flex min-w-0 items-center gap-2 sm:gap-3">
             <span class="relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-lg font-black text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform group-hover:rotate-[-6deg] sm:h-12 sm:w-12" aria-hidden="true">
               <span class="absolute inset-x-0 bottom-0 h-1/2 bg-[var(--color-sun-500)]"></span>
@@ -88,7 +88,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             </div>
           </a>
 
-          <nav class="flex shrink-0 items-center gap-0.5 sm:gap-2">
+          <nav aria-label="Club navigation" class="order-3 flex w-full shrink-0 items-center justify-between gap-0.5 sm:order-none sm:w-auto sm:gap-2">
             {site.navigation.map((item) => (
               <a
                 class="rounded-full px-2 py-1.5 text-[0.72rem] font-semibold text-[var(--color-ink-950)] transition hover:bg-[var(--color-sun-500)] hover:rotate-[-2deg] sm:px-3 sm:py-2 sm:text-sm"
@@ -96,7 +96,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
                 href={item.href}
               >
                 <span class="sm:hidden">{item.label}</span>
-                <span class="hidden sm:inline">{item.labelFull ?? item.label}</span>
+                <span class="hidden sm:inline">{item.labelFull}</span>
               </a>
             ))}
           </nav>
@@ -141,6 +141,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
       )}
 
       <footer class="border-t-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]">
+        <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a href="/login" class="text-sm font-semibold underline underline-offset-4">Member sign-in</a></div>
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
           <div class="space-y-5">
             <p class="section-title" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">
@@ -237,7 +238,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         animate(
           "[data-float]",
           { opacity: [0, 1], y: [32, 0] },
-          { delay: stagger(0.1), duration: 0.85, easing: [0.22, 1, 0.36, 1] },
+          { delay: stagger(0.1), duration: 0.85, ease: [0.22, 1, 0.36, 1] },
         );
 
         inView("[data-reveal]", (element) => {
@@ -246,7 +247,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           animate(
             element,
             { opacity: [0, 1], y: [28, 0], filter: ["blur(10px)", "blur(0px)"] },
-            { duration: 0.7, easing: [0.22, 1, 0.36, 1] },
+            { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
           );
         });
       }

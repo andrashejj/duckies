@@ -1,0 +1,195 @@
+---
+import "../styles/members.css";
+---
+
+<section id="our-duckies" data-members hidden class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-14 sm:py-20">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <div class="flex flex-wrap items-start justify-between gap-6">
+      <div>
+        <p class="section-kicker">Members · Tamarin Bay</p>
+        <h2 class="section-title mt-4">Our <span class="font-accent italic">duckies.</span></h2>
+        <p class="mt-4 text-base leading-7">The kids we paddle out with. Shared only with signed-in club members.</p>
+      </div>
+      <div class="max-w-full text-sm">
+        <p data-member-email class="break-all"></p>
+        <button data-sign-out type="button" class="member-text-button mt-2">Sign out</button>
+      </div>
+    </div>
+    <p data-roster-count class="mt-8 font-mono text-xs uppercase tracking-widest"></p>
+    <ul data-roster class="duckies-roster" aria-label="Club kids"></ul>
+    <p data-empty hidden class="mt-6 text-lg">The lineup is taking shape. The club will add the kids here soon.</p>
+    <form data-add-kid hidden class="member-form mt-8 max-w-lg rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] p-5">
+      <label for="kid-name">Add a duckie</label>
+      <p id="kid-name-help" class="text-sm leading-6">Use the name they go by at the club. A first name and surname initial works well.</p>
+      <input id="kid-name" name="name" required maxlength="80" autocomplete="off" aria-describedby="kid-name-help" placeholder="Name at the club" />
+      <button class="cta-primary" type="submit">Add to the lineup</button>
+    </form>
+    <p data-roster-status class="member-status" role="status" aria-live="polite"></p>
+  </div>
+</section>
+<p data-member-load-error hidden class="mx-auto max-w-7xl px-6 py-4 text-sm" role="status">The members area couldn’t load. <button type="button" data-retry-members class="member-text-button">Try again</button></p>
+
+<script>
+  import { authClient } from "../lib/auth-client";
+
+  type Kid = { id: string; name: string };
+  type Roster = { member: { email: string; role: "member" | "organiser" }; kids: Kid[] };
+  const section = document.querySelector<HTMLElement>("[data-members]")!;
+  const list = section.querySelector<HTMLUListElement>("[data-roster]")!;
+  const form = section.querySelector<HTMLFormElement>("[data-add-kid]")!;
+  const status = section.querySelector<HTMLElement>("[data-roster-status]")!;
+  const loadError = document.querySelector<HTMLElement>("[data-member-load-error]")!;
+  const memberLinks = document.querySelectorAll<HTMLAnchorElement>("[data-member-link]");
+  let generation = 0;
+  let lastRoster = "";
+
+  function clearRoster() {
+    generation++;
+    lastRoster = "";
+    section.hidden = true;
+    list.replaceChildren();
+    form.reset();
+    form.hidden = true;
+    section.querySelector("[data-member-email]")!.textContent = "";
+    section.querySelector("[data-roster-count]")!.textContent = "";
+    status.textContent = "";
+    for (const link of memberLinks) { link.href = "/login"; link.textContent = "Member sign-in"; }
+  }
+
+  function button(label: string, action: () => void) {
+    const element = document.createElement("button");
+    element.type = "button";
+    element.className = "member-text-button";
+    element.textContent = label;
+    element.addEventListener("click", action);
+    return element;
+  }
+
+  async function mutate(url: string, method: string, name?: string) {
+    status.textContent = "";
+    const response = await fetch(url, {
+      method, headers: { "Content-Type": "application/json" },
+      ...(name === undefined ? {} : { body: JSON.stringify({ name }) }),
+    });
+    if (response.status === 401) { clearRoster(); window.location.assign("/login"); return false; }
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error ?? "Couldn't save your change. Please try again.");
+    }
+    await loadRoster();
+    return true;
+  }
+
+  function render(data: Roster) {
+    list.replaceChildren();
+    data.kids.forEach((kid, index) => {
+      const row = document.createElement("li");
+      row.className = "duckie-row";
+      const number = document.createElement("span");
+      number.className = "duckie-number";
+      number.setAttribute("aria-hidden", "true");
+      number.textContent = String(index + 1).padStart(2, "0");
+      const name = document.createElement("span");
+      name.className = "duckie-name";
+      name.textContent = kid.name;
+      row.append(number, name);
+      if (data.member.role === "organiser") {
+        const actions = document.createElement("div");
+        actions.className = "duckie-actions";
+        const edit = document.createElement("form");
+        edit.className = "member-form duckie-edit";
+        edit.hidden = true;
+        const input = document.createElement("input");
+        input.id = `edit-${kid.id}`;
+        input.value = kid.name;
+        input.required = true;
+        input.maxLength = 80;
+        const label = document.createElement("label");
+        label.htmlFor = input.id;
+        label.textContent = "Name at the club";
+        const save = document.createElement("button");
+        save.type = "submit";
+        save.className = "member-text-button";
+        save.textContent = "Save";
+        const editButton = button("Edit", () => { edit.hidden = false; input.focus(); });
+        editButton.setAttribute("aria-label", `Edit ${kid.name}`);
+        edit.append(label, input, save, button("Cancel", () => { edit.hidden = true; input.value = kid.name; editButton.focus(); }));
+        edit.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          save.disabled = true;
+          try { await mutate(`/api/kids/${kid.id}`, "PATCH", input.value); }
+          catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't save your change."; }
+          finally { save.disabled = false; }
+        });
+        const remove = button("Remove", async () => {
+          if (!window.confirm(`Remove ${kid.name} from the kids list?`)) return;
+          remove.disabled = true;
+          try { await mutate(`/api/kids/${kid.id}`, "DELETE"); }
+          catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't remove this duckie."; }
+          finally { remove.disabled = false; }
+        });
+        remove.setAttribute("aria-label", `Remove ${kid.name}`);
+        actions.append(editButton, remove);
+        row.append(actions, edit);
+      }
+      list.append(row);
+    });
+    section.querySelector("[data-member-email]")!.textContent = data.member.email;
+    section.querySelector("[data-roster-count]")!.textContent = `${data.kids.length} ${data.kids.length === 1 ? "duckie" : "duckies"} in the lineup`;
+    section.querySelector<HTMLElement>("[data-empty]")!.hidden = data.kids.length > 0;
+    form.hidden = data.member.role !== "organiser";
+  }
+
+  async function loadRoster() {
+    const version = ++generation;
+    try {
+      const response = await fetch("/api/kids", { cache: "no-store" });
+      if (version !== generation) return;
+      if (response.status === 401) { clearRoster(); loadError.hidden = true; return; }
+      if (!response.ok) throw new Error("Unavailable");
+      const data: Roster = await response.json();
+      if (version !== generation) return;
+      const snapshot = JSON.stringify(data);
+      if (snapshot !== lastRoster) { render(data); lastRoster = snapshot; }
+      const wasHidden = section.hidden;
+      section.hidden = false;
+      loadError.hidden = true;
+      for (const link of memberLinks) { link.href = "#our-duckies"; link.textContent = "Our duckies"; }
+      if (wasHidden && window.location.hash === "#our-duckies") section.scrollIntoView();
+    } catch {
+      if (version !== generation) return;
+      clearRoster();
+      loadError.hidden = false;
+    }
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    submit.disabled = true;
+    try {
+      const input = form.querySelector<HTMLInputElement>("input")!;
+      if (await mutate("/api/kids", "POST", input.value)) { form.reset(); status.textContent = "Duckie added to the lineup."; input.focus(); }
+    } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't add this duckie."; }
+    finally { submit.disabled = false; }
+  });
+
+  section.querySelector<HTMLButtonElement>("[data-sign-out]")!.addEventListener("click", async (event) => {
+    const target = event.currentTarget as HTMLButtonElement;
+    target.disabled = true;
+    try {
+      const { error } = await authClient.signOut();
+      if (error) throw new Error("Sign-out failed");
+      clearRoster();
+      window.location.replace("/");
+    } catch { status.textContent = "Couldn't sign out. Please try again."; }
+    finally { target.disabled = false; }
+  });
+  document.querySelector("[data-retry-members]")!.addEventListener("click", () => void loadRoster());
+  window.addEventListener("pagehide", clearRoster);
+  window.addEventListener("pageshow", () => void loadRoster());
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) clearRoster(); else void loadRoster();
+  });
+  window.setInterval(() => { if (!document.hidden) void loadRoster(); }, 60000);
+</script>

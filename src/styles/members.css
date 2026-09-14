@@ -1,0 +1,31 @@
+.member-form { display: grid; gap: 0.85rem; }
+.member-form[hidden], [data-members][hidden], [data-members] [hidden] { display: none !important; }
+.member-form label { font-weight: 650; }
+.member-form input {
+  min-width: 0;
+  width: 100%;
+  border: 2px solid var(--color-ink-950);
+  border-radius: 0.75rem;
+  background: var(--color-cream-soft);
+  padding: 0.8rem 1rem;
+  font: inherit;
+}
+.member-form input:focus-visible, .member-text-button:focus-visible {
+  outline: 3px solid var(--color-teal-600);
+  outline-offset: 3px;
+}
+.member-form button:disabled, [data-members] button:disabled { opacity: 0.6; cursor: wait; }
+.member-text-button { text-decoration: underline; text-underline-offset: 4px; font-size: 0.875rem; cursor: pointer; }
+.member-status:not(:empty) { margin-top: 1rem; font-size: 0.95rem; line-height: 1.6; }
+.duckies-roster { list-style: none; padding: 0; margin: 2rem 0 0; border-top: 2px solid var(--color-ink-950); }
+.duckie-row { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--color-ink-950); padding: 1.25rem 0; }
+.duckie-number { font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.65; }
+.duckie-name { flex: 1; min-width: 8rem; overflow-wrap: anywhere; font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 650; }
+.duckie-actions { display: flex; gap: 1rem; }
+.duckie-edit { flex: 1 1 100%; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+.duckie-edit label { grid-column: 1 / -1; }
+#our-duckies { scroll-margin-top: 7rem; }
+@media (prefers-reduced-motion: no-preference) {
+  [data-members]:not([hidden]) { animation: crew-arrive 350ms ease-out both; }
+  @keyframes crew-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+}

@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import MembersArea from "../components/MembersArea.astro";
 
 const qrCode = await QRCode.toDataURL(site.whatsappUrl, {
   margin: 1,
@@ -94,6 +95,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           <a class="cta-secondary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
             Slide into WhatsApp
           </a>
+          <a data-member-link class="py-2 text-center text-sm font-semibold text-white underline underline-offset-4" href="/login">Member sign-in</a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
             Mon + Fri · 4-6pm · Tamarin Bay
           </p>
@@ -122,6 +124,8 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
   </section>
 
   <!-- ===================== SEMESTER UPDATE ===================== -->
+  <MembersArea />
+
   <section id="semester-update" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] py-16 text-white lg:py-20">
     <div class="absolute inset-0 opacity-35" aria-hidden="true" style="background-image: radial-gradient(circle at 10% 15%, var(--color-coral-500), transparent 38%), radial-gradient(circle at 90% 85%, var(--color-teal-500), transparent 42%);"></div>
     <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
@@ -683,7 +687,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
               "surface-card overflow-hidden",
               i % 2 === 0 ? "sticker-sun" : "sticker-teal",
             ]} data-reveal>
-              {sponsor.image && (
+              {"image" in sponsor && sponsor.image && (
                 <div class="border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-deep)]">
                   <img
                     src={sponsor.image}
@@ -698,7 +702,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
                   {sponsor.logo && (
                     <img
                       src={sponsor.logo}
-                      alt={sponsor.logoAlt ?? sponsor.name}
+                      alt={sponsor.logoAlt}
                       class="mb-4 h-8 w-auto max-w-[12rem] object-contain"
                       loading="lazy"
                     />

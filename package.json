@@ -10,13 +10,29 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "member": "tsx scripts/member.ts",
+    "test": "playwright test"
   },
   "dependencies": {
+    "@astrojs/vercel": "^10.0.8",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.4",
+    "better-auth": "^1.7.4",
+    "dotenv": "^17.4.2",
     "motion": "^12.38.0",
+    "pg": "^8.23.0",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.63.0",
+    "@types/pg": "^8.23.1",
+    "@types/qrcode": "^1.5.6",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3"
   }
 }

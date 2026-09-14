@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+import "../styles/members.css";
+---
+
+<BaseLayout title="Member sign-in | Sunset Duckies" description="Sign in to the Sunset Duckies members area.">
+  <section class="member-login mx-auto max-w-xl px-6 py-16 sm:py-24">
+    <p class="section-kicker">For our surf families</p>
+    <h1 class="section-title mt-4">Back with the <span class="font-accent italic">crew.</span></h1>
+    <p class="body-copy mt-6">Sign in to see the club’s kids list. We’ll email you a six-digit code — no password to remember.</p>
+    <div class="surface-card mt-8 p-6 sm:p-8">
+      <form id="email-form" class="member-form">
+        <label for="email">Your email address</label>
+        <input id="email" type="email" name="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" />
+        <button class="cta-primary" type="submit">Email me a code</button>
+      </form>
+      <form id="code-form" class="member-form" hidden>
+        <p id="code-help" class="text-sm leading-6">If your email is on the club list, a code is on its way. It’s valid for 10 minutes.</p>
+        <label for="code">Your six-digit code</label>
+        <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required aria-describedby="code-help" />
+        <button class="cta-primary" type="submit">Sign in</button>
+        <button id="change-email" class="member-text-button" type="button">Use another email or request a new code</button>
+      </form>
+      <p id="login-status" class="member-status" role="status" aria-live="polite"></p>
+      <noscript><p class="mt-4">Please enable JavaScript to sign in.</p></noscript>
+    </div>
+    <p class="mt-7 text-sm leading-6">Access is for club-approved email addresses. Need access? <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">Contact the club on WhatsApp.</a></p>
+  </section>
+</BaseLayout>
+
+<script>
+  import { authClient } from "../lib/auth-client";
+
+  const emailForm = document.querySelector<HTMLFormElement>("#email-form")!;
+  const codeForm = document.querySelector<HTMLFormElement>("#code-form")!;
+  const emailInput = document.querySelector<HTMLInputElement>("#email")!;
+  const codeInput = document.querySelector<HTMLInputElement>("#code")!;
+  const status = document.querySelector<HTMLElement>("#login-status")!;
+  let email = "";
+
+  fetch("/api/kids", { cache: "no-store" }).then((response) => {
+    if (response.ok) window.location.replace("/#our-duckies");
+  }).catch(() => {});
+
+  async function submit(form: HTMLFormElement, action: () => Promise<void>) {
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    button.disabled = true;
+    status.textContent = "";
+    try { await action(); }
+    catch { status.textContent = "Couldn't connect. Please try again."; }
+    finally { button.disabled = false; }
+  }
+  emailForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void submit(emailForm, async () => {
+      email = emailInput.value.trim().toLowerCase();
+      const { error } = await authClient.emailOtp.sendVerificationOtp({ email, type: "sign-in" });
+      if (error) {
+        status.textContent = error.status === 429 ? "Please wait a minute before requesting another code." : "Couldn't send a code right now. Please try again shortly.";
+        return;
+      }
+      emailForm.hidden = true;
+      codeForm.hidden = false;
+      codeInput.focus();
+    });
+  });
+  codeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void submit(codeForm, async () => {
+      const { error } = await authClient.signIn.emailOtp({ email, otp: codeInput.value.trim() });
+      if (error) {
+        status.textContent = "That code couldn’t sign you in. Check it or request a new one. If you still need access, contact the club.";
+        return;
+      }
+      window.location.replace("/#our-duckies");
+    });
+  });
+  document.querySelector("#change-email")!.addEventListener("click", () => {
+    codeForm.hidden = true;
+    emailForm.hidden = false;
+    codeInput.value = "";
+    status.textContent = "";
+    emailInput.focus();
+  });
+</script>
