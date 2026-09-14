@@ -23,6 +23,11 @@ import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
       <fieldset class="registration-panel member-form">
         <legend>01 · The surfer</legend>
         <label>Child’s full name<input name="childName" required maxlength="80" autocomplete="name" /></label>
+        <label>Profile photo (optional)<input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+        <p class="text-sm">A recognisable photo for club organisers. It stays private and does not grant permission for social media. JPEG, PNG or WebP up to 4 MB / 20 megapixels. The photo is saved to the profile when you sign.</p>
+        <img id="photo-preview" hidden width="128" height="128" alt="Selected profile photo" class="duckie-avatar" />
+        <button id="remove-profile-photo" type="button" class="member-text-button" hidden>Remove selected photo</button>
+        <p id="photo-status" role="status"></p>
         <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
         <div class="registration-grid">
           <label>Division<select aria-label="Division" name="division" required><option value="">Choose…</option><option value="duckling">Duckling — coach pushes me in</option><option value="duck">Duck — I paddle myself</option></select></label>
@@ -88,6 +93,8 @@ import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
   let signature: [number, number][][] = [];
   let current: [number, number][] | null = null;
   let submitting = false;
+  let photoBusy = false;
+  let previewUrl = "";
   const headers = { Authorization: `Bearer ${token}` };
   function addGuardian() {
     const container = document.querySelector<HTMLElement>("#guardians")!;
@@ -118,6 +125,8 @@ import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
     try {
       const response = await fetch("/api/registration", { headers, cache: "no-store" }); const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      form.querySelector<HTMLOptionElement>('option[value="child"]')!.textContent = `One child · Rs ${data.childFeeMur} / semester`;
+      form.querySelector<HTMLOptionElement>('option[value="family"]')!.textContent = `Family · Rs ${data.familyFeeMur} / semester`;
       version = form.dataset.waiverVersion ?? "";
       if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
       if (data.completedAt) { completed(Boolean(data.canDownload)); return; }
@@ -127,7 +136,7 @@ import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
     } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again."; }
   }
   form.addEventListener("submit", async event => {
-    event.preventDefault(); if (submitting) return; submitting=true;
+    event.preventDefault(); if (submitting || photoBusy) return; submitting=true;
     const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!; submit.disabled=true;
     const values = new FormData(form);
     const body: Record<string, unknown> = { version, signature };
@@ -150,5 +159,21 @@ import { waiver, WAIVER_VERSION } from "../lib/registration/policy";
     } catch(error) { status.textContent=error instanceof Error ? error.message : "Download failed."; }
   }
   document.querySelector("#download-waiver")!.addEventListener("click",()=>void download()); document.querySelector("#download-audit")!.addEventListener("click",()=>void download(true));
+  const photoInput = document.querySelector<HTMLInputElement>("#profile-photo")!;
+  const photoStatus = document.querySelector<HTMLElement>("#photo-status")!;
+  const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview")!;
+  const removePhoto = document.querySelector<HTMLButtonElement>("#remove-profile-photo")!;
+  async function uploadPhoto(remove=false) {
+    const file = photoInput.files?.[0]; if (!remove && !file) return;
+    if (file && file.size > 4*1024*1024) { photoStatus.textContent = "Choose a photo smaller than 4 MB."; photoInput.value=""; return; }
+    photoBusy=true; photoInput.disabled=true; removePhoto.disabled=true;
+    const submit=form.querySelector<HTMLButtonElement>('button[type="submit"]')!; submit.disabled=true;
+    photoStatus.textContent=remove ? "Removing photo…" : "Uploading photo…";
+    try { const response=await fetch("/api/registration/photo", {method:remove?"DELETE":"PUT",headers:{...headers,...(file?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
+      if(previewUrl)URL.revokeObjectURL(previewUrl); previewUrl=remove?"":URL.createObjectURL(file!); photoPreview.src=previewUrl; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":"Photo uploaded. Sign below to save it with the profile."; if(remove)photoInput.value="";
+    }catch(e){photoStatus.textContent=e instanceof Error?e.message:"Photo upload failed. Please try again.";photoInput.value="";}
+    finally{photoBusy=false;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=false;}
+  }
+  photoInput.addEventListener("change",()=>void uploadPhoto()); removePhoto.addEventListener("click",()=>void uploadPhoto(true));
   void load();
 </script>

@@ -1,6 +1,4 @@
 // Version changes must be explicit: signed records retain their exact text.
-export const REGISTRATION_TERM = "2026-S2";
-export const TERM_LABEL = "September 2026 semester";
 export const WAIVER_VERSION = "2026-09-14.1";
 export const waiver = {
   title: "Parent / guardian liability waiver",

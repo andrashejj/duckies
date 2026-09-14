@@ -264,6 +264,7 @@ test("only the verified owner changes payments, preserving an append-only histor
   playwright,
 }) => {
   const payment = {
+    term: "2026-S2",
     status: "paid",
     amountMur: null,
     note: "Reported payment; amount not supplied",
@@ -291,6 +292,7 @@ test("only the verified owner changes payments, preserving an append-only histor
       await andras.post(`/api/kids/${kidId}/payment`, {
         headers: { origin },
         data: {
+          term: "2026-S2",
           status: "unpaid",
           amountMur: null,
           note: "Correcting a report",

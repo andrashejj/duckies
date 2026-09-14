@@ -7,19 +7,19 @@ import { uuid } from "../../../../lib/registration/schema";
 import { getDatabase } from "../../../../lib/server/db";
 import { json } from "../../../../lib/server/http";
 export const prerender = false;
-export const POST = safeRoute(async ({ request, params }) => {
+export const POST = safeRoute(async ({ request, params, url }) => {
   const member = await requireOrganiser(request, true);
   if (!uuid.safeParse(params.id).success)
     throw new RegistrationError("Duckie not found.", 404);
-  return json(await issueLink(params.id!, member.userId), 201);
+  return json(await issueLink(params.id!, member.userId, url.searchParams.get("term") ?? undefined), 201);
 });
-export const DELETE = safeRoute(async ({ request, params }) => {
+export const DELETE = safeRoute(async ({ request, params, url }) => {
   await requireOrganiser(request, true);
   if (!uuid.safeParse(params.id).success)
     throw new RegistrationError("Duckie not found.", 404);
   await getDatabase().query(
-    "UPDATE club_registration_link SET revoked_at=now() WHERE kid_id=$1 AND revoked_at IS NULL",
-    [params.id],
+    "UPDATE club_registration_link SET revoked_at=now() WHERE kid_id=$1 AND revoked_at IS NULL AND ($2::text IS NULL OR term=$2)",
+    [params.id, url.searchParams.get("term")],
   );
   return json({ success: true });
 });

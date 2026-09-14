@@ -15,6 +15,7 @@ import "../styles/members.css";
         <button data-sign-out type="button" class="member-text-button mt-2">Sign out</button>
       </div>
     </div>
+    <div data-semester-controls hidden class="mt-8"></div>
     <p data-roster-count class="mt-8 font-mono text-xs uppercase tracking-widest"></p>
     <ul data-roster class="duckies-roster" aria-label="Club kids"></ul>
     <p data-empty hidden class="mt-6 text-lg">The lineup is taking shape. The club will add the kids here soon.</p>
@@ -31,18 +32,21 @@ import "../styles/members.css";
 <p data-member-load-error hidden class="mx-auto max-w-7xl px-6 py-4 text-sm" role="status">The members area couldn’t load. <button type="button" data-retry-members class="member-text-button">Try again</button></p>
 
 <script>
+  import { semesterControls } from "../lib/registration/semester-controls";
+  import type { Semester } from "../lib/registration/semesters";
   import { authClient } from "../lib/auth-client";
   import { kidOverview } from "../lib/registration/overview";
   import type { OrganiserKid } from "../lib/registration/records";
 
   type Kid = { id: string; name: string };
-  type Roster = { member: { email: string; role: "member" | "organiser"; canManagePayments?: boolean }; termLabel: string; kids: Kid[] };
+  type Roster = { member: { email: string; role: "member" | "organiser"; canManagePayments?: boolean }; term: Semester; semesters: Semester[]; termLabel: string; kids: Kid[] };
   const section = document.querySelector<HTMLElement>("[data-members]")!;
   const list = section.querySelector<HTMLUListElement>("[data-roster]")!;
   const form = section.querySelector<HTMLFormElement>("[data-add-kid]")!;
   const status = section.querySelector<HTMLElement>("[data-roster-status]")!;
   const loadError = document.querySelector<HTMLElement>("[data-member-load-error]")!;
   const memberLinks = document.querySelectorAll<HTMLAnchorElement>("[data-member-link]");
+  let selectedTerm = "";
   let generation = 0;
   let lastRoster = "";
 
@@ -51,6 +55,7 @@ import "../styles/members.css";
     lastRoster = "";
     section.hidden = true;
     list.replaceChildren();
+    section.querySelector("[data-semester-controls]")!.replaceChildren();
     form.reset();
     form.hidden = true;
     section.querySelector("[data-member-email]")!.textContent = "";
@@ -85,6 +90,10 @@ import "../styles/members.css";
 
   function render(data: Roster) {
     list.replaceChildren();
+    const controls = section.querySelector<HTMLElement>("[data-semester-controls]")!;
+    controls.hidden = data.member.role !== "organiser";
+    controls.replaceChildren();
+    if (!controls.hidden) controls.append(semesterControls(data.semesters, data.term, Boolean(data.member.canManagePayments), async id => { selectedTerm = id; await loadRoster(); }, message => { status.textContent = message; }));
     data.kids.forEach((kid, index) => {
       const row = document.createElement("li");
       row.className = "duckie-row";
@@ -95,7 +104,13 @@ import "../styles/members.css";
       const name = document.createElement("span");
       name.className = "duckie-name";
       name.textContent = kid.name;
-      row.append(number, name);
+      row.append(number);
+      if (data.member.role === "organiser") {
+        const photo = (kid as OrganiserKid).photoVersion;
+        if (photo) { const img = document.createElement("img"); img.className = "duckie-avatar"; img.alt = `${kid.name}'s profile photo`; img.width = 64; img.height = 64; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; row.append(img); }
+        else { const placeholder = document.createElement("span"); placeholder.className = "duckie-avatar duckie-avatar-empty"; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); row.append(placeholder); }
+      }
+      row.append(name);
       if (data.member.role === "organiser") {
         const actions = document.createElement("div");
         actions.className = "duckie-actions";
@@ -134,7 +149,7 @@ import "../styles/members.css";
         remove.setAttribute("aria-label", `Remove ${kid.name}`);
         actions.append(editButton, remove);
         row.append(actions, edit);
-        row.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), loadRoster, message => { status.textContent = message; }));
+        row.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), data.term, loadRoster, message => { status.textContent = message; }));
       }
       list.append(row);
     });
@@ -148,7 +163,7 @@ import "../styles/members.css";
   async function loadRoster() {
     const version = ++generation;
     try {
-      const response = await fetch("/api/kids", { cache: "no-store" });
+      const response = await fetch(`/api/kids${selectedTerm ? `?term=${encodeURIComponent(selectedTerm)}` : ""}`, { cache: "no-store" });
       if (version !== generation) return;
       if (response.status === 401) { clearRoster(); loadError.hidden = true; return; }
       if (!response.ok) throw new Error("Unavailable");

@@ -48,3 +48,8 @@
 .duckie-share, .duckie-payment, .duckie-history { margin-top:1rem; padding:1rem; border:1px solid var(--color-ink-950); border-radius:.75rem; }
 .duckie-share input { font-size:.8rem; }
 @media(max-width:600px) { .registration-grid,.duckie-facts { grid-template-columns:1fr; } .registration-panel { padding:1.1rem; } }
+.duckie-avatar { width:64px; height:64px; border:2px solid var(--color-ink-950); border-radius:50%; object-fit:cover; flex-shrink:0; }
+.duckie-avatar-empty { display:grid; place-items:center; background:var(--color-sun-500); font-family:var(--font-display); font-size:1.7rem; }
+.duckie-photo-form { padding:1rem; margin-top:1rem; border:1px dashed var(--color-ink-950); border-radius:.75rem; font-size:.875rem; }
+.semester-controls { max-width:650px; padding:1.25rem; border:2px solid var(--color-ink-950); border-radius:1rem; background:var(--color-cream-soft); }
+.semester-controls summary { cursor:pointer; text-decoration:underline; text-underline-offset:4px; margin-bottom:1rem; }

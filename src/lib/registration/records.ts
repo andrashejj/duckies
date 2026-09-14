@@ -8,8 +8,9 @@ import {
   verify,
 } from "node:crypto";
 import { getDatabase } from "../server/db";
-import { REGISTRATION_TERM, waiver, WAIVER_VERSION } from "./policy";
+import { waiver, WAIVER_VERSION } from "./policy";
 import { registrationSchema, type RegistrationInput } from "./schema";
+import { getSemester } from "./semesters";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
 export const sha256 = (value: string | Buffer) =>
   createHash("sha256").update(value).digest("hex");
@@ -37,7 +38,12 @@ function key() {
     throw new Error("An Ed25519 waiver key is required.");
   return result;
 }
-export async function issueLink(kidId: string, userId: string) {
+export async function issueLink(
+  kidId: string,
+  userId: string,
+  termId?: string,
+) {
+  const semester = await getSemester(termId);
   key(); // Never issue a link whose signature cannot be stored.
   const db = await getDatabase().connect();
   try {
@@ -48,13 +54,13 @@ export async function issueLink(kidId: string, userId: string) {
     );
     if (!kid.rowCount) throw new RegistrationError("Duckie not found.", 404);
     await db.query(
-      "UPDATE club_registration_link SET revoked_at = now() WHERE kid_id = $1 AND revoked_at IS NULL",
-      [kidId],
+      "UPDATE club_registration_link SET revoked_at = now() WHERE kid_id = $1 AND term=$2 AND revoked_at IS NULL",
+      [kidId, semester.id],
     );
     const token = randomBytes(32).toString("base64url");
     const { rows } = await db.query(
       "INSERT INTO club_registration_link (kid_id, token_hash, term, created_by, expires_at) VALUES ($1,$2,$3,$4, now() + interval '14 days') RETURNING expires_at",
-      [kidId, sha256(token), REGISTRATION_TERM, userId],
+      [kidId, sha256(token), semester.id, userId],
     );
     await db.query("COMMIT");
     return {
@@ -80,7 +86,7 @@ export function bearer(request: Request) {
 }
 export async function linkInfo(hash: string) {
   const { rows } = await getDatabase().query(
-    `SELECT l.*, k.name FROM club_registration_link l JOIN club_kid k ON k.id = l.kid_id
+    `SELECT l.*, k.name, s.label AS term_label,s.child_fee_mur,s.family_fee_mur FROM club_registration_link l JOIN club_kid k ON k.id = l.kid_id JOIN club_semester s ON s.id=l.term
     WHERE token_hash = $1 AND revoked_at IS NULL AND expires_at > now() AND k.archived_at IS NULL`,
     [hash],
   );
@@ -180,6 +186,14 @@ export async function completeRegistration(
       "UPDATE club_registration_link SET completed_at=$1 WHERE id=$2",
       [snapshot.signedAt, link.id],
     );
+    await db.query(
+      `INSERT INTO club_kid_photo(kid_id,image,source) SELECT $1,image,'guardian' FROM club_registration_photo WHERE link_id=$2
+      ON CONFLICT(kid_id) DO UPDATE SET image=EXCLUDED.image,source='guardian',uploaded_by=NULL,updated_at=now()`,
+      [link.kid_id, link.id],
+    );
+    await db.query("DELETE FROM club_registration_photo WHERE link_id=$1", [
+      link.id,
+    ]);
     await db.query("COMMIT");
     return { signedAt: snapshot.signedAt, id: snapshot.id };
   } catch (error) {
@@ -240,15 +254,17 @@ export type OrganiserKid = {
   link: any;
   contactName: string | null;
   contactPhone: string | null;
+  photoVersion: string | null;
+  waiverTerm: string | null;
 };
-export async function organiserRoster(): Promise<OrganiserKid[]> {
+export async function organiserRoster(term: string): Promise<OrganiserKid[]> {
   const { rows } = await getDatabase().query(
-    `SELECT k.*, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration,
+    `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link
-    FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id AND term=$1 ORDER BY signed_at DESC LIMIT 1) w ON true
+    FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
     WHERE k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
-    [REGISTRATION_TERM],
+    [term],
   );
   return rows.map((row) => ({
     id: row.id,
@@ -261,5 +277,7 @@ export async function organiserRoster(): Promise<OrganiserKid[]> {
     link: row.link,
     contactName: row.contact_name,
     contactPhone: row.contact_phone,
+    photoVersion: row.photo_version,
+    waiverTerm: row.waiver_term,
   }));
 }

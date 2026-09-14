@@ -3,19 +3,21 @@ import { getMemberSession } from "../../../lib/server/auth";
 import { getDatabase } from "../../../lib/server/db";
 import { json, parseName, sameOrigin } from "../../../lib/server/http";
 
-import { organiserRoster } from "../../../lib/registration/records";
+import { organiserRoster, RegistrationError } from "../../../lib/registration/records";
 import { canManagePayments } from "../../../lib/registration/schema";
-import { TERM_LABEL } from "../../../lib/registration/policy";
+import { getSemester, semesters } from "../../../lib/registration/semesters";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, url }) => {
   try {
     const member = await getMemberSession(request.headers);
     if (!member) return json({ error: "Please sign in with a club-approved email address." }, 401);
-    const kids = member.role === "organiser" ? await organiserRoster() : (await getDatabase().query("SELECT id, name FROM club_kid WHERE archived_at IS NULL ORDER BY lower(name), id")).rows;
-    return json({ member: { email: member.email, role: member.role, canManagePayments: member.role === "organiser" && canManagePayments(member.email) }, termLabel: TERM_LABEL, kids });
-  } catch {
+    const term = await getSemester(member.role === "organiser" ? url.searchParams.get("term") : undefined);
+    const kids = member.role === "organiser" ? await organiserRoster(term.id) : (await getDatabase().query("SELECT id, name FROM club_kid WHERE archived_at IS NULL ORDER BY lower(name), id")).rows;
+    return json({ member: { email: member.email, role: member.role, canManagePayments: member.role === "organiser" && canManagePayments(member.email) }, termLabel: term.label, term, semesters: member.role === "organiser" ? await semesters() : [], kids });
+  } catch (error) {
+    if (error instanceof RegistrationError) return json({ error: error.message }, error.status);
     console.error("Duckies roster read failed. Check database configuration and migrations.");
     return json({ error: "The kids list is temporarily unavailable. Please try again." }, 503);
   }

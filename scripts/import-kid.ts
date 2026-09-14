@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { getDatabase } from "../src/lib/server/db";
 import { paymentSchema, PAYMENT_OWNER } from "../src/lib/registration/schema";
-import { REGISTRATION_TERM } from "../src/lib/registration/policy";
+import { getSemester } from "../src/lib/registration/semesters";
 const file = process.argv[2];
 if (!file)
   throw new Error(
@@ -22,6 +22,7 @@ const data = z
 const pool = getDatabase();
 const db = await pool.connect();
 try {
+  await getSemester(data.payment.term);
   await db.query("BEGIN");
   await db.query("SELECT pg_advisory_xact_lock(94831722)");
   await db.query(
@@ -56,7 +57,7 @@ try {
     "SELECT id FROM club_payment_event WHERE kid_id=$1 AND term=$2 AND note=$3 AND status=$4 AND amount_mur IS NOT DISTINCT FROM $5::numeric",
     [
       kid[0].id,
-      REGISTRATION_TERM,
+      data.payment.term,
       data.payment.note,
       data.payment.status,
       data.payment.amountMur,
@@ -67,7 +68,7 @@ try {
       "INSERT INTO club_payment_event(kid_id,term,status,amount_mur,note,actor_email) VALUES ($1,$2,$3,$4,$5,$6)",
       [
         kid[0].id,
-        REGISTRATION_TERM,
+        data.payment.term,
         data.payment.status,
         data.payment.amountMur,
         data.payment.note,

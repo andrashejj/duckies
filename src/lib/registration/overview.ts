@@ -1,3 +1,4 @@
+import type { Semester } from "./semesters";
 import type { OrganiserKid } from "./records";
 const text = (tag: string, value: string) => {
   const element = document.createElement(tag);
@@ -33,6 +34,7 @@ async function api(url: string, method = "GET", body?: unknown) {
 export function kidOverview(
   kid: OrganiserKid,
   canPay: boolean,
+  semester: Semester,
   reload: () => Promise<void>,
   report: (message: string) => void,
 ) {
@@ -91,10 +93,10 @@ export function kidOverview(
     r ? `${r.rashieSize} · ${r.rashieName} · ${r.membership}` : "Not supplied",
   );
   fact(
-    "Payment",
+    `Payment · ${semester.label}`,
     kid.payment
       ? `${kid.payment.status === "paid" ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
-      : "Not recorded",
+      : "Unpaid · no payment recorded for this semester",
   );
   if (kid.contactName || kid.contactPhone)
     fact(
@@ -120,7 +122,10 @@ export function kidOverview(
   const generate = button("Generate registration link", async () => {
     generate.disabled = true;
     try {
-      const data = await api(`/api/kids/${kid.id}/link`, "POST");
+      const data = await api(
+        `/api/kids/${kid.id}/link?term=${encodeURIComponent(semester.id)}`,
+        "POST",
+      );
       share.replaceChildren();
       share.hidden = false;
       const label = text("label", "Private registration link");
@@ -169,7 +174,10 @@ export function kidOverview(
   });
   const revoke = button("Revoke registration link", async () => {
     try {
-      await api(`/api/kids/${kid.id}/link`, "DELETE");
+      await api(
+        `/api/kids/${kid.id}/link?term=${encodeURIComponent(semester.id)}`,
+        "DELETE",
+      );
       await reload();
       report("Invitation revoked.");
     } catch (error) {
@@ -271,6 +279,10 @@ export function kidOverview(
       noteLabel,
       text(
         "p",
+        `Applies to ${semester.label}. Fees: Rs ${semester.childFeeMur} per child / Rs ${semester.familyFeeMur} per family. Amount is the total recorded for this child or the attributed family payment; explain shared payments in the note.`,
+      ),
+      text(
+        "p",
         "Only Andras can change this. Every change stays in the history.",
       ),
       save,
@@ -280,6 +292,7 @@ export function kidOverview(
       save.disabled = true;
       try {
         await api(`/api/kids/${kid.id}/payment`, "POST", {
+          term: semester.id,
           status: select.value,
           amountMur: amount.value === "" ? null : Number(amount.value),
           note: note.value,
@@ -296,5 +309,65 @@ export function kidOverview(
     };
     section.append(payment);
   }
+  const photo = document.createElement("form");
+  photo.className = "member-form duckie-photo-form";
+  const photoLabel = text("label", "Profile photo");
+  const file = document.createElement("input");
+  file.type = "file";
+  file.accept = "image/jpeg,image/png,image/webp";
+  photoLabel.append(file);
+  const upload = document.createElement("button");
+  upload.type = "submit";
+  upload.className = "member-text-button";
+  upload.textContent = "Upload photo";
+  photo.append(
+    photoLabel,
+    text(
+      "p",
+      "Private to organisers. JPEG, PNG or WebP, up to 4 MB / 20 megapixels. Uploading does not grant permission to publish.",
+    ),
+    upload,
+  );
+  if (kid.photoVersion)
+    photo.append(
+      button("Remove photo", async () => {
+        try {
+          await api(`/api/kids/${kid.id}/photo`, "DELETE");
+          await reload();
+          report("Profile photo removed.");
+        } catch (e) {
+          report(String(e));
+        }
+      }),
+    );
+  photo.onsubmit = async (event) => {
+    event.preventDefault();
+    const selected = file.files?.[0];
+    if (!selected) {
+      report("Choose a photo first.");
+      return;
+    }
+    if (selected.size > 4 * 1024 * 1024) {
+      report("Choose a photo smaller than 4 MB.");
+      return;
+    }
+    upload.disabled = true;
+    try {
+      const response = await fetch(`/api/kids/${kid.id}/photo`, {
+        method: "PUT",
+        headers: { "Content-Type": selected.type },
+        body: selected,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      await reload();
+      report("Private profile photo saved.");
+    } catch (e) {
+      report(e instanceof Error ? e.message : "Photo upload failed.");
+    } finally {
+      upload.disabled = false;
+    }
+  };
+  section.append(photo);
   return section;
 }

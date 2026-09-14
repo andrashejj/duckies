@@ -11,7 +11,6 @@ import {
 } from "../../../lib/registration/http";
 import { json, sameOrigin } from "../../../lib/server/http";
 import {
-  TERM_LABEL,
   waiver,
   WAIVER_VERSION,
 } from "../../../lib/registration/policy";
@@ -22,7 +21,9 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
   return json({
     childName: link.name,
     term: link.term,
-    termLabel: TERM_LABEL,
+    termLabel: link.term_label,
+    childFeeMur: Number(link.child_fee_mur),
+    familyFeeMur: Number(link.family_fee_mur),
     expiresAt: link.expires_at,
     completedAt: link.completed_at,
     canDownload:
