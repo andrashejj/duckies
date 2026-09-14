@@ -74,11 +74,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
       <header class="site-header border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)]/92 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 sm:flex-nowrap sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
           <a href="/" class="group flex min-w-0 items-center gap-2 sm:gap-3">
-            <span class="relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-lg font-black text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-transform group-hover:rotate-[-6deg] sm:h-12 sm:w-12" aria-hidden="true">
-              <span class="absolute inset-x-0 bottom-0 h-1/2 bg-[var(--color-sun-500)]"></span>
-              <span class="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-cream-soft)] ring-2 ring-[var(--color-ink-950)] sm:h-6 sm:w-6"></span>
-              <span class="absolute inset-x-0 bottom-0 h-[3px] bg-[var(--color-ink-950)]"></span>
-            </span>
+            <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" class="h-10 w-10 shrink-0 rounded-full sm:h-12 sm:w-12" />
             <div class="min-w-0">
               <p class="truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--color-coral-500)] sm:text-xs sm:tracking-[0.28em]">
                 {variant === "performance" ? "Sunset Duckies" : "Sunset ★ Duckies"}
@@ -207,23 +203,9 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         });
       };
 
-      const heroVideo = document.querySelector("[data-hero-video]");
-      if (heroVideo instanceof HTMLVideoElement) {
-        const applyHeroVideoRate = () => {
-          heroVideo.playbackRate = 0.72;
-        };
-
-        applyHeroVideoRate();
-        heroVideo.addEventListener("loadedmetadata", applyHeroVideoRate);
-        heroVideo.addEventListener("play", applyHeroVideoRate);
-      }
-
       if (reducedMotion.matches) {
         revealAll();
 
-        if (heroVideo instanceof HTMLVideoElement) {
-          heroVideo.pause();
-        }
       } else {
         animate(
           "[data-float]",

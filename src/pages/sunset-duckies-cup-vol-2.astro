@@ -1,4 +1,5 @@
 ---
+import SurfPhoto from "../components/SurfPhoto.astro";
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -72,7 +73,7 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay (date TBD) 
             {cup.blurb}
           </p>
           <p class="font-mono text-[0.78rem] uppercase tracking-[0.22em] text-white/75">
-            📍 {cup.location}  ·  🗓 {cup.timeLabel}
+             {cup.location}  ·   {cup.timeLabel}
           </p>
         </div>
 
@@ -134,7 +135,7 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay (date TBD) 
       <ul class="grid max-w-3xl gap-3" data-reveal>
         {cup.lessons.map((lesson) => (
           <li class:list={["flex items-center gap-4 rounded-[1.3rem] border-2 border-[var(--color-ink-950)] p-4 shadow-[3px_3px_0_0_var(--color-ink-950)] sm:p-5", lesson.accent]}>
-            <span class="shrink-0 text-3xl sm:text-4xl">{lesson.emoji}</span>
+            <SurfPhoto scene={lesson.photo} />
             <div class="min-w-0 flex-1">
               <p class="font-display text-lg text-[var(--color-ink-950)] sm:text-xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
                 {lesson.title}

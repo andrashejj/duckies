@@ -25,7 +25,6 @@ export interface BlogGif {
 }
 
 export interface BlogPostSection {
-  emoji: string;
   title: string;
   accent: string;
   body: string;
@@ -40,7 +39,7 @@ export interface BlogPost {
   dateISO: string;
   location: string;
   excerpt: string;
-  facts: { emoji: string; value: string; label: string }[];
+  facts: { value: string; label: string }[];
   intro: string[];
   sections: BlogPostSection[];
   outro: string;
@@ -76,35 +75,31 @@ export const blog = {
       excerpt:
         "One open kickoff, semester membership, one parent from every family in the water, Estelle joining the brand work, and a competition planned for October.",
       facts: [
-        { emoji: "🌅", value: "11 Sep", label: "kickoff · 4-6pm · open to all" },
-        { emoji: "🦆", value: "Rs 3k / 5k", label: "one kid / family · semester" },
-        { emoji: "🌊", value: "1 parent", label: "every family · in the water" },
-        { emoji: "🏆", value: "October", label: "next competition planned" },
+        { value: "11 Sep", label: "kickoff · 4-6pm · open to all" },
+        { value: "Rs 3k / 5k", label: "one kid / family · semester" },
+        { value: "1 parent", label: "every family · in the water" },
+        { value: "October", label: "next competition planned" },
       ],
       intro: [
         "Hope you had a great summer. We missed you soo much. Looking down, I think my belly could also use some training :D. So let's get down to business.",
       ],
       sections: [
         {
-          emoji: "01",
           title: "Membership is a commitment",
           accent: "sticker-teal",
           body: "Membership is Rs 3,000 per semester for one child, or Rs 5,000 for a family. The fee is part of a commitment from all of us: we take the club seriously, and we need the duckies and parents to do the same. After the kickoff, our regular Monday and Friday training from 4-6pm will be for members only.",
         },
         {
-          emoji: "02",
           title: "Everyone is invited on 11 September",
           accent: "sticker-sun",
           body: "We are starting the semester with a kickoff on Friday 11 September from 4-6pm. This session is open to everyone, and it can be the free first session for new duckies. We had too many gnarly situations last semester, so every family must have at least one parent or guardian in the water for the full session, including that first one. We will share the final details in the WhatsApp group.",
         },
         {
-          emoji: "03",
           title: "Estelle is joining the brand crew",
           accent: "sticker-coral",
           body: "Estelle, the daughter of a good friend of mine from Switzerland, is travelling to Mauritius for an internship with Sunset Duckies. Yes, we are officially importing Swiss talent :D. She will help us take the brand to the next level and contact everyone who joins the club.",
         },
         {
-          emoji: "04",
           title: "A competition is coming in October",
           accent: "sticker-lilac",
           body: "We are planning the next Sunset Duckies competition for October. The date and format are still being worked out, and we will share them as soon as they are ready.",
@@ -152,10 +147,10 @@ export const blog = {
       excerpt:
         "We swapped the Tamarin shorebreak for a boat day at the island's wildest corner — snorkelling over the Le Morne reef, watching One Eye peel, and learning what the mountain remembers.",
       facts: [
-        { emoji: "🚤", value: "Boat day", label: "down the west coast" },
-        { emoji: "📍", value: "Le Morne", label: "south-west tip" },
-        { emoji: "🤿", value: "Reef snorkel", label: "lagoon + passes" },
-        { emoji: "🌊", value: "One Eye", label: "a world-class left" },
+        { value: "Boat day", label: "down the west coast" },
+        { value: "Le Morne", label: "south-west tip" },
+        { value: "Reef snorkel", label: "lagoon + passes" },
+        { value: "One Eye", label: "a world-class left" },
       ],
       intro: [
         "Monday and Friday, 4pm, Tamarin Bay. This time we loaded the duckies onto a boat and pointed south.",
@@ -163,25 +158,21 @@ export const blog = {
       ],
       sections: [
         {
-          emoji: "🚤",
           title: "Down the coast",
           accent: "sticker-teal",
           body: "Out of the bay, past the salt pans and fishing boats, the mountain growing the whole way down. By the time we crossed into the Le Morne lagoon every duckie was hanging off the side calling out fish.",
         },
         {
-          emoji: "🐠",
           title: "Faces in the water",
           accent: "sticker-sun",
           body: "Masks on, fins on, over the side. Parrotfish, needlefish, the odd squeal when something bigger cruised past. Half the crew didn't want to get back on the boat.",
         },
         {
-          emoji: "🌊",
           title: "Wave school, no paddling required",
           accent: "sticker-coral",
           body: "Near the passes we watched One Eye peel — one of the best lefts alive, over the same reef the kids had just been swimming. Two sessions a week in the Tamarin whitewater leads exactly here.",
         },
         {
-          emoji: "⛰️",
           title: "What the mountain remembers",
           accent: "sticker-lilac",
           body: "Le Morne Brabant is a UNESCO Heritage site — once a refuge for escaped slaves who chose its cliffs over capture. We took a quiet minute under it. Knowing the story is part of being a local crew.",
@@ -229,10 +220,10 @@ export const blog = {
       excerpt:
         "Sunset Duckies started as a surf club. Project Molt asks whether it can also become a product brand built around quality, local work and communities that can shape it for themselves.",
       facts: [
-        { emoji: "◉", value: "4 ideas", label: "developed first" },
-        { emoji: "↘", value: "1 product", label: "chosen from evidence" },
-        { emoji: "◎", value: "31 Oct", label: "Tamarin launch" },
-        { emoji: "↗", value: "28 Feb", label: "global plan" },
+        { value: "4 ideas", label: "developed first" },
+        { value: "1 product", label: "chosen from evidence" },
+        { value: "31 Oct", label: "Tamarin launch" },
+        { value: "28 Feb", label: "global plan" },
       ],
       intro: [
         "Sunset Duckies grew from afternoons in the water, families helping each other and kids learning to surf. We are now exploring whether that same community can build useful, high-quality products for surfers and surf families.",
@@ -240,19 +231,16 @@ export const blog = {
       ],
       sections: [
         {
-          emoji: "01",
           title: "Start with four",
           accent: "sticker-teal",
           body: "We will develop four product ideas to the same level, put them in front of families, kids, likely buyers and makers, then choose one from what we learn. No favourite gets a head start.",
         },
         {
-          emoji: "02",
           title: "Make and launch one",
           accent: "sticker-sun",
           body: "The selected idea becomes a small proof of concept made with local people where possible. We will build interest before launching it alongside a surf competition at the end of October, then record what sold, what failed and what people would change.",
         },
         {
-          emoji: "03",
           title: "Learn what can travel",
           accent: "sticker-coral",
           body: "The Tamarin pilot runs through February. By then we need real product standards, working economics, a local handover model and a plan for how another surf community could start without losing its own identity.",

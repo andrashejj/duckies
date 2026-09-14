@@ -69,7 +69,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
             i % 2 === 1 && i < post.facts.length - 1 && "lg:border-r-2 lg:border-[var(--color-ink-950)]/25",
           ]}>
             <p class="font-display text-2xl font-black leading-none md:text-3xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
-              {fact.emoji} {fact.value}
+              {fact.value}
             </p>
             <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/80">{fact.label}</p>
           </div>
@@ -92,7 +92,6 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
           <Fragment>
           <div class:list={["surface-card p-7 md:p-8", section.accent, i % 2 === 0 ? "tilt-left" : "tilt-right", post.sections.length % 2 === 1 && i === post.sections.length - 1 && "md:col-span-2"]} data-reveal>
             <div class="flex items-center gap-3">
-              <span class="text-3xl" aria-hidden="true">{section.emoji}</span>
               <h2 class="section-title" style="font-size: clamp(1.4rem, 2.4vw, 1.9rem);">{section.title}</h2>
             </div>
             <p class="body-copy mt-4">{section.body}</p>

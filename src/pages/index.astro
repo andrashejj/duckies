@@ -1,5 +1,6 @@
 ---
 import QRCode from "qrcode";
+import SurfPhoto from "../components/SurfPhoto.astro";
 
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -19,46 +20,21 @@ const description =
   "A kids' surf club in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding into the sunset week after week.";
 
 const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
-const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
 ---
 
-<BaseLayout title={title} description={description} page="home">
+<BaseLayout title={title} description={description} page="home" image="/media/surf/hero-wave.webp" imageAlt="A powerful teal wave curling into a sunlit barrel." imageWidth={1672} imageHeight={941}>
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
     <div class="absolute inset-0 -z-10">
-      <video
-        data-hero-video
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        poster="/media/hero-poster.jpg"
-        class="h-full w-full object-cover brightness-[0.5] saturate-[1.15]"
-      >
-        <source src="/media/hero-wave.mp4" type="video/mp4" />
-      </video>
-      <div class="absolute inset-0 bg-[linear-gradient(120deg,rgba(11,22,32,0.8)_0%,rgba(20,38,58,0.55)_45%,rgba(7,201,182,0.25)_100%)]"></div>
-      <div class="absolute inset-0 mix-blend-overlay opacity-60 bg-[radial-gradient(circle_at_80%_20%,rgba(255,210,63,0.4),transparent_45%)]"></div>
-    </div>
-
-    <!-- Floating sticker decorations -->
-    <div class="pointer-events-none absolute right-8 top-28 hidden lg:block" aria-hidden="true">
-      <div class="floating">
-        <div class="relative h-20 w-20">
-          <div class="absolute inset-0 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] shadow-[4px_4px_0_0_var(--color-ink-950)]"></div>
-          <div class="spin-slow absolute inset-0 flex items-center justify-center font-mono text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-ink-950)]">
-            <svg viewBox="0 0 100 100" class="h-full w-full">
-              <defs>
-                <path id="circle-text" d="M 50,50 m -36,0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" />
-              </defs>
-              <text font-size="12" fill="#0b1620" letter-spacing="2">
-                <textPath href="#circle-text">★ tamarin bay · tamarin bay · </textPath>
-              </text>
-            </svg>
-          </div>
-        </div>
-      </div>
+      <img
+        data-hero-image
+        src="/media/surf/hero-wave.webp"
+        alt="A powerful teal wave curling into a sunlit barrel."
+        width="1672" height="941"
+        fetchpriority="high" loading="eager"
+        class="h-full w-full object-cover object-[60%_center]"
+      />
+      <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,22,32,0.65)_0%,rgba(11,22,32,0.12)_65%),linear-gradient(0deg,rgba(11,22,32,0.72)_0%,transparent_75%)]"></div>
     </div>
 
     <div class="relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
@@ -80,7 +56,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
               <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">real</span>
               grit.
             </span>
-            <span class="block">No <span class="ink-underline text-[var(--color-ink-950)]">cap</span>.</span>
+            <span class="block">No <span class="bg-[var(--color-sun-500)] px-1 text-[var(--color-ink-950)]">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
             {site.name} is a surf club for kids in Tamarin. Two sessions a week, kids training
@@ -187,7 +163,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
           <p class="section-kicker">{site.ageGuide.kicker}</p>
 
           <div class="wobble inline-flex rotate-[-2deg] items-center gap-3 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-5 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-            <span class="text-2xl" aria-hidden="true">🐤</span>
+
             <span class="font-display text-2xl font-black leading-none sm:text-3xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
               {site.ageGuide.rangeLabel}
             </span>
@@ -209,9 +185,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
         <div class="grid gap-4 sm:gap-5" data-reveal>
           {site.ageGuide.requirements.map((req, i) => (
             <div class:list={["surface-card flex items-start gap-4 p-6 sm:p-7", i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
-              <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] text-3xl shadow-[3px_3px_0_0_var(--color-ink-950)]" aria-hidden="true">
-                {req.emoji}
-              </span>
+              <SurfPhoto scene={req.photo} />
               <div>
                 <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
                   {req.title}
@@ -348,9 +322,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
     <a href="/sunset-duckies-cup" class="group relative block">
       <div class="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-10 lg:px-10 lg:py-12">
         <div class="flex items-center gap-4">
-          <span class="floating inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-[var(--color-cream-soft)] bg-[var(--color-coral-500)] text-3xl shadow-[4px_4px_0_0_var(--color-sun-500)]" aria-hidden="true">
-            🦆
-          </span>
+          <SurfPhoto scene="beach-crew" />
           <div>
             <p class="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-[var(--color-sun-500)]">
               ★ first ever · vol. 01
@@ -366,9 +338,9 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             {site.cup.tagline} Sunday <strong>31 May 2026</strong>, Tamarin Bay, 13:00–17:30.
           </p>
           <div class="flex flex-wrap gap-2">
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]">🐤 Duckling + 🦆 Duck</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]">🍔 BBQ + 🏆 prizes</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]">💸 {site.cup.entryFeeLabel}</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> Duckling +  Duck</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> BBQ +  prizes</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> {site.cup.entryFeeLabel}</span>
           </div>
         </div>
 
@@ -422,8 +394,8 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
       <div class="relative" data-reveal>
         <div class="media-frame aspect-[1.08/0.95] tilt-right transition-transform duration-500">
           <img
-            src="/media/board-lineup.jpg"
-            alt="Young surfers standing with their boards at the shoreline in Tamarin."
+            src="/media/surf/surf-kit.webp"
+            alt="Surfboards and a rash vest ready on a sandy beach."
             loading="eager"
           />
         </div>
@@ -480,7 +452,7 @@ const pillarTilts = ["tilt-left", "tilt-right", "tilt-left"];
             ★ Next up — first ever
           </p>
           <p class="mt-2 font-display text-xl leading-tight text-[var(--color-cream-soft)] sm:text-2xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span> — Sun 31 May 2026 🦆
+            Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span> — Sun 31 May 2026
           </p>
           <p class="mt-2 text-[0.92rem] leading-6 text-[var(--color-cream-soft)]/85">
             Tamarin Bay, 13:00–17:30. Heats of 4, two divisions, BBQ on the sand, parent heat at 16:30.

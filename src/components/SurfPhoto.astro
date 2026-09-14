@@ -1,0 +1,12 @@
+---
+interface Props {
+  scene: "hero-wave" | "whitewater" | "surf-kit" | "beach-crew";
+  wide?: boolean;
+}
+const { scene, wide = false } = Astro.props;
+---
+<img src={`/media/surf/${scene}-small.webp`} alt="" aria-hidden="true" width="600" height="450" loading="lazy" decoding="async" class:list={["surf-photo", { "surf-photo-wide": wide }]} />
+<style>
+  .surf-photo { display: block; width: clamp(5rem, 9vw, 7.5rem); height: clamp(5rem, 9vw, 7.5rem); flex-shrink: 0; object-fit: cover; border: 1px solid var(--color-ink-950); border-radius: .5rem; }
+  .surf-photo-wide { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+</style>

@@ -571,6 +571,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .js [data-float], .js [data-reveal] { opacity: 1; transform: none; filter: none; }
   .floating, .spin-slow, .wobble, .marquee-track { animation: none; }
 }
 
