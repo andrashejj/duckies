@@ -54,7 +54,7 @@ export default function GranolaNutrition({recipe,canEdit,disabled,onChange}:{rec
     try{const next=applySuggestion(recipe,suggestion);onChange(next);setApplied(JSON.stringify(next));}catch{setError("This suggestion no longer matches the recipe. Ask for a fresh review.");}
   }
   return <section className="g-nutrition-section" id="granola-nutrition" aria-label="Nutrition and AI adviser">
-    <div className="g-section-title"><span>05 / WHAT'S INSIDE</span><b>A better mix, by the numbers.</b></div>
+    <div className="g-section-title"><span>03 / WHAT'S INSIDE</span><b>A better mix, by the numbers.</b></div>
     <div className="g-nutrition-layout">
       <div className="g-nutrition-facts">
         <div className="g-nutrition-title"><div><span className="g-eyebrow">RECIPE-DERIVED ESTIMATES</span><h4>Nutrition notebook</h4></div><span className="g-estimate-tag">{facts?.[0].complete?"Estimated":"Partial estimate"}</span></div>

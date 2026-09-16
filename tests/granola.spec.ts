@@ -259,8 +259,9 @@ test("scenario changes update the whole draft immediately on desktop and mobile"
   await explorer.getByLabel('Scenario hourly labour cost',{exact:true}).fill('300');
   await expect(app.getByLabel('Loaded hourly cost',{exact:true})).toHaveValue('300');
   await expect(app.locator('.g-month > strong')).toHaveText('Rs -5,533');
-  const ledger=app.getByLabel('Monthly cost breakdown',{exact:true});
-  await expect(ledger.locator('div').filter({has:page.locator('dt',{hasText:'Order handling + admin'})})).toContainText('Rs 3,000.00');
+  const sheet=app.getByLabel('Business case sheet',{exact:true});
+  await expect(sheet.locator('.g-sheet-cost').filter({has:page.getByLabel('Order handling + admin amount',{exact:true})}).locator('.g-sheet-amount')).toContainText('Rs 3,000.00');
+  await expect(sheet.locator('.g-sheet-result > strong')).toHaveText('Rs -5,533');
   await app.getByLabel('Batch costing',{exact:true}).selectOption('proportional');
   await expect(app.locator('.g-month > strong')).toHaveText('Rs -4,633');
   await explorer.getByRole('button',{name:'Packs per month',exact:true}).click();

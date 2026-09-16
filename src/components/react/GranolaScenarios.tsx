@@ -27,7 +27,7 @@ export default function GranolaScenarios({recipe,disabled,onChange}:{recipe:Reci
   const zero=y(0);
   const choose=(v:number)=>onChange(key,v);
   return <div className="g-chart g-scenarios" aria-label="Business scenario explorer">
-    <span>CHANGE THE BUSINESS CASE</span>
+    <span>WHAT IF / SAME DRAFT</span>
     <div className="g-scenario-tabs" role="group" aria-label="Scenario axis"><button type="button" aria-pressed={mode==="volume"} onClick={()=>setMode("volume")}>Packs per month</button><button type="button" aria-pressed={mode==="price"} onClick={()=>setMode("price")}>Selling price</button><button type="button" aria-pressed={mode==="labour"} onClick={()=>setMode("labour")}>Hourly labour</button></div>
     <svg viewBox="0 0 300 171" role="img" aria-label={mode==="volume"?"Monthly profit from zero packs through break-even":mode==="price"?"Monthly profit by selling price":"Monthly profit by hourly labour cost"}>
       <defs><clipPath id={`${uid}-profit`}><rect x="42" y="20" width="244" height={Math.max(0,zero-20)}/></clipPath><clipPath id={`${uid}-loss`}><rect x="42" y={zero} width="244" height={Math.max(0,135-zero)}/></clipPath></defs>
@@ -48,7 +48,7 @@ export default function GranolaScenarios({recipe,disabled,onChange}:{recipe:Reci
     <input className="g-scenario-slider" aria-label={mode==="volume"?"Explore monthly volume":mode==="price"?"Explore selling price":"Explore hourly labour cost"} type="range" disabled={disabled} min={0} max={maximum} step={1} value={selected} onChange={e=>choose(Number(e.target.value))}/>
     <div className="g-scenario-presets">{(mode==="volume"?[0,10,25,50,100]:[0,100,200,250,350]).map(v=><button type="button" disabled={disabled} key={v} aria-pressed={selected===v} onClick={()=>choose(v)}>{mode==="volume"?`${v} packs`:`Rs ${v}${mode==="labour"?" / h":""}`}</button>)}</div>
     <div className="g-scenario-result"><span>{mode==="volume"?`${selected} made · ${preview.sold} sold at ${money(recipe.price)}`:`${preview.sold} sold at ${money(recipe.price)}${mode==="labour"?` · ${money(selected)} / h`:""}`}</span><strong className={preview.monthlyProfit<0?"negative":""}>{money(preview.monthlyProfit)}<small> / month</small></strong><span>{preview.monthlyProfit<0?"Loss":"Profit"} after {money(preview.overhead)} recurring overhead · total costs {money(preview.monthlyCost)}</span></div>
-    <p>Changes update this draft, the monthly breakdown and comparisons immediately. Save a version to keep them.</p>
+    <p>Changes are written straight onto the business case sheet, so the monthly result and comparisons follow immediately. Save a version to keep them.</p>
     <p>{mode==="volume"?(recipe.batchCostMode==="whole"?"Each started batch incurs its full paid time and batch expenses. Profit can dip when another batch starts.":"Labour and batch expenses scale proportionally with production."):mode==="price"?"Volume and sell-through stay as entered. Changing price does not predict customer demand.":"Costs entered as rupee amounts stay at their entered amount. Costs entered as paid hours follow this rate."}</p>
   </div>;
 }
