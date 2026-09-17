@@ -21,11 +21,11 @@ set -euo pipefail
 TOKEN="${1:?usage: list-share-media.sh <share-token>}"
 HOST="https://owncloud.justnet.pl"
 
-curl -fsS -X PROPFIND -u "${TOKEN}:" -H 'Depth: 1' "${HOST}/public.php/webdav/" \
-| python3 - <<'PY'
+XML="$(curl -fsS -X PROPFIND -u "${TOKEN}:" -H 'Depth: 1' "${HOST}/public.php/webdav/")" \
+  python3 - <<'PY'
 import sys, re, json, urllib.parse, posixpath
 
-xml = sys.stdin.read()
+xml = __import__("os").environ["XML"]  # curl output; stdin carries this script
 hrefs = re.findall(r"<[a-zA-Z]*:?href>([^<]+)</[a-zA-Z]*:?href>", xml)
 
 names = []

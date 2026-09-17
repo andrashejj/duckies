@@ -1,6 +1,67 @@
 // Photos on /gallery. Originals come from the members' WhatsApp group; the
 // WebP derivatives live in public/media/gallery/ (see CREDITS.md there).
 
+export type GallerySlug =
+  | "sunset-ride-arms-out"
+  | "standing-tall"
+  | "riding-the-shore"
+  | "first-waves-blue-sky"
+  | "crouch-and-go"
+  | "evening-glide"
+  | "pink-board-whitewater"
+  | "three-on-the-inside"
+  | "sunset-ride-arms-out-2"
+  | "wading-in"
+  | "board-lineup-sunset"
+  | "crew-and-boards"
+  | "boards-under-the-mountain"
+  | "filao-games"
+  | "beach-run"
+  | "sand-games"
+  | "warm-up-circle"
+  | "into-the-dusk"
+  | "sunrise-rays"
+  | "red-sun-lineup"
+  | "sunrise-sky"
+  | "dawn-patrol"
+  | "sunrise-rays-2"
+  | "red-sun-wide"
+  | "bonfire-at-sunset"
+  | "evening-sun"
+  | "sunset-silhouette"
+  | "bonfire-circle"
+  | "sparks"
+  | "bonfire-blue-hour"
+  | "bonfire-faces"
+  | "bonfire-crew"
+  | "painted-boards"
+  | "heart-cake"
+  | "le-morne-sunrise"
+  | "le-morne-green-wall"
+  | "le-morne-arjon-drop"
+  | "le-morne-point-from-above"
+  | "le-morne-sandcastles"
+  | "reef-foam-from-above"
+  | "cup-the-crew"
+  | "cup-arms-out"
+  | "cup-duckling-heat"
+  | "cup-pink-board-ride"
+  | "cup-duck-heat"
+  | "cup-final-golden-hour"
+  | "cup-finalists"
+  | "cup-finalists-2"
+  | "cup-grey-goose-heat"
+  | "cup-beach-sprint"
+  | "cup-boards-on-the-sand"
+  | "cup-briefing"
+  | "cup-coach-and-duckling"
+  | "cup-the-final"
+  | "little-reef-lineup"
+  | "little-reef-kids-on-wave"
+  | "little-reef-over-the-reef"
+  | "little-reef-long-wave"
+  | "little-reef-paddle-out";
+
 export type GalleryPhoto = { slug: string; alt: string; credit: string; date: string; w: number; h: number };
 export type GallerySection = { id: string; title: string; lead: string; photos: GalleryPhoto[] };
 export type GalleryClip = { slug: string; title: string; credit: string; date: string };
@@ -59,6 +120,29 @@ export const gallery = {
       { slug: "le-morne-sandcastles", alt: "Two Duckies and a parent on the empty Le Morne beach, seen from the drone.", credit: "club drone", date: "12 Jul 2026", w: 1600, h: 844 },
       { slug: "reef-foam-from-above", alt: "Whitewater spreading over the Le Morne reef, seen from a low-flying drone.", credit: "club drone", date: "12 Jul 2026", w: 1600, h: 844 },
     ] },
+    { id: "cup-vol-1", title: "Cup Vol. 01", lead: "Sunday 31 May 2026. The first Sunset Duckies Cup, shot on a proper camera: heats, the Final at golden hour, and the parents' turn.", photos: [
+      { slug: "cup-the-crew", alt: "The whole club with their boards on Tamarin beach after Cup Vol. 01, arms up.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-arms-out", alt: "A Duckling rides the whitewater to the beach, arms out.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-duckling-heat", alt: "A Duckling stands tall on a small wave in a Cup heat.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-pink-board-ride", alt: "A Duckie rides a pink soft-top through the whitewater.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-duck-heat", alt: "A Duck in a pink rashie rides a wave in front of the beach, arms out.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-final-golden-hour", alt: "A finalist rides a wave under a golden evening sky.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-finalists", alt: "The finalists line up behind their boards on the sand.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-finalists-2", alt: "Three Duckies waiting with their boards before the Final.", credit: "Cup photographer", date: "31 May 2026", w: 1067, h: 1600 },
+      { slug: "cup-grey-goose-heat", alt: "Two parents in wetsuits ride the same wave in the grey goose heat.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-beach-sprint", alt: "Duckies sprint along the shoreline in a beach game.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-boards-on-the-sand", alt: "Soft-top boards laid out in a row on the sand before the heats.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-briefing", alt: "Families gather at the desk on the beach for the Cup briefing.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-coach-and-duckling", alt: "A coach and a Duckling in a wetsuit on the sand, the mountain behind.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+      { slug: "cup-the-final", alt: "The Final at sunset: a Duckie riding a wave in silhouette under a dramatic sky.", credit: "Cup photographer", date: "31 May 2026", w: 1600, h: 1067 },
+    ] },
+    { id: "little-reef", title: "The Little Reef trip", lead: "4 June 2026: the club's first reef session, shot from the drone. Kids on boards over the coral, and a long, long wave.", photos: [
+      { slug: "little-reef-lineup", alt: "Drone view of Duckies and their coach sitting on boards over the turquoise reef.", credit: "club drone", date: "4 Jun 2026", w: 1600, h: 900 },
+      { slug: "little-reef-kids-on-wave", alt: "Kids on soft-tops as a wave breaks over the reef, seen from above.", credit: "club drone", date: "4 Jun 2026", w: 1600, h: 844 },
+      { slug: "little-reef-over-the-reef", alt: "Two boards paddling over the coral, seen straight down from the drone.", credit: "club drone", date: "4 Jun 2026", w: 1600, h: 844 },
+      { slug: "little-reef-long-wave", alt: "A surfer takes off on a long peeling reef wave.", credit: "club drone", date: "4 Jun 2026", w: 1600, h: 844 },
+      { slug: "little-reef-paddle-out", alt: "Duckies paddling out over the reef at first light.", credit: "club drone", date: "4 Jun 2026", w: 1600, h: 900 },
+    ] },
   ] satisfies GallerySection[],
   clips: [
     { slug: "long-ride", title: "A long ride to the sand", credit: "Bron", date: "22 Apr 2026" },
@@ -67,5 +151,8 @@ export const gallery = {
     { slug: "bonfire", title: "Bonfire", credit: "Arjon", date: "18 Jul 2026" },
     { slug: "le-morne-arjon", title: "Le Morne, the parents' turn", credit: "club drone", date: "12 Jul 2026" },
     { slug: "le-morne-from-above", title: "The beach from above", credit: "club drone", date: "12 Jul 2026" },
+    { slug: "little-reef-kids-on-wave", title: "Little Reef: kids on a wave", credit: "club drone", date: "4 Jun 2026" },
+    { slug: "little-reef-long-wave", title: "Little Reef: the long wave", credit: "club drone", date: "4 Jun 2026" },
+    { slug: "little-reef-over-the-reef", title: "Over the coral", credit: "club drone", date: "4 Jun 2026" },
   ] satisfies GalleryClip[],
 };

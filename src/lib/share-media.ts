@@ -16,8 +16,16 @@
 export interface ShareConfig {
   base: string;
   token: string;
+  /** Folder inside the share, when the album is not at the share root (no leading slash). */
+  path?: string;
+  /** Skip the share's videos (e.g. multi-hundred-MB drone originals that should not stream into a page). */
+  imagesOnly?: boolean;
   files: readonly string[];
 }
+
+// Path prefix inside the share: "" at the root, "/Folder" below it (each segment encoded).
+const folder = (share: ShareConfig) =>
+  share.path ? "/" + share.path.split("/").map(encodeURIComponent).join("/") : "";
 
 export const IMAGE_RE = /\.(jpe?g|png|gif|webp)$/i;
 export const VIDEO_RE = /\.(mp4|mov|m4v|webm)$/i;
@@ -29,19 +37,19 @@ export const isVideo = (name: string) => VIDEO_RE.test(name);
 // `a=true` keeps the aspect ratio; bump `size` for lightboxes.
 export const sharePreviewUrl = (share: ShareConfig, file: string, size: number) =>
   `${share.base}/index.php/apps/files_sharing/publicpreview/${share.token}` +
-  `?file=/${encodeURIComponent(file)}&x=${size}&y=${size}&a=true`;
+  `?file=${folder(share)}/${encodeURIComponent(file)}&x=${size}&y=${size}&a=true`;
 
 // Direct download/stream URL for one file — what <video> tags want.
 export const shareDownloadUrl = (share: ShareConfig, file: string) =>
-  `${share.base}/index.php/s/${share.token}/download?path=%2F&files=${encodeURIComponent(file)}`;
+  `${share.base}/index.php/s/${share.token}/download?path=${encodeURIComponent("/" + (share.path ?? ""))}&files=${encodeURIComponent(file)}`;
 
 async function listShare(share: ShareConfig, matcher: RegExp): Promise<string[]> {
   const auth = "Basic " + Buffer.from(`${share.token}:`).toString("base64");
 
   // Classic endpoint first, then the newer DAV path as a backup.
   const endpoints = [
-    `${share.base}/public.php/webdav/`,
-    `${share.base}/public.php/dav/files/${share.token}/`,
+    `${share.base}/public.php/webdav${folder(share)}/`,
+    `${share.base}/public.php/dav/files/${share.token}${folder(share)}/`,
   ];
 
   for (const url of endpoints) {

@@ -35,14 +35,15 @@ const tile = "rounded-[1.2rem] border-2 border-edge bg-surface shadow-sticker-sm
 const cardTitle = "font-display font-bold text-fg [font-variation-settings:'wdth'_110]";
 ---
 
-<BaseLayout title={title} description={description} image="/media/tamarin-shore.jpg" imageAlt="Sunset Duckies Cup — Tamarin Bay">
+<BaseLayout title={title} description={description} image="/media/cup/vol-1-og.jpg" imageAlt="The Sunset Duckies with their boards after Cup Vol. 01 at Tamarin Bay." imageWidth={1200} imageHeight={630}>
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
     <div class="absolute inset-0 -z-10">
       <div class="absolute inset-0 bg-ink-950"></div>
       <img
-        src="/media/tamarin-shore.jpg"
+        src="/media/cup/vol-1-hero.webp"
         alt=""
+        width="2000" height="1125"
         class="h-full w-full object-cover opacity-55"
         aria-hidden="true"
       />
@@ -167,7 +168,7 @@ const cardTitle = "font-display font-bold text-fg [font-variation-settings:'wdth
         {cup.divisions.map((division, i) => (
           <StickerCard as="article" tone={i === 0 ? "sun" : "teal"} tilt={i === 0 ? "left" : "right"} class="p-7">
             <div class="flex items-start gap-5">
-              <SurfPhoto scene={i === 0 ? "whitewater" : "beach-crew"} />
+              <SurfPhoto scene={division.photo} />
               <div>
                 <p class="font-display text-3xl font-bold text-fg [font-variation-settings:'wdth'_112]">
                   {division.name}
@@ -235,7 +236,7 @@ const cardTitle = "font-display font-bold text-fg [font-variation-settings:'wdth
         {cup.judgingCriteria.map((criterion, i) => (
           <article class={miniCard}>
             <div class="flex items-start gap-3">
-              <SurfPhoto scene={i === 0 ? "whitewater" : i === 3 ? "hero-wave" : "surf-kit"} />
+              <SurfPhoto scene={criterion.photo} />
               <div>
                 <p class={`text-xl ${cardTitle}`}>
                   {criterion.title}

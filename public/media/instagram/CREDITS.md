@@ -1,8 +1,7 @@
 # Instagram assets
 
-- `00-tamarin-bay.jpg`, `01-save-the-date.jpg`, `02-registration-open.jpg`, `05-countdown.jpg` — generated scenes (image_gen), kept as fallbacks for any post where a recognisable kid's media consent is missing.
 - `profile.jpg` — the logo.
-- `photos/` — real club photos from the members' WhatsApp group, cropped for the feed (4:5 at 1080×1350, or 4:3 at 1440×1080 where the shot needs the full width). Same slot names as the generated files where they cover the same post.
+- `photos/` — real club photos from the members' WhatsApp group, cropped for the feed (4:5 at 1080×1350, or 4:3 at 1440×1080 where the shot needs the full width). 
 - `stories/` — 9:16 at 1080×1920, no recognisable people; safe to post any time.
 - Feed and story **videos** are not committed (63 MB) — they are in `.local-data/instagram-video/` on Andras's Mac.
 
@@ -11,6 +10,11 @@ Originals: `.local-data/whatsapp/sunset-duckies/` (not committed), with `manifes
 | File | Source | Shot by | People |
 |---|---|---|---|
 | photos/01-save-the-date.jpg | 20260403_2129_046 | member-122071 (unnamed in contacts) | one kid, back to camera |
+| photos/01-save-the-date-cup.jpg | Cup Vol. 01 photo 1192 (Nextcloud share Doz36QepJBNrmfc) | the Cup photographer | one kid in silhouette |
+| photos/feed-cup-crew.jpg | Cup Vol. 01 photo 1339 | the Cup photographer | whole group, faces → check consent |
+| photos/feed-cup-arms-out.jpg | Cup Vol. 01 photo 288 | the Cup photographer | one kid, face visible → check consent |
+| photos/feed-cup-boards.jpg | Cup Vol. 01 photo 140 | the Cup photographer | boards, one kid far |
+| video: feed-little-reef-* | Little Reef drone clips 0498 / 0516 / 0509 (same share) | club drone | kids small from above / one surfer / two boards |
 | photos/02-registration-open.jpg | 20260311_1911_006 | Pierre Lamboray | kids as silhouettes |
 | photos/05-countdown.jpg | 20260718_0701_230 | Holly | one kid, silhouette |
 | photos/feed-beach-run.jpg | 20260515_1847_124 | Kyrah Ashe | group, faces small but visible → check media consent |

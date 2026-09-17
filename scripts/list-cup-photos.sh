@@ -20,14 +20,15 @@
 #
 set -euo pipefail
 
-TOKEN="kmNsjY62yRzergT"
+TOKEN="Doz36QepJBNrmfc"
+FOLDER="20260531%20Sunset%20Duckies%20Cup"   # the album sits in a subfolder of this share
 HOST="https://owncloud.justnet.pl"
 
-curl -fsS -X PROPFIND -u "${TOKEN}:" -H 'Depth: 1' "${HOST}/public.php/webdav/" \
-| python3 - <<'PY'
+XML="$(curl -fsS -X PROPFIND -u "${TOKEN}:" -H 'Depth: 1' "${HOST}/public.php/webdav/${FOLDER}/")" \
+  python3 - <<'PY'
 import sys, re, json, urllib.parse, posixpath
 
-xml = sys.stdin.read()
+xml = __import__("os").environ["XML"]  # curl output; stdin carries this script
 hrefs = re.findall(r"<[a-zA-Z]*:?href>([^<]+)</[a-zA-Z]*:?href>", xml)
 
 names = []

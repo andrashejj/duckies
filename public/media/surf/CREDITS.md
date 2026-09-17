@@ -1,6 +1,6 @@
 # Surf imagery
 
-Two kinds of file live here. `whitewater`, `surf-kit` and `beach-crew` are real club photos from the members' WhatsApp group, and `hero-wave` is a frame from the club's drone footage (2026-09-17). Only `grom-hero` is still a generated scene (image_gen, 2026-09-14). Originals for the real photos are in `.local-data/whatsapp/sunset-duckies/photos/` (not committed); production derivatives here are WebP.
+Every file here is a real club photo: `whitewater`, `surf-kit` and `beach-crew` come from the members' WhatsApp group and `hero-wave` is a frame from the club's drone footage (2026-09-17). Originals are in `.local-data/whatsapp/sunset-duckies/photos/` and `.local-data/nextcloud-drone/` (not committed); production derivatives here are WebP.
 
 ## Real photos
 
@@ -30,14 +30,3 @@ Source: `DJI_0521 (David).mp4` at 8.6 s, 12 July 2026, Le Morne. Club drone foot
 
 Files: hero-loop.mp4 (1024×576, 15 s, silent, 1.2 MB), hero-loop-poster.webp
 Source: `20260712_0949_196.mp4`, 12 July 2026 sunrise lineup, Tamarin Bay. Shot by Holly. The steady 7.0–14.5 s window, played forward then reversed so it loops without a cut; light denoise for WhatsApp banding. Resolution is WhatsApp's — ask Holly for the original if it ever needs to be sharper.
-
-## Generated scenes
-
-
-## grom-hero
-
-Created with the built-in image_gen tool. Generated action scene, not a photograph of a club member.
-
-File: grom-hero.webp
-
-Prompt: A great surf-magazine action photograph of one talented grom, around 12 years old, ripping a sharp carving turn on a clean head-high teal wave. Low, powerful stance, rail engaged in the wave face, a beautiful fan of spray thrown behind the board. This is a proper young surfer in motion, not a surf lesson, not posing or smiling at the camera. Unbranded faded ochre rash vest and dark boardshorts, white shortboard. Realistic anatomy and surf mechanics. Crisp sports photography, natural afternoon light, subtle grain, rich deep teal water with warm sun on the spray. Landscape 16:9 composition for a website hero: surfer and board fully visible in the upper-right half, open darker wave face across the left and lower-left for headline text. Fill the frame with the wave and the action, little or no sky. One surfer only. No lettering, logos, watermark or illustration style.

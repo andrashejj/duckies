@@ -109,13 +109,13 @@ export const blog = {
         "For now, save Friday 11 September. If you join the club, expect a hello from Estelle too.",
       cover: {
         src: "/media/logbook/semester-cover.webp",
-        alt: "Illustration of surf families carrying colourful boards into Tamarin Bay at sunset.",
-        caption: "Back to the bay. Boards under arms, parents in the water.",
+        alt: "The Sunset Duckies crew with their boards on Tamarin beach at dusk.",
+        caption: "The crew, the boards, the last light. Monday and Friday, from 11 September.",
       },
       storyImage: {
         src: "/media/logbook/semester-water.webp",
-        alt: "Illustration of a parent beside a child riding a small wave on a yellow surfboard.",
-        caption: "Small waves. A steady hand. One parent from every family, in the water.",
+        alt: "A parent wades into the shallows with a board while Duckies play in the water behind.",
+        caption: "One parent from every family in the water. That is the deal.",
       },
       gif: {
         src: "/media/logbook/surfing-duck.gif",
@@ -182,13 +182,8 @@ export const blog = {
         'Back in the bay by sunset, salty and fried. New answer to “why do we train twice a week?” — because one day, that reef.',
       cover: {
         src: "/media/logbook/reef-cover.webp",
-        alt: "Illustration of a small boat crossing the turquoise lagoon beneath Le Morne Brabant.",
-        caption: "A different kind of school run: south along the coast, towards Le Morne.",
-      },
-      storyImage: {
-        src: "/media/logbook/reef-underwater.webp",
-        alt: "Illustrated view above and below the lagoon: snorkellers, parrotfish and coral beneath Le Morne.",
-        caption: "Masks on, eyes open. A whole other world just below the surface.",
+        alt: "Drone view of Duckies and their coach sitting on boards over the turquoise Little Reef.",
+        caption: "The lineup from above: Duckies on the reef, 4 June.",
       },
       heroGlyphs: "⛰️ → 🚤 → 🤿",
       cta: {
@@ -200,13 +195,16 @@ export const blog = {
         secondary: { label: "How to join the club", href: "/#join" },
       },
       media: {
-        shareUrl: "https://owncloud.justnet.pl/index.php/s/jZtkwTHpCzoxHaB",
+        // The trip lives in the same share as the Cup album (the original
+        // jZtkwTHpCzoxHaB share is password-protected now). Stills only: the
+        // folder's 4K drone originals are cut for /gallery instead of being
+        // streamed from Nextcloud.
+        shareUrl: "https://owncloud.justnet.pl/index.php/s/Doz36QepJBNrmfc",
         base: "https://owncloud.justnet.pl",
-        token: "jZtkwTHpCzoxHaB",
-        // Offline fallback — empty until generated; the build enumerates the
-        // share live, so the gallery fills itself wherever the host is
-        // reachable (e.g. the Vercel build).
-        files: [],
+        token: "Doz36QepJBNrmfc",
+        path: "20260604 Little Reef Surfing/Part-1",
+        imagesOnly: true,
+        files: ["DJI_0503.JPG", "DJI_0513.JPG"],
       },
     },
     {
@@ -250,13 +248,13 @@ export const blog = {
         "The first job is deliberately small: make the four product ideas equally clear by 7 September. The interviews and the evidence come next.",
       cover: {
         src: "/media/logbook/molt-cover.webp",
-        alt: "Illustration of a beachside worktable with fabric, product sketches, oats, a bottle and a yellow duck.",
-        caption: "The workbench stage. A few ideas, some rough samples, plenty to find out.",
+        alt: "Two Duckies on the beach holding a heart-shaped cake.",
+        caption: "Something baked, something shared. The brand exercise starts from here.",
       },
       storyImage: {
         src: "/media/logbook/molt-workshop.webp",
-        alt: "Illustration of people stitching fabric, sketching and comparing product samples around a shared table.",
-        caption: "Make something small. Put it in someone's hands. Listen.",
+        alt: "Four soft-top surfboards painted by the Duckies, seen from above.",
+        caption: "Product design, Duckies edition: four boards, four artists, no brief.",
       },
       gif: {
         src: "/media/logbook/thinking-duck.gif",

@@ -1,0 +1,169 @@
+---
+import { site } from "../../data/site";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import SectionTitle from "../../components/ui/SectionTitle.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import { bodyCopy, ctaClass, field, label } from "../../lib/ui";
+
+const title = `Share a photo — ${site.name}`;
+const description = "Send your photos from a session to the Sunset Duckies gallery. Nothing goes online until the club has looked at it.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="relative isolate overflow-hidden">
+    <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
+      <div data-float><Kicker as="a" href="/gallery" class="no-underline">← The gallery</Kicker></div>
+      <h1 data-float class="mt-6 font-display text-[clamp(2.6rem,8vw,5.8rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
+        Your shot, <span class="font-accent font-medium italic text-accent-text">our wall</span>.
+      </h1>
+      <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
+        Took a good one at training? Send it here. Andras looks at every photo before it goes on the gallery page, so nothing is published by accident.
+      </p>
+    </div>
+  </section>
+
+  <div class="h-8 w-full bg-(image:--texture-wave) bg-repeat-x opacity-70" aria-hidden="true"></div>
+
+  <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start">
+      <StickerCard as="form" tone="none" hover={false} class="p-6 sm:p-8" data-share-form novalidate>
+        <div>
+          <label class={label} for="share-files">Photos</label>
+          <label for="share-files" class="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-edge bg-canvas px-6 py-10 text-center transition-colors hover:bg-highlight/30" data-dropzone>
+            <span class="text-3xl" aria-hidden="true">📷</span>
+            <span class="font-display text-lg font-semibold text-fg">Tap to choose photos</span>
+            <span class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">JPEG, PNG, HEIC · up to 12 MB each · as many as you like</span>
+          </label>
+          <input id="share-files" name="files" type="file" accept="image/*" multiple class="sr-only" />
+          <ul class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4" data-previews aria-live="polite"></ul>
+        </div>
+
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div>
+            <label class={label} for="share-name">Your name <span class="normal-case tracking-normal text-fg/50">(optional, for the credit)</span></label>
+            <input id="share-name" name="name" type="text" maxlength="80" autocomplete="name" class={`mt-2 ${field}`} placeholder="e.g. Holly" />
+          </div>
+          <div>
+            <label class={label} for="share-note">When and where? <span class="normal-case tracking-normal text-fg/50">(optional)</span></label>
+            <input id="share-note" name="note" type="text" maxlength="280" class={`mt-2 ${field}`} placeholder="Friday session, 12 September" />
+          </div>
+        </div>
+
+        <label class="mt-6 flex items-start gap-3 rounded-xl border-2 border-edge bg-canvas p-4">
+          <input name="consent" type="checkbox" required class="mt-1 h-5 w-5 shrink-0 accent-[var(--color-coral-500)]" />
+          <span class={`text-[0.95rem] leading-[1.6] text-fg`}>I took these photos (or have the photographer's OK), and I'm fine with them being on the Sunset Duckies website and social channels. Families decide about their own kids on the club waiver; the club checks that before publishing.</span>
+        </label>
+
+        <p class="mt-4 hidden rounded-xl border-2 border-coral-500 bg-sticker-coral px-4 py-3 text-sm text-ink-950" data-form-error role="alert"></p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <button type="submit" class={ctaClass("primary", "md")} data-submit>Send for review</button>
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60" data-progress></p>
+        </div>
+      </StickerCard>
+
+      <div class="space-y-5">
+        <StickerCard tone="sun" tilt="right" class="p-6">
+          <p class="font-display text-xl font-semibold text-fg">What happens next</p>
+          <ol class={`mt-3 list-decimal space-y-2 pl-5 ${bodyCopy}`}>
+            <li>Your photos land in a private review queue.</li>
+            <li>Andras checks each one against the families' media consent.</li>
+            <li>Approved photos appear in <a class="underline" href="/gallery#from-the-parents">From the parents</a> on the gallery page, with your name if you gave one.</li>
+          </ol>
+        </StickerCard>
+        <StickerCard tone="teal" tilt="left" class="p-6">
+          <p class="font-display text-xl font-semibold text-fg">Good to know</p>
+          <ul class={`mt-3 space-y-2 ${bodyCopy}`}>
+            <li>Photos are resized and re-saved on upload; location data and the original file are not kept.</li>
+            <li>Videos don't work here yet — drop those in the club WhatsApp.</li>
+            <li>Changed your mind? Message Andras and the photo comes down.</li>
+          </ul>
+        </StickerCard>
+      </div>
+    </div>
+  </section>
+
+  <template data-preview-template>
+    <li class="relative overflow-hidden rounded-xl border-2 border-edge bg-surface">
+      <img alt="" class="aspect-square w-full object-cover" />
+      <span class="absolute inset-x-0 bottom-0 bg-ink-950/75 px-2 py-1 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-cream-soft" data-status>Ready</span>
+    </li>
+  </template>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-share-form]");
+  const input = document.querySelector<HTMLInputElement>("#share-files");
+  const previews = document.querySelector<HTMLUListElement>("[data-previews]");
+  const template = document.querySelector<HTMLTemplateElement>("[data-preview-template]");
+  const errorBox = document.querySelector<HTMLElement>("[data-form-error]");
+  const progress = document.querySelector<HTMLElement>("[data-progress]");
+  const submit = document.querySelector<HTMLButtonElement>("[data-submit]");
+  const MAX_BYTES = 12 * 1024 * 1024;
+
+  type Item = { file: File; li: HTMLLIElement; status: HTMLElement; done: boolean };
+  const items: Item[] = [];
+
+  const showError = (message: string) => { if (errorBox) { errorBox.textContent = message; errorBox.hidden = !message; errorBox.classList.toggle("hidden", !message); } };
+
+  input?.addEventListener("change", () => {
+    showError("");
+    for (const file of Array.from(input.files ?? [])) {
+      if (!template || !previews) break;
+      const li = (template.content.firstElementChild as HTMLLIElement).cloneNode(true) as HTMLLIElement;
+      const img = li.querySelector("img")!; const status = li.querySelector<HTMLElement>("[data-status]")!;
+      img.src = URL.createObjectURL(file);
+      if (file.size > MAX_BYTES) { status.textContent = "Too big"; li.classList.add("opacity-60"); }
+      previews.append(li);
+      items.push({ file, li, status, done: file.size > MAX_BYTES });
+    }
+    input.value = "";
+  });
+
+  // Phones hand over 5–12 MB originals; a 2000px JPEG is plenty for the gallery and uploads in a second.
+  async function shrink(file: File): Promise<Blob> {
+    try {
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, 2000 / Math.max(bitmap.width, bitmap.height));
+      if (scale === 1 && file.size < 2 * 1024 * 1024) return file;
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
+      canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.9));
+      return blob ?? file;
+    } catch { return file; }
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    showError("");
+    const pending = items.filter((item) => !item.done);
+    const consent = form.querySelector<HTMLInputElement>("[name=consent]")?.checked;
+    if (!pending.length) return showError("Choose at least one photo first.");
+    if (!consent) return showError("Please tick the box to confirm the photos are yours to share.");
+    const name = form.querySelector<HTMLInputElement>("[name=name]")?.value ?? "";
+    const note = form.querySelector<HTMLInputElement>("[name=note]")?.value ?? "";
+    const query = new URLSearchParams({ name, note }).toString();
+    if (submit) submit.disabled = true;
+    let sent = 0, failed = 0;
+    for (const item of pending) {
+      item.status.textContent = "Sending…";
+      if (progress) progress.textContent = `${sent + failed + 1} of ${pending.length}`;
+      try {
+        const body = await shrink(item.file);
+        const response = await fetch(`/api/gallery/uploads?${query}`, { method: "POST", body, headers: { "Content-Type": body.type || "application/octet-stream" } });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error ?? "Upload failed.");
+        item.status.textContent = "In review ✓"; item.done = true; sent++;
+      } catch (error) {
+        item.status.textContent = "Failed"; failed++;
+        showError(error instanceof Error ? error.message : "Upload failed.");
+      }
+    }
+    if (submit) submit.disabled = false;
+    if (progress) progress.textContent = sent ? `${sent} photo${sent === 1 ? "" : "s"} in the review queue. Thank you!` : "";
+    if (sent && !failed) showError("");
+  });
+</script>

@@ -1,6 +1,6 @@
 # Sunset Duckies — Instagram drafts (17 Sep 2026)
 
-Ready-to-post captions. Files are under `public/media/instagram/` (stills) and `.local-data/instagram-video/` on Andras's Mac (videos, not committed). Every caption ends with the club hashtags; add a location tag "Tamarin Bay" (or "Le Morne Brabant" for the drone posts).
+Ready-to-post captions. Files are under `public/media/instagram/photos/` and `stories/` (stills) and `.local-data/instagram-video/` on Andras's Mac (videos, not committed). Every caption ends with the club hashtags; add a location tag "Tamarin Bay" (or "Le Morne Brabant" for the drone posts).
 
 Hashtags: `#sunsetduckies #tamarin #tamarinbay #mauritius #kidssurf #groms #surfclub`
 
@@ -10,11 +10,11 @@ Web vs app: feed posts and Reels can go from instagram.com; Stories only from th
 
 ---
 
-## 1 · Fri 18 Sep · Save the date — feed, `photos/01-save-the-date.jpg` (4:5) · safe (one kid, back to camera)
+## 1 · Fri 18 Sep · Save the date — feed · two options: `photos/01-save-the-date-cup.jpg` (the Final of Vol. 01 at sunset, silhouette · safe) or `photos/01-save-the-date.jpg` (kid on an evening wave, back to camera · safe)
 
 Sunset Duckies Cup Vol. 02: Friday 16 October, Tamarin Bay. Heats for every level, crowns for the Duckie King and Queen, the grey goose heat for the parents. We are also cooking something for the day. Save the date; registration opens next week.
 
-Alt text: A Duckie rides a small evening wave towards the beach, arms out, under a sunset sky.
+Alt text (Cup version): A Duckie rides a wave in silhouette under a golden sky in the Final of Cup Vol. 01.
 
 ## 2 · Mon 21 Sep · The gallery is live — carousel, 5 slides · check consent (slides 1 and 4)
 
@@ -77,6 +77,24 @@ Here it is: [name], the first Sunset Duckies granola, baked in Tamarin. Rs [pric
 ## 15 · Sat 17 – Sun 18 Oct · Results — real photo of the crowns · check consent
 
 Cup Vol. 02, done. [Duckie King and Queen, Duckling King and Queen.] Thank you to the judges, the marshals, the BBQ crew and every parent on the sand. [X] bags left / sold out: order the next batch through the link in bio.
+
+## 16 · Any Tuesday · Throwback — carousel, `photos/feed-cup-crew.jpg`, `photos/feed-cup-arms-out.jpg`, `photos/feed-cup-boards.jpg` (crop to 4:5) · check consent (faces)
+
+Throwback to Cup Vol. 01, 31 May. Heats of four, a grey goose heat, crowns before sunset and a bonfire after. Vol. 02 is Friday 16 October — registration opens 25 September in the parents' WhatsApp.
+
+## 17 · Any Thursday · Reel — `feed-little-reef-kids-on-wave.mp4` (1:1, 15 s, silent) · check consent (kids from above, small)
+
+The Little Reef trip, 4 June, from the drone: Duckies on boards over the coral, then the wave arrives. Two sessions a week in the Tamarin whitewater leads exactly here.
+
+Location: Le Morne Brabant.
+
+## 18 · Any Sunday · Reel — `feed-little-reef-long-wave.mp4` (1:1, 24 s, silent) · safe (one surfer, far)
+
+One wave, from the top. The long left over the Little Reef, shot from above on 4 June.
+
+## 19 · Reel — `feed-little-reef-over-the-reef.mp4` (1:1, 7 s, silent) · safe (two boards from straight above)
+
+Two boards, one reef, all turquoise. Straight down from the drone at the Little Reef.
 
 ---
 

@@ -36,7 +36,7 @@ const photos = imageFiles.map((file, i) => ({
   thumb: sharePreviewUrl(post.media!, file, 700),
   full: sharePreviewUrl(post.media!, file, 2048),
 }));
-const clips = mediaFiles.filter(isVideo).map((file) => ({
+const clips = (post.media?.imagesOnly ? [] : mediaFiles.filter(isVideo)).map((file) => ({
   src: shareDownloadUrl(post.media!, file),
   poster: sharePreviewUrl(post.media!, file, 1200),
 }));
@@ -185,7 +185,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
     {post.media && <Lightbox id="post-lightbox" label="Photo viewer" />}
 
-    {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Illustrations created for Sunset Duckies with AI. {post.media && "The trip gallery contains the club’s original photos and videos."}</p>}
+    {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos by club parents and the club drone. {post.media && "The trip gallery contains the club’s original photos and videos."}</p>}
 
     <!-- ===================== CTA ===================== -->
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">

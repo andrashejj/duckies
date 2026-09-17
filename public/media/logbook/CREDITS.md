@@ -1,21 +1,12 @@
 # Logbook media
 
-Six original illustrations were created for Sunset Duckies on 14 September 2026 with the built-in imagegen tool. These are fictional editorial illustrations, not documentary pictures of club members. The full prompt set is in `scripts/logbook-art-prompts.json`. Each illustration is delivered as a 1536×1024 WebP with a 768×512 responsive version:
+Blog covers and story images are real club photos (WhatsApp group and club drone, 2026-09-17), delivered as 1536×1024 WebP with a 768×512 responsive version. Originals are in `.local-data/` (not committed).
 
-- semester-cover: families returning to Tamarin Bay.
-- semester-water: a parent helping a child catch a small wave.
-- reef-cover: boat crossing the Le Morne lagoon.
-- reef-underwater: snorkellers, parrotfish and coral.
-- molt-cover: beachside product workbench.
-- molt-workshop: hands making and testing rough samples.
-
-The original trip photos and videos stay in the club's existing Nextcloud gallery.
-
-## Found GIFs
-
-These animations were found on Tenor, not generated. The GIF files preserve the downloaded source bytes. Poster WebPs are still first frames for click-to-play controls. Credits link to the source next to each GIF in the article; these animations are not club footage or club-owned artwork.
-
-- `surfing-duck.gif`: [Duck Surfing on Tenor](https://tenor.com/view/duck-surfing-gif-11348510), retrieved 14 September 2026. Source: https://media1.tenor.com/m/o0esrjBiSuYAAAAC/duck-surfing.gif
-- `thinking-duck.gif`: [Chris P. Duck reaction via Tenor](https://tenor.com/view/huh-raised-eyebrow-hm-think-chris-p-duck-gif-11545850), retrieved 14 September 2026. Source: https://media1.tenor.com/m/nc7XmPRi4iwAAAAC/huh-raised-eyebrow.gif
-
-GIFs load only when readers press Play, with a Stop control that returns to the still frame. No third-party embed script or tracking iframe is used.
+- semester-cover: the crew with their boards at dusk (Arjon, 31 May 2026).
+- semester-water: a parent wading in with a board, Duckies behind (Bron, 12 Mar 2026).
+- reef-cover: drone still from the Little Reef trip (4 Jun 2026).
+- molt-cover: two Duckies with a heart-shaped cake (Bron, 10 Jul 2026).
+- molt-workshop: the boards the Duckies painted (Andras, 5 May 2026).
+- cup-vol-2-cover: the board lineup at sunset (3 Apr 2026).
+- le-morne-dawn-cover: drone still from the parents' Le Morne session (12 Jul 2026).
+- surfing-duck.gif / thinking-duck.gif: Tenor GIFs, credited in the post.

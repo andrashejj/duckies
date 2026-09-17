@@ -18,6 +18,8 @@
     "db:migrate:production": "tsx scripts/db-target.ts production migrate",
     "db:status:staging": "tsx scripts/db-target.ts staging status",
     "db:status:production": "tsx scripts/db-target.ts production status",
+    "db:rolled-back:staging": "tsx scripts/db-target.ts staging rolled-back",
+    "db:rolled-back:production": "tsx scripts/db-target.ts production rolled-back",
     "member": "tsx scripts/member.ts",
     "test": "playwright test",
     "db:generate": "prisma generate",
