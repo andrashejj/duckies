@@ -14,7 +14,7 @@ const statusTone: Record<TaskStatus, string> = {
 };
 const control = "min-h-9 rounded-none border border-line bg-canvas px-2 py-1 font-mono text-[0.68rem] text-fg focus:outline-2 focus:outline-offset-2 focus:outline-accent disabled:opacity-50";
 
-export default function PlanBoard({ initialView = "timeline" }: { initialView?: View }) {
+export default function PlanBoard({ initialView = "board" }: { initialView?: View }) {
   const [plan, setPlan] = useState<PlanData | null>(null);
   const [view, setView] = useState<View>(initialView);
   const [owner, setOwner] = useState<OwnerFilter>("all");
@@ -86,10 +86,10 @@ export default function PlanBoard({ initialView = "timeline" }: { initialView?: 
     <div className="text-fg">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4 border-y border-line py-4">
         <div role="tablist" aria-label="View" className="flex border border-line">
-          {(["timeline", "board"] as View[]).map(option => (
+          {(["board", "timeline"] as View[]).map(option => (
             <button key={option} role="tab" type="button" aria-selected={view === option} onClick={() => setView(option)}
               className={`min-h-10 px-4 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] transition-colors ${view === option ? "bg-accent text-accent-fg" : "text-fg-muted hover:text-fg"}`}>
-              {option === "timeline" ? "Timeline" : "Board"}
+              {option === "board" ? "Board" : "Timeline"}
             </button>
           ))}
         </div>

@@ -3,9 +3,9 @@ import BrandingLayout from "../../layouts/BrandingLayout.astro";
 import PlanBoard from "../../components/react/PlanBoard";
 export const prerender=false;
 if(!Astro.locals.branding?.canView)return Astro.redirect("/branding-plan");
-const view=Astro.url.searchParams.get("view")==="board"?"board":"timeline";
+const view=Astro.url.searchParams.get("view")==="timeline"?"timeline":"board";
 ---
 <BrandingLayout title="Plan board" description="Project Molt milestones and tasks: who does what, by when, and where it stands." kicker="Project Molt / Board" heading="Who does what.">
- <p slot="lead">Every task from the <a href="/branding-plan/plan">plan</a> and the <a href="/branding-plan/onsite">three weeks onsite</a>, with an owner and a status. Timeline is by date; Board is by to do, doing and done. Drag a card, or use its status menu on a phone.</p>
+ <p slot="lead">Every task from the <a href="/branding-plan/plan">plan</a> and the <a href="/branding-plan/onsite">three weeks onsite</a>, with an owner and a status. Board is by to do, doing and done; Timeline is the same tasks by date. Drag a card, or use its status menu on a phone.</p>
  <PlanBoard client:load initialView={view}/>
 </BrandingLayout>

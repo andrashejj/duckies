@@ -74,10 +74,13 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   expect(onsite).toContain('Print the price sign');
   expect(onsite).toContain('href="/branding-plan/board"');
 
-  // The board renders both views with live status.
+  // The board opens on the kanban and renders both views with live status.
   await page.goto('/branding-plan/board');
   await expect(page.getByRole('heading',{name:'Who does what.'})).toBeVisible();
-  await expect(page.getByRole('tab',{name:'Timeline'})).toHaveAttribute('aria-selected','true');
+  await expect(page.getByRole('tab',{name:'Board'})).toHaveAttribute('aria-selected','true');
+  await expect(page.getByRole('region',{name:'To do'})).toBeVisible();
+  await page.getByRole('tab',{name:'Timeline'}).click();
+  await expect(page).toHaveURL(/view=timeline/);
   await expect(page.getByText('Lock the product and the date')).toBeVisible();
   await page.screenshot({path:'test-results/plan-timeline-desktop.png',fullPage:true});
   await page.getByRole('tab',{name:'Board'}).click();
