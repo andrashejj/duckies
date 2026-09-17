@@ -2,7 +2,11 @@
 import { site } from "../../data/site";
 import { blog } from "../../data/blog";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import "../../styles/logbook.css";
+import Cta from "../../components/ui/Cta.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import SectionTitle from "../../components/ui/SectionTitle.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import { bodyCopy } from "../../lib/ui";
 
 const title = `${blog.name} — ${site.name}`;
 const description = blog.tagline;
@@ -13,74 +17,70 @@ const posts = [...blog.posts].sort((a, b) => b.dateISO.localeCompare(a.dateISO))
 <BaseLayout title={title} description={description}>
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
-    <div class="sunburst -left-20 -top-24 opacity-60" aria-hidden="true"></div>
-    <div class="blob-teal -right-24 top-10" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute top-10 -right-24 h-[280px] w-[280px] rounded-[60%_40%_55%_45%/42%_58%_42%_58%] bg-teal-500 opacity-50 blur-[44px]" aria-hidden="true"></div>
 
     <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
       <div>
-        <p class="section-kicker">✎ Field notes from the club</p>
+        <Kicker>✎ Field notes from the club</Kicker>
       </div>
-      <h1
-
-        class="font-display mt-6 text-[var(--color-ink-950)]"
-        style="font-size: clamp(2.8rem, 9vw, 6.6rem); line-height: 0.92; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 650;"
-      >
+      <h1 class="mt-6 font-display text-[clamp(2.8rem,9vw,6.6rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
         The
-        <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">Logbook</span>.
+        <span class="font-accent font-medium italic text-accent-text">Logbook</span>.
       </h1>
-      <p class="body-copy mt-6 max-w-2xl text-lg">
+      <p class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
         {blog.tagline}
       </p>
     </div>
   </section>
 
-  <div class="wave-divider" aria-hidden="true"></div>
+  <div class="h-8 w-full bg-(image:--texture-wave) bg-repeat-x opacity-70" aria-hidden="true"></div>
 
   <!-- ===================== POSTS ===================== -->
   <section class="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:px-6 lg:px-10">
     <div class="grid gap-7">
       {posts.map((post, i) => (
-        <a
+        <StickerCard
+          as="a"
           href={`/blog/${post.slug}`}
-          class:list={["surface-card group logbook-card", i % 2 === 0 ? "tilt-left" : "tilt-right"]}
+          tilt={i % 2 === 0 ? "left" : "right"}
+          class="group grid overflow-hidden p-0 no-underline focus-visible:outline-4 focus-visible:outline-offset-6 focus-visible:outline-coral-500 md:grid-cols-[1fr_1.05fr]"
           data-reveal
         >
-          {post.cover && <div class="logbook-card-art">
+          {post.cover && <div class="relative m-0 overflow-hidden bg-teal-500 md:border-r-2 md:border-edge">
             <img src={post.cover.src} alt={post.cover.alt} width="1536" height="1024"
               srcset={`${post.cover.src.replace('.webp', '-small.webp')} 768w, ${post.cover.src} 1536w`}
-              sizes="(min-width: 768px) 48vw, 100vw" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
-            <span class="logbook-page-number">PAGE {String(posts.length - i).padStart(2, "0")}</span>
+              sizes="(min-width: 768px) 48vw, 100vw" loading={i === 0 ? "eager" : "lazy"} decoding="async" class="aspect-[3/2] h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
+            <span class="absolute top-4 left-4 rounded border-2 border-edge bg-surface px-[0.7rem] py-[0.35rem] font-mono text-[0.7rem] tracking-[0.14em] text-fg">PAGE {String(posts.length - i).padStart(2, "0")}</span>
           </div>}
-          <div class="logbook-card-copy">
+          <div class="self-center p-[clamp(1.5rem,4vw,3rem)]">
           <div class="flex flex-wrap items-center gap-3">
-            <span class="tag-pill sun">{post.dateLabel}</span>
-            <span class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+            <span class="inline-flex rounded-full border-[1.5px] border-ink-950 bg-sun-500 px-3 py-[0.32rem] font-mono text-[0.66rem] font-semibold uppercase tracking-[0.08em] text-ink-950">{post.dateLabel}</span>
+            <span class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-fg/60">
               📍 {post.location}
             </span>
           </div>
-          <h2 class="section-title mt-5" style="font-size: clamp(1.8rem, 4vw, 3rem);">
+          <SectionTitle size="none" class="mt-5 text-[clamp(1.8rem,4vw,3rem)]">
             {post.title}{" "}
-            <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">{post.titleAccent}</span>
-          </h2>
-          <p class="body-copy mt-4 max-w-3xl">{post.excerpt}</p>
-          <p class="mt-6 inline-flex items-center gap-2 font-mono text-[0.74rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)] transition-transform group-hover:translate-x-1.5">
-            Read the post <span class="text-[var(--color-coral-500)]">→</span>
+            <span class="font-accent italic text-accent-text">{post.titleAccent}</span>
+          </SectionTitle>
+          <p class={`mt-4 max-w-3xl ${bodyCopy}`}>{post.excerpt}</p>
+          <p class="mt-6 inline-flex items-center gap-2 font-mono text-[0.74rem] font-semibold uppercase tracking-[0.2em] text-fg transition-transform group-hover:translate-x-1.5">
+            Read the post <span class="text-accent-text">→</span>
           </p>
           </div>
-        </a>
+        </StickerCard>
       ))}
     </div>
 
-    <div class="mt-14 surface-card sticker-sun dashed p-7 text-center md:p-9" data-reveal>
-      <p class="font-display text-xl font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110;">
+    <StickerCard tone="sun" dashed class="mt-14 p-7 text-center md:p-9" data-reveal>
+      <p class="font-display text-xl font-bold text-fg [font-variation-settings:'wdth'_110]">
         More pages incoming — every comp, every trip, every milestone.
       </p>
-      <p class="body-copy mx-auto mt-3 max-w-xl">
+      <p class={`mx-auto mt-3 max-w-xl ${bodyCopy}`}>
         Want your duckie in the next one? The whole story starts in the WhatsApp group.
       </p>
-      <a class="cta-primary mt-6" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-        Join the crew
-      </a>
-    </div>
+      <Cta href={site.whatsappUrl} target="_blank" rel="noreferrer" class="mt-6">Join the crew</Cta>
+    </StickerCard>
   </section>
 </BaseLayout>

@@ -1,5 +1,6 @@
 import { useHydrated } from "./useHydrated";
 import { useState } from "react";
+import { ctaClass } from "../../lib/ui";
 
 type Props = {
   orderId: string;
@@ -43,18 +44,18 @@ export default function OrderNoteForm({ orderId }: Props) {
         onChange={(e) => setMessage(e.target.value)}
         rows={3}
         placeholder="Internal note — only visible to admins."
-        className="w-full rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="w-full rounded-[0.8rem] border-2 border-edge bg-surface p-3 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
       <div className="flex items-center justify-between gap-3">
         <button
           type="submit"
           disabled={submitting || !message.trim()}
-          className="cta-secondary py-2 px-4 text-[0.78rem] disabled:opacity-60"
+          className={ctaClass("secondary", "md", "px-4 py-2 text-[0.78rem]")}
         >
           {submitting ? "Adding…" : "Add internal note"}
         </button>
         {error && (
-          <span className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+          <span className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-coral-500">
             {error}
           </span>
         )}

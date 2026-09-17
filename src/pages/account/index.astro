@@ -4,6 +4,10 @@ import SignOutButton from "../../components/react/SignOutButton";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { prisma } from "../../lib/prisma";
+import Cta from "../../components/ui/Cta.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import { bodyCopy } from "../../lib/ui";
 
 const session = Astro.locals.session;
 const user = session!.user;
@@ -25,14 +29,12 @@ const description = "Your Sunset Duckies account dashboard.";
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-4" data-float>
       <div class="space-y-3">
-        <p class="section-kicker">✦ Your account</p>
-        <h1
-          class="font-display text-[var(--color-ink-950)]"
-          style="font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+        <Kicker>✦ Your account</Kicker>
+        <h1 class="font-display text-fg text-[clamp(2.25rem,5vw,3.75rem)] leading-[1] tracking-[-0.03em] [font-variation-settings:'wdth'_114] font-bold"
         >
           Welcome back, {user.name?.split(" ")[0] ?? "Duckie"}.
         </h1>
-        <p class="body-copy max-w-xl">
+        <p class={`max-w-xl ${bodyCopy}`}>
           Your reservations and account details live here.
         </p>
       </div>
@@ -40,70 +42,59 @@ const description = "Your Sunset Duckies account dashboard.";
     </div>
 
     <div class="grid gap-6 md:grid-cols-3">
-      <a href="/account/orders" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
-        <p class="section-kicker">Orders</p>
-        <p
-          class="font-display text-3xl text-[var(--color-ink-950)]"
-          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+      <StickerCard href="/account/orders" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <Kicker>Orders</Kicker>
+        <p class="font-display text-3xl text-fg [font-variation-settings:'wdth'_112] font-bold"
         >
           {recentOrderCount}
         </p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">
           All orders linked to {user.email}
         </p>
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500">
           View history →
         </p>
-      </a>
+      </StickerCard>
 
-      <a href="/shop" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
-        <p class="section-kicker">Shop</p>
-        <p
-          class="font-display text-2xl text-[var(--color-ink-950)]"
-          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+      <StickerCard href="/shop" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <Kicker>Shop</Kicker>
+        <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"
         >
           Browse the current kit
         </p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">
           Pickup Mon/Fri at Tamarin.
         </p>
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500">
           Browse →
         </p>
-      </a>
+      </StickerCard>
 
-      {session?.member && <a href="/#our-duckies" class="surface-card block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
-        <p class="section-kicker">Members</p>
-        <p
-          class="font-display text-2xl text-[var(--color-ink-950)]"
-          style="font-variation-settings: 'wdth' 112; font-weight: 700;"
+      {session?.member && <StickerCard href="/#our-duckies" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <Kicker>Members</Kicker>
+        <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"
         >
           Our duckies
         </p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">
           The club’s private kids list.
         </p>
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)]">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500">
           View the lineup →
         </p>
-      </a>}
+      </StickerCard>}
     </div>
 
     {Astro.locals.isAdmin && (
       <div class="mt-10">
-        <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] p-6 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-          <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/80">
+        <div class="rounded-card border-2 border-ink-950 bg-sun-500 p-6 text-ink-950 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-ink-950/80">
             ✦ Admin crew
           </p>
-          <p
-            class="mt-1 font-display text-2xl text-[var(--color-ink-950)]"
-            style="font-variation-settings: 'wdth' 112; font-weight: 700;"
-          >
+          <p class="mt-1 font-display text-2xl font-bold [font-variation-settings:'wdth'_112]">
             Jump to the club backstage.
           </p>
-          <a class="cta-primary mt-4 inline-flex" href="/admin">
-            Open admin →
-          </a>
+          <Cta class="mt-4" href="/admin">Open admin →</Cta>
         </div>
       </div>
     )}

@@ -5,6 +5,9 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { STATUS_COLOR, STATUS_LABEL } from "../../../lib/admin-orders";
 import { formatPrice, shortOrderId } from "../../../lib/format";
 import { prisma } from "../../../lib/prisma";
+import Cta from "../../../components/ui/Cta.astro";
+import Kicker from "../../../components/ui/Kicker.astro";
+import StickerCard from "../../../components/ui/StickerCard.astro";
 
 const statusParam = Astro.url.searchParams.get("status");
 const qParam = Astro.url.searchParams.get("q")?.trim() ?? "";
@@ -62,10 +65,8 @@ const buildChipHref = (value: OrderStatus | null) => {
 <AdminLayout title="Reservations · Admin" section="orders">
   <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
     <div class="space-y-2">
-      <p class="section-kicker">✦ Reservations</p>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      <Kicker>✦ Reservations</Kicker>
+      <h1 class="font-display text-fg text-[clamp(2rem,4vw,3rem)] leading-[1] [font-variation-settings:'wdth'_114] font-bold"
       >
         The book.
       </h1>
@@ -73,15 +74,13 @@ const buildChipHref = (value: OrderStatus | null) => {
     <form method="get" action="/admin/orders" class="flex items-center gap-2">
       {statusFilter && <input type="hidden" name="status" value={statusFilter} />}
       <input
-        type="search"
+ type="search"
         name="q"
         value={qParam}
         placeholder="Email, name, reservation id…"
-        class="w-64 rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        class="w-64 rounded-[0.8rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
-      <button type="submit" class="cta-secondary py-2 px-4 text-[0.78rem]">
-        Search
-      </button>
+      <Cta variant="secondary" type="submit" class="py-2 px-4 text-[0.78rem]">Search</Cta>
     </form>
   </div>
 
@@ -90,12 +89,12 @@ const buildChipHref = (value: OrderStatus | null) => {
       const active = chip.value === statusFilter;
       return (
         <a
-          href={buildChipHref(chip.value)}
+ href={buildChipHref(chip.value)}
           class:list={[
             "rounded-full border-2 px-3 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.14em] transition",
             active
-              ? "border-[var(--color-ink-950)] bg-[var(--color-ink-950)] text-[var(--color-sun-500)] shadow-[3px_3px_0_0_var(--color-ink-950)]"
-              : "border-[var(--color-ink-950)]/40 bg-[var(--color-cream-soft)] text-[var(--color-ink-950)]/75 hover:bg-[var(--color-sun-500)]",
+              ? "border-edge bg-ink-950 text-sun-500 shadow-sticker-sm"
+              : "border-edge/40 bg-surface text-fg/75 hover:bg-sun-500 hover:text-ink-950",
           ]}
         >
           {chip.label}
@@ -105,22 +104,22 @@ const buildChipHref = (value: OrderStatus | null) => {
   </div>
 
   {loadError ? (
-    <div class="surface-card p-6">
-      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+    <StickerCard class="p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
         Could not load reservations
       </p>
-      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
-    </div>
+      <p class="mt-2 text-[0.95rem] text-fg/80">{loadError}</p>
+    </StickerCard>
   ) : orders.length === 0 ? (
-    <div class="surface-card p-12 text-center">
-      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+    <StickerCard class="p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-fg/55">
         No reservations match.
       </p>
-    </div>
+    </StickerCard>
   ) : (
-    <div class="surface-card overflow-hidden">
+    <StickerCard class="overflow-hidden">
       <table class="w-full border-separate border-spacing-0 text-sm">
-        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+        <thead class="bg-ink-950 text-cream-soft">
           <tr>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Reservation</th>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Customer</th>
@@ -131,13 +130,13 @@ const buildChipHref = (value: OrderStatus | null) => {
         </thead>
         <tbody>
           {orders.map((o) => (
-            <tr class="group border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+            <tr class="group border-t border-edge/10 hover:bg-sun-500/20">
               <td class="px-4 py-3">
                 <a href={`/admin/orders/${o.id}`} class="block">
-                  <p class="font-display text-sm text-[var(--color-ink-950)] group-hover:text-[var(--color-coral-500)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  <p class="font-display text-sm text-fg group-hover:text-coral-500 [font-variation-settings:'wdth'_110] font-bold">
                     {shortOrderId(o.id)}
                   </p>
-                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-fg/55">
                     {new Date(o.createdAt).toLocaleString("en-GB", {
                       day: "2-digit",
                       month: "short",
@@ -149,31 +148,28 @@ const buildChipHref = (value: OrderStatus | null) => {
               </td>
               <td class="px-4 py-3">
                 <a href={`/admin/orders/${o.id}`} class="block">
-                  <p class="font-semibold text-[var(--color-ink-950)]">{o.name}</p>
-                  <p class="font-mono text-[0.68rem] text-[var(--color-ink-950)]/65">{o.email}</p>
+                  <p class="font-semibold text-fg">{o.name}</p>
+                  <p class="font-mono text-[0.68rem] text-fg/65">{o.email}</p>
                 </a>
               </td>
               <td class="px-4 py-3">
-                <span
-                  class="rounded-full border border-[var(--color-ink-950)] px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]"
-                  style={`background:${STATUS_COLOR[o.status]};`}
-                >
+                <span class:list={["rounded-full border border-ink-950 px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]", STATUS_COLOR[o.status]]}>
                   {STATUS_LABEL[o.status]}
                 </span>
               </td>
               <td class="px-4 py-3">
                 {o.paidAt ? (
-                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-teal-500)]">
+                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-teal-500">
                     ✓ Paid
                   </span>
                 ) : (
-                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/45">
+                  <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-fg/45">
                     —
                   </span>
                 )}
               </td>
               <td class="px-4 py-3 text-right">
-                <span class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                <span class="font-mono text-[0.82rem] text-fg">
                   {formatPrice(o.totalCents, o.currency)}
                 </span>
               </td>
@@ -181,6 +177,6 @@ const buildChipHref = (value: OrderStatus | null) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </StickerCard>
   )}
 </AdminLayout>

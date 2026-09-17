@@ -1,0 +1,18 @@
+---
+import { stickerCardClass, type StickerTone } from "../../lib/ui";
+// Brutalist sticker card: hard edge, offset shadow, optional pastel tone,
+// dashed zine cut-out and a slight tape-on tilt that straightens on hover.
+interface Props {
+  as?: "div" | "li" | "article" | "section" | "a" | "aside" | "form";
+  tone?: StickerTone;
+  dashed?: boolean;
+  tilt?: "left" | "right";
+  hover?: boolean;
+  class?: string;
+  href?: string;
+  id?: string;
+}
+const { as, tone = "none", dashed = false, tilt, hover = true, class: className, ...rest } = Astro.props as Props;
+const Tag = as ?? "div";
+---
+<Tag class={stickerCardClass({ tone, dashed, tilt, hover }, className)} {...rest}><slot /></Tag>

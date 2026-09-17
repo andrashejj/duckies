@@ -26,7 +26,7 @@ export interface BlogGif {
 
 export interface BlogPostSection {
   title: string;
-  accent: string;
+  accent: "coral" | "teal" | "sun" | "pink" | "lilac";
   body: string;
 }
 
@@ -86,22 +86,22 @@ export const blog = {
       sections: [
         {
           title: "Membership is a commitment",
-          accent: "sticker-teal",
+          accent: "teal",
           body: "Membership is Rs 3,000 per semester for one child, or Rs 5,000 for a family. The fee is part of a commitment from all of us: we take the club seriously, and we need the duckies and parents to do the same. After the kickoff, our regular Monday and Friday training from 4-6pm will be for members only.",
         },
         {
           title: "Everyone is invited on 11 September",
-          accent: "sticker-sun",
+          accent: "sun",
           body: "We are starting the semester with a kickoff on Friday 11 September from 4-6pm. This session is open to everyone, and it can be the free first session for new duckies. We had too many gnarly situations last semester, so every family must have at least one parent or guardian in the water for the full session, including that first one. We will share the final details in the WhatsApp group.",
         },
         {
           title: "Estelle is joining the brand crew",
-          accent: "sticker-coral",
+          accent: "coral",
           body: "Estelle, the daughter of a good friend of mine from Switzerland, is travelling to Mauritius for an internship with Sunset Duckies. Yes, we are officially importing Swiss talent :D. She will help us take the brand to the next level and contact everyone who joins the club.",
         },
         {
           title: "A competition is coming in October",
-          accent: "sticker-lilac",
+          accent: "lilac",
           body: "We are planning the next Sunset Duckies competition for October. The date and format are still being worked out, and we will share them as soon as they are ready.",
         },
       ],
@@ -159,22 +159,22 @@ export const blog = {
       sections: [
         {
           title: "Down the coast",
-          accent: "sticker-teal",
+          accent: "teal",
           body: "Out of the bay, past the salt pans and fishing boats, the mountain growing the whole way down. By the time we crossed into the Le Morne lagoon every duckie was hanging off the side calling out fish.",
         },
         {
           title: "Faces in the water",
-          accent: "sticker-sun",
+          accent: "sun",
           body: "Masks on, fins on, over the side. Parrotfish, needlefish, the odd squeal when something bigger cruised past. Half the crew didn't want to get back on the boat.",
         },
         {
           title: "Wave school, no paddling required",
-          accent: "sticker-coral",
+          accent: "coral",
           body: "Near the passes we watched One Eye peel — one of the best lefts alive, over the same reef the kids had just been swimming. Two sessions a week in the Tamarin whitewater leads exactly here.",
         },
         {
           title: "What the mountain remembers",
-          accent: "sticker-lilac",
+          accent: "lilac",
           body: "Le Morne Brabant is a UNESCO Heritage site — once a refuge for escaped slaves who chose its cliffs over capture. We took a quiet minute under it. Knowing the story is part of being a local crew.",
         },
       ],
@@ -232,17 +232,17 @@ export const blog = {
       sections: [
         {
           title: "Start with four",
-          accent: "sticker-teal",
+          accent: "teal",
           body: "We will develop four product ideas to the same level, put them in front of families, kids, likely buyers and makers, then choose one from what we learn. No favourite gets a head start.",
         },
         {
           title: "Make and launch one",
-          accent: "sticker-sun",
+          accent: "sun",
           body: "The selected idea becomes a small proof of concept made with local people where possible. We will build interest before launching it alongside a surf competition at the end of October, then record what sold, what failed and what people would change.",
         },
         {
           title: "Learn what can travel",
-          accent: "sticker-coral",
+          accent: "coral",
           body: "The Tamarin pilot runs through February. By then we need real product standards, working economics, a local handover model and a plan for how another surf community could start without losing its own identity.",
         },
       ],

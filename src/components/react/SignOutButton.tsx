@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { authClient } from "../../lib/auth-client";
+import { textButton } from "../../lib/members-ui";
 
-export default function SignOutButton({ label = "Sign out", className = "member-text-button underline" }: { label?: string; className?: string }) {
+export default function SignOutButton({ label = "Sign out", className = textButton }: { label?: string; className?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   return <>

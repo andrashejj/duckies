@@ -1,0 +1,12 @@
+---
+import { sectionTitleClass } from "../../lib/ui";
+interface Props {
+  as?: "h1" | "h2" | "h3" | "p" | "span";
+  size?: "lg" | "md" | "sm" | "none";
+  class?: string;
+  id?: string;
+}
+const { as, size = "lg", class: className, ...rest } = Astro.props as Props;
+const Tag = as ?? "h2";
+---
+<Tag class={sectionTitleClass(size, className)} {...rest}><slot /></Tag>

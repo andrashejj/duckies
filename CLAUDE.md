@@ -17,8 +17,16 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 
 ## Notes
 - Shared copy and data lives in `src/data/site.ts`.
-- Global theme tokens and utility classes live in `src/styles/global.css`.
 - Media lives in `public/media/`.
+
+## Styling
+- Tailwind utilities only: no component stylesheets, no inline `style` colours. `src/styles/global.css` holds the design tokens (palette, semantic colours, fonts, shadows, keyframes) and nothing else. It is the only place a colour value is written.
+- Colours in markup are semantic tokens (`bg-canvas`, `bg-surface`, `text-fg`, `text-fg-muted`, `border-line`, `border-edge`, `bg-accent`, `bg-highlight`, `bg-sticker-*`, `bg-board`, `text-signal` …). They follow the system light/dark preference automatically; brand colours (`coral-500`, `sun-500`, `teal-500` …) are constant in both modes and want `text-ink-950` on top.
+- Themed scopes re-point the tokens: `theme-performance` (branding workspace, set on `<html>` by `BaseLayout variant="performance"`) and `theme-studio` (granola kitchen root).
+- Inside an arbitrary value use the raw variable, e.g. `shadow-[7px_7px_0_0_var(--edge)]`, never `var(--color-edge)` — the `--color-*` alias is also emitted on `:root` and would ignore the scope.
+- Reusable pieces are components or recipe strings, never CSS classes: `src/components/ui/*` (Cta, Kicker, Chip, StickerCard, SectionTitle, Underline) with React twins in `src/components/react/ui.tsx`, plus `src/lib/ui.ts`, `members-ui.ts`, `plan-ui.ts`, `studio-ui.ts`. `cn()` (`src/lib/cn.ts`, tailwind-merge) lets a `class` prop override a recipe.
+- `g-*`, `duckie-*` and `b-badge` class names carry no styles; the Playwright suite uses them as hooks.
+- `src/private/branding/*.html` are standalone printable templates with their own inline CSS and are outside the Tailwind pipeline.
 
 <frontend_aesthetics>
 You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight. Focus on:

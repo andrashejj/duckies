@@ -5,26 +5,29 @@ import SurfPhoto from "../components/SurfPhoto.astro";
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MembersArea from "../components/MembersArea.astro";
+import Chip from "../components/ui/Chip.astro";
+import Cta from "../components/ui/Cta.astro";
+import Kicker from "../components/ui/Kicker.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import StickerCard from "../components/ui/StickerCard.astro";
+import Underline from "../components/ui/Underline.astro";
+import { bodyCopy, eyebrowBadge, mediaFrame, miniCard, stepBubble } from "../lib/ui";
 
-const qrCode = await QRCode.toDataURL(site.whatsappUrl, {
-  margin: 1,
-  width: 320,
-  color: {
-    dark: "#0b1620",
-    light: "#fff5de",
-  },
-});
+// Inline SVG in currentColor so the QR follows the theme instead of baking in colours.
+const qrCode = (await QRCode.toString(site.whatsappUrl, { type: "svg", margin: 1, color: { dark: "#000000ff", light: "#00000000" } }))
+  .replace(/#000000/g, "currentColor").replace("<svg ", '<svg role="img" aria-label="QR code linking to the Sunset Duckies WhatsApp group." class="h-40 w-40" ');
 
 const title = `${site.name} | Kids surfing into the sunset in Tamarin Bay`;
 const description =
   "A kids' surf club in Tamarin Bay. Young duckies paddling out, getting amazing at surfing, and riding into the sunset week after week.";
 
-const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
+const pillarAccents = ["teal", "sun", "coral"] as const;
+const glow = "pointer-events-none absolute rounded-full";
 ---
 
 <BaseLayout title={title} description={description} page="home" image="/media/surf/grom-hero.webp" imageAlt="A young surfer carving a clean teal wave." imageWidth={1672} imageHeight={941}>
   <!-- ===================== HERO ===================== -->
-  <section class="grom-hero relative isolate overflow-hidden bg-[var(--color-ink-950)]">
+  <section class="relative isolate overflow-hidden bg-ink-950">
     <div class="absolute inset-0 -z-10">
       <img
         data-hero-image
@@ -32,31 +35,30 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
         alt="A young surfer carving a clean teal wave."
         width="1672" height="941"
         fetchpriority="high" loading="eager"
-        class="h-full w-full object-cover object-[76%_center]"
+        class="h-full w-full object-cover object-[76%_center] max-sm:h-[360px]"
       />
-      <div class="hero-shade absolute inset-0 bg-[linear-gradient(90deg,rgba(11,22,32,0.65)_0%,rgba(11,22,32,0.12)_65%),linear-gradient(0deg,rgba(11,22,32,0.72)_0%,transparent_75%)]"></div>
+      <div class="absolute inset-0 bg-linear-to-r from-ink-950/65 to-ink-950/12 to-65% max-sm:hidden"></div>
+      <div class="absolute inset-0 bg-linear-to-t from-ink-950/72 to-transparent to-75% max-sm:hidden"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-transparent from-[220px] to-ink-950 to-[360px] sm:hidden"></div>
     </div>
 
-    <div class="hero-copy relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
+    <div class="relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 max-sm:pt-[320px] sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
       <div data-float class="mb-6">
-        <span class="eyebrow-badge">
-          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-coral-500)]"></span>
+        <span class={eyebrowBadge}>
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-coral-500"></span>
           Kickoff · Friday 11 September · 4-6pm
         </span>
       </div>
 
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end lg:gap-10">
         <div data-float class="max-w-5xl space-y-6">
-          <h1
-            class="font-display text-white"
-            style="font-size: clamp(3rem, 8.5vw, 7.25rem); line-height: 0.88; letter-spacing: -0.045em; font-variation-settings: 'wdth' 112, 'opsz' 96; font-weight: 600;"
-          >
+          <h1 class="font-display text-[clamp(3rem,8.5vw,7.25rem)] font-semibold leading-[0.88] tracking-[-0.045em] text-white [font-variation-settings:'wdth'_112,'opsz'_96]">
             <span class="block">Salty hair,</span>
             <span class="block">
-              <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; font-weight: 500;">real</span>
+              <span class="font-accent font-medium italic text-sun-500">real</span>
               grit.
             </span>
-            <span class="block">No <span class="bg-[var(--color-sun-500)] px-1 text-[var(--color-ink-950)]">cap</span>.</span>
+            <span class="block">No <span class="bg-sun-500 px-1 text-ink-950">cap</span>.</span>
           </h1>
           <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
             {site.name} is a surf club for kids in Tamarin. Two sessions a week, kids training
@@ -65,12 +67,8 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
         </div>
 
         <div data-float class="flex flex-col gap-3">
-          <a class="cta-primary w-full" href="#how-to-join">
-            Start here · how to join
-          </a>
-          <a class="cta-secondary w-full" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-            Slide into WhatsApp
-          </a>
+          <Cta href="#how-to-join" class="w-full">Start here · how to join</Cta>
+          <Cta href={site.whatsappUrl} variant="secondary" target="_blank" rel="noreferrer" class="w-full">Slide into WhatsApp</Cta>
           <a data-member-link class="py-2 text-center text-sm font-semibold text-white underline underline-offset-4" href="/login">Member sign-in</a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
             Mon + Fri · 4-6pm · Tamarin Bay
@@ -81,17 +79,17 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   </section>
 
   <!-- ===================== STATS STRIP ===================== -->
-  <section class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-coral-500)] text-[var(--color-ink-950)]">
+  <section class="relative border-b-2 border-edge bg-coral-500 text-ink-950">
     <div class="mx-auto grid max-w-7xl grid-cols-2 gap-0 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">
       {site.stats.map((stat, i) => (
         <div class:list={[
           "flex flex-col items-start gap-1 py-6 pr-6",
-          i < site.stats.length - 1 ? "border-r-2 border-[var(--color-ink-950)]/25" : "",
+          i < site.stats.length - 1 ? "border-r-2 border-ink-950/25" : "",
         ]}>
-          <p class="font-display text-4xl font-black leading-none md:text-5xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
+          <p class="font-display text-4xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-5xl">
             {stat.value}
           </p>
-          <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/80">
+          <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">
             {stat.label}
           </p>
         </div>
@@ -102,14 +100,14 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   <!-- ===================== SEMESTER UPDATE ===================== -->
   <MembersArea />
 
-  <section id="semester-update" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] py-16 text-white lg:py-20">
-    <div class="absolute inset-0 opacity-35" aria-hidden="true" style="background-image: radial-gradient(circle at 10% 15%, var(--color-coral-500), transparent 38%), radial-gradient(circle at 90% 85%, var(--color-teal-500), transparent 42%);"></div>
+  <section id="semester-update" class="relative overflow-hidden border-b-2 border-edge bg-ink-950 py-16 text-white lg:py-20">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_10%_15%,var(--color-coral-500),transparent_38%),radial-gradient(circle_at_90%_85%,var(--color-teal-500),transparent_42%)] opacity-35" aria-hidden="true"></div>
     <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
       <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:gap-14">
         <div data-reveal>
-          <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-sun-500)]">New semester · September 2026</p>
-          <h2 class="mt-5 font-display text-4xl font-black leading-[0.95] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl" style="font-variation-settings: 'wdth' 114; font-weight: 750;">
-            Start with one free session, then <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1; font-weight: 500;">commit</span>.
+          <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-sun-500">New semester · September 2026</p>
+          <h2 class="mt-5 font-display text-4xl font-[750] leading-[0.95] tracking-[-0.035em] text-white [font-variation-settings:'wdth'_114] sm:text-5xl lg:text-6xl">
+            Start with one free session, then <span class="font-accent font-medium italic text-sun-500">commit</span>.
           </h2>
           <p class="mt-6 max-w-xl text-base leading-7 text-white/82 sm:text-lg sm:leading-8">
             We take this club seriously. Membership asks the same commitment from the duckies and their parents: show up, get in the water, and help keep the session safe.
@@ -117,19 +115,19 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2" data-reveal>
-          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-sun-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-coral-500)]">
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-sun-500 p-5 text-ink-950 shadow-[4px_4px_0_0_var(--color-coral-500)]">
             <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">Open kickoff</p>
-            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">Friday 11 September</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight [font-variation-settings:'wdth'_114]">Friday 11 September</p>
             <p class="mt-2 text-sm leading-6">4-6pm. Everyone is welcome. A new duckie's first session is free.</p>
           </div>
-          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-teal-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-sun-500)]">
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-teal-500 p-5 text-ink-950 shadow-[4px_4px_0_0_var(--color-sun-500)]">
             <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">Semester membership</p>
-            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">Rs 3,000 / Rs 5,000</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight [font-variation-settings:'wdth'_114]">Rs 3,000 / Rs 5,000</p>
             <p class="mt-2 text-sm leading-6">One child / family. Regular Monday and Friday training is members-only after the kickoff.</p>
           </div>
-          <div class="rounded-[1.4rem] border-2 border-white/80 bg-[var(--color-coral-500)] p-5 text-[var(--color-ink-950)] shadow-[4px_4px_0_0_var(--color-teal-500)] sm:col-span-2">
+          <div class="rounded-[1.4rem] border-2 border-white/80 bg-coral-500 p-5 text-ink-950 shadow-[4px_4px_0_0_var(--color-teal-500)] sm:col-span-2">
             <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em]">The water rule</p>
-            <p class="mt-2 font-display text-2xl font-black leading-tight" style="font-variation-settings: 'wdth' 114;">At least one parent from every family gets wet.</p>
+            <p class="mt-2 font-display text-2xl font-black leading-tight [font-variation-settings:'wdth'_114]">At least one parent from every family gets wet.</p>
             <p class="mt-2 max-w-2xl text-sm leading-6">We had too many gnarly situations last semester. A parent or guardian must be in the water for the full session, including a new duckie's free first one.</p>
           </div>
         </div>
@@ -137,64 +135,63 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 
       <div class="mt-9 grid gap-5 border-t border-white/25 pt-7 sm:grid-cols-2" data-reveal>
         <div>
-          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-sun-500)]">Swiss talent incoming</p>
+          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-sun-500">Swiss talent incoming</p>
           <p class="mt-2 max-w-xl text-sm leading-6 text-white/78">Estelle is travelling from Switzerland for an internship with Sunset Duckies. She will contact every family that joins the club.</p>
         </div>
         <div>
-          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-sun-500)]">Next competition</p>
+          <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-sun-500">Next competition</p>
           <p class="mt-2 max-w-xl text-sm leading-6 text-white/78">We are planning it for October. The date and format are still being worked out.</p>
         </div>
       </div>
 
       <div class="mt-9 flex flex-wrap gap-3" data-reveal>
-        <a class="cta-primary" href="/blog/new-semester-2026">Read the full semester update</a>
-        <a class="cta-secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">Join the WhatsApp group</a>
+        <Cta href="/blog/new-semester-2026">Read the full semester update</Cta>
+        <Cta href={site.whatsappUrl} variant="secondary" target="_blank" rel="noreferrer">Join the WhatsApp group</Cta>
       </div>
     </div>
   </section>
 
   <!-- ===================== AGE RECOMMENDATION ===================== -->
-  <section id="age-guide" class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] py-16 text-[var(--color-ink-950)] lg:py-20">
-    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 88% 12%, rgba(255,210,63,0.55), transparent 45%), radial-gradient(circle at 8% 92%, rgba(255,225,212,0.6), transparent 50%);"></div>
+  <section id="age-guide" class="relative overflow-hidden border-b-2 border-edge bg-teal-500 py-16 text-ink-950 lg:py-20">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_88%_12%,color-mix(in_oklab,var(--color-sun-500)_55%,transparent),transparent_45%),radial-gradient(circle_at_8%_92%,color-mix(in_oklab,var(--color-cream)_60%,transparent),transparent_50%)] opacity-50" aria-hidden="true"></div>
 
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
       <div class="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14">
         <div class="space-y-5" data-reveal>
-          <p class="section-kicker">{site.ageGuide.kicker}</p>
+          <Kicker>{site.ageGuide.kicker}</Kicker>
 
-          <div class="wobble inline-flex rotate-[-2deg] items-center gap-3 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-5 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-
-            <span class="font-display text-2xl font-black leading-none sm:text-3xl" style="font-variation-settings: 'wdth' 118; font-weight: 800;">
+          <div class="inline-flex animate-wobble items-center gap-3 rounded-full border-2 border-ink-950 bg-sun-500 px-5 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)] motion-reduce:animate-none">
+            <span class="font-display text-2xl font-extrabold leading-none [font-variation-settings:'wdth'_118] sm:text-3xl">
               {site.ageGuide.rangeLabel}
             </span>
           </div>
 
-          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
+          <SectionTitle class="text-ink-950">
             Built for kids
-            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">7</span>
-            and <span class="ink-underline">up</span>.
-          </h2>
-          <p class="text-base leading-7 text-[var(--color-ink-950)]/85 sm:text-lg sm:leading-8">
+            <span class="font-accent italic">7</span>
+            and <Underline>up</Underline>.
+          </SectionTitle>
+          <p class="text-base leading-7 text-ink-950/85 sm:text-lg sm:leading-8">
             {site.ageGuide.intro}
           </p>
-          <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/70">
+          <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ink-950/70">
             {site.ageGuide.footnote}
           </p>
         </div>
 
         <div class="grid gap-4 sm:gap-5" data-reveal>
           {site.ageGuide.requirements.map((req, i) => (
-            <div class:list={["surface-card flex items-start gap-4 p-6 sm:p-7", i % 2 === 0 ? "tilt-left" : "tilt-right"]}>
+            <StickerCard tilt={i % 2 === 0 ? "left" : "right"} class="flex items-start gap-4 p-6 sm:p-7">
               <SurfPhoto scene={req.photo} />
               <div>
-                <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                <p class="font-display text-xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110] sm:text-2xl">
                   {req.title}
                 </p>
-                <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                <p class="mt-2 text-[0.98rem] leading-7 text-fg/80">
                   {req.text}
                 </p>
               </div>
-            </div>
+            </StickerCard>
           ))}
         </div>
       </div>
@@ -202,39 +199,39 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   </section>
 
   <!-- ===================== HOW TO JOIN ===================== -->
-  <section id="how-to-join" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-16 lg:py-20">
-    <div class="absolute inset-0 -z-10 opacity-50" aria-hidden="true" style="background-image: radial-gradient(circle at 90% 10%, #cdf7f0, transparent 55%), radial-gradient(circle at 10% 90%, #ffe1d4, transparent 55%);"></div>
+  <section id="how-to-join" class="relative border-b-2 border-edge bg-canvas py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_90%_10%,var(--sticker-teal),transparent_55%),radial-gradient(circle_at_10%_90%,var(--sticker-coral),transparent_55%)] opacity-50" aria-hidden="true"></div>
 
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
       <div class="max-w-3xl space-y-5" data-reveal>
-        <p class="section-kicker">{site.howToJoin.kicker}</p>
-        <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
-          How to <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">join</span>
-          the club, in <span class="ink-underline">four</span> steps.
-        </h2>
-        <p class="body-copy">{site.howToJoin.intro}</p>
+        <Kicker>{site.howToJoin.kicker}</Kicker>
+        <SectionTitle>
+          How to <span class="font-accent italic text-accent-text">join</span>
+          the club, in <Underline>four</Underline> steps.
+        </SectionTitle>
+        <p class={bodyCopy}>{site.howToJoin.intro}</p>
       </div>
 
       <ol class="mt-10 grid gap-5 sm:gap-6 lg:mt-14 lg:grid-cols-2">
         {site.howToJoin.steps.map((step, i) => (
-          <li class:list={["surface-card p-6 sm:p-7", step.accent]} data-reveal>
+          <StickerCard as="li" tone={step.accent as "coral" | "teal" | "sun" | "pink" | "lilac"} class="p-6 sm:p-7" data-reveal>
             <div class="flex items-start gap-4">
-              <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+              <span class={stepBubble}>{String(i + 1).padStart(2, "0")}</span>
               <div class="min-w-0 flex-1 space-y-3">
-                <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
+                <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-fg/65">
                   {step.tag}
                 </p>
-                <p class="font-display text-2xl leading-tight text-[var(--color-ink-950)] sm:text-[1.65rem]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                <p class="font-display text-2xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110] sm:text-[1.65rem]">
                   {step.title}
                 </p>
-                <p class="text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                <p class="text-[0.98rem] leading-7 text-fg/80">
                   {step.body}
                 </p>
 
                 {step.id === "waiver" && (
-                  <details class="join-details mt-2">
-                    <summary>What the waiver says (1-min read)</summary>
-                    <ul class="mt-3 space-y-2 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/80">
+                  <details class="group mt-2 rounded-2xl border-[1.5px] border-line bg-canvas/60 px-[0.9rem] py-[0.55rem]">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-2 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-fg before:inline-flex before:h-[1.1rem] before:w-[1.1rem] before:items-center before:justify-center before:rounded-full before:border-[1.5px] before:border-edge before:bg-highlight before:font-display before:text-[0.85rem] before:font-extrabold before:leading-none before:text-highlight-fg before:content-['+'] group-open:before:bg-coral-500 group-open:before:text-cream group-open:before:content-['−'] focus-visible:rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-coral-500 [&::-webkit-details-marker]:hidden">What the waiver says (1-min read)</summary>
+                    <ul class="mt-3 space-y-2 text-[0.92rem] leading-6 text-fg/80">
                       {site.howToJoin.waiverSummary.map((bullet) => (
                         <li class="flex gap-2"><span aria-hidden="true">✦</span><span>{bullet}</span></li>
                       ))}
@@ -244,71 +241,71 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 
                 <div class="flex flex-wrap gap-2 pt-1">
                   {step.actions.map((action) => (
-                    <a
-                      class:list={[action.variant === "primary" ? "cta-primary" : "cta-secondary"]}
+                    <Cta
+                      variant={action.variant === "primary" ? "primary" : "secondary"}
                       href={action.href}
                       {...(action.external ? { target: "_blank", rel: "noreferrer" } : {})}
                     >
                       {action.label}
-                    </a>
+                    </Cta>
                   ))}
                 </div>
 
                 {step.footnote && (
-                  <p class="pt-1 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60">
+                  <p class="pt-1 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-fg/60">
                     {step.footnote}
                   </p>
                 )}
               </div>
             </div>
-          </li>
+          </StickerCard>
         ))}
       </ol>
 
-      <p class="mt-10 text-center font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-ink-950)]/65">
-        Stuck? → <a href={`mailto:${site.contact.coordinatorEmail}`} class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">{site.contact.coordinatorEmail}</a>
+      <p class="mt-10 text-center font-mono text-[0.7rem] uppercase tracking-[0.22em] text-fg/65">
+        Stuck? → <a href={`mailto:${site.contact.coordinatorEmail}`} class="underline decoration-accent decoration-2 underline-offset-4 hover:text-accent-text">{site.contact.coordinatorEmail}</a>
       </p>
     </div>
   </section>
 
   <!-- ===================== HOW THE CLUB WORKS ===================== -->
-  <section id="how-it-works" class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] py-16 lg:py-20">
-    <div class="absolute inset-0 -z-10 opacity-60" aria-hidden="true" style="background-image: radial-gradient(circle at 12% 25%, #ffe1d4, transparent 55%), radial-gradient(circle at 88% 75%, #fff0b3, transparent 55%);"></div>
+  <section id="how-it-works" class="relative border-b-2 border-edge bg-surface py-16 lg:py-20">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_25%,var(--sticker-coral),transparent_55%),radial-gradient(circle_at_88%_75%,var(--sticker-sun),transparent_55%)] opacity-60" aria-hidden="true"></div>
 
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
       <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-14">
         <div class="space-y-5" data-reveal>
-          <p class="section-kicker">{site.clubRules.kicker}</p>
-          <h2 class="section-title" style="font-size: clamp(2rem, 4.5vw, 3.6rem);">
-            It's a <span class="font-accent italic text-[var(--color-coral-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club</span>.
-            <span class="block">Not a <span class="ink-underline">lesson</span>.</span>
-          </h2>
-          <p class="body-copy max-w-md">
+          <Kicker>{site.clubRules.kicker}</Kicker>
+          <SectionTitle>
+            It's a <span class="font-accent italic text-accent-text">club</span>.
+            <span class="block">Not a <Underline>lesson</Underline>.</span>
+          </SectionTitle>
+          <p class={`max-w-md ${bodyCopy}`}>
             {site.clubRules.intro}
           </p>
           <div class="flex flex-wrap gap-2 pt-1">
-            <span class="chip">BYO surfboard</span>
-            <span class="chip">BYO wetsuit</span>
-            <span class="chip">One parent in the water</span>
-            <span class="chip">No drop-off</span>
+            <Chip>BYO surfboard</Chip>
+            <Chip>BYO wetsuit</Chip>
+            <Chip>One parent in the water</Chip>
+            <Chip>No drop-off</Chip>
           </div>
         </div>
 
         <div class="grid gap-4 sm:gap-5" data-reveal>
           {site.clubRules.rules.map((rule, i) => (
-            <div class:list={["surface-card p-6 sm:p-7", pillarAccents[i % pillarAccents.length]]}>
+            <StickerCard tone={pillarAccents[i % pillarAccents.length]} class="p-6 sm:p-7">
               <div class="flex items-start gap-4">
-                <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+                <span class={stepBubble}>{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <p class="font-display text-xl leading-tight text-[var(--color-ink-950)] sm:text-2xl" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  <p class="font-display text-xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110] sm:text-2xl">
                     {rule.title}
                   </p>
-                  <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/80">
+                  <p class="mt-2 text-[0.98rem] leading-7 text-fg/80">
                     {rule.text}
                   </p>
                 </div>
               </div>
-            </div>
+            </StickerCard>
           ))}
         </div>
       </div>
@@ -316,39 +313,37 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   </section>
 
   <!-- ===================== EVENT SPOTLIGHT — SUNSET DUCKIES CUP ===================== -->
-  <section class="relative overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
-    <div class="absolute inset-0 -z-10 opacity-[0.18]" aria-hidden="true" style="background-image: radial-gradient(circle at 18% 20%, var(--color-coral-500), transparent 45%), radial-gradient(circle at 82% 80%, var(--color-sun-500), transparent 45%), radial-gradient(circle at 50% 50%, var(--color-teal-500), transparent 55%);"></div>
+  <section class="relative overflow-hidden border-b-2 border-edge bg-ink-950 text-cream-soft">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,var(--color-coral-500),transparent_45%),radial-gradient(circle_at_82%_80%,var(--color-sun-500),transparent_45%),radial-gradient(circle_at_50%_50%,var(--color-teal-500),transparent_55%)] opacity-[0.18]" aria-hidden="true"></div>
 
     <a href="/sunset-duckies-cup" class="group relative block">
       <div class="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-10 lg:px-10 lg:py-12">
         <div class="flex items-center gap-4">
           <SurfPhoto scene="beach-crew" />
           <div>
-            <p class="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-[var(--color-sun-500)]">
+            <p class="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-sun-500">
               ★ first ever · vol. 01
             </p>
-            <p class="mt-1 font-display text-2xl font-bold leading-tight text-[var(--color-cream-soft)] sm:text-3xl" style="font-variation-settings: 'wdth' 114;">
-              Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span>
+            <p class="mt-1 font-display text-2xl font-bold leading-tight text-cream-soft [font-variation-settings:'wdth'_114] sm:text-3xl">
+              Sunset Duckies <span class="font-accent italic text-sun-500">Cup</span>
             </p>
           </div>
         </div>
 
         <div class="space-y-3">
-          <p class="text-base leading-7 text-[var(--color-cream-soft)]/90 sm:text-lg">
+          <p class="text-base leading-7 text-cream-soft/90 sm:text-lg">
             {site.cup.tagline} Sunday <strong>31 May 2026</strong>, Tamarin Bay, 13:00–17:30.
           </p>
           <div class="flex flex-wrap gap-2">
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> Duckling +  Duck</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> BBQ +  prizes</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-[var(--color-cream-soft)]/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-cream-soft)]"> {site.cup.entryFeeLabel}</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-cream-soft/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-cream-soft"> Duckling +  Duck</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-cream-soft/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-cream-soft"> BBQ +  prizes</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-cream-soft/40 bg-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-cream-soft"> {site.cup.entryFeeLabel}</span>
           </div>
         </div>
 
         <div class="flex flex-col gap-2 sm:flex-row lg:flex-col">
-          <span class="cta-primary inline-flex">
-            See the cup
-          </span>
-          <span class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-cream-soft)]/60 lg:text-right">
+          <Cta as="span">See the cup</Cta>
+          <span class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-cream-soft/60 lg:text-right">
             ↓ templates + sign-up
           </span>
         </div>
@@ -358,50 +353,51 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 
   <!-- ===================== WHY SUNSET DUCKIES ===================== -->
   <section id="why-sunset-duckies" class="relative mx-auto max-w-7xl px-6 pb-14 pt-20 lg:px-10">
-    <div class="blob-teal absolute -left-32 top-20 -z-0"></div>
-    <div class="blob-coral absolute -right-20 bottom-0 -z-0"></div>
+    <div class={`${glow} -left-32 top-20 -z-0 h-[280px] w-[280px] rounded-[60%_40%_55%_45%/42%_58%_42%_58%] bg-teal-500 opacity-50 blur-[44px]`}></div>
+    <div class={`${glow} -right-20 bottom-0 -z-0 h-[320px] w-[320px] rounded-[52%_48%_40%_60%/55%_45%_55%_45%] bg-coral-500 opacity-45 blur-[40px]`}></div>
 
     <div class="relative grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
       <div class="space-y-6" data-reveal>
-        <p class="section-kicker">Why Sunset Duckies</p>
-        <h2 class="section-title max-w-2xl">
+        <Kicker>Why Sunset Duckies</Kicker>
+        <SectionTitle class="max-w-2xl">
           A
-          <span class="ink-underline">steady</span>
-          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">weekly</span>
+          <Underline>steady</Underline>
+          <span class="font-accent italic">weekly</span>
           rhythm in Tamarin.
-        </h2>
-        <p class="body-copy max-w-2xl">
+        </SectionTitle>
+        <p class={`max-w-2xl ${bodyCopy}`}>
           Two sessions a week. Kids build confidence in the water and become part of the local crew.
         </p>
 
         <div class="grid gap-4 sm:gap-5">
           {site.pillars.map((pillar, i) => (
-            <div class:list={["surface-card p-6", pillarAccents[i % pillarAccents.length]]}>
+            <StickerCard tone={pillarAccents[i % pillarAccents.length]} class="p-6">
               <div class="flex items-start gap-4">
-                <span class="step-bubble">{String(i + 1).padStart(2, "0")}</span>
+                <span class={stepBubble}>{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <p class="font-display text-2xl leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 108; font-weight: 600;">
+                  <p class="font-display text-2xl font-semibold leading-tight text-fg [font-variation-settings:'wdth'_108]">
                     {pillar.title}
                   </p>
-                  <p class="mt-2 text-[0.98rem] leading-7 text-[var(--color-ink-950)]/75">{pillar.text}</p>
+                  <p class="mt-2 text-[0.98rem] leading-7 text-fg/75">{pillar.text}</p>
                 </div>
               </div>
-            </div>
+            </StickerCard>
           ))}
         </div>
       </div>
 
       <div class="relative" data-reveal>
-        <div class="media-frame aspect-[1.08/0.95] tilt-right transition-transform duration-500">
+        <div class={`${mediaFrame} aspect-[1.08/0.95] rotate-[1.6deg] transition-transform duration-500 hover:rotate-0`}>
           <img
             src="/media/surf/surf-kit.webp"
             alt="Surfboards and a rash vest ready on a sandy beach."
             loading="eager"
+            class="h-full w-full object-cover"
           />
         </div>
-        <div class="absolute -bottom-6 -left-6 wobble hidden md:block">
-          <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-5 py-3 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-            <p class="font-display text-lg font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110;">
+        <div class="absolute -bottom-6 -left-6 hidden animate-wobble motion-reduce:animate-none md:block">
+          <div class="rounded-full border-2 border-ink-950 bg-teal-500 px-5 py-3 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+            <p class="font-display text-lg font-bold text-ink-950 [font-variation-settings:'wdth'_110]">
               ✦ Tamarin Bay
             </p>
           </div>
@@ -413,165 +409,155 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   <!-- ===================== SCHEDULE + COMPETITION ===================== -->
   <section id="schedule" class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
     <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <div class="surface-card sticker-sun p-8" data-reveal>
-        <p class="section-kicker">Weekly rhythm</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+      <StickerCard tone="sun" class="p-8" data-reveal>
+        <Kicker>Weekly rhythm</Kicker>
+        <SectionTitle size="md" class="mt-4">
           Monday <span class="font-accent italic">+</span> Friday, 4-6pm.
-        </h2>
+        </SectionTitle>
         <div class="mt-6 grid gap-4">
           {site.schedule.map((session) => (
-            <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <div class={miniCard}>
               <div class="flex items-center justify-between gap-4">
-                <p class="font-display text-2xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                <p class="font-display text-2xl font-bold text-fg [font-variation-settings:'wdth'_110]">
                   {session.day}
                 </p>
-                <p class="font-mono text-sm font-semibold text-[var(--color-coral-500)]">
+                <p class="font-mono text-sm font-semibold text-accent-text">
                   {session.time}
                 </p>
               </div>
-              <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/72">{session.focus}</p>
+              <p class="mt-2 text-[0.95rem] leading-7 text-fg/72">{session.focus}</p>
             </div>
           ))}
         </div>
 
-        <p class="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65">
-          ↑ <a href="#how-it-works" class="underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 hover:text-[var(--color-coral-500)]">How the club works</a> — BYO board + wetsuit, one parent in the water.
+        <p class="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-fg/65">
+          ↑ <a href="#how-it-works" class="underline decoration-accent decoration-2 underline-offset-4 hover:text-accent-text">How the club works</a> — BYO board + wetsuit, one parent in the water.
         </p>
-      </div>
+      </StickerCard>
 
-      <div class="surface-card sticker-coral p-8" data-reveal>
-        <p class="section-kicker">{site.competition.label}</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+      <StickerCard tone="coral" class="p-8" data-reveal>
+        <Kicker>{site.competition.label}</Kicker>
+        <SectionTitle size="md" class="mt-4">
           {site.competition.title}
-        </h2>
-        <p class="body-copy mt-4">
+        </SectionTitle>
+        <p class={`mt-4 ${bodyCopy}`}>
           {site.competition.description}
         </p>
-        <div class="mt-6 rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] p-5 text-[var(--color-cream-soft)] shadow-[4px_4px_0_0_var(--color-sun-500)]">
-          <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--color-sun-500)]">
+        <div class="mt-6 rounded-card border-2 border-ink-950 bg-ink-950 p-5 text-cream-soft shadow-[4px_4px_0_0_var(--color-sun-500)]">
+          <p class="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-sun-500">
             ★ Next up — first ever
           </p>
-          <p class="mt-2 font-display text-xl leading-tight text-[var(--color-cream-soft)] sm:text-2xl" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
-            Sunset Duckies <span class="font-accent italic text-[var(--color-sun-500)]" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">Cup</span> — Sun 31 May 2026
+          <p class="mt-2 font-display text-xl font-bold leading-tight text-cream-soft [font-variation-settings:'wdth'_112] sm:text-2xl">
+            Sunset Duckies <span class="font-accent italic text-sun-500">Cup</span> — Sun 31 May 2026
           </p>
-          <p class="mt-2 text-[0.92rem] leading-6 text-[var(--color-cream-soft)]/85">
+          <p class="mt-2 text-[0.92rem] leading-6 text-cream-soft/85">
             Tamarin Bay, 13:00–17:30. Heats of 4, two divisions, BBQ on the sand, parent heat at 16:30.
           </p>
-          <a href="/sunset-duckies-cup" class="mt-4 inline-flex items-center gap-2 rounded-full border-2 border-[var(--color-cream-soft)] bg-[var(--color-coral-500)] px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-sun-500)] transition-transform hover:-translate-y-0.5" style="font-variation-settings: 'wdth' 108;">
+          <a href="/sunset-duckies-cup" class="mt-4 inline-flex items-center gap-2 rounded-full border-2 border-cream-soft bg-coral-500 px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-ink-950 shadow-[3px_3px_0_0_var(--color-sun-500)] transition-transform [font-variation-settings:'wdth'_108] hover:-translate-y-0.5">
             See the cup →
           </a>
         </div>
         <div class="mt-6 flex flex-wrap gap-3">
-          <span class="chip">Milestones to train towards</span>
-          <span class="chip">Beach day for the families</span>
-          <span class="chip">Sponsor visibility</span>
+          <Chip>Milestones to train towards</Chip>
+          <Chip>Beach day for the families</Chip>
+          <Chip>Sponsor visibility</Chip>
         </div>
-      </div>
+      </StickerCard>
     </div>
   </section>
 
   <!-- ===================== THE PATH / PROGRESSION ===================== -->
   <section id="how-it-works" class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
-    <div class="surface-card sticker-lilac p-8 md:p-10" data-reveal>
+    <StickerCard tone="lilac" class="p-8 md:p-10" data-reveal>
       <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div class="space-y-5">
-          <p class="section-kicker">The path</p>
-          <h2 class="section-title">
+          <Kicker>The path</Kicker>
+          <SectionTitle>
             From first
-            <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">whitewater</span>
-            to <span class="ink-underline">chasing</span> the sunset line.
-          </h2>
-          <p class="body-copy max-w-xl">
+            <span class="font-accent italic">whitewater</span>
+            to <Underline>chasing</Underline> the sunset line.
+          </SectionTitle>
+          <p class={`max-w-xl ${bodyCopy}`}>
             Every duckie starts in the whitewater. Week by week the kids progress at their own pace,
             until they're paddling out with the crew.
           </p>
         </div>
 
         <div class="grid gap-4">
-          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+          <div class={miniCard}>
+            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-accent-text">
               Two sessions a week
             </p>
-            <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+            <p class="mt-2 font-display text-xl font-bold text-fg [font-variation-settings:'wdth'_110]">
               Monday + Friday, 4-6pm.
             </p>
-            <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+            <p class="mt-2 text-[0.95rem] leading-7 text-fg/78">
               Technique, whitewater reps, and sunset paddle-outs.
             </p>
           </div>
 
-          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+          <div class={miniCard}>
+            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-accent-text">
               Bring your own kit
             </p>
-            <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+            <p class="mt-2 font-display text-xl font-bold text-fg [font-variation-settings:'wdth'_110]">
               Surfboard + wetsuit, on the family.
             </p>
-            <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+            <p class="mt-2 text-[0.95rem] leading-7 text-fg/78">
               Buy or borrow — we'll point you to the right shape and size, no guesswork.
             </p>
           </div>
 
-          <div class="rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-5 shadow-[3px_3px_0_0_var(--color-ink-950)]">
-            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+          <div class={miniCard}>
+            <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-accent-text">
               Semester membership
             </p>
-            <p class="mt-2 font-display text-xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+            <p class="mt-2 font-display text-xl font-bold text-fg [font-variation-settings:'wdth'_110]">
               {site.membership.feeLabel}
             </p>
-            <p class="mt-2 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/78">
+            <p class="mt-2 text-[0.95rem] leading-7 text-fg/78">
               {site.membership.fundingNote}
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </StickerCard>
   </section>
 
   <!-- ===================== TRAINING + WHATSAPP ===================== -->
   <section class="mx-auto max-w-7xl px-6 py-10 lg:px-10">
     <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <div class="surface-card sticker-teal p-8" data-reveal>
-        <p class="section-kicker">Training materials</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
-          A <span class="ink-underline">library</span> for home practice.
-        </h2>
-        <p class="body-copy mt-4 max-w-2xl">
+      <StickerCard tone="teal" class="p-8" data-reveal>
+        <Kicker>Training materials</Kicker>
+        <SectionTitle size="md" class="mt-4">
+          A <Underline>library</Underline> for home practice.
+        </SectionTitle>
+        <p class={`mt-4 max-w-2xl ${bodyCopy}`}>
           Pop-up practice, balance work, ocean knowledge, and surf videos — all in one spot.
         </p>
         <div class="mt-8">
-          <a class="cta-primary" href="/training-materials">
-            Open the training library
-          </a>
+          <Cta href="/training-materials">Open the training library</Cta>
         </div>
-      </div>
+      </StickerCard>
 
-      <div class="surface-card sticker-lilac p-8" data-reveal>
-        <p class="section-kicker">WhatsApp</p>
-        <h2 class="section-title mt-4" style="font-size: clamp(1.7rem, 3vw, 2.6rem);">
+      <StickerCard tone="lilac" class="p-8" data-reveal>
+        <Kicker>WhatsApp</Kicker>
+        <SectionTitle size="md" class="mt-4">
           The club group.
-        </h2>
-        <p class="body-copy mt-4">
+        </SectionTitle>
+        <p class={`mt-4 ${bodyCopy}`}>
           Join the WhatsApp to get session updates and stay in the loop.
         </p>
         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div class="rounded-[1.5rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-4 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-            <img
-              src={qrCode}
-              alt="QR code linking to the Sunset Duckies WhatsApp group."
-              class="h-40 w-40 rounded-xl"
-            />
-          </div>
+          <div class="rounded-[1.5rem] border-2 border-edge bg-surface p-4 text-fg shadow-sticker-md" set:html={qrCode} />
           <div class="space-y-3">
-            <p class="text-sm leading-7 text-[var(--color-ink-950)]/72">
+            <p class="text-sm leading-7 text-fg/72">
               Scan to open the club WhatsApp directly on your phone.
             </p>
-            <a class="cta-primary" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-              Open WhatsApp
-            </a>
+            <Cta href={site.whatsappUrl} target="_blank" rel="noreferrer">Open WhatsApp</Cta>
           </div>
         </div>
-      </div>
+      </StickerCard>
     </div>
   </section>
 
@@ -579,23 +565,19 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
   <section class="mx-auto max-w-7xl px-6 py-18 lg:px-10">
     <div class="space-y-10" data-reveal>
       <div class="max-w-3xl">
-        <p class="section-kicker">Founder</p>
-        <h2 class="section-title mt-4">
+        <Kicker>Founder</Kicker>
+        <SectionTitle class="mt-4">
           Who runs the
-          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">club</span>.
-        </h2>
+          <span class="font-accent italic">club</span>.
+        </SectionTitle>
       </div>
 
       <div class="mx-auto grid w-full max-w-3xl gap-6">
         {site.founders.map((founder, i) => (
-          <article class:list={[
-            "surface-card overflow-hidden",
-            i % 2 === 0 ? "tilt-left" : "tilt-right",
-            "transition-transform duration-500",
-          ]}>
+          <StickerCard as="article" tilt={i % 2 === 0 ? "left" : "right"} class="overflow-hidden duration-500">
             <div class:list={founder.image ? "grid gap-0 md:grid-cols-[0.92fr_1.08fr]" : "block"}>
               {founder.image && (
-                <div class="bg-[var(--color-cream-deep)]">
+                <div class="bg-surface-2">
                   <img
                     src={founder.image}
                     alt={founder.name}
@@ -605,16 +587,16 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
                 </div>
               )}
               <div class="p-6 md:p-7">
-                <p class="font-display text-3xl text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112; font-weight: 700;">
+                <p class="font-display text-3xl font-bold text-fg [font-variation-settings:'wdth'_112]">
                   {founder.name}
                 </p>
-                <p class="mt-2 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+                <p class="mt-2 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-accent-text">
                   ✦ {founder.role}
                 </p>
-                <p class="mt-4 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">{founder.bio}</p>
+                <p class="mt-4 text-[0.95rem] leading-7 text-fg/75">{founder.bio}</p>
                 {founder.href && (
                   <a
-                    class="mt-6 inline-flex font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-950)] underline decoration-[var(--color-coral-500)] decoration-2 underline-offset-4 transition hover:text-[var(--color-coral-500)]"
+                    class="mt-6 inline-flex font-mono text-xs font-semibold uppercase tracking-[0.2em] text-fg underline decoration-accent decoration-2 underline-offset-4 transition hover:text-accent-text"
                     href={founder.href}
                     target="_blank"
                     rel="noreferrer"
@@ -624,7 +606,7 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
                 )}
               </div>
             </div>
-          </article>
+          </StickerCard>
         ))}
       </div>
     </div>
@@ -632,20 +614,20 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
 
   <!-- ===================== SPONSORS ===================== -->
   <section id="sponsors" aria-labelledby="sponsors-title" class="mx-auto max-w-7xl px-6 pb-20 pt-8 lg:px-10">
-    <div class="sponsor-strip">
-      <h2 id="sponsors-title">Backed by</h2>
-      <ul class="sponsor-logos" aria-label="Club sponsors">
+    <div class="border-t-2 border-b border-edge pt-7 pb-8">
+      <h2 id="sponsors-title" class="text-center font-mono text-[0.7rem] uppercase tracking-[0.18em]">Backed by</h2>
+      <ul class="mt-6 grid list-none grid-cols-2 items-center gap-x-8 gap-y-5 p-0 max-sm:[&>li:last-child]:col-span-full sm:grid-cols-5 sm:gap-8" aria-label="Club sponsors">
         {site.sponsors.map(sponsor => {
           const Tag = sponsor.href ? "a" : "span";
           return (
             <li>
-              <Tag href={sponsor.href ?? undefined} target={sponsor.href ? "_blank" : undefined} rel={sponsor.href ? "noreferrer" : undefined} class="sponsor-logo">
+              <Tag href={sponsor.href ?? undefined} target={sponsor.href ? "_blank" : undefined} rel={sponsor.href ? "noreferrer" : undefined} class:list={["flex min-h-16 items-center justify-center text-fg focus-visible:rounded focus-visible:outline-3 focus-visible:outline-offset-6 focus-visible:outline-teal-600", sponsor.href && "hover:opacity-65"]}>
                 {sponsor.logo ? (
-                  <img src={sponsor.logo} alt={sponsor.name} loading="lazy" width="180" height="48" />
+                  <img src={sponsor.logo} alt={sponsor.name} loading="lazy" width="180" height="48" class="block h-[38px] w-full max-w-[132px] object-contain dark:invert sm:h-11 sm:max-w-[155px]" />
                 ) : sponsor.wordmark === "nbk" ? (
-                  <span class="sponsor-nbk" role="img" aria-label={sponsor.name}>NBK<span>LABS</span></span>
+                  <span class="font-display text-[2rem] font-[750] leading-none tracking-[-0.06em]" role="img" aria-label={sponsor.name}>NBK<span class="ml-2 font-mono text-[0.72rem] tracking-[0.16em]">LABS</span></span>
                 ) : (
-                  <span class="sponsor-andras" role="img" aria-label={sponsor.name}>A<span class="sponsor-dot">·</span>H<small>andrashejj.com</small></span>
+                  <span class="text-center font-display text-[2rem] font-semibold leading-none" role="img" aria-label={sponsor.name}>A<span class="italic text-accent-text">·</span>H<small class="mt-[0.45rem] block font-mono text-[0.6rem] tracking-[0.03em]">andrashejj.com</small></span>
                 )}
               </Tag>
             </li>
@@ -655,29 +637,3 @@ const pillarAccents = ["sticker-teal", "sticker-sun", "sticker-coral"];
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  @media (max-width: 639px) {
-    .grom-hero [data-hero-image] { height: 360px; object-position: 76% center; }
-    .grom-hero .hero-copy { padding-top: 320px; }
-    .grom-hero .hero-shade { background: linear-gradient(180deg, transparent 220px, var(--color-ink-950) 360px); }
-  }
-
-  .sponsor-strip { border-top: 2px solid var(--color-ink-950); border-bottom: 1px solid var(--color-ink-950); padding: 1.75rem 0 2rem; }
-  .sponsor-strip h2 { font: .7rem var(--font-mono); letter-spacing: .18em; text-transform: uppercase; text-align: center; }
-  .sponsor-logos { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2rem; align-items: center; margin-top: 1.5rem; padding: 0; }
-  .sponsor-logo { display: flex; align-items: center; justify-content: center; min-height: 64px; color: var(--color-ink-950); }
-  .sponsor-logo img { display: block; width: 100%; max-width: 155px; height: 44px; object-fit: contain; }
-  .sponsor-logo:focus-visible { outline: 3px solid var(--color-teal-600); outline-offset: 6px; border-radius: .25rem; }
-  a.sponsor-logo:hover { opacity: .65; }
-  .sponsor-nbk { font-family: var(--font-display); font-size: 2rem; font-weight: 750; letter-spacing: -.06em; line-height: 1; }
-  .sponsor-nbk > span { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .16em; margin-left: .5rem; }
-  .sponsor-andras { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1; text-align: center; }
-  .sponsor-dot { color: var(--color-coral-500); font-style: italic; }
-  .sponsor-andras small { display: block; margin-top: .45rem; font: .6rem var(--font-mono); letter-spacing: .03em; }
-  @media (max-width: 640px) {
-    .sponsor-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; }
-    .sponsor-logos li:last-child { grid-column: 1 / -1; }
-    .sponsor-logo img { max-width: 132px; height: 38px; }
-  }
-</style>

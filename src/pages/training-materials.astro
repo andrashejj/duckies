@@ -1,6 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
+import Chip from "../components/ui/Chip.astro";
+import Kicker from "../components/ui/Kicker.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import StickerCard from "../components/ui/StickerCard.astro";
+import Underline from "../components/ui/Underline.astro";
+import { bodyCopy, mediaFrame } from "../lib/ui";
 
 const title = `Training Materials | ${site.name}`;
 const description =
@@ -16,7 +22,7 @@ type Pillar = {
   kicker: string;
   title: string;
   blurb: string;
-  accent: string;
+  accent: "teal" | "lilac";
   videos: Video[];
   playlist?: { label: string; href: string };
 };
@@ -30,7 +36,7 @@ const pillars: Pillar[] = [
     title: "Body",
     blurb:
       "Mobility, strength, and technique in one stack. Loose hips and open shoulders for a smoother paddle, bodyweight reps for the push-up and the legs underneath your stance, and pop-up mechanics drilled slow on a rug. Short sessions, clean shape, eyes forward — the way you move at home is the way you'll move on the wave.",
-    accent: "sticker-teal",
+    accent: "teal",
     videos: [
       {
         name: "Kai Lenny warm-up flow",
@@ -73,7 +79,7 @@ const pillars: Pillar[] = [
     title: "Mind",
     blurb:
       "Start the day calm and energised. A few minutes of Qigong gets the body awake; a round of Wim Hof breathing teaches you to stay relaxed when sets roll through. This is the quiet pillar — it makes the body work better.",
-    accent: "sticker-lilac",
+    accent: "lilac",
     videos: [
       {
         name: "Qigong morning practice",
@@ -102,14 +108,14 @@ const pillars: Pillar[] = [
   <!-- ===================== HERO ===================== -->
   <section class="relative mx-auto max-w-7xl px-6 pb-10 pt-14 lg:px-10">
     <div class="grid gap-8 lg:grid-cols-[1fr_0.85fr]">
-      <div class="surface-card p-8 md:p-10" data-float>
-        <p class="section-kicker">Train at home</p>
-        <h1 class="section-title mt-5 max-w-3xl" style="font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height: 0.95;">
+      <StickerCard class="p-8 md:p-10" data-float>
+        <Kicker>Train at home</Kicker>
+        <SectionTitle as="h1" size="none" class="mt-5 max-w-3xl text-[clamp(2.4rem,5.5vw,4.8rem)] leading-[0.95]">
           Body and mind,
-          <span class="font-accent italic" style="font-variation-settings: 'SOFT' 100, 'WONK' 1;">between</span>
-          <span class="ink-underline">sessions</span>.
-        </h1>
-        <p class="body-copy mt-6 max-w-3xl">
+          <span class="font-accent italic">between</span>
+          <Underline>sessions</Underline>.
+        </SectionTitle>
+        <p class={`mt-6 max-w-3xl ${bodyCopy}`}>
           A small library of videos kids can press play on at home, between the Monday
           and Friday sessions. Two pillars — body work (mobility, strength, technique) and a
           breathing practice for the mind — each pointing to a handful of clips we actually use.
@@ -117,21 +123,21 @@ const pillars: Pillar[] = [
         </p>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          {pillars.map((p) => <span class="chip">{p.title}</span>)}
+          {pillars.map((p) => <Chip>{p.title}</Chip>)}
         </div>
-      </div>
+      </StickerCard>
 
       <div class="relative" data-float>
-        <div class="media-frame min-h-[22rem] tilt-right transition-transform duration-500">
+        <div class={`${mediaFrame} min-h-[22rem] rotate-[1.6deg] transition-transform duration-500 hover:rotate-0`}>
           <img
             src="/media/surf/beach-crew.webp"
             alt="Illustrative surf scene of children and adults carrying boards toward the water."
             loading="eager"
           />
         </div>
-        <div class="wobble absolute -bottom-5 -right-4 hidden md:block">
-          <div class="rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-4 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
-            <p class="font-display text-sm font-bold text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 112;">
+        <div class="absolute -right-4 -bottom-5 hidden animate-wobble motion-reduce:animate-none md:block">
+          <div class="rounded-full border-2 border-ink-950 bg-sun-500 px-4 py-2.5 shadow-[4px_4px_0_0_var(--color-ink-950)]">
+            <p class="font-display text-sm font-bold text-ink-950 [font-variation-settings:'wdth'_112]">
               ✦ press play.
             </p>
           </div>
@@ -143,16 +149,16 @@ const pillars: Pillar[] = [
   <!-- ===================== PILLARS ===================== -->
   {pillars.map((pillar) => (
     <section class="mx-auto max-w-7xl px-6 py-6 lg:px-10">
-      <div class:list={["surface-card p-8 md:p-10", pillar.accent]} data-reveal>
+      <StickerCard tone={pillar.accent} class="p-8 md:p-10" data-reveal>
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div class="max-w-2xl">
-            <p class="section-kicker">{pillar.kicker}</p>
-            <h2 class="section-title mt-4" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+            <Kicker>{pillar.kicker}</Kicker>
+            <SectionTitle size="none" class="mt-4 text-[clamp(1.9rem,3.5vw,3rem)]">
               {pillar.title}
-            </h2>
-            <p class="body-copy mt-4">{pillar.blurb}</p>
+            </SectionTitle>
+            <p class={`mt-4 ${bodyCopy}`}>{pillar.blurb}</p>
           </div>
-          <p class="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg/55">
             {pillar.videos.length} {pillar.videos.length === 1 ? "video" : "videos"}
           </p>
         </div>
@@ -163,27 +169,27 @@ const pillars: Pillar[] = [
               href={video.href}
               target="_blank"
               rel="noreferrer"
-              class="group overflow-hidden rounded-[1.4rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] shadow-[4px_4px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--color-ink-950)]"
+              class="group overflow-hidden rounded-card border-2 border-edge bg-surface shadow-sticker-md transition-all hover:-translate-y-1 hover:shadow-sticker"
             >
-              <div class="relative aspect-video w-full overflow-hidden border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-900)]">
+              <div class="relative aspect-video w-full overflow-hidden border-b-2 border-edge bg-ink-900">
                 <img
                   src={video.image}
                   alt={video.name}
                   class="h-full w-full object-cover"
                   loading="lazy"
                 />
-                <div class="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(11,22,32,0.6))]"></div>
+                <div class="absolute inset-0 bg-linear-to-b from-transparent from-55% to-ink-950/60"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)] transition-transform group-hover:scale-110">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-ink-950 bg-sun-500 text-ink-950 transition-transform group-hover:scale-110">
                     <span class="ml-0.5 text-sm">▶</span>
                   </div>
                 </div>
               </div>
               <div class="p-4">
-                <p class="font-display text-lg leading-tight text-[var(--color-ink-950)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                <p class="font-display text-lg font-bold leading-tight text-fg [font-variation-settings:'wdth'_110]">
                   {video.name}
                 </p>
-                <p class="mt-1 truncate font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                <p class="mt-1 truncate font-mono text-[0.7rem] uppercase tracking-[0.14em] text-fg/55">
                   {new URL(video.href).hostname.replace("www.", "")}
                 </p>
               </div>
@@ -197,14 +203,14 @@ const pillars: Pillar[] = [
               href={pillar.playlist.href}
               target="_blank"
               rel="noreferrer"
-              class="group inline-flex items-center gap-2 rounded-full border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-4 py-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-ink-950)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--color-ink-950)]"
+              class="group inline-flex items-center gap-2 rounded-full border-2 border-edge bg-surface px-4 py-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-fg shadow-sticker-sm transition-all hover:-translate-y-0.5 hover:shadow-sticker-lg"
             >
               <span>{pillar.playlist.label}</span>
               <span class="transition-transform group-hover:translate-x-0.5">→</span>
             </a>
           </div>
         )}
-      </div>
+      </StickerCard>
     </section>
   ))}
 </BaseLayout>

@@ -7,6 +7,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { shortOrderId } from "../../lib/format";
 import { STATUS_COLOR, STATUS_LABEL } from "../../lib/admin-orders";
 import { prisma } from "../../lib/prisma";
+import Cta from "../../components/ui/Cta.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import { bodyCopy } from "../../lib/ui";
 
 const session = Astro.locals.session;
 const user = session!.user;
@@ -35,55 +39,47 @@ const description = "Your Sunset Duckies reservations.";
 <BaseLayout title={title} description={description}>
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
     <div class="mb-10 space-y-3" data-float>
-      <p class="section-kicker">Reservation history</p>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(2rem, 4.5vw, 3.25rem); line-height: 1; letter-spacing: -0.03em; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      <Kicker>Reservation history</Kicker>
+      <h1 class="font-display text-fg text-[clamp(2rem,4.5vw,3.25rem)] leading-[1] tracking-[-0.03em] [font-variation-settings:'wdth'_114] font-bold"
       >
         Every sesh, every kit.
       </h1>
-      <p class="body-copy max-w-xl">
+      <p class={`max-w-xl ${bodyCopy}`}>
         Reservations linked to this account or placed under <span class="font-mono">{user.email}</span>.
       </p>
     </div>
 
     {loadError ? (
-      <div class="surface-card p-8">
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+      <StickerCard class="p-8">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
           Could not load reservations
         </p>
-        <p class="mt-3 text-[0.95rem] leading-7 text-[var(--color-ink-950)]/75">
+        <p class="mt-3 text-[0.95rem] leading-7 text-fg/75">
           {loadError}
         </p>
-      </div>
+      </StickerCard>
     ) : orders.length === 0 ? (
-      <div class="surface-card p-8 text-center">
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+      <StickerCard class="p-8 text-center">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
           Clean slate
         </p>
-        <p
-          class="mt-3 font-display text-2xl text-[var(--color-ink-950)]"
-          style="font-variation-settings: 'wdth' 110; font-weight: 700;"
+        <p class="mt-3 font-display text-2xl text-fg [font-variation-settings:'wdth'_110] font-bold"
         >
           No reservations yet.
         </p>
-        <a class="cta-primary mt-6 inline-flex" href="/shop">
-          See the drop
-        </a>
-      </div>
+        <Cta class="mt-6" href="/shop">See the drop</Cta>
+      </StickerCard>
     ) : (
       <ul class="space-y-4">
         {orders.map((order) => (
-          <li class="surface-card p-5">
+          <StickerCard as="li" class="p-5">
             <div class="flex flex-wrap items-start justify-between gap-4">
               <div class="min-w-0 space-y-1">
-                <p
-                  class="font-display text-xl text-[var(--color-ink-950)]"
-                  style="font-variation-settings: 'wdth' 110; font-weight: 700;"
+                <p class="font-display text-xl text-fg [font-variation-settings:'wdth'_110] font-bold"
                 >
                   Reservation {shortOrderId(order.id)}
                 </p>
-                <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/60">
+                <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">
                   {new Date(order.createdAt).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "short",
@@ -94,17 +90,14 @@ const description = "Your Sunset Duckies reservations.";
                 </p>
               </div>
               <div class="flex items-center gap-3">
-                <span
-                  class="rounded-full border-2 border-[var(--color-ink-950)] px-3 py-1 font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)]"
-                  style={`background:${STATUS_COLOR[order.status] ?? "var(--color-cream-soft)"};`}
-                >
+                <span class:list={["rounded-full border-2 border-ink-950 px-3 py-1 font-mono text-[0.66rem] uppercase tracking-[0.18em] shadow-[2px_2px_0_0_var(--color-ink-950)]", STATUS_COLOR[order.status] ?? "bg-surface text-fg"]}>
                   {STATUS_LABEL[order.status] ?? order.status}
                 </span>
               </div>
             </div>
             <ul class="mt-4 flex flex-wrap gap-2">
               {order.items.map((item) => (
-                <li class="rounded-full border border-[var(--color-ink-950)]/30 bg-[var(--color-cream-soft)] px-3 py-1 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/75">
+                <li class="rounded-full border border-edge/30 bg-surface px-3 py-1 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-fg/75">
                   {item.quantity} × {item.nameSnapshot}
                   {item.size ? ` · ${item.size}` : ""}
                   {item.kidName ? ` · for ${item.kidName}` : ""}
@@ -112,14 +105,13 @@ const description = "Your Sunset Duckies reservations.";
               ))}
             </ul>
             <div class="mt-4">
-              <a
-                class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-coral-500)] hover:underline"
+              <a class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500 hover:underline"
                 href={`/orders/${order.id}?t=${order.guestToken}`}
               >
                 View reservation →
               </a>
             </div>
-          </li>
+          </StickerCard>
         ))}
       </ul>
     )}

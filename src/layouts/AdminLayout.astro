@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import SignOutButton from "../components/react/SignOutButton";
+import Chip from "../components/ui/Chip.astro";
 import { site } from "../data/site";
 
 interface Props {
@@ -21,7 +22,7 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="overflow-x-clip bg-canvas motion-reduce:scroll-auto">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,26 +37,24 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..125,400..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1;1,9..144,400..800,0..100,0..1&family=Outfit:wght@300..800&family=JetBrains+Mono:wght@400;500;600&display=swap"
     />
   </head>
-  <body class="min-h-screen bg-[var(--color-cream-soft)] antialiased">
+  <body class="min-h-screen bg-surface font-sans text-fg antialiased">
     <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
-      <aside class="sticky top-0 z-30 border-b-2 border-[var(--color-ink-950)] bg-[var(--color-ink-950)] text-[var(--color-cream-soft)] lg:h-screen lg:border-b-0 lg:border-r-2">
+      <aside class="sticky top-0 z-30 border-b-2 border-edge bg-ink-950 text-cream-soft lg:h-screen lg:border-b-0 lg:border-r-2">
         <div class="flex items-center justify-between gap-3 p-5">
           <a href="/admin" class="flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border-2 border-[var(--color-cream-soft)] bg-[var(--color-coral-500)] text-sm font-black">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border-2 border-cream-soft bg-coral-500 text-sm font-black">
               SD
             </span>
             <div>
-              <p class="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-[var(--color-sun-500)]">
+              <p class="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-sun-500">
                 ✦ Admin
               </p>
-              <p class="text-sm font-bold" style="font-family: var(--font-display); font-variation-settings: 'wdth' 108;">
+              <p class="font-display text-sm font-bold [font-variation-settings:'wdth'_108]">
                 Sunset Duckies
               </p>
             </div>
           </a>
-          <a href="/" class="chip hidden sm:inline-flex !bg-[var(--color-cream-soft)] !text-[var(--color-ink-950)] hover:!bg-[var(--color-sun-500)]">
-            ← Site
-          </a>
+          <Chip as="a" href="/" class="hidden hover:bg-sun-500 hover:text-ink-950 sm:inline-flex">← Site</Chip>
         </div>
 
         <nav class="hidden lg:block px-3 pb-6">
@@ -65,12 +64,11 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
                 <a
                   href={item.href}
                   class:list={[
-                    "flex items-center justify-between rounded-xl px-4 py-2.5 font-semibold transition",
+                    "flex items-center justify-between rounded-xl px-4 py-2.5 font-display font-semibold transition [font-variation-settings:'wdth'_110]",
                     section === item.key
-                      ? "bg-[var(--color-sun-500)] text-[var(--color-ink-950)] shadow-[3px_3px_0_0_var(--color-cream-soft)]"
-                      : "text-[var(--color-cream-soft)]/85 hover:bg-[var(--color-cream-soft)]/10",
+                      ? "bg-sun-500 text-ink-950 shadow-[3px_3px_0_0_var(--color-cream-soft)]"
+                      : "text-cream-soft/85 hover:bg-cream-soft/10",
                   ]}
-                  style="font-family: var(--font-display); font-variation-settings: 'wdth' 110;"
                 >
                   <span>{item.label}</span>
                   {section === item.key && <span class="text-xs">✦</span>}
@@ -89,8 +87,8 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
                   class:list={[
                     "rounded-full border px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.14em]",
                     section === item.key
-                      ? "border-[var(--color-sun-500)] bg-[var(--color-sun-500)] text-[var(--color-ink-950)]"
-                      : "border-[var(--color-cream-soft)]/30 text-[var(--color-cream-soft)]/80 hover:bg-[var(--color-cream-soft)]/10",
+                      ? "border-sun-500 bg-sun-500 text-ink-950"
+                      : "border-cream-soft/30 text-cream-soft/80 hover:bg-cream-soft/10",
                   ]}
                 >
                   {item.label}
@@ -100,16 +98,16 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
           </ul>
         </nav>
 
-        <div class="hidden lg:block absolute bottom-4 left-4 right-4 rounded-xl border-2 border-[var(--color-cream-soft)]/30 bg-[var(--color-cream-soft)]/5 p-3">
-          <p class="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-[var(--color-sun-500)]">
+        <div class="absolute right-4 bottom-4 left-4 hidden rounded-xl border-2 border-cream-soft/30 bg-cream-soft/5 p-3 lg:block">
+          <p class="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-sun-500">
             Signed in as
           </p>
           <p class="mt-1 truncate text-sm font-semibold">{session?.user?.name ?? "Admin"}</p>
-          <p class="truncate font-mono text-[0.68rem] text-[var(--color-cream-soft)]/65">
+          <p class="truncate font-mono text-[0.68rem] text-cream-soft/65">
             {session?.user?.email}
           </p>
           <div class="mt-2">
-            <SignOutButton client:load className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-coral-500)] underline-offset-4 hover:underline" />
+            <SignOutButton client:load className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-coral-500 underline-offset-4 hover:underline" />
           </div>
         </div>
       </aside>

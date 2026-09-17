@@ -4,7 +4,9 @@ import BrandingToolbar from "../components/BrandingToolbar.astro";
 export const prerender=false;
 const approved=Astro.locals.branding?.canView??false;
 import BaseLayout from "../layouts/BaseLayout.astro";
-import "../styles/plan.css";
+import PlanDefinitions from "../components/plan/PlanDefinitions.astro";
+import PlanSectionHead from "../components/plan/PlanSectionHead.astro";
+import { divider, monoMeta, muted, overline, panel, section, subheading } from "../lib/plan-ui";
 import { site } from "../data/site";
 
 const title = `Project Molt product candidates | ${site.name}`;
@@ -200,108 +202,95 @@ const criteria = [
 
 <BaseLayout title={approved?title:"Project Molt | Sunset Duckies"} description={approved?description:"A surf brand taking shape in Tamarin. Request access to join the working group."} variant="performance">
   {approved?<><BrandingToolbar/>
-  <div class="performance-plan">
-    <section class="plan-section plan-ideas-hero" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">Project Molt · product candidates</p>
-        <h2>Draft four. Then choose one.</h2>
+  <div class="overflow-clip text-fg">
+    <section class={`${section} pt-[clamp(3rem,6vw,6rem)]`} data-reveal>
+      <PlanSectionHead overline="Project Molt · product candidates" title="Draft four. Then choose one.">
         <p>
           Complete all four concepts by 7 September. Interview against the same four, choose
           one from the evidence, then build it for the end-of-October competition and launch.
           Granola leads today, but it has not won. The <a href="/branding-plan">project brief</a>
           defines the full sequence.
         </p>
-      </div>
+      </PlanSectionHead>
 
-      <div class="plan-access">
-        <div class="plan-access-head">
-          <p class="plan-overline">How to read this</p>
-          <h3>The same evidence is required for every candidate.</h3>
+      <div class="mt-12 border border-line border-l-[3px] border-l-accent">
+        <div class="border-b border-line p-8">
+          <p class={overline}>How to read this</p>
+          <h3 class={`${subheading} mt-3`}>The same evidence is required for every candidate.</h3>
         </div>
-        <dl class="plan-access-list">
-          <div>
-            <dt>Leading hypothesis</dt>
-            <dd>The most likely route going in. It still competes on the same evidence.</dd>
-          </div>
-          <div>
-            <dt>Sketch</dt>
-            <dd>A direction and a tension, no detail underneath it yet.</dd>
-          </div>
-          <div>
-            <dt>Heading only</dt>
-            <dd>A category with nothing in it. The gap is the point.</dd>
-          </div>
-        </dl>
+        <PlanDefinitions items={[
+          { name: "Leading hypothesis", text: "The most likely route going in. It still competes on the same evidence." },
+          { name: "Sketch", text: "A direction and a tension, no detail underneath it yet." },
+          { name: "Heading only", text: "A category with nothing in it. The gap is the point." },
+        ]} />
       </div>
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
     {
       ideas.map((idea) => (
-        <section class="plan-section plan-idea" data-reveal>
-          <div class="plan-idea-head">
-            <div class="plan-card-code">
+        <section class={`${section} py-[clamp(3rem,5vw,5rem)] [&+&]:border-t [&+&]:border-line`} data-reveal>
+          <div class="relative mb-10 max-w-[900px]">
+            <div class={`${monoMeta} mb-7 max-w-[420px] [&>span:first-child]:text-accent-text`}>
               <span>{idea.code}</span>
               <span>{idea.category}</span>
             </div>
-            <h2>{idea.name}</h2>
-            <p class="plan-idea-lead">{idea.lead}</p>
-            <span class:list={["plan-idea-depth", idea.depth === "Leading hypothesis" && "is-full"]}>
+            <h2 class="m-0 mb-4 font-display text-[clamp(2.2rem,4.4vw,3.6rem)] font-[650] leading-none tracking-[-0.045em] text-fg">{idea.name}</h2>
+            <p class="m-0 max-w-[68ch] text-[1.05rem] leading-[1.7] text-fg-muted">{idea.lead}</p>
+            <span class:list={["mt-6 inline-block border px-[0.7rem] py-[0.35rem] font-mono text-[0.62rem] font-semibold uppercase tracking-[0.11em]", idea.depth === "Leading hypothesis" ? "border-accent text-accent-text" : "border-line text-fg-muted"]}>
               {idea.depth}
             </span>
           </div>
 
-          <dl class="plan-idea-fields">
+          <dl class="m-0 grid grid-cols-1 gap-px border border-line bg-line lg:grid-cols-2 [&>div:last-child:nth-child(odd)]:lg:col-span-full">
             {
               idea.fields.map((field) => (
-                <div>
-                  <dt>{field.label}</dt>
-                  <dd>{field.text}</dd>
+                <div class={`${panel} px-8 py-7`}>
+                  <dt class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-accent-text">{field.label}</dt>
+                  <dd class="mt-[0.9rem] ml-0 text-[0.95rem] leading-[1.65] text-fg-muted">{field.text}</dd>
                 </div>
               ))
             }
           </dl>
 
-          <div class="plan-questions">
-            <p class="plan-overline">Unknown</p>
-            <ul>
-              {idea.unknowns.map((unknown) => <li>{unknown}</li>)}
+          <div class="mt-12 max-w-[900px] border-l-2 border-warm pl-[1.4rem]">
+            <p class={overline}>Unknown</p>
+            <ul class="m-0 list-none p-0">
+              {idea.unknowns.map((unknown) => <li class="relative mb-[0.7rem] pl-[1.4rem] text-[0.95rem] leading-[1.6] text-fg-muted last:mb-0 before:absolute before:left-0 before:font-mono before:text-warm before:content-['?']">{unknown}</li>)}
             </ul>
           </div>
         </section>
       ))
     }
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="evaluation" class="plan-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">Evaluation</p>
-        <h2>The same nine tests for all four.</h2>
+    <section id="evaluation" class={section} data-reveal>
+      <PlanSectionHead overline="Evaluation" title="The same nine tests for all four.">
         <p>
           Filled in during the research, not now. A candidate that wins on paper and loses at
           training has lost.
         </p>
-      </div>
+      </PlanSectionHead>
 
-      <div class="plan-matrix-scroll">
-        <table class="plan-matrix">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[720px] border-collapse text-left [&_td]:border [&_td]:border-line [&_td]:px-5 [&_td]:py-[1.1rem] [&_td]:align-top [&_th]:border [&_th]:border-line [&_th]:px-5 [&_th]:py-[1.1rem] [&_th]:align-top">
           <thead>
             <tr>
-              <th scope="col">Criterion</th>
-              {ideas.map((idea) => <th scope="col">{idea.category}</th>)}
+              <th scope="col" class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-accent-text">Criterion</th>
+              {ideas.map((idea) => <th scope="col" class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-accent-text">{idea.category}</th>)}
             </tr>
           </thead>
           <tbody>
             {
               criteria.map((criterion) => (
                 <tr>
-                  <th scope="row">
+                  <th scope="row" class="w-[30%] font-display text-base font-[650] text-fg">
                     {criterion.name}
-                    <span>{criterion.note}</span>
+                    <span class="mt-[0.4rem] block font-sans text-[0.82rem] font-normal leading-[1.5] text-fg-muted">{criterion.note}</span>
                   </th>
-                  {ideas.map(() => <td aria-label="Not yet assessed">—</td>)}
+                  {ideas.map(() => <td aria-label="Not yet assessed" class="font-mono text-[0.9rem] text-fg-muted">—</td>)}
                 </tr>
               ))
             }
@@ -309,16 +298,16 @@ const criteria = [
         </table>
       </div>
 
-      <p class="plan-note">
+      <p class={`${muted} mt-12 max-w-[860px] border-l-2 border-accent pl-[1.4rem]`}>
         Interviews run from 8 to 18 September and the product decision closes on 25 September.
         Families, kids, outside buyers and makers supply the evidence. The winner moves into proof-of-concept
         work and an end-of-October launch; the other three stay here with the reasons they did not pass.
       </p>
 
-      <a class="plan-jump" href="/branding-plan">
-        <span class="plan-jump-label">Back to the project brief</span>
-        <span class="plan-jump-title">How these get tested, compared and decided</span>
-        <span class="plan-jump-cta">Open the project brief <span aria-hidden="true">→</span></span>
+      <a class="mt-12 flex flex-col gap-[0.6rem] border border-line border-l-[3px] border-l-accent bg-accent/5 p-8 transition-colors duration-200 hover:bg-accent/9" href="/branding-plan">
+        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-fg-muted">Back to the project brief</span>
+        <span class="font-display text-[clamp(1.3rem,2.2vw,1.8rem)] font-[650] leading-[1.15] tracking-[-0.03em] text-fg">How these get tested, compared and decided</span>
+        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-accent-text">Open the project brief <span aria-hidden="true">→</span></span>
       </a>
     </section>
   </div>

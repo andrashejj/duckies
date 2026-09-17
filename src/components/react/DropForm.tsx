@@ -2,6 +2,7 @@ import { useHydrated } from "./useHydrated";
 import { useState } from "react";
 
 import { DROP_STATUS_VALUES } from "../../lib/drop-admin";
+import { ctaClass, kickerClass, stickerCardClass } from "../../lib/ui";
 
 type DropFormValues = {
   id?: string;
@@ -118,8 +119,8 @@ export default function DropForm({ mode, initial }: Props) {
     <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
       <fieldset disabled={!ready} className="contents">
       <div className="space-y-5">
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Identity</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Identity</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Name" value={values.name} onChange={(v) => update("name", v)} required placeholder="Drop 002 — Comp kit" />
             <Field label="Slug (url)" value={values.slug} onChange={(v) => update("slug", v)} required placeholder="drop-002" />
@@ -133,17 +134,17 @@ export default function DropForm({ mode, initial }: Props) {
           />
         </fieldset>
 
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Status + windows</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Status + windows</legend>
           <div className="grid gap-4 sm:grid-cols-3">
-            <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+            <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
               <span>Status</span>
               <select
                 value={values.status}
                 onChange={(e) =>
                   update("status", e.target.value as DropFormValues["status"])
                 }
-                className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+                className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
               >
                 {DROP_STATUS_VALUES.map((s) => (
                   <option key={s} value={s}>
@@ -175,17 +176,17 @@ export default function DropForm({ mode, initial }: Props) {
       </div>
 
       <aside className="sticky top-6 h-fit space-y-4">
-        <div className="surface-card space-y-3 p-5">
-          <p className="section-kicker">Save</p>
+        <div className={stickerCardClass({ hover: false }, "space-y-3 p-5")}>
+          <p className={kickerClass()}>Save</p>
           {error && (
-            <p className="rounded-[0.6rem] border border-[var(--color-coral-500)] bg-[var(--color-coral-500)]/10 p-3 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+            <p className="rounded-[0.6rem] border border-coral-500 bg-coral-500/10 p-3 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-coral-500">
               {error}
             </p>
           )}
           <button
             type="submit"
             disabled={submitting !== null}
-            className="cta-primary w-full justify-center disabled:opacity-60"
+            className={ctaClass("primary", "md", "w-full")}
           >
             {submitting === "save"
               ? "Saving…"
@@ -198,12 +199,12 @@ export default function DropForm({ mode, initial }: Props) {
               type="button"
               onClick={handleDelete}
               disabled={submitting !== null}
-              className="w-full rounded-full border-2 border-[var(--color-coral-500)] bg-transparent px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--color-coral-500)] hover:bg-[var(--color-coral-500)] hover:text-[var(--color-cream-soft)] disabled:opacity-60"
+              className="w-full rounded-full border-2 border-coral-500 bg-transparent px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-coral-500 hover:bg-coral-500 hover:text-cream-soft disabled:opacity-60"
             >
               {submitting === "delete" ? "Closing…" : "Close drop"}
             </button>
           )}
-          <a href="/admin/drops" className="block text-center font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60 hover:text-[var(--color-coral-500)]">
+          <a href="/admin/drops" className="block text-center font-mono text-[0.7rem] uppercase tracking-[0.2em] text-fg/60 hover:text-coral-500">
             Cancel
           </a>
         </div>
@@ -229,10 +230,10 @@ function Field({
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>
         {label}
-        {required && <span className="ml-1 text-[var(--color-coral-500)]">*</span>}
+        {required && <span className="ml-1 text-coral-500">*</span>}
       </span>
       <input
         type="text"
@@ -241,7 +242,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
-        className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );
@@ -257,13 +258,13 @@ function DateTimeField({
   onChange: (v: string) => void;
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>{label}</span>
       <input
         type="datetime-local"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );
@@ -285,10 +286,10 @@ function TextArea({
   rows?: number;
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>
         {label}
-        {required && <span className="ml-1 text-[var(--color-coral-500)]">*</span>}
+        {required && <span className="ml-1 text-coral-500">*</span>}
       </span>
       <textarea
         required={required}
@@ -296,7 +297,7 @@ function TextArea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-2 w-full rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.8rem] border-2 border-edge bg-surface p-3 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );

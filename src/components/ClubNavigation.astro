@@ -1,42 +1,37 @@
 ---
 import { site } from "../data/site";
+interface Props { variant?: "default" | "performance" }
+const { variant = "default" } = Astro.props;
+const performance = variant === "performance";
 const currentPath = Astro.url.pathname;
+// The branding workspace keeps only its own link on phones and uses mono caps.
+const item = (last = false) => performance
+  ? ["cursor-pointer items-center gap-[0.3rem] whitespace-nowrap rounded-[0.35rem] px-2 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.1em] text-fg no-underline hover:bg-accent/12 hover:text-accent-text aria-[current=page]:bg-accent/12 aria-[current=page]:text-accent-text sm:px-3 sm:py-2", last ? "flex" : "hidden sm:flex"]
+  : "flex cursor-pointer items-center gap-[0.3rem] whitespace-nowrap rounded-full px-2 py-1.5 font-display text-[0.72rem] font-semibold text-fg no-underline hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg sm:px-3 sm:py-2 sm:text-sm";
+const focus = "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-coral-500";
 ---
-<nav aria-label="Club navigation" class="club-nav order-3 flex w-full shrink-0 items-center justify-between gap-0.5 sm:order-none sm:w-auto sm:gap-2">
-  {site.navigation.map(item => "children" in item ? (
-    <details class="cup-menu" data-cup-menu>
-      <summary class="nav-item">
-        <span class="sm:hidden">{item.label}</span>
-        <span class="hidden sm:inline">{item.labelFull}</span>
-        <span class="cup-chevron" aria-hidden="true">⌄</span>
+<nav aria-label="Club navigation" class="order-3 flex w-full shrink-0 items-center justify-between gap-0.5 sm:order-none sm:w-auto sm:gap-2">
+  {site.navigation.map((entry, index) => "children" in entry ? (
+    <details class="group relative" data-cup-menu>
+      <summary class:list={[item(), focus, "list-none [&::-webkit-details-marker]:hidden", !performance && "group-open:bg-highlight group-open:text-highlight-fg"]}>
+        <span class="sm:hidden">{entry.label}</span>
+        <span class="hidden sm:inline">{entry.labelFull}</span>
+        <span class="font-sans transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
       </summary>
-      <div class="cup-editions">
-        <p>Two editions. One Cup.</p>
-        {item.children.map(edition => <a href={edition.href} aria-current={currentPath === edition.href ? "page" : undefined}>{edition.label}</a>)}
+      <div class="absolute top-[calc(100%+0.7rem)] left-0 z-60 w-[min(17rem,calc(100vw-2rem))] rounded-[0.8rem] border-2 border-edge bg-surface p-[0.65rem] shadow-sticker-lg">
+        <p class="px-[0.6rem] py-2 font-mono text-[0.6rem] uppercase tracking-[0.1em]">Two editions. One Cup.</p>
+        {entry.children.map(edition => (
+          <a href={edition.href} aria-current={currentPath === edition.href ? "page" : undefined} class:list={["block rounded-[0.4rem] px-[0.6rem] py-3 text-[0.85rem] font-semibold no-underline hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg", focus]}>{edition.label}</a>
+        ))}
       </div>
     </details>
   ) : (
-    <a class="nav-item" href={item.href} aria-current={currentPath === item.href ? "page" : undefined}>
-      <span class="sm:hidden">{item.label}</span>
-      <span class="hidden sm:inline">{item.labelFull}</span>
+    <a class:list={[item(index === site.navigation.length - 1), focus]} href={entry.href} aria-current={currentPath === entry.href ? "page" : undefined}>
+      <span class="sm:hidden">{entry.label}</span>
+      <span class="hidden sm:inline">{entry.labelFull}</span>
     </a>
   ))}
 </nav>
-<style>
-  .nav-item { display: flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .375rem .5rem; font-family: var(--font-display); font-size: .72rem; font-weight: 600; color: var(--color-ink-950); text-decoration: none; cursor: pointer; white-space: nowrap; }
-  .nav-item:hover, .nav-item[aria-current="page"], .cup-menu[open] summary { background: var(--color-sun-500); }
-  .nav-item:focus-visible, .cup-editions a:focus-visible { outline: 3px solid var(--color-coral-500); outline-offset: 3px; }
-  .cup-menu { position: relative; }
-  .cup-menu summary { list-style: none; }
-  .cup-menu summary::-webkit-details-marker { display: none; }
-  .cup-chevron { font-family: var(--font-sans); }
-  .cup-menu[open] .cup-chevron { transform: rotate(180deg); }
-  .cup-editions { position: absolute; top: calc(100% + .7rem); left: 0; z-index: 60; width: min(17rem, calc(100vw - 2rem)); padding: .65rem; border: 2px solid var(--color-ink-950); border-radius: .8rem; background: var(--color-cream-soft); box-shadow: 5px 5px 0 var(--color-ink-950); }
-  .cup-editions p { padding: .5rem .6rem; font-family: var(--font-mono); font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; }
-  .cup-editions a { display: block; padding: .75rem .6rem; border-radius: .4rem; font-size: .85rem; font-weight: 600; text-decoration: none; }
-  .cup-editions a:hover, .cup-editions a[aria-current="page"] { background: var(--color-sun-500); }
-  @media (min-width: 640px) { .nav-item { padding: .5rem .75rem; font-size: .875rem; } }
-</style>
 <script>
   const cupMenu = document.querySelector<HTMLDetailsElement>("[data-cup-menu]");
   document.addEventListener("click", event => {

@@ -1,5 +1,6 @@
 ---
 import GranolaSimulator from "./react/GranolaSimulator";
+import PlanSectionHead from "./plan/PlanSectionHead.astro";
 // Historical research only. Live economics are calculated in granola.ts.
 const ingredients = [
   { name: "Oats", shelf: "Bokomo Morning Oats · Rs 82 / 500 g", note: "Winners listing; test flake size and crunch in the bake.", url: "https://www.winners.mu/cereales" },
@@ -10,19 +11,17 @@ const ingredients = [
   { name: "Cinnamon + salt", shelf: "Allowance · Rs 2 per pack", note: "Small seasoning allowance; replace with actual quantities and receipt prices.", url: null },
 ];
 ---
-<section id="granola-business-case" class="plan-section plan-brief-section granola-case" aria-labelledby="granola-title">
-  <div class="plan-section-head">
-    <p class="plan-overline">07 / Granola business case</p>
-    <h2 id="granola-title">The granola kitchen.</h2>
+<section id="granola-business-case" class="mx-auto max-w-[1400px] scroll-mt-32 px-[clamp(1.5rem,5vw,5rem)] py-[clamp(4rem,7vw,7rem)] [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-[0.2em]" aria-labelledby="granola-title">
+  <PlanSectionHead overline="07 / Granola business case" title="The granola kitchen." class="mb-12">
     <p>Build the mix, then work the whole month on one sheet: paid time, other costs, price and sales sit beside the monthly lines they drive. Save the version worth testing.</p>
-  </div>
+  </PlanSectionHead>
   <GranolaSimulator client:load />
-  <details class="granola-research">
-    <summary>Ingredient research &amp; sources <span>Historical supermarket snapshot · 14 September 2026</span></summary>
+  <details class="[&>p]:my-5 [&>p]:max-w-[85ch] [&>p]:leading-[1.75] [&>p]:text-fg-muted">
+    <summary class="cursor-pointer border-t border-line py-6 font-display text-[1.6rem] text-fg">Ingredient research &amp; sources <span class="mt-2 block font-mono text-[0.65rem] text-fg-muted">Historical supermarket snapshot · 14 September 2026</span></summary>
     <p>These listings informed the starter mixes. They are not live quotes or confirmed Tamarin stock. Update the source, shelf quantity and price in the editor when you get a supplier quote. Honey, seasoning, packaging and operating expenses include planning allowances.</p>
-    <div class="table-scroll" tabindex="0" role="region" aria-label="Ingredient supermarket sources">
-      <table><caption>Original source notes · current costs come from your draft above</caption><thead><tr><th scope="col">Ingredient</th><th scope="col">Retail reference</th><th scope="col">What to check</th></tr></thead>
-        <tbody>{ingredients.map(item=><tr><th scope="row">{item.name}</th><td>{item.url?<a href={item.url} target="_blank" rel="noreferrer">{item.shelf} ↗</a>:item.shelf}</td><td>{item.note}</td></tr>)}</tbody>
+    <div class="my-6 max-w-full overflow-x-auto" tabindex="0" role="region" aria-label="Ingredient supermarket sources">
+      <table class="w-full min-w-[620px] border-collapse text-left text-[0.9rem] leading-[1.5] [&_:is(th,td)]:border-b [&_:is(th,td)]:border-line [&_:is(th,td)]:p-4 [&_:is(th,td)]:align-top"><caption class="pb-[0.8rem] text-left text-[0.8rem] text-fg-muted">Original source notes · current costs come from your draft above</caption><thead><tr><th scope="col" class="font-mono text-[0.72rem] text-accent-text">Ingredient</th><th scope="col" class="font-mono text-[0.72rem] text-accent-text">Retail reference</th><th scope="col" class="font-mono text-[0.72rem] text-accent-text">What to check</th></tr></thead>
+        <tbody>{ingredients.map(item=><tr><th scope="row" class="text-fg">{item.name}</th><td class="text-fg-muted">{item.url?<a href={item.url} target="_blank" rel="noreferrer">{item.shelf} ↗</a>:item.shelf}</td><td class="text-fg-muted">{item.note}</td></tr>)}</tbody>
       </table>
     </div>
     <p>Alternative oat sources from the same research: <a href="https://www.scotthomedelivery.mu/products/jungle-cooking-oats-1kg" target="_blank" rel="noreferrer">Scott / Jungle rolled oats</a> and <a href="https://mantrafoods.mu/collections/cereals-breakfast-foods" target="_blank" rel="noreferrer">Mantra / organic oats</a>. Enter the quoted size, price, discount and allocated freight to compare them in your recipe.</p>
@@ -31,17 +30,3 @@ const ingredients = [
     <p>Cost a measured batch, take paid orders, and record repeat purchases. A price change does not tell us how demand will change: update volume and sell-through using what customers actually do.</p>
   </details>
 </section>
-<style>
-  .granola-case { scroll-margin-top:8rem; }
-  .granola-research > summary { cursor:pointer; padding:1.5rem 0; font-family:var(--font-display); font-size:1.6rem; color:var(--plan-text); border-top:1px solid var(--plan-line); }
-  .granola-research > summary span { display:block; margin-top:.5rem; font-family:var(--font-mono); font-size:.65rem; color:var(--plan-muted); }
-  .granola-research > p { max-width:85ch; color:var(--plan-muted); line-height:1.75; margin:1.25rem 0; }
-  .granola-case a { color:var(--plan-text); text-decoration:underline; text-underline-offset:.2em; }
-  .table-scroll { max-width:100%; overflow-x:auto; margin:1.5rem 0; }
-  table { width:100%; min-width:620px; border-collapse:collapse; text-align:left; font-size:.9rem; line-height:1.5; }
-  caption { text-align:left; padding-bottom:.8rem; color:var(--plan-muted); font-size:.8rem; }
-  th,td { padding:1rem; border-bottom:1px solid var(--plan-line); vertical-align:top; }
-  thead th { color:var(--plan-accent); font-family:var(--font-mono); font-size:.72rem; }
-  tbody th { color:var(--plan-text); }
-  td { color:var(--plan-muted); }
-</style>

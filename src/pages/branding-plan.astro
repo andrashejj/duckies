@@ -5,8 +5,14 @@ export const prerender=false;
 const approved=Astro.locals.branding?.canView??false;
 import BaseLayout from "../layouts/BaseLayout.astro";
 import GranolaBusinessCase from "../components/GranolaBusinessCase.astro";
-import "../styles/plan.css";
+import PlanCallout from "../components/plan/PlanCallout.astro";
+import PlanDefinitions from "../components/plan/PlanDefinitions.astro";
+import PlanSectionHead from "../components/plan/PlanSectionHead.astro";
+import PlanTable from "../components/plan/PlanTable.astro";
+import PlanTimeline from "../components/plan/PlanTimeline.astro";
+import { briefSection, cardTitle, divider, monoMeta, overline, panel } from "../lib/plan-ui";
 import { site } from "../data/site";
+import { loadPlanForBrief } from "../lib/server/plan";
 
 const title = `Project Molt brief | ${site.name}`;
 const description =
@@ -32,88 +38,32 @@ const communityApproach = [
   "Stay connected through shared brand rules",
 ];
 
-const explorationSteps = [
-  {
-    date: "28 Aug – 7 Sep",
-    status: "now",
-    title: "Detail the four product ideas",
-    deliverable: "Four completed product concept sheets at the same level of detail.",
-    tasks: [
-      "Complete one product concept sheet for each of the four areas.",
-      "For each idea, define the product, customer, problem, surf moment, quality promise, materials or ingredients and provisional price.",
-      "Bring all four ideas to the same level of detail. Do not choose a favourite or contact makers yet.",
-    ],
-    links: [
-      { label: "Four product areas", file: "/product-ideas" },
-      { label: "Product concept sheet", file: "/templates/brand-direction-sheet.html" },
-    ],
-  },
-  {
-    date: "8 – 18 Sep",
-    title: "Run the interviews",
-    deliverable: "Interview log and one comparison table covering all four products.",
-    tasks: [
-      "Interview all founding families and participating kids using the same four concepts and prices.",
-      "Interview at least five likely buyers outside the club and one relevant maker or supplier per concept.",
-      "Record choices, reasons, refusals, price objections, quoted costs, minimums and lead times.",
-      "Ask whether the club story changes interest, price or the chance of buying again. Record support for the club separately from interest in the product.",
-    ],
-    links: [
-      { label: "Parent interview", file: "/templates/brand-parent-questionnaire.html" },
-      { label: "Kid interview", file: "/templates/brand-kid-conversations.html" },
-    ],
-  },
-  {
-    date: "19 – 25 Sep",
-    title: "Choose one product",
-    deliverable: "Product decision record and approved proof-of-concept brief.",
-    tasks: [
-      "Score all four against the same demand, quality, maker, cost, risk and brand criteria.",
-      "Keep donations, event spending and purchases made only to support the club out of the demand score.",
-      "Record why one product advances and why each of the other three stops or is parked.",
-      "Approve the proof-of-concept owner, budget and pass or fail tests.",
-    ],
-    links: [
-      { label: "Comparison table", file: "/product-ideas#evaluation" },
-      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
-    ],
-  },
-  {
-    date: "26 Sep – 18 Oct",
-    title: "Build the proof of concept",
-    deliverable: "Launch-ready small batch or sample, product specification and unit economics.",
-    tasks: [
-      "Agree the maker role, payment, credit, approval, production method and quality checks.",
-      "Test the product specification, materials or ingredients, size or portion, packaging, durability or shelf life, safety, labelling and any product claims.",
-      "Test the sample, confirm launch quantity and price, then make a launch, revise or stop decision.",
-    ],
-    links: [
-      { label: "Product clarity check", file: "/templates/brand-stranger-test.html" },
-    ],
-  },
-  {
-    date: "5 – 30 Oct",
-    title: "Prepare and promote the launch",
-    deliverable: "Competition ready to run, registration open and a short product launch campaign published.",
-    tasks: [
-      "Confirm the date, venue, surf format, permissions, safety plan, roles, stock and event budget before promotion starts.",
-      "Publish the event announcement and open registration. Make it clear who can enter, how to join, when to arrive and how others can attend.",
-      "Introduce the chosen product and the local work behind it, then publish the sample, price and buying or ordering details once confirmed.",
-      "Run a simple countdown through WhatsApp, social channels and participating families. Track registrations, RSVPs, questions and early product interest.",
-    ],
-    links: [],
-  },
-  {
-    date: "By 31 Oct + 48 hours",
-    title: "Run the competition and launch",
-    deliverable: "Completed event, 48-hour launch report and approved November-to-February plan.",
-    tasks: [
-      "Run the competition with the schedule, roles, safety plan and product launch ready before the first heat.",
-      "Launch at a visible price and record units sold, orders, refusals, product issues and customer reasons.",
-      "Reconcile the event within 48 hours and decide what changes before the second product cycle.",
-    ],
-    links: [],
-  },
+// Only approved readers touch the plan tables; the teaser never seeds or queries them.
+const { explorationSteps, estelleWeeks, hardDates, live: planLive } = approved ? await loadPlanForBrief() : { explorationSteps: [], estelleWeeks: [], hardDates: [], live: true };
+
+const commsPlan = [
+  { when: "Fri 18 Sep", whatsapp: "Save the date: Cup Vol. 02 on 17/18 October. “We are also cooking something for the day.”", instagram: "Account live. First post: save the date, with a photo from Cup Vol. 01." },
+  { when: "Fri 25 Sep", whatsapp: "Registration open. Ask for volunteers: judges, beach marshals, food, the stall.", instagram: "Cup registration post. Photo permissions in hand before any kid appears." },
+  { when: "Fri 2 Oct", whatsapp: "Founding families taste the locked recipe at Friday training. Collect quotes for the label and the maker story.", instagram: "Teaser 1: something is in the oven. Test-bake shots, no name, no pack." },
+  { when: "Fri 9 Oct", whatsapp: "A limited first batch will be revealed at the Cup. Draft heat list.", instagram: "Teaser 2: the maker story. Who bakes it, what goes in, why." },
+  { when: "Mon 12 – Fri 16 Oct", whatsapp: "Final schedule, heats, arrival time, what to bring. Reminder on Friday 16.", instagram: "Countdown: schedule post, packaging sneak peek, “first batch reveal at the Cup”." },
+  { when: "Sat 17 / Sun 18 Oct", whatsapp: "Photo of the stall. “Grab your bag, or pre-order here.”", instagram: "Stories live from the beach. Reveal post from the stall with the price and how to get one." },
+  { when: "Mon 19 – Tue 20 Oct", whatsapp: "Results, thank you, pre-order form for batch two.", instagram: "Results and thank-you post. How to order the next batch." },
+];
+
+const estelleStreams = [
+  { code: "A", name: "Cook", target: "2 test bakes · first batch 15–16 Oct", text: "Estelle owns the recipe, the kitchen days, the timing sheet, the receipts and the cost per bag. Abiguelle is the second pair of hands on the first-batch bake." },
+  { code: "B", name: "Validate the business case", target: "Business case v1 with actuals · Fri 9 Oct", text: "Replace every allowance in the granola sheet with a receipt, a quote or a measured number, then propose a price and a first-batch quantity." },
+  { code: "C", name: "Talk to customers", target: "15 conversations · 10 names on the pre-order list", text: "Product clarity checks with people outside the club: the beach at the weekend, cafés, school pickup. Record price objections, not compliments." },
+  { code: "D", name: "Talk to shops", target: "6 shops · 2 willing to trial after the Cup", text: "Tamarin, La Preneuse and Black River. Learn what they need to stock it; do not sell yet. Abiguelle introduces the shops she knows; the rest open with a WhatsApp intro from Andras." },
+  { code: "E", name: "Organise the Cup", target: "Vol. 02 checklist owned end to end · rehearsed Fri 16 Oct", text: "Start from the Vol. 01 kit and the nine Vol. 02 lessons. Registrations, volunteers, judges, kit, heat draw, printing, run of show. Andras signs off the heat draw and the safety plan." },
+];
+
+const estelleRhythm = [
+  { name: "Andras, remote", text: "Ten minutes on WhatsApp every evening in week one, then a 30-minute call Tuesday and Friday. Anything that costs money or changes the label goes through Andras." },
+  { name: "Abiguelle, three moments", text: "Shop introductions, the first-batch bake and the granola stall on Cup day. Not on call in between; Estelle does not wait on her." },
+  { name: "Friday numbers", text: "Sheet updated with actuals, logs photographed, a five-line WhatsApp update to Andras." },
+  { name: "Training days", text: "Mon + Fri 4–6 pm at the beach. Tastings, photo permissions, pre-orders and the maker story all happen there." },
 ];
 
 const pilotSteps = [
@@ -122,8 +72,7 @@ const pilotSteps = [
     title: "Improve after the launch",
     deliverable: "Revised product specification, economics and second-cycle plan.",
     tasks: [
-      "Reconcile every unit and all event and product costs.",
-      "Keep product revenue, product costs, competition costs and club spending as four separate totals.",
+      "Start from the October reconciliation: product revenue, product costs, competition costs and club spending stay four separate totals.",
       "Do not use product money for club equipment during the test unless it is approved and recorded as a separate contribution.",
       "Review feedback, failures, price objections and follow-on demand.",
       "Revise the product, price, production process and maker agreement where needed.",
@@ -156,13 +105,13 @@ const pilotSteps = [
   },
 ];
 
-const octoberGate = [
-  "Four-product decision record",
-  "Launch-ready proof of concept",
-  "Pilot rules separating product, competition and club money",
-  "Competition promotion and registration record",
-  "Competition and launch report",
-  "Approved November-to-February plan",
+const cupGate = [
+  "Four-product decision record (granola advances)",
+  "Locked recipe, print-ready label and cost per bag",
+  "First batch baked, labelled and counted",
+  "Cup promotion and registration record: WhatsApp and Instagram posts, registrations, RSVPs",
+  "Cup and reveal report within 48 hours: bags sold, pre-orders, refusals, reasons",
+  "By 31 October: reconciled accounts and approved November-to-February plan",
 ];
 
 const februaryGate = [
@@ -173,176 +122,156 @@ const februaryGate = [
   "Costed global rollout plan",
 ];
 
+const compactCard = `${panel} border-r border-b border-line bg-surface-2/72 p-[1.6rem] [&>span]:font-mono [&>span]:text-[0.66rem] [&>span]:tracking-[0.12em] [&>span]:text-accent-text`;
+const compactTitle = `${cardTitle} mt-10 mb-[0.65rem] text-[1.35rem] leading-[1.1] tracking-[-0.025em]`;
+const compactText = "m-0 text-[0.92rem] leading-[1.55] text-fg-muted";
+const gate = "bg-surface p-8 [&_li]:relative [&_li]:border-t [&_li]:border-line [&_li]:py-[0.65rem] [&_li]:pl-6 [&_li]:text-[0.92rem] [&_li]:text-fg-muted [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:text-accent-text [&_li]:before:content-['✓']";
+
 const templates = [
-  { when: "Now · by 7 Sep", name: "Product concept sheet", use: "Complete once for each of the four products.", file: "/templates/brand-direction-sheet.html" },
-  { when: "8–18 Sep", name: "Parent interview", use: "Record buying history and compare all four concepts.", file: "/templates/brand-parent-questionnaire.html" },
-  { when: "8–18 Sep", name: "Kid interview", use: "Record what kids would use, reject and change.", file: "/templates/brand-kid-conversations.html" },
-  { when: "19 Sep–18 Oct", name: "Product clarity check", use: "Test whether an outside buyer understands the product and price.", file: "/templates/brand-stranger-test.html" },
+  { when: "Done · 7 Sep", name: "Product concept sheet", use: "Completed for the four products. Kept for the decision record.", file: "/templates/brand-direction-sheet.html" },
+  { when: "Closing · 18 Sep", name: "Parent interview", use: "Buying history and the four-concept comparison. Feeds the decision record.", file: "/templates/brand-parent-questionnaire.html" },
+  { when: "Closing · 18 Sep", name: "Kid interview", use: "What kids would use, reject and change. Feeds the test bakes.", file: "/templates/brand-kid-conversations.html" },
+  { when: "By 25 Sep", name: "Photo permission", use: "Required before any child appears on Instagram or the Cup pages.", file: "/templates/brand-photo-permission.html" },
+  { when: "29 Sep – 11 Oct", name: "Product clarity check", use: "Estelle's fifteen customer conversations, starting with the label check before print.", file: "/templates/brand-stranger-test.html" },
+  { when: "1 – 16 Oct", name: "Cup Vol. 01 kit", use: "Pre-event checklist, volunteer roles, run of show, heat schedule, scorecards. Estelle copies and updates them for Vol. 02.", file: "/templates/pre-event-checklist.html" },
+  { when: "5 – 13 Oct", name: "Shop conversations", use: "Estelle's six shop visits: would they stock it, margin, what the label needs, minimum order.", file: "/templates/brand-shop-conversations.html" },
   { when: "Nov–Feb", name: "Brand and community model", use: "Record local ownership, handover, shared rules and rollout decisions.", file: "/templates/brand-concept.html" },
-  { when: "Before public media", name: "Photo permission", use: "Supporting consent document, used only when a child's image will be published.", file: "/templates/brand-photo-permission.html" },
 ];
 ---
 
 <BaseLayout title={approved?title:"Project Molt | Sunset Duckies"} description={approved?description:"A surf brand taking shape in Tamarin. Request access to join the working group."} variant="performance">
   {approved?<><BrandingToolbar/>
-  <div class="performance-plan">
-    <section class="plan-hero">
-      <figure class="plan-hero-media" data-float>
-        <img src="/media/young-rider.jpg" alt="A young surfer riding a wave at sunset in Tamarin" width="1200" height="1600" loading="eager" />
-        <figcaption>Tamarin · Mauritius · First proof community</figcaption>
+  <div class="overflow-clip text-fg">
+    <section class="grid min-h-[calc(100vh-5rem)] border-b border-line lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <figure class="relative m-0 min-h-[48vh] overflow-hidden border-b border-line bg-surface-2 after:absolute after:inset-0 after:bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-ink-950)_5%,transparent),color-mix(in_oklab,var(--color-ink-950)_55%,transparent)),linear-gradient(90deg,transparent_60%,color-mix(in_oklab,var(--color-ink-950)_28%,transparent))] after:content-[''] sm:min-h-[58vh] lg:max-h-[680px] lg:min-h-[760px] lg:border-r lg:border-b-0" data-float>
+        <img src="/media/young-rider.jpg" alt="A young surfer riding a wave at sunset in Tamarin" width="1200" height="1600" loading="eager" class="h-full w-full object-cover saturate-[0.82] contrast-[1.08]" />
+        <figcaption class="absolute inset-x-5 bottom-5 z-[1] font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-cream-soft/72 sm:inset-x-8 sm:bottom-8">Tamarin · Mauritius · First proof community</figcaption>
       </figure>
 
-      <div class="plan-hero-panel" data-float>
-        <div class="plan-hero-topline">
+      <div class="flex min-h-[650px] min-w-0 flex-col p-6 sm:min-h-[660px] sm:p-[clamp(2rem,5vw,5rem)]" data-float>
+        <div class={`${monoMeta} flex-wrap border-b border-line pb-5`}>
           <span>Sunset Duckies / Project Molt</span>
           <span>Aug 2026 – Feb 2027</span>
         </div>
-        <div class="plan-hero-content">
-          <p class="plan-overline">Project Molt brief</p>
-          <h1>Build here. <span>Prepare to travel.</span></h1>
-          <p class="plan-hero-lead">Build Sunset Duckies into a high-quality surf brand with a real purpose, a strong community behind it and a model that can grow beyond Tamarin.</p>
-          <p class="plan-hero-copy">Project Molt is the first build phase: choose and launch one product by 31 October, improve it through a live Tamarin pilot and finish the global rollout plan by 28 February 2027.</p>
+        <div class="my-auto max-w-[800px] py-16">
+          <p class={overline}>Project Molt brief</p>
+          <h1 class="m-0 max-w-[9ch] font-brand text-[clamp(4rem,20vw,6.2rem)] font-normal uppercase leading-[0.82] tracking-[0.005em] text-fg sm:text-[clamp(5rem,8.5vw,10rem)]">Build here. <span class="block text-accent-text">Prepare to travel.</span></h1>
+          <p class="mt-9 mb-0 max-w-[690px] font-display text-[clamp(1.2rem,2vw,1.75rem)] font-[550] leading-[1.35]">Build Sunset Duckies into a high-quality surf brand with a real purpose, a strong community behind it and a model that can grow beyond Tamarin.</p>
+          <p class="mt-5 mb-0 max-w-[640px] text-base leading-[1.7] text-fg-muted">Project Molt is the first build phase: reveal the first batch of Sunset Duckies granola at Cup Vol. 02 on 17/18 October, improve it through a live Tamarin pilot and finish the global rollout plan by 28 February 2027.</p>
         </div>
-        <div class="plan-hero-data" aria-label="Project deadlines">
-          <div><strong>NOW</strong><span>Detail four ideas</span></div>
-          <div><strong>31.10</strong><span>Launch + pilot plan</span></div>
+        <div class="grid grid-cols-3 border-t border-line [&>div]:flex [&>div]:flex-col [&>div]:gap-1 [&>div]:border-r [&>div]:border-line [&>div]:px-[0.65rem] [&>div]:py-[1.1rem] [&>div:last-child]:border-r-0 sm:[&>div]:px-5 sm:[&>div]:py-[1.4rem] [&_strong]:font-brand [&_strong]:text-[1.75rem] [&_strong]:leading-none [&_strong]:font-normal [&_strong]:text-fg sm:[&_strong]:text-[2.2rem] [&_span]:font-mono [&_span]:text-[0.6rem] [&_span]:uppercase [&_span]:tracking-[0.08em] [&_span]:text-fg-muted" aria-label="Project deadlines">
+          <div><strong>NOW</strong><span>Lock granola + the day</span></div>
+          <div><strong>17.10</strong><span>Cup + granola go-live</span></div>
           <div><strong>28.02</strong><span>Global rollout plan</span></div>
         </div>
       </div>
     </section>
 
-    <nav class="plan-index" aria-label="Project brief sections">
-      <a href="#goal"><span>01</span> Overall goal</a>
-      <a href="#goals"><span>02</span> Project goals</a>
-      <a href="#exploration"><span>03</span> To October</a>
-      <a href="#method"><span>04</span> Method</a>
-      <a href="#pilot"><span>05</span> To February</a>
-      <a href="#delivery"><span>06</span> Delivery</a>
-      <a href="#granola-business-case"><span>07</span> Granola economics</a>
+    <nav class="mx-auto grid max-w-[1400px] grid-cols-2 border-l border-line sm:grid-cols-3 lg:grid-cols-8" aria-label="Project brief sections">
+      {[["#goal","01","Overall goal"],["#goals","02","Project goals"],["#exploration","03","To 18 October"],["#estelle","04","Estelle onsite"],["#method","05","Method"],["#pilot","06","To February"],["#delivery","07","Delivery"],["#granola-business-case","08","Granola economics"]].map(([href, code, label]) => (
+        <a href={href} class="border-r border-b border-line px-6 py-5 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-fg-muted transition-[background-color,color] duration-200 hover:bg-accent/7 hover:text-fg"><span class="mr-[0.65rem] text-accent-text">{code}</span> {label}</a>
+      ))}
     </nav>
 
-    <section id="goal" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">01 / Overall project goal</p>
-        <h2>Build a surf brand people choose for the product.</h2>
+    <section id="goal" class={briefSection} data-reveal>
+      <PlanSectionHead overline="01 / Overall project goal" title="Build a surf brand people choose for the product." class="mb-12">
         <p>Product quality comes first. Purpose and community give people more reason to care, contribute and stay involved.</p>
-      </div>
-      <div class="plan-goal-statement">
-        <p>Sunset Duckies will make high-quality products for surfers and surf families. It will develop them with local communities, create paid local work and give those communities a real role in the brand. Tamarin is the first proof; the model must be able to grow globally without flattening the people and identity of each place.</p>
+      </PlanSectionHead>
+      <div class="max-w-[1120px] border border-line border-l-4 border-l-accent bg-linear-135 from-accent/8 to-surface-2/72 p-[clamp(1.75rem,4vw,3rem)]">
+        <p class="m-0 font-display text-[clamp(1.35rem,2.5vw,2.15rem)] font-[550] leading-[1.35] tracking-[-0.035em] text-fg">Sunset Duckies will make high-quality products for surfers and surf families. It will develop them with local communities, create paid local work and give those communities a real role in the brand. Tamarin is the first proof; the model must be able to grow globally without flattening the people and identity of each place.</p>
       </div>
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="goals" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">02 / Project goals</p>
-        <h2>What Project Molt must prove.</h2>
+    <section id="goals" class={briefSection} data-reveal>
+      <PlanSectionHead overline="02 / Project goals" title="What Project Molt must prove." class="mb-12">
         <p>These goals guide every product choice, community agreement and decision about what happens after Tamarin.</p>
-      </div>
-      <div class="plan-compact-grid">
+      </PlanSectionHead>
+      <div class="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:grid-cols-4">
         {projectGoals.map((goal) => (
-          <article class="plan-compact-card"><span>{goal.code}</span><h3>{goal.name}</h3><p>{goal.text}</p></article>
+          <article class={compactCard}><span>{goal.code}</span><h3 class={compactTitle}>{goal.name}</h3><p class={compactText}>{goal.text}</p></article>
         ))}
       </div>
-      <div class="plan-phase-result">
-        <span>Open decision</span>
-        <strong>Decide whether the club and product business should remain one operation or become two connected ones. Test whether the club story helps people buy, but keep club spending, donations and friendly purchases out of the product result.</strong>
+      <PlanCallout label="Open decision" class="mt-8 mb-0">Decide whether the club and product business should remain one operation or become two connected ones. Test whether the club story helps people buy, but keep club spending, donations and friendly purchases out of the product result.</PlanCallout>
+    </section>
+
+    <div class={divider} aria-hidden="true"></div>
+
+    <section id="exploration" class={briefSection} data-reveal>
+      <PlanSectionHead overline="03 / Phase 1 · Countdown to the Cup" title="Now to 18 October." class="mb-12">
+        <p>Granola is the product. Four and a half weeks to lock the recipe, get it into a bag, tell people it is coming and reveal the first batch at Sunset Duckies Cup Vol. 02 on 17/18 October in Tamarin. Owners and status live on the <a href="/branding-plan/board">plan board</a>; ✔ marks a task done, → one in progress.{!planLive && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
+      </PlanSectionHead>
+      <PlanCallout label="Due 17/18 October">First batch of granola revealed and on sale at the Cup, a completed competition with a recorded audience, then a 48-hour report and an approved plan through February by 31 October.</PlanCallout>
+      <PlanTimeline steps={explorationSteps} />
+
+      <div class="mt-16">
+        <PlanSectionHead level="h3" overline="Working back from Saturday 17 October" title="The dates that cannot slip." class="mb-12">
+          <p>Stock pouches with printed labels are the only packaging route that fits. Custom-printed pouches take four to eight weeks plus shipping and are out for this batch.</p>
+        </PlanSectionHead>
+        <PlanTable columns={["Date", "Milestone", "Why then"]} rows={hardDates.map((item) => [item.date, item.milestone, item.why])} />
+      </div>
+
+      <div class="mt-16">
+        <PlanSectionHead level="h3" overline="Tell people it is coming" title="WhatsApp for the families, Instagram for everyone else." class="mb-12">
+          <p>One message a week. WhatsApp carries the Cup logistics and the first taste; Instagram builds the reveal without showing the product until the day.</p>
+        </PlanSectionHead>
+        <PlanTable columns={["When", "WhatsApp · parents group", "Instagram"]} rows={commsPlan.map((item) => [item.when, item.whatsapp, item.instagram])} />
       </div>
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="exploration" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">03 / Phase 1 · Initial exploration</p>
-        <h2>Now to 31 October.</h2>
-        <p>Detail four product ideas, choose one from evidence, build the smallest useful proof, build interest before the event and launch at the end-of-October surf competition.</p>
-      </div>
-      <div class="plan-phase-result"><span>Due 31 October</span><strong>One launched product, a completed competition with a recorded audience, a 48-hour event report and an approved plan through February.</strong></div>
-      <ol class="plan-timeline">
-        {explorationSteps.map((step, index) => (
-          <li class:list={["plan-step", step.status === "now" && "is-current"]}>
-            <div class="plan-step-rail"><span>{String(index + 1).padStart(2, "0")}</span><time>{step.date}</time>{step.status === "now" && <em>Do this now</em>}</div>
-            <div class="plan-step-body">
-              <h3>{step.title}</h3>
-              <p class="plan-step-deliverable"><span>Deliverable</span>{step.deliverable}</p>
-              <ul>{step.tasks.map((task) => <li>{task}</li>)}</ul>
-              {step.links.length > 0 && <div class="plan-step-links">{step.links.map((link) => <a href={link.file} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div>}
-            </div>
-          </li>
+    <section id="estelle" class={briefSection} data-reveal>
+      <PlanSectionHead overline="04 / Estelle onsite · Tue 29 Sep – Mon 19 Oct" title="Three weeks on the ground." class="mb-12">
+        <p>Estelle is in Tamarin for the whole run-up to the Cup and does the work herself. Abiguelle helps at three fixed moments; Andras guides remotely until Friday 16 October. Estelle owns five streams and hands over a product, a validated business case, two logs and a Cup that ran on schedule.</p>
+      </PlanSectionHead>
+      <div class="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:grid-cols-5">
+        {estelleStreams.map((stream) => (
+          <article class={compactCard}><span>{stream.code}</span><h3 class={compactTitle}>{stream.name}</h3><p class="mb-[0.6rem] font-mono text-[0.68rem] uppercase tracking-[0.06em] text-accent-text">{stream.target}</p><p class={compactText}>{stream.text}</p></article>
         ))}
-      </ol>
+      </div>
+      <PlanTimeline steps={estelleWeeks} prefix="E" start={0} class="mt-12" />
+      <PlanDefinitions items={estelleRhythm} signal class="mt-12" />
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="method" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">04 / Method and approach</p>
-        <h2>How decisions are made.</h2>
+    <section id="method" class={briefSection} data-reveal>
+      <PlanSectionHead overline="05 / Method and approach" title="How decisions are made." class="mb-12">
         <p>The team uses the same method from the first product drafts through the second live test. Evidence decides whether the work continues, changes or stops.</p>
-      </div>
-      <dl class="plan-access-list plan-method-list">
-        {methodology.map((item) => <div><dt>{item.name}</dt><dd>{item.text}</dd></div>)}
-      </dl>
-      <div class="plan-community-approach">
-        <p class="plan-overline">Community approach</p>
-        <ol>{communityApproach.map((item, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
+      </PlanSectionHead>
+      <PlanDefinitions items={methodology} signal />
+      <div class="mt-8 border border-line px-7 py-6">
+        <p class={`${overline} mb-4`}>Community approach</p>
+        <ol class="m-0 grid list-none grid-cols-1 p-0 sm:grid-cols-2 lg:grid-cols-4">{communityApproach.map((item, index) => <li class="flex gap-3 py-[0.4rem] pr-5 text-[0.9rem] leading-[1.5] text-fg-muted"><span class="flex-none font-mono text-[0.65rem] text-accent-text">{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
       </div>
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="pilot" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">05 / Phase 2 · Live Tamarin pilot</p>
-        <h2>November to February.</h2>
+    <section id="pilot" class={briefSection} data-reveal>
+      <PlanSectionHead overline="06 / Phase 2 · Live Tamarin pilot" title="November to February." class="mb-12">
         <p>Improve after the launch, prove repeat demand, move agreed work into local hands and turn the Tamarin evidence into the global rollout plan.</p>
-      </div>
-      <div class="plan-phase-result"><span>Due 28 February</span><strong>Two product cycles, tested local ownership, actual economics and a costed rollout plan.</strong></div>
-      <ol class="plan-timeline">
-        {pilotSteps.map((step, index) => (
-          <li class="plan-step">
-            <div class="plan-step-rail"><span>P{String(index + 1).padStart(2, "0")}</span><time>{step.date}</time></div>
-            <div class="plan-step-body">
-              <h3>{step.title}</h3>
-              <p class="plan-step-deliverable"><span>Deliverable</span>{step.deliverable}</p>
-              <ul>{step.tasks.map((task) => <li>{task}</li>)}</ul>
-              <div class="plan-step-links">{step.links.map((link) => <a href={link.file} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div>
-            </div>
-          </li>
-        ))}
-      </ol>
+      </PlanSectionHead>
+      <PlanCallout label="Due 28 February">Two product cycles, tested local ownership, actual economics and a costed rollout plan.</PlanCallout>
+      <PlanTimeline steps={pilotSteps} prefix="P" />
     </section>
 
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
 
-    <section id="delivery" class="plan-section plan-brief-section" data-reveal>
-      <div class="plan-section-head">
-        <p class="plan-overline">06 / Delivery gates and templates</p>
-        <h2>The final checklists.</h2>
+    <section id="delivery" class={briefSection} data-reveal>
+      <PlanSectionHead overline="07 / Delivery gates and templates" title="The final checklists." class="mb-12">
         <p>A deadline is complete only when every item below exists. The template table shows which working document to use and when.</p>
+      </PlanSectionHead>
+      <div class="grid grid-cols-1 gap-px border border-line bg-line md:grid-cols-2">
+        <article class={gate}><time class="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-accent-text">17/18 October 2026</time><h3 class={`${cardTitle} mt-[0.8rem] mb-6 text-[1.6rem] tracking-[-0.03em]`}>Cup run, granola live</h3><ul class="m-0 list-none p-0">{cupGate.map((item) => <li>{item}</li>)}</ul></article>
+        <article class={gate}><time class="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-accent-text">28 February 2027</time><h3 class={`${cardTitle} mt-[0.8rem] mb-6 text-[1.6rem] tracking-[-0.03em]`}>Tamarin pilot complete</h3><ul class="m-0 list-none p-0">{februaryGate.map((item) => <li>{item}</li>)}</ul></article>
       </div>
-      <div class="plan-gates">
-        <article class="plan-gate"><time>31 October 2026</time><h3>Initial exploration complete</h3><ul>{octoberGate.map((item) => <li>{item}</li>)}</ul></article>
-        <article class="plan-gate"><time>28 February 2027</time><h3>Tamarin pilot complete</h3><ul>{februaryGate.map((item) => <li>{item}</li>)}</ul></article>
-      </div>
-      <div class="plan-template-wrap">
-        <table class="plan-template-table">
-          <thead><tr><th scope="col">When</th><th scope="col">Template</th><th scope="col">Use it for</th></tr></thead>
-          <tbody>{templates.map((item) => <tr><td>{item.when}</td><td><a href={item.file} target="_blank" rel="noreferrer">{item.name} ↗</a></td><td>{item.use}</td></tr>)}</tbody>
-        </table>
-      </div>
+      <PlanTable columns={["When", "Template", "Use it for"]} rows={templates.map((item) => [item.when, { label: item.name, href: item.file }, item.use])} />
     </section>
-    <div class="plan-divider" aria-hidden="true"></div>
+    <div class={divider} aria-hidden="true"></div>
     <GranolaBusinessCase />
   </div>
 </>:<BrandingTeaser/>}
 </BaseLayout>
-
-<style>
-  @media (min-width: 1025px) {
-    .plan-index { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  }
-</style>

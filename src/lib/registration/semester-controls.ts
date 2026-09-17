@@ -1,4 +1,6 @@
 import type { Semester } from "./semesters";
+import { ctaClass } from "../ui";
+import { semesterControls as semesterControlsClass, semesterForm, textButton } from "../members-ui";
 export function semesterControls(
   terms: Semester[],
   selected: Semester,
@@ -7,7 +9,7 @@ export function semesterControls(
   report: (text: string) => void,
 ) {
   const root = document.createElement("div");
-  root.className = "member-form semester-controls";
+  root.className = semesterControlsClass;
   const label = document.createElement("label");
   label.textContent = "Payment semester";
   const select = document.createElement("select");
@@ -38,7 +40,7 @@ export function semesterControls(
     if (!selected.isCurrent) {
       const activate = document.createElement("button");
       activate.type = "button";
-      activate.className = "member-text-button";
+      activate.className = textButton;
       activate.textContent = "Make this the current semester";
       activate.onclick = async () => {
         activate.disabled = true;
@@ -58,7 +60,7 @@ export function semesterControls(
     summary.textContent = "Add a semester";
     details.append(summary);
     const form = document.createElement("form");
-    form.className = "member-form";
+    form.className = semesterForm;
     for (const [name, title, type, value] of [
       ["id", "Semester ID", "text", ""],
       ["label", "Semester name", "text", ""],
@@ -94,7 +96,7 @@ export function semesterControls(
     }
     const button = document.createElement("button");
     button.type = "submit";
-    button.className = "cta-primary";
+    button.className = ctaClass();
     button.textContent = "Create semester";
     form.append(button);
     form.onsubmit = async (e) => {

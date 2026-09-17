@@ -1,0 +1,14 @@
+---
+import { kickerClass, type Tone } from "../../lib/ui";
+// Section kicker pill. `outline` is the quiet variant used on dark footers.
+interface Props {
+  as?: "p" | "span" | "h2" | "h3" | "a";
+  href?: string;
+  tone?: Tone;
+  class?: string;
+  id?: string;
+}
+const { as, tone = "sticker", class: className, ...rest } = Astro.props as Props;
+const Tag = as ?? "p";
+---
+<Tag class={kickerClass(tone, className)} {...rest}><slot /></Tag>

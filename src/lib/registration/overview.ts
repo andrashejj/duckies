@@ -1,5 +1,7 @@
 import type { Semester } from "./semesters";
 import type { OrganiserKid } from "./records";
+import { ctaClass } from "../ui";
+import { duckieActions, duckieBox, duckieDetails, duckieFacts, duckiePhotoForm, duckieShare, textButton } from "../members-ui";
 const text = (tag: string, value: string) => {
   const element = document.createElement(tag);
   element.textContent = value;
@@ -9,14 +11,14 @@ function link(label: string, href: string) {
   const a = document.createElement("a");
   a.textContent = label;
   a.href = href;
-  a.className = "member-text-button";
+  a.className = textButton;
   return a;
 }
 function button(label: string, action: () => unknown) {
   const b = document.createElement("button");
   b.type = "button";
   b.textContent = label;
-  b.className = "member-text-button";
+  b.className = textButton;
   b.onclick = () => void action();
   return b;
 }
@@ -39,9 +41,9 @@ export function kidOverview(
   report: (message: string) => void,
 ) {
   const section = document.createElement("div");
-  section.className = "duckie-details";
+  section.className = duckieDetails;
   const facts = document.createElement("dl");
-  facts.className = "duckie-facts";
+  facts.className = duckieFacts;
   function fact(label: string, value: string) {
     const group = document.createElement("div");
     group.append(text("dt", label), text("dd", value));
@@ -115,9 +117,9 @@ export function kidOverview(
   );
   section.append(facts);
   const actions = document.createElement("div");
-  actions.className = "duckie-actions";
+  actions.className = duckieActions;
   const share = document.createElement("div");
-  share.className = "duckie-share member-form";
+  share.className = duckieShare;
   share.hidden = true;
   const generate = button("Generate registration link", async () => {
     generate.disabled = true;
@@ -190,7 +192,7 @@ export function kidOverview(
       link("Download signed waiver", `/api/waivers/${kid.waiverId}`),
     );
   const history = document.createElement("div");
-  history.className = "duckie-history member-form";
+  history.className = duckieBox;
   history.hidden = true;
   actions.append(
     button("Signed records + payment history", async () => {
@@ -207,7 +209,7 @@ export function kidOverview(
           history.append(text("p", "No signed records yet."));
         for (const w of data.waivers) {
           const row = document.createElement("div");
-          row.className = "duckie-actions";
+          row.className = duckieActions;
           row.append(
             link(
               `${w.term} · ${new Date(w.signed_at).toLocaleString()} · PDF`,
@@ -235,7 +237,7 @@ export function kidOverview(
   section.append(actions, share, history);
   if (canPay) {
     const payment = document.createElement("form");
-    payment.className = "member-form duckie-payment";
+    payment.className = duckieBox;
     payment.hidden = true;
     actions.append(
       button("Update payment", () => {
@@ -271,7 +273,7 @@ export function kidOverview(
     noteLabel.append(note);
     const save = document.createElement("button");
     save.type = "submit";
-    save.className = "cta-primary";
+    save.className = ctaClass();
     save.textContent = "Save payment status";
     payment.append(
       statusLabel,
@@ -310,7 +312,7 @@ export function kidOverview(
     section.append(payment);
   }
   const photo = document.createElement("form");
-  photo.className = "member-form duckie-photo-form";
+  photo.className = duckiePhotoForm;
   const photoLabel = text("label", "Profile photo");
   const file = document.createElement("input");
   file.type = "file";
@@ -318,7 +320,7 @@ export function kidOverview(
   photoLabel.append(file);
   const upload = document.createElement("button");
   upload.type = "submit";
-  upload.className = "member-text-button";
+  upload.className = textButton;
   upload.textContent = "Upload photo";
   photo.append(
     photoLabel,

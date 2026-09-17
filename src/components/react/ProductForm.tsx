@@ -2,6 +2,7 @@ import { useHydrated } from "./useHydrated";
 import { useState } from "react";
 
 import { COLORWAY_OPTIONS } from "../../lib/product-admin";
+import { ctaClass, kickerClass, stickerCardClass } from "../../lib/ui";
 
 type ProductFormValues = {
   id?: string;
@@ -179,8 +180,8 @@ export default function ProductForm({ mode, initial, drops }: Props) {
     <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
       <fieldset disabled={!ready} className="contents">
       <div className="space-y-5">
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Identity</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Identity</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Name" value={values.name} onChange={(v) => update("name", v)} required />
             <Field label="Kind (display)" value={values.kind} onChange={(v) => update("kind", v)} placeholder="Tee · Hoodie · Accessories" required />
@@ -193,8 +194,8 @@ export default function ProductForm({ mode, initial, drops }: Props) {
           <TextArea label="Description" value={values.description} onChange={(v) => update("description", v)} required rows={4} />
         </fieldset>
 
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Pricing + stock</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Pricing + stock</legend>
           <div className="grid gap-4 sm:grid-cols-3">
             <Field
               label={`Price (${values.currency})`}
@@ -215,8 +216,8 @@ export default function ProductForm({ mode, initial, drops }: Props) {
           </div>
         </fieldset>
 
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Image</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Image</legend>
           <Field
             label="Image URL (drop into /public/media/shop/ first)"
             value={values.imageUrl}
@@ -231,7 +232,7 @@ export default function ProductForm({ mode, initial, drops }: Props) {
             rows={2}
           />
           {values.imageUrl && (
-            <div className="overflow-hidden rounded-[1rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-deep)] shadow-[3px_3px_0_0_var(--color-ink-950)]">
+            <div className="overflow-hidden rounded-[1rem] border-2 border-edge bg-surface-2 shadow-sticker-sm">
               <img
                 src={values.imageUrl}
                 alt={values.imageAlt || "Preview"}
@@ -241,8 +242,8 @@ export default function ProductForm({ mode, initial, drops }: Props) {
           )}
         </fieldset>
 
-        <fieldset className="surface-card space-y-4 p-5">
-          <legend className="section-kicker">Display</legend>
+        <fieldset className={stickerCardClass({ hover: false }, "space-y-4 p-5")}>
+          <legend className={kickerClass()}>Display</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <Select
               label="Category"
@@ -265,12 +266,12 @@ export default function ProductForm({ mode, initial, drops }: Props) {
             rows={2}
           />
           <Field label="Sort order" value={values.sortOrder} onChange={(v) => update("sortOrder", v)} inputMode="numeric" />
-          <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+          <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
             <span>Drop</span>
             <select
               value={values.dropId}
               onChange={(e) => update("dropId", e.target.value)}
-              className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+              className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
             >
               <option value="">— No drop (always-on) —</option>
               {drops.map((d) => (
@@ -288,17 +289,17 @@ export default function ProductForm({ mode, initial, drops }: Props) {
       </div>
 
       <aside className="sticky top-6 h-fit space-y-4">
-        <div className="surface-card space-y-3 p-5">
-          <p className="section-kicker">Save</p>
+        <div className={stickerCardClass({ hover: false }, "space-y-3 p-5")}>
+          <p className={kickerClass()}>Save</p>
           {error && (
-            <p className="rounded-[0.6rem] border border-[var(--color-coral-500)] bg-[var(--color-coral-500)]/10 p-3 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+            <p className="rounded-[0.6rem] border border-coral-500 bg-coral-500/10 p-3 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-coral-500">
               {error}
             </p>
           )}
           <button
             type="submit"
             disabled={submitting !== null}
-            className="cta-primary w-full justify-center disabled:opacity-60"
+            className={ctaClass("primary", "md", "w-full")}
           >
             {submitting === "save"
               ? "Saving…"
@@ -311,12 +312,12 @@ export default function ProductForm({ mode, initial, drops }: Props) {
               type="button"
               onClick={handleArchive}
               disabled={submitting !== null}
-              className="w-full rounded-full border-2 border-[var(--color-coral-500)] bg-transparent px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--color-coral-500)] hover:bg-[var(--color-coral-500)] hover:text-[var(--color-cream-soft)] disabled:opacity-60"
+              className="w-full rounded-full border-2 border-coral-500 bg-transparent px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-coral-500 hover:bg-coral-500 hover:text-cream-soft disabled:opacity-60"
             >
               {submitting === "delete" ? "Archiving…" : "Archive product"}
             </button>
           )}
-          <a href="/admin/products" className="block text-center font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/60 hover:text-[var(--color-coral-500)]">
+          <a href="/admin/products" className="block text-center font-mono text-[0.7rem] uppercase tracking-[0.2em] text-fg/60 hover:text-coral-500">
             Cancel
           </a>
         </div>
@@ -342,10 +343,10 @@ function Field({
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>
         {label}
-        {required && <span className="ml-1 text-[var(--color-coral-500)]">*</span>}
+        {required && <span className="ml-1 text-coral-500">*</span>}
       </span>
       <input
         type="text"
@@ -354,7 +355,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
-        className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );
@@ -376,10 +377,10 @@ function TextArea({
   rows?: number;
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>
         {label}
-        {required && <span className="ml-1 text-[var(--color-coral-500)]">*</span>}
+        {required && <span className="ml-1 text-coral-500">*</span>}
       </span>
       <textarea
         required={required}
@@ -387,7 +388,7 @@ function TextArea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-2 w-full rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.8rem] border-2 border-edge bg-surface p-3 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );
@@ -405,12 +406,12 @@ function Select({
   options: string[];
 }) {
   return (
-    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/75">
+    <label className="block font-mono text-[0.64rem] uppercase tracking-[0.16em] text-fg/75">
       <span>{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full rounded-[0.6rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.6rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       >
         {options.map((o) => (
           <option key={o} value={o}>
@@ -432,12 +433,12 @@ function Checkbox({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/75">
+    <label className="flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-fg/75">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 accent-[var(--color-coral-500)]"
+        className="h-4 w-4 accent-coral-500"
       />
       {label}
     </label>

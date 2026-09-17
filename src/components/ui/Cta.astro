@@ -1,0 +1,21 @@
+---
+import { ctaClass, type CtaSize, type CtaVariant } from "../../lib/ui";
+// Sticker CTA. Renders <a> when href is given, otherwise <button> (or `as`).
+// "performance" is the flat mono button of the branding workspace.
+interface Props {
+  as?: "a" | "button" | "span";
+  href?: string;
+  variant?: CtaVariant;
+  size?: CtaSize;
+  class?: string;
+  type?: "button" | "submit";
+  target?: string;
+  rel?: string;
+  download?: string | boolean;
+  "data-member-link"?: boolean;
+  id?: string;
+}
+const { as, href, variant = "primary", size = "md", class: className, type = "button", ...rest } = Astro.props as Props;
+const Tag = as ?? (href ? "a" : "button");
+---
+<Tag href={href} type={Tag === "button" ? type : undefined} class={ctaClass(variant, size, className)} {...rest}><slot /></Tag>

@@ -1,0 +1,51 @@
+---
+import type { Product } from "../generated/prisma/client";
+import { themeFor } from "../lib/products";
+// Product artwork or the big wordmark fallback, tinted by the product colourway.
+interface Props {
+  product: Pick<Product, "name" | "colorway" | "imageUrl" | "imageAlt" | "kind">;
+  size?: "sm" | "md" | "lg";
+  as?: "div" | "a";
+  href?: string;
+  class?: string;
+  eager?: boolean;
+}
+const { product, size = "md", as, href, class: className, eager = false } = Astro.props as Props;
+const Tag = as ?? (href ? "a" : "div");
+const theme = themeFor(product.colorway);
+const wordmark = { sm: "px-4 text-[clamp(1.8rem,4.5vw,3rem)]", md: "px-6 text-[clamp(2.2rem,5.5vw,3.8rem)]", lg: "px-6 text-[clamp(3rem,7vw,5.5rem)]" }[size];
+---
+<Tag
+  href={href}
+  class:list={[
+    "group/visual relative block aspect-[4/3] overflow-hidden bg-[radial-gradient(circle_at_85%_15%,color-mix(in_oklab,white_18%,transparent),transparent_45%),radial-gradient(circle_at_10%_90%,color-mix(in_oklab,black_14%,transparent),transparent_50%)] after:pointer-events-none after:absolute after:inset-0 after:bg-[radial-gradient(120%_90%_at_50%_100%,color-mix(in_oklab,var(--color-ink-950)_12%,transparent),transparent_55%),linear-gradient(180deg,transparent_70%,color-mix(in_oklab,var(--color-ink-950)_8%,transparent)_100%)] after:mix-blend-multiply after:content-['']",
+    theme.visual,
+    href && "outline-none focus-visible:ring-2 focus-visible:ring-sun-500",
+    className,
+  ]}
+  aria-label={href ? `${product.name} details` : undefined}
+>
+  {product.imageUrl ? (
+    <img
+      src={product.imageUrl}
+      alt={product.imageAlt ?? product.name}
+      width={size === "lg" ? 1280 : size === "sm" ? 800 : 1020}
+      height={size === "lg" ? 960 : size === "sm" ? 600 : 780}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      class:list={["absolute inset-0 h-full w-full object-cover", href && "transition-transform duration-500 ease-out group-hover/visual:scale-[1.035]"]}
+    />
+  ) : (
+    <>
+      <span class:list={["absolute inset-0 flex items-center justify-center text-center font-display font-extrabold leading-[0.82] tracking-[-0.05em] [font-variation-settings:'wdth'_118]", wordmark]}>
+        {product.name.split(" ").map((word) => <span class="block">{word}</span>)}
+      </span>
+      <svg class:list={["pointer-events-none absolute inset-x-0 w-full opacity-90", size === "lg" ? "bottom-4 h-8" : "bottom-3 h-6", theme.wave]} viewBox="0 0 320 24" aria-hidden="true">
+        <path d="M 0 12 Q 20 0 40 12 T 80 12 T 120 12 T 160 12 T 200 12 T 240 12 T 280 12 T 320 12" fill="none" stroke-width="2.5" stroke-linecap="round" />
+      </svg>
+    </>
+  )}
+  <span class:list={["pointer-events-none absolute z-[1] rounded-full border-2 border-edge bg-surface font-mono font-semibold uppercase tracking-[0.22em] text-fg shadow-sticker-xs", size === "lg" ? "top-4 left-4 px-3 py-1 text-[0.66rem]" : "top-3 left-3 px-2.5 py-1 text-[0.6rem]"]}>
+    {product.kind}
+  </span>
+</Tag>

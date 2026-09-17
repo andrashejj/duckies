@@ -7,56 +7,23 @@ export { formatPrice } from "./format";
 export type Colorway = "cream" | "teal" | "sun" | "coral" | "lilac" | "ink";
 
 export type ColorTheme = {
-  bg: string;
-  ink: string;
-  waveStroke: string;
-  badgeBg: string;
-  badgeInk: string;
+  /** Background + text utilities for the product visual */
+  visual: string;
+  /** Stroke utility for the decorative wave */
+  wave: string;
+  /** Badge fill + text utilities */
+  badge: string;
 };
 
+// Utility classes rather than colour values, so the visuals follow the theme
+// tokens and Tailwind can see every class at build time.
 export const colorThemes: Record<Colorway, ColorTheme> = {
-  cream: {
-    bg: "var(--color-cream-deep)",
-    ink: "var(--color-ink-950)",
-    waveStroke: "var(--color-coral-500)",
-    badgeBg: "var(--color-coral-500)",
-    badgeInk: "var(--color-cream-soft)",
-  },
-  teal: {
-    bg: "var(--color-teal-500)",
-    ink: "var(--color-ink-950)",
-    waveStroke: "var(--color-ink-950)",
-    badgeBg: "var(--color-sun-500)",
-    badgeInk: "var(--color-ink-950)",
-  },
-  sun: {
-    bg: "var(--color-sun-500)",
-    ink: "var(--color-ink-950)",
-    waveStroke: "var(--color-ink-950)",
-    badgeBg: "var(--color-coral-500)",
-    badgeInk: "var(--color-cream-soft)",
-  },
-  coral: {
-    bg: "var(--color-coral-500)",
-    ink: "var(--color-cream-soft)",
-    waveStroke: "var(--color-sun-500)",
-    badgeBg: "var(--color-sun-500)",
-    badgeInk: "var(--color-ink-950)",
-  },
-  lilac: {
-    bg: "var(--color-lilac-400)",
-    ink: "var(--color-ink-950)",
-    waveStroke: "var(--color-ink-950)",
-    badgeBg: "var(--color-ink-950)",
-    badgeInk: "var(--color-cream-soft)",
-  },
-  ink: {
-    bg: "var(--color-ink-950)",
-    ink: "var(--color-cream-soft)",
-    waveStroke: "var(--color-sun-500)",
-    badgeBg: "var(--color-sun-500)",
-    badgeInk: "var(--color-ink-950)",
-  },
+  cream: { visual: "bg-surface-2 text-fg", wave: "stroke-coral-500", badge: "bg-coral-500 text-cream-soft" },
+  teal: { visual: "bg-teal-500 text-ink-950", wave: "stroke-ink-950", badge: "bg-sun-500 text-ink-950" },
+  sun: { visual: "bg-sun-500 text-ink-950", wave: "stroke-ink-950", badge: "bg-coral-500 text-cream-soft" },
+  coral: { visual: "bg-coral-500 text-cream-soft", wave: "stroke-sun-500", badge: "bg-sun-500 text-ink-950" },
+  lilac: { visual: "bg-lilac-400 text-ink-950", wave: "stroke-ink-950", badge: "bg-ink-950 text-cream-soft" },
+  ink: { visual: "bg-ink-950 text-cream-soft", wave: "stroke-sun-500", badge: "bg-sun-500 text-ink-950" },
 };
 
 export function themeFor(colorway: string): ColorTheme {

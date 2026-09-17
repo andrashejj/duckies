@@ -2,6 +2,9 @@
 export const prerender = false;
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { DROP_STATUS_COLOR, DROP_STATUS_LABEL, listDropsWithCounts } from "../../../lib/drops";
+import Cta from "../../../components/ui/Cta.astro";
+import Kicker from "../../../components/ui/Kicker.astro";
+import StickerCard from "../../../components/ui/StickerCard.astro";
 
 let drops: Awaited<ReturnType<typeof listDropsWithCounts>> = [];
 let loadError: string | null = null;
@@ -24,37 +27,33 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 <AdminLayout title="Drops · Admin" section="drops">
   <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
     <div class="space-y-2">
-      <p class="section-kicker">✦ Drops</p>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      <Kicker>✦ Drops</Kicker>
+      <h1 class="font-display text-fg text-[clamp(2rem,4vw,3rem)] leading-[1] [font-variation-settings:'wdth'_114] font-bold"
       >
         The seasons.
       </h1>
     </div>
-    <a class="cta-primary" href="/admin/drops/new">+ New drop</a>
+    <Cta href="/admin/drops/new">+ New drop</Cta>
   </div>
 
   {loadError ? (
-    <div class="surface-card p-6">
-      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+    <StickerCard class="p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
         Could not load drops
       </p>
-      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
-    </div>
+      <p class="mt-2 text-[0.95rem] text-fg/80">{loadError}</p>
+    </StickerCard>
   ) : drops.length === 0 ? (
-    <div class="surface-card p-12 text-center">
-      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+    <StickerCard class="p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-fg/55">
         No drops yet.
       </p>
-      <a class="cta-primary mt-5 inline-flex" href="/admin/drops/new">
-        Create the first drop →
-      </a>
-    </div>
+      <Cta class="mt-5" href="/admin/drops/new">Create the first drop →</Cta>
+    </StickerCard>
   ) : (
-    <div class="surface-card overflow-hidden">
+    <StickerCard class="overflow-hidden">
       <table class="w-full border-separate border-spacing-0 text-sm">
-        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+        <thead class="bg-ink-950 text-cream-soft">
           <tr>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Drop</th>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Status</th>
@@ -64,26 +63,23 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
         </thead>
         <tbody>
           {drops.map((d) => (
-            <tr class="group border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+            <tr class="group border-t border-edge/10 hover:bg-sun-500/20">
               <td class="px-4 py-3">
                 <a href={`/admin/drops/${d.id}`} class="block">
-                  <p class="font-display text-sm text-[var(--color-ink-950)] group-hover:text-[var(--color-coral-500)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  <p class="font-display text-sm text-fg group-hover:text-coral-500 [font-variation-settings:'wdth'_110] font-bold">
                     {d.name}
                   </p>
-                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                  <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-fg/55">
                     /{d.slug}
                   </p>
                 </a>
               </td>
               <td class="px-4 py-3">
-                <span
-                  class="rounded-full border border-[var(--color-ink-950)] px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.14em]"
-                  style={`background:${DROP_STATUS_COLOR[d.status]};`}
-                >
+                <span class:list={["rounded-full border border-ink-950 px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.14em]", DROP_STATUS_COLOR[d.status]]}>
                   {DROP_STATUS_LABEL[d.status]}
                 </span>
               </td>
-              <td class="px-4 py-3 font-mono text-[0.72rem] text-[var(--color-ink-950)]/70">
+              <td class="px-4 py-3 font-mono text-[0.72rem] text-fg/70">
                 {d.opensAt ? dateFormatter.format(d.opensAt) : "—"}
                 {" → "}
                 {d.closesAt ? dateFormatter.format(d.closesAt) : "—"}
@@ -95,6 +91,6 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
           ))}
         </tbody>
       </table>
-    </div>
+    </StickerCard>
   )}
 </AdminLayout>

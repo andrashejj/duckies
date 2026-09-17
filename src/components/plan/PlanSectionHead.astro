@@ -1,0 +1,24 @@
+---
+import { cn } from "../../lib/cn";
+import { heading, muted, overline, subheading } from "../../lib/plan-ui";
+// Overline + big heading + a muted intro column. The heading spans the full
+// row when `wide`, otherwise the intro sits beside it on large screens.
+interface Props {
+  overline: string;
+  title: string;
+  level?: "h2" | "h3";
+  wide?: boolean;
+  class?: string;
+}
+const { overline: kicker, title, level = "h2", wide = false, class: className } = Astro.props as Props;
+const Tag = level;
+const classes = cn(
+  "mb-16 grid grid-cols-1 items-end gap-x-20 gap-y-10 max-[680px]:mb-11 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.48fr)]",
+  className,
+);
+---
+<div class={classes}>
+  <p class={cn(overline, "lg:col-span-full lg:-mb-2")}>{kicker}</p>
+  <Tag class:list={[level === "h2" ? heading : subheading, wide && "lg:col-span-full"]}>{title}</Tag>
+  <div class={cn(muted, "[&_a]:border-b [&_a]:border-accent [&_a]:text-fg")}><slot /></div>
+</div>

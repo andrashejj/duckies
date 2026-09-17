@@ -1,12 +1,12 @@
 ---
 import type { BlogIllustration } from "../data/blog";
-interface Props { image: BlogIllustration; eager?: boolean; }
-const { image, eager = false } = Astro.props;
+interface Props { image: BlogIllustration; eager?: boolean; class?: string; }
+const { image, eager = false, class: className } = Astro.props;
 ---
-<figure class="logbook-illustration">
+<figure class:list={["m-0 rounded-[0.45rem] border-2 border-edge bg-surface p-[0.55rem] shadow-[7px_7px_0_0_var(--edge)]", className]}>
   <img src={image.src} alt={image.alt} width="1536" height="1024"
     srcset={`${image.src.replace('.webp', '-small.webp')} 768w, ${image.src} 1536w`}
     sizes={eager ? "(min-width: 1024px) 55vw, 100vw" : "(min-width: 1024px) 1100px, 100vw"}
-    loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : "auto"} decoding="async" />
-  <figcaption>{image.caption}</figcaption>
+    loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : "auto"} decoding="async" class="block aspect-[3/2] h-auto w-full rounded-[0.15rem] object-cover" />
+  <figcaption class="px-2 pt-[0.9rem] pb-2 font-mono text-[0.7rem] leading-[1.7]">{image.caption}</figcaption>
 </figure>

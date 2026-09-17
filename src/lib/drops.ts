@@ -46,7 +46,7 @@ export const DROP_STATUS_LABEL: Record<DropStatus, string> = {
 };
 
 export const DROP_STATUS_COLOR: Record<DropStatus, string> = {
-  DRAFT: "var(--color-lilac-400)",
-  LIVE: "var(--color-teal-500)",
-  CLOSED: "var(--color-coral-500)",
+  DRAFT: "bg-lilac-400 text-ink-950",
+  LIVE: "bg-teal-500 text-ink-950",
+  CLOSED: "bg-coral-500 text-ink-950",
 };

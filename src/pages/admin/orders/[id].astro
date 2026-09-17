@@ -12,6 +12,8 @@ import {
 } from "../../../lib/admin-orders";
 import { formatPrice, shortOrderId } from "../../../lib/format";
 import { prisma } from "../../../lib/prisma";
+import Kicker from "../../../components/ui/Kicker.astro";
+import StickerCard from "../../../components/ui/StickerCard.astro";
 
 const { id } = Astro.params;
 
@@ -52,33 +54,31 @@ const eventTypeLabel: Record<string, string> = {
 };
 
 const eventTypeColor: Record<string, string> = {
-  CREATED: "var(--color-sun-500)",
-  CONFIRMED: "var(--color-teal-500)",
-  READY: "var(--color-teal-500)",
-  FULFILLED: "var(--color-lilac-400)",
-  CANCELLED: "var(--color-coral-500)",
-  PAID: "var(--color-teal-500)",
-  NOTE: "var(--color-cream-deep)",
-  EMAIL_SENT: "var(--color-cream-deep)",
+  CREATED: "bg-sun-500",
+  CONFIRMED: "bg-teal-500",
+  READY: "bg-teal-500",
+  FULFILLED: "bg-lilac-400",
+  CANCELLED: "bg-coral-500",
+  PAID: "bg-teal-500",
+  NOTE: "bg-surface-2",
+  EMAIL_SENT: "bg-surface-2",
 };
 ---
 
 <AdminLayout
-  title={`Reservation ${shortOrderId(order.id)} · Admin`}
+ title={`Reservation ${shortOrderId(order.id)} · Admin`}
   section="orders"
 >
   <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
     <div class="space-y-2">
-      <a href="/admin/orders" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/65 hover:text-[var(--color-coral-500)]">
+      <a href="/admin/orders" class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-fg/65 hover:text-coral-500">
         ← Reservations
       </a>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1; font-variation-settings: 'wdth' 112; font-weight: 700;"
+      <h1 class="font-display text-fg text-[clamp(1.8rem,3.5vw,2.6rem)] leading-[1] [font-variation-settings:'wdth'_112] font-bold"
       >
         Reservation {shortOrderId(order.id)}
       </h1>
-      <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+      <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/55">
         Placed {new Date(order.createdAt).toLocaleString("en-GB", {
           day: "2-digit",
           month: "short",
@@ -90,18 +90,15 @@ const eventTypeColor: Record<string, string> = {
       </p>
     </div>
     <div class="flex flex-col items-end gap-2">
-      <span
-        class="rounded-full border-2 border-[var(--color-ink-950)] px-4 py-1.5 font-mono text-[0.72rem] uppercase tracking-[0.18em] shadow-[3px_3px_0_0_var(--color-ink-950)]"
-        style={`background:${STATUS_COLOR[order.status]};`}
-      >
+      <span class:list={["rounded-full border-2 border-ink-950 px-4 py-1.5 font-mono text-[0.72rem] uppercase tracking-[0.18em] shadow-[3px_3px_0_0_var(--color-ink-950)]", STATUS_COLOR[order.status]]}>
         {STATUS_LABEL[order.status]}
       </span>
       {order.paidAt ? (
-        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-teal-500)]">
+        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-teal-500">
           ✓ Paid {new Date(order.paidAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
         </span>
       ) : (
-        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-coral-500)]">
+        <span class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-coral-500">
           Cash outstanding · {formatPrice(order.totalCents, order.currency)}
         </span>
       )}
@@ -110,63 +107,60 @@ const eventTypeColor: Record<string, string> = {
 
   <div class="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
     <section class="space-y-6">
-      <div class="surface-card p-5">
-        <p class="section-kicker">Items</p>
-        <ul class="mt-4 divide-y divide-dashed divide-[var(--color-ink-950)]/15">
+      <StickerCard class="p-5">
+        <Kicker>Items</Kicker>
+        <ul class="mt-4 divide-y divide-dashed divide-edge/15">
           {order.items.map((item) => (
             <li class="flex justify-between gap-4 py-3">
               <div class="min-w-0">
-                <p class="font-display text-base text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+                <p class="font-display text-base text-fg [font-variation-settings:'wdth'_110] font-bold">
                   {item.nameSnapshot}
                 </p>
-                <p class="mt-0.5 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/60">
+                <p class="mt-0.5 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-fg/60">
                   SKU {item.sku}
                   {item.size ? ` · ${item.size}` : ""} · ×{item.quantity}
                 </p>
                 {item.kidName && (
-                  <p class="mt-1 inline-flex rounded-full border border-[var(--color-ink-950)]/40 bg-[var(--color-sun-500)]/40 px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]">
+                  <p class="mt-1 inline-flex rounded-full border border-edge/40 bg-sun-500/40 px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-fg">
                     For {item.kidName}
                   </p>
                 )}
               </div>
               <div class="text-right">
-                <p class="font-mono text-[0.82rem] text-[var(--color-ink-950)]">
+                <p class="font-mono text-[0.82rem] text-fg">
                   {formatPrice(item.lineTotalCents, order.currency)}
                 </p>
-                <p class="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                <p class="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-fg/55">
                   {formatPrice(item.priceCentsSnapshot, order.currency)} each
                 </p>
               </div>
             </li>
           ))}
         </ul>
-        <dl class="mt-4 space-y-1 border-t-2 border-[var(--color-ink-950)] pt-4 font-mono text-[0.82rem]">
+        <dl class="mt-4 space-y-1 border-t-2 border-edge pt-4 font-mono text-[0.82rem]">
           <div class="flex justify-between">
-            <dt class="text-[var(--color-ink-950)]/70">Subtotal</dt>
+            <dt class="text-fg/70">Subtotal</dt>
             <dd>{formatPrice(order.subtotalCents, order.currency)}</dd>
           </div>
-          <div class="mt-2 flex justify-between border-t-2 border-[var(--color-ink-950)] pt-3 text-base">
-            <dt class="font-display" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+          <div class="mt-2 flex justify-between border-t-2 border-edge pt-3 text-base">
+            <dt class="font-display font-bold [font-variation-settings:'wdth'_110]">
               Cash to collect
             </dt>
-            <dd class="font-display" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+            <dd class="font-display font-bold [font-variation-settings:'wdth'_110]">
               {formatPrice(order.totalCents, order.currency)}
             </dd>
           </div>
         </dl>
-      </div>
+      </StickerCard>
 
-      <div class="surface-card p-5">
-        <p class="section-kicker">Activity</p>
+      <StickerCard class="p-5">
+        <Kicker>Activity</Kicker>
         <ul class="mt-4 space-y-3">
           {order.events.map((event) => (
             <li class="flex gap-3">
-              <span
-                class="mt-1 inline-block h-3 w-3 flex-none rounded-full border border-[var(--color-ink-950)]"
-                style={`background:${eventTypeColor[event.type] ?? "var(--color-cream-deep)"};`}
-              ></span>
+              <span class:list={["mt-1 inline-block h-3 w-3 flex-none rounded-full border border-edge", eventTypeColor[event.type] ?? "bg-surface-2"]}></span>
               <div class="min-w-0 flex-1">
-                <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/65">
+                <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/65">
                   {eventTypeLabel[event.type] ?? event.type}
                   {" · "}
                   {new Date(event.createdAt).toLocaleString("en-GB", {
@@ -177,7 +171,7 @@ const eventTypeColor: Record<string, string> = {
                   })}
                 </p>
                 {event.message && (
-                  <p class="mt-0.5 text-[0.92rem] leading-6 text-[var(--color-ink-950)]/85">
+                  <p class="mt-0.5 text-[0.92rem] leading-6 text-fg/85">
                     {event.message}
                   </p>
                 )}
@@ -185,18 +179,18 @@ const eventTypeColor: Record<string, string> = {
             </li>
           ))}
         </ul>
-        <div class="mt-4 border-t border-dashed border-[var(--color-ink-950)]/15 pt-4">
+        <div class="mt-4 border-t border-dashed border-edge/15 pt-4">
           <OrderNoteForm client:load orderId={order.id} />
         </div>
-      </div>
+      </StickerCard>
     </section>
 
     <aside class="space-y-6">
-      <div class="surface-card p-5">
-        <p class="section-kicker">Move it</p>
+      <StickerCard class="p-5">
+        <Kicker>Move it</Kicker>
         <div class="mt-4">
           <OrderActions
-            client:load
+ client:load
             orderId={order.id}
             currentStatus={order.status}
             isPaid={order.paidAt !== null}
@@ -205,38 +199,38 @@ const eventTypeColor: Record<string, string> = {
             statusLabel={STATUS_LABEL}
           />
         </div>
-      </div>
+      </StickerCard>
 
-      <div class="surface-card p-5 space-y-3">
-        <p class="section-kicker">Customer</p>
-        <p class="font-display text-lg text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+      <StickerCard class="p-5 space-y-3">
+        <Kicker>Customer</Kicker>
+        <p class="font-display text-lg text-fg [font-variation-settings:'wdth'_110] font-bold">
           {order.name}
         </p>
-        <a href={`mailto:${order.email}`} class="block font-mono text-[0.82rem] text-[var(--color-coral-500)] hover:underline">
+        <a href={`mailto:${order.email}`} class="block font-mono text-[0.82rem] text-coral-500 hover:underline">
           {order.email}
         </a>
         {order.phone && (
-          <p class="font-mono text-[0.82rem] text-[var(--color-ink-950)]/80">
+          <p class="font-mono text-[0.82rem] text-fg/80">
             {order.phone}
           </p>
         )}
-        <dl class="space-y-2 border-t border-dashed border-[var(--color-ink-950)]/15 pt-3 font-mono text-[0.72rem] uppercase tracking-[0.14em]">
+        <dl class="space-y-2 border-t border-dashed border-edge/15 pt-3 font-mono text-[0.72rem] uppercase tracking-[0.14em]">
           <div class="flex justify-between">
-            <dt class="text-[var(--color-ink-950)]/65">Pickup</dt>
-            <dd class="text-[var(--color-ink-950)]">{order.pickupMethod}</dd>
+            <dt class="text-fg/65">Pickup</dt>
+            <dd class="text-fg">{order.pickupMethod}</dd>
           </div>
         </dl>
         {order.customerNote && (
-          <div class="rounded-[0.8rem] border border-[var(--color-ink-950)]/20 bg-[var(--color-cream-deep)]/60 p-3">
-            <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--color-ink-950)]/55">
+          <div class="rounded-[0.8rem] border border-edge/20 bg-surface-2/60 p-3">
+            <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-fg/55">
               Customer note
             </p>
-            <p class="mt-1 text-[0.88rem] leading-6 text-[var(--color-ink-950)]/85">
+            <p class="mt-1 text-[0.88rem] leading-6 text-fg/85">
               {order.customerNote}
             </p>
           </div>
         )}
-      </div>
+      </StickerCard>
     </aside>
   </div>
 </AdminLayout>

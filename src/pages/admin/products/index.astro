@@ -4,6 +4,9 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { formatPrice } from "../../../lib/format";
 import { CATEGORY_LABEL } from "../../../lib/product-admin";
 import { prisma } from "../../../lib/prisma";
+import Cta from "../../../components/ui/Cta.astro";
+import Kicker from "../../../components/ui/Kicker.astro";
+import StickerCard from "../../../components/ui/StickerCard.astro";
 
 let products: Awaited<ReturnType<typeof prisma.product.findMany>> = [];
 let loadError: string | null = null;
@@ -22,37 +25,33 @@ try {
 <AdminLayout title="Products · Admin" section="products">
   <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
     <div class="space-y-2">
-      <p class="section-kicker">✦ Products</p>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      <Kicker>✦ Products</Kicker>
+      <h1 class="font-display text-fg text-[clamp(2rem,4vw,3rem)] leading-[1] [font-variation-settings:'wdth'_114] font-bold"
       >
         The rack.
       </h1>
     </div>
-    <a class="cta-primary" href="/admin/products/new">+ New product</a>
+    <Cta href="/admin/products/new">+ New product</Cta>
   </div>
 
   {loadError ? (
-    <div class="surface-card p-6">
-      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+    <StickerCard class="p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
         Could not load products
       </p>
-      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
-    </div>
+      <p class="mt-2 text-[0.95rem] text-fg/80">{loadError}</p>
+    </StickerCard>
   ) : products.length === 0 ? (
-    <div class="surface-card p-12 text-center">
-      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+    <StickerCard class="p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-fg/55">
         No products yet.
       </p>
-      <a class="cta-primary mt-5 inline-flex" href="/admin/products/new">
-        Create the first one →
-      </a>
-    </div>
+      <Cta class="mt-5" href="/admin/products/new">Create the first one →</Cta>
+    </StickerCard>
   ) : (
-    <div class="surface-card overflow-hidden">
+    <StickerCard class="overflow-hidden">
       <table class="w-full border-separate border-spacing-0 text-sm">
-        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+        <thead class="bg-ink-950 text-cream-soft">
           <tr>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Product</th>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">SKU</th>
@@ -64,24 +63,24 @@ try {
         </thead>
         <tbody>
           {products.map((p) => (
-            <tr class="group border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+            <tr class="group border-t border-edge/10 hover:bg-sun-500/20">
               <td class="px-4 py-3">
                 <a href={`/admin/products/${p.id}`} class="block">
-                  <p class="font-display text-sm text-[var(--color-ink-950)] group-hover:text-[var(--color-coral-500)]" style="font-variation-settings: 'wdth' 110; font-weight: 700;">
+                  <p class="font-display text-sm text-fg group-hover:text-coral-500 [font-variation-settings:'wdth'_110] font-bold">
                     {p.name}
                   </p>
                   {p.tagline && (
-                    <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/55">
+                    <p class="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-fg/55">
                       {p.tagline}
                     </p>
                   )}
                 </a>
               </td>
-              <td class="px-4 py-3 font-mono text-[0.72rem] text-[var(--color-ink-950)]/75">
+              <td class="px-4 py-3 font-mono text-[0.72rem] text-fg/75">
                 {p.sku}
               </td>
               <td class="px-4 py-3">
-                <span class="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/70">
+                <span class="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-fg/70">
                   {CATEGORY_LABEL[p.category]}
                 </span>
               </td>
@@ -93,14 +92,13 @@ try {
               </td>
               <td class="px-4 py-3">
                 <div class="flex flex-wrap gap-1">
-                  <span
-                    class="rounded-full border border-[var(--color-ink-950)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]"
+                  <span class="rounded-full border border-edge px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]"
                     style={`background:${p.active ? "var(--color-teal-500)" : "var(--color-cream-deep)"};`}
                   >
                     {p.active ? "Active" : "Archived"}
                   </span>
                   {p.featured && (
-                    <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+                    <span class="rounded-full border border-edge bg-sun-500 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
                       Featured
                     </span>
                   )}
@@ -110,6 +108,6 @@ try {
           ))}
         </tbody>
       </table>
-    </div>
+    </StickerCard>
   )}
 </AdminLayout>

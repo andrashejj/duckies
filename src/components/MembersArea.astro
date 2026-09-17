@@ -1,22 +1,25 @@
 ---
-import "../styles/members.css";
+import Cta from "./ui/Cta.astro";
+import Kicker from "./ui/Kicker.astro";
+import SectionTitle from "./ui/SectionTitle.astro";
+import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterToolbar, textButton } from "../lib/members-ui";
 ---
 
-<section id="our-duckies" data-members hidden class="relative border-b-2 border-[var(--color-ink-950)] bg-[var(--color-cream)] py-14 sm:py-20">
+<section id="our-duckies" data-members hidden class="relative scroll-mt-28 border-b-2 border-edge bg-canvas py-14 motion-safe:animate-crew-arrive sm:py-20">
   <div class="mx-auto max-w-7xl px-6 lg:px-10">
     <div class="flex flex-wrap items-start justify-between gap-6">
       <div>
-        <p class="section-kicker">Members · Tamarin Bay</p>
-        <h2 class="section-title mt-4">Our <span class="font-accent italic">duckies.</span></h2>
+        <Kicker>Members · Tamarin Bay</Kicker>
+        <SectionTitle class="mt-4">Our <span class="font-accent italic">duckies.</span></SectionTitle>
         <p class="mt-4 text-base leading-7">The kids we paddle out with. Shared only with signed-in club members.</p>
       </div>
       <div class="max-w-full text-sm">
         <p data-member-email class="break-all"></p>
-        <button data-sign-out type="button" class="member-text-button mt-2">Sign out</button>
+        <button data-sign-out type="button" class={`mt-2 ${textButton}`}>Sign out</button>
       </div>
     </div>
     <div data-semester-controls hidden class="mt-8"></div>
-    <div class="roster-toolbar member-form">
+    <div class={rosterToolbar}>
       <label>Search the lineup<input data-roster-search type="search" placeholder="Kid, guardian or phone…" autocomplete="off" /></label>
       <label data-roster-filter-label hidden>Show<select data-roster-filter aria-label="Show">
         <option value="all">All kids</option>
@@ -27,25 +30,26 @@ import "../styles/members.css";
       </select></label>
     </div>
     <p data-roster-count role="status" aria-live="polite" class="mt-4 font-mono text-xs uppercase tracking-widest"></p>
-    <div data-roster-head hidden class="roster-columns roster-head" aria-hidden="true"><span>Duckie</span><span>Age</span><span>Legal guardians</span><span>Waiver</span><span>Media</span><span>Parent in water</span><span>Payment</span></div>
-    <ul data-roster class="duckies-roster" aria-label="Club kids"></ul>
+    <div data-roster-head hidden class={rosterHead} aria-hidden="true"><span>Duckie</span><span>Age</span><span>Legal guardians</span><span>Waiver</span><span>Media</span><span>Parent in water</span><span>Payment</span></div>
+    <ul data-roster class={duckiesRoster} aria-label="Club kids"></ul>
     <p data-empty hidden class="mt-6 text-lg">The lineup is taking shape. The club will add the kids here soon.</p>
     <p data-no-matches hidden class="mt-6">No kids match. Try another name or filter.</p>
-    <details data-add-panel hidden class="roster-add"><summary>Add a duckie</summary>
-    <form data-add-kid hidden class="member-form mt-8 max-w-lg rounded-2xl border-2 border-[var(--color-ink-950)] bg-[var(--color-sun-500)] p-5">
+    <details data-add-panel hidden class={rosterAdd}><summary>Add a duckie</summary>
+    <form data-add-kid hidden class={`${memberForm} mt-8 max-w-lg rounded-2xl border-2 border-edge bg-sun-500 p-5 text-ink-950`}>
       <label for="kid-name">Add a duckie</label>
       <p id="kid-name-help" class="text-sm leading-6">Use the name they go by at the club. A first name and surname initial works well.</p>
       <input id="kid-name" name="name" required maxlength="80" autocomplete="off" aria-describedby="kid-name-help" placeholder="Name at the club" />
-      <button class="cta-primary" type="submit">Add to the lineup</button>
+      <Cta type="submit">Add to the lineup</Cta>
     </form>
     </details>
-    <a data-archived-kids hidden href="/admin/kids/archived" class="member-text-button mt-6 inline-block">Archived kids and signed records</a>
-    <p data-roster-status class="member-status" role="status" aria-live="polite"></p>
+    <a data-archived-kids hidden href="/admin/kids/archived" class={`mt-6 inline-block ${textButton}`}>Archived kids and signed records</a>
+    <p data-roster-status class={memberStatus} role="status" aria-live="polite"></p>
   </div>
 </section>
-<p data-member-load-error hidden class="mx-auto max-w-7xl px-6 py-4 text-sm" role="status">The members area couldn’t load. <button type="button" data-retry-members class="member-text-button">Try again</button></p>
+<p data-member-load-error hidden class="mx-auto max-w-7xl px-6 py-4 text-sm" role="status">The members area couldn’t load. <button type="button" data-retry-members class={textButton}>Try again</button></p>
 
 <script>
+  import { duckieAvatar, duckieAvatarEmpty, duckieChevron, duckieEdit, duckieIdentity, duckieIdentityRow, duckieName, duckiePanel, duckieProfile, duckieRow, duckieSummary, duckieActions, textButton } from "../lib/members-ui";
   import { semesterControls } from "../lib/registration/semester-controls";
   import type { Semester } from "../lib/registration/semesters";
   import { authClient } from "../lib/auth-client";
@@ -86,7 +90,7 @@ import "../styles/members.css";
   function button(label: string, action: () => void) {
     const element = document.createElement("button");
     element.type = "button";
-    element.className = "member-text-button";
+    element.className = textButton;
     element.textContent = label;
     element.addEventListener("click", action);
     return element;
@@ -138,25 +142,25 @@ import "../styles/members.css";
     if (!controls.hidden) controls.append(semesterControls(data.semesters, data.term, Boolean(data.member.canManagePayments), async id => { selectedTerm = id; await loadRoster(); }, message => { status.textContent = message; }));
     data.kids.forEach((kid) => {
       const row = document.createElement("li");
-      row.className = "duckie-row";
+      row.className = duckieRow;
       const profile = document.createElement("details");
-      profile.className = "duckie-profile";
+      profile.className = duckieProfile;
       profile.dataset.kidId = kid.id;
       profile.open = expanded.has(kid.id);
       const summary = document.createElement("summary");
-      summary.className = "roster-columns duckie-summary";
+      summary.className = duckieSummary;
       summary.setAttribute("aria-label", `${kid.name}, details`);
       const identity = document.createElement("span");
-      identity.className = "duckie-identity";
+      identity.className = organiser ? duckieIdentity : duckieIdentityRow;
       const name = document.createElement("span");
-      name.className = "duckie-name";
+      name.className = duckieName;
       name.textContent = kid.name;
       if (organiser) {
         const photo = (kid as OrganiserKid).photoVersion;
-        if (photo) { const img = document.createElement("img"); img.className = "duckie-avatar"; img.alt = `${kid.name}'s profile photo`; img.width = 36; img.height = 36; img.loading = "lazy"; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; identity.append(img); }
-        else { const placeholder = document.createElement("span"); placeholder.className = "duckie-avatar duckie-avatar-empty"; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); identity.append(placeholder); }
+        if (photo) { const img = document.createElement("img"); img.className = duckieAvatar; img.alt = `${kid.name}'s profile photo`; img.width = 36; img.height = 36; img.loading = "lazy"; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; identity.append(img); }
+        else { const placeholder = document.createElement("span"); placeholder.className = duckieAvatarEmpty; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); identity.append(placeholder); }
         const chevron = document.createElement("span");
-        chevron.className = "duckie-chevron";
+        chevron.className = duckieChevron;
         chevron.textContent = "›";
         chevron.setAttribute("aria-hidden", "true");
         identity.append(name, chevron);
@@ -166,9 +170,9 @@ import "../styles/members.css";
       } else { identity.append(name); row.append(identity); }
       if (data.member.role === "organiser") {
         const actions = document.createElement("div");
-        actions.className = "duckie-actions";
+        actions.className = duckieActions;
         const edit = document.createElement("form");
-        edit.className = "member-form duckie-edit";
+        edit.className = duckieEdit;
         edit.hidden = true;
         const input = document.createElement("input");
         input.id = `edit-${kid.id}`;
@@ -180,7 +184,7 @@ import "../styles/members.css";
         label.textContent = "Name at the club";
         const save = document.createElement("button");
         save.type = "submit";
-        save.className = "member-text-button";
+        save.className = textButton;
         save.textContent = "Save";
         const editButton = button("Edit", () => { edit.hidden = false; input.focus(); });
         editButton.setAttribute("aria-label", `Edit ${kid.name}`);
@@ -202,7 +206,7 @@ import "../styles/members.css";
         remove.setAttribute("aria-label", `Remove ${kid.name}`);
         actions.append(editButton, remove);
         const panel = document.createElement("div");
-        panel.className = "duckie-panel";
+        panel.className = duckiePanel;
         panel.append(actions, edit);
         panel.append(kidOverview(kid as OrganiserKid, Boolean(data.member.canManagePayments), data.term, loadRoster, message => { status.textContent = message; }));
         profile.append(panel);

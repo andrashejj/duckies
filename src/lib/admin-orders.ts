@@ -31,12 +31,13 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
   CANCELLED: "Cancelled",
 };
 
+// Utility classes (fill + readable text) so status badges follow the theme tokens.
 export const STATUS_COLOR: Record<OrderStatus, string> = {
-  PENDING: "var(--color-sun-500)",
-  CONFIRMED: "var(--color-teal-500)",
-  READY: "var(--color-teal-500)",
-  FULFILLED: "var(--color-lilac-400)",
-  CANCELLED: "var(--color-coral-500)",
+  PENDING: "bg-sun-500 text-ink-950",
+  CONFIRMED: "bg-teal-500 text-ink-950",
+  READY: "bg-teal-500 text-ink-950",
+  FULFILLED: "bg-lilac-400 text-ink-950",
+  CANCELLED: "bg-coral-500 text-ink-950",
 };
 
 const statusToEmailVariant: Partial<Record<OrderStatus, OrderStatusVariant>> = {

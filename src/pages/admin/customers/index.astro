@@ -5,6 +5,8 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { formatPrice } from "../../../lib/format";
 import { prisma } from "../../../lib/prisma";
 import { getDatabase } from "../../../lib/server/db";
+import Kicker from "../../../components/ui/Kicker.astro";
+import StickerCard from "../../../components/ui/StickerCard.astro";
 
 type CustomerRow = {
   email: string;
@@ -67,10 +69,8 @@ try {
 <AdminLayout title="Customers · Admin" section="customers">
   <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
     <div class="space-y-2">
-      <p class="section-kicker">✦ Customers</p>
-      <h1
-        class="font-display text-[var(--color-ink-950)]"
-        style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1; font-variation-settings: 'wdth' 114; font-weight: 700;"
+      <Kicker>✦ Customers</Kicker>
+      <h1 class="font-display text-fg text-[clamp(2rem,4vw,3rem)] leading-[1] [font-variation-settings:'wdth'_114] font-bold"
       >
         The lineup.
       </h1>
@@ -78,22 +78,22 @@ try {
   </div>
 
   {loadError ? (
-    <div class="surface-card p-6">
-      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-coral-500)]">
+    <StickerCard class="p-6">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
         Could not load customers
       </p>
-      <p class="mt-2 text-[0.95rem] text-[var(--color-ink-950)]/80">{loadError}</p>
-    </div>
+      <p class="mt-2 text-[0.95rem] text-fg/80">{loadError}</p>
+    </StickerCard>
   ) : rows.length === 0 ? (
-    <div class="surface-card p-12 text-center">
-      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-ink-950)]/55">
+    <StickerCard class="p-12 text-center">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-fg/55">
         No customers yet.
       </p>
-    </div>
+    </StickerCard>
   ) : (
-    <div class="surface-card overflow-hidden">
+    <StickerCard class="overflow-hidden">
       <table class="w-full border-separate border-spacing-0 text-sm">
-        <thead class="bg-[var(--color-ink-950)] text-[var(--color-cream-soft)]">
+        <thead class="bg-ink-950 text-cream-soft">
           <tr>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Customer</th>
             <th class="px-4 py-3 text-left font-mono text-[0.66rem] uppercase tracking-[0.2em]">Account</th>
@@ -104,29 +104,29 @@ try {
         </thead>
         <tbody>
           {rows.map((c) => (
-            <tr class="border-t border-[var(--color-ink-950)]/10 hover:bg-[var(--color-sun-500)]/20">
+            <tr class="border-t border-edge/10 hover:bg-sun-500/20">
               <td class="px-4 py-3">
-                <p class="font-display text-sm text-[var(--color-ink-950)]" style="font-variation-settings:'wdth' 110;font-weight:700;">
+                <p class="font-display text-sm text-fg [font-variation-settings:'wdth'_110] font-bold">
                   {c.name}
                 </p>
-                <a href={`mailto:${c.email}`} class="font-mono text-[0.66rem] text-[var(--color-coral-500)] hover:underline">
+                <a href={`mailto:${c.email}`} class="font-mono text-[0.66rem] text-coral-500 hover:underline">
                   {c.email}
                 </a>
               </td>
               <td class="px-4 py-3">
                 {c.userId ? (
                   <div class="flex flex-wrap gap-1">
-                    <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-teal-500)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+                    <span class="rounded-full border border-edge bg-teal-500 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
                       Signed up
                     </span>
                     {c.role === "ADMIN" && (
-                      <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-sun-500)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+                      <span class="rounded-full border border-ink-950 bg-sun-500 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-ink-950">
                         Admin
                       </span>
                     )}
                   </div>
                 ) : (
-                  <span class="rounded-full border border-[var(--color-ink-950)] bg-[var(--color-cream-deep)] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/80">
+                  <span class="rounded-full border border-edge bg-surface-2 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-fg/80">
                     Guest
                   </span>
                 )}
@@ -137,7 +137,7 @@ try {
               <td class="px-4 py-3 text-right font-mono text-[0.82rem]">
                 {formatPrice(c.spendCents)}
               </td>
-              <td class="px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--color-ink-950)]/70">
+              <td class="px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-fg/70">
                 {new Date(c.lastAt).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
@@ -148,6 +148,6 @@ try {
           ))}
         </tbody>
       </table>
-    </div>
+    </StickerCard>
   )}
 </AdminLayout>

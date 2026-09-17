@@ -1,0 +1,15 @@
+---
+import { cn } from "../../lib/cn";
+// Three-up definition list with hairline separators (mono term, muted text).
+interface Props { items: { name: string; text: string }[]; signal?: boolean; class?: string; }
+const { items, signal = false, class: className } = Astro.props as Props;
+const classes = cn("m-0 grid grid-cols-1 lg:grid-cols-3", signal && "border border-line border-l-[3px] border-l-accent", className);
+---
+<dl class={classes}>
+  {items.map((item) => (
+    <div class="border-t border-line px-8 py-7 first:border-t-0 lg:border-t-0 lg:border-l lg:border-line lg:first:border-l-0">
+      <dt class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-accent-text">{item.name}</dt>
+      <dd class="mt-[0.9rem] ml-0 text-[0.95rem] leading-[1.6] text-fg-muted">{item.text}</dd>
+    </div>
+  ))}
+</dl>

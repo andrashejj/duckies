@@ -1,30 +1,35 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
-import "../styles/members.css";
+import Cta from "../components/ui/Cta.astro";
+import Kicker from "../components/ui/Kicker.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import StickerCard from "../components/ui/StickerCard.astro";
+import { bodyCopy } from "../lib/ui";
+import { memberForm, memberStatus, textButton } from "../lib/members-ui";
 ---
 
 <BaseLayout title="Sign in | Sunset Duckies" description="Sign in to the Sunset Duckies members area.">
-  <section class="member-login mx-auto max-w-xl px-6 py-16 sm:py-24">
-    <p class="section-kicker">For our surf families</p>
-    <h1 class="section-title mt-4">Back with the <span class="font-accent italic">crew.</span></h1>
-    <p class="body-copy mt-6">Sign in to the club’s members area to see the duckies. We’ll email you a six-digit code — no password to remember.</p>
-    <div class="surface-card mt-8 p-6 sm:p-8">
-      <form id="email-form" class="member-form">
+  <section class="mx-auto max-w-xl px-6 py-16 sm:py-24">
+    <Kicker id="login-kicker">For our surf families</Kicker>
+    <SectionTitle as="h1" class="mt-4">Back with the <span class="font-accent italic">crew.</span></SectionTitle>
+    <p id="login-intro" class={`mt-6 ${bodyCopy}`}>Sign in to the club’s members area to see the duckies. We’ll email you a six-digit code — no password to remember.</p>
+    <StickerCard class="mt-8 p-6 sm:p-8">
+      <form id="email-form" class={memberForm}>
         <label for="email">Your email address</label>
         <input id="email" type="email" name="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" />
-        <button class="cta-primary" type="submit">Email me a code</button>
+        <Cta type="submit">Email me a code</Cta>
       </form>
-      <form id="code-form" class="member-form" hidden>
+      <form id="code-form" class={memberForm} hidden>
         <p id="code-help" class="text-sm leading-6">If your email has access, a code is on its way. It’s valid for 10 minutes.</p>
         <label for="code">Your six-digit code</label>
         <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required aria-describedby="code-help" />
-        <button class="cta-primary" type="submit">Sign in</button>
-        <button id="change-email" class="member-text-button" type="button">Use another email or request a new code</button>
+        <Cta type="submit">Sign in</Cta>
+        <button id="change-email" class={textButton} type="button">Use another email or request a new code</button>
       </form>
-      <p id="login-status" class="member-status" role="status" aria-live="polite"></p>
+      <p id="login-status" class={memberStatus} role="status" aria-live="polite"></p>
       <noscript><p class="mt-4">Please enable JavaScript to sign in.</p></noscript>
-    </div>
+    </StickerCard>
     <p class="mt-7 text-sm leading-6">Use your club-approved email address. Need club access? <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">Contact the club on WhatsApp.</a></p>
   </section>
 </BaseLayout>
@@ -43,8 +48,8 @@ import "../styles/members.css";
   const destination = requestedPath && /^\/(account|admin|members|branding-plan|product-ideas)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
     ? requestedPath : null;
   if (destination?.startsWith("/branding-plan") || destination?.startsWith("/product-ideas")) {
-    document.querySelector(".section-kicker")!.textContent="Project Molt / Private workspace";
-    document.querySelector(".body-copy")!.textContent="Sign in with your approved email. We’ll send a six-digit code.";
+    document.querySelector("#login-kicker")!.textContent="Project Molt / Private workspace";
+    document.querySelector("#login-intro")!.textContent="Sign in with your approved email. We’ll send a six-digit code.";
   }
   authClient.getSession().then(({ data }) => {
     if (data) void finishSignIn();

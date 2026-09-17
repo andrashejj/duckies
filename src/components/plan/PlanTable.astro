@@ -1,0 +1,16 @@
+---
+import { cn } from "../../lib/cn";
+import { table, tableWrap, td, tdFirst, th } from "../../lib/plan-ui";
+// Hairline data table; a cell may be a link { label, href }.
+type Cell = string | { label: string; href: string };
+interface Props { columns: string[]; rows: Cell[][]; class?: string; }
+const { columns, rows, class: className } = Astro.props as Props;
+---
+<div class={cn(tableWrap, className)}>
+  <table class={table}>
+    <thead><tr>{columns.map((column) => <th scope="col" class={th}>{column}</th>)}</tr></thead>
+    <tbody>{rows.map((row) => <tr>{row.map((cell, i) => (
+      <td class:list={[td, i === 0 && tdFirst, i === 1 && "w-[250px]"]}>{typeof cell === "string" ? cell : <a href={cell.href} target="_blank" rel="noreferrer" class="text-accent-text">{cell.label} ↗</a>}</td>
+    ))}</tr>)}</tbody>
+  </table>
+</div>

@@ -1,0 +1,99 @@
+import { test, expect } from "@playwright/test";
+import pg from "pg";
+import { signIn } from "./auth-helpers";
+import { planMilestones, planPeople } from "../src/data/plan-tasks";
+const db=new pg.Pool({connectionString:process.env.DUCKIES_DATABASE_URL});
+const origin="http://127.0.0.1:4329";
+const seededTasks=planMilestones.reduce((n,m)=>n+m.tasks.length,0);
+
+test.beforeEach(async()=>{
+  await db.query('TRUNCATE plan_task_event, plan_task, plan_milestone, plan_person, branding_access_event, branding_access, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
+  await db.query("INSERT INTO club_member(email,role) VALUES ('organiser@example.com','organiser'),('parent@example.com','member')");
+  await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('organiser@example.com','Editor','approved',true,now()),('parent@example.com','Reader','approved',false,now())");
+});
+test.afterAll(async()=>{await db.end();});
+
+test("anonymous visitors get no plan data and are sent to the teaser",async({request})=>{
+  expect((await request.get('/api/plan')).status()).toBe(401);
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{data:{status:'done',version:1}})).status()).toBe(401);
+  const page=await request.get('/branding-plan/board',{maxRedirects:0});
+  expect(page.status()).toBe(302);expect(page.headers().location).toBe('/branding-plan');
+  expect((await db.query("SELECT count(*)::int AS n FROM plan_task")).rows[0].n).toBe(0);
+});
+
+test("the first approved read seeds the plan; readers cannot change it",async({request})=>{
+  await signIn(request,'parent@example.com');
+  const r=await request.get('/api/plan');expect(r.status()).toBe(200);
+  const plan=await r.json();
+  expect(plan.canEdit).toBe(false);
+  expect(plan.people.map((p:{id:string})=>p.id)).toEqual(planPeople.map(p=>p.id));
+  expect(plan.people.find((p:{id:string})=>p.id==='estelle').email).toBe('niki.este.2022@ksz.edu-zg.ch');
+  expect(plan.milestones).toHaveLength(planMilestones.length);
+  expect(plan.milestones.flatMap((m:{tasks:unknown[]})=>m.tasks)).toHaveLength(seededTasks);
+  const cup=plan.milestones.find((m:{id:string})=>m.id==='d-cup');expect(cup.track).toBe('dates');expect(cup.startsOn).toBe('2026-10-17');
+  const first=plan.milestones[0].tasks[0];expect(first).toMatchObject({id:'p1-01-1',ownerId:'andras',dueOn:'2026-09-18',status:'todo',version:1});
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{status:'doing',version:1}})).status()).toBe(403);
+  expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'p1-01',text:'Reader task',ownerId:null,dueOn:null}})).status()).toBe(403);
+  // A second read does not seed twice.
+  expect((await (await request.get('/api/plan')).json()).milestones).toHaveLength(planMilestones.length);
+});
+
+test("editors move tasks, reassign owners and add tasks, with version and origin checks",async({page})=>{
+  const request=page.request;
+  await signIn(request,'organiser@example.com');
+  expect((await (await request.get('/api/plan')).json()).canEdit).toBe(true);
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin:'https://elsewhere.example'},data:{status:'doing',version:1}})).status()).toBe(403);
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{version:1}})).status()).toBe(400);
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{status:'doing',ownerId:'nobody',version:1}})).status()).toBe(400);
+  expect((await request.patch('/api/plan/tasks/missing',{headers:{origin},data:{status:'doing',version:1}})).status()).toBe(404);
+  const moved=await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{status:'doing',version:1}});
+  expect(moved.status()).toBe(200);expect((await moved.json()).task).toMatchObject({status:'doing',ownerId:'andras',version:2});
+  expect((await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{status:'done',version:1}})).status()).toBe(409);
+  const reassigned=await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{ownerId:'estelle',version:2}});
+  expect((await reassigned.json()).task).toMatchObject({status:'doing',ownerId:'estelle',version:3});
+  const cleared=await request.patch('/api/plan/tasks/p1-01-1',{headers:{origin},data:{ownerId:null,status:'done',version:3}});
+  expect((await cleared.json()).task).toMatchObject({status:'done',ownerId:null,version:4});
+  expect((await db.query("SELECT status,owner_id,actor FROM plan_task_event WHERE task_id='p1-01-1' ORDER BY id")).rows).toEqual([
+    {status:'doing',owner_id:'andras',actor:'organiser@example.com'},{status:'doing',owner_id:'estelle',actor:'organiser@example.com'},{status:'done',owner_id:null,actor:'organiser@example.com'}]);
+
+  expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'p1-01',text:'no',ownerId:null,dueOn:null}})).status()).toBe(400);
+  expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'nowhere',text:'Print the price sign',ownerId:null,dueOn:null}})).status()).toBe(400);
+  const created=await request.post('/api/plan',{headers:{origin},data:{milestoneId:'e03',text:'Print the price sign',ownerId:'abiguelle',dueOn:'2026-10-14'}});
+  expect(created.status()).toBe(201);
+  const task=(await created.json()).task;expect(task).toMatchObject({milestoneId:'e03',ownerId:'abiguelle',dueOn:'2026-10-14',status:'todo',version:1});
+  expect(task.sort).toBe(planMilestones.find(m=>m.id==='e03')!.tasks.length);
+
+  // The brief reads the same record: done and in-progress markers, the new task.
+  const brief=await (await request.get('/branding-plan')).text();
+  expect(brief).toContain('✔ Write the four-product decision record');
+  expect(brief).toContain('Print the price sign');
+  expect(brief).toContain('href="/branding-plan/board"');
+
+  // The board renders both views with live status.
+  await page.goto('/branding-plan/board');
+  await expect(page.getByRole('heading',{name:'Who does what.'})).toBeVisible();
+  await expect(page.getByRole('tab',{name:'Timeline'})).toHaveAttribute('aria-selected','true');
+  await expect(page.getByText('Lock the product and the date')).toBeVisible();
+  await page.screenshot({path:'test-results/plan-timeline-desktop.png',fullPage:true});
+  await page.getByRole('tab',{name:'Board'}).click();
+  await expect(page).toHaveURL(/view=board/);
+  const done=page.getByRole('region',{name:'Done'});
+  await expect(done.getByText('Write the four-product decision record',{exact:false})).toBeVisible();
+  await page.getByLabel('Filter by owner').selectOption('abiguelle');
+  await expect(page.getByRole('region',{name:'To do'}).getByText('Print the price sign')).toBeVisible();
+  await expect(page.getByRole('region',{name:'To do'}).getByText('Lock the ingredient list',{exact:false})).toHaveCount(0);
+  await page.screenshot({path:'test-results/plan-board-desktop.png',fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'test-results/plan-board-mobile.png',fullPage:true});
+});
+
+test("a pre-approved person can sign in with the code and edit straight away",async({request})=>{
+  // Mirrors the rows 009-plan-board.sql inserts for Estelle and Dori.
+  await db.query("INSERT INTO branding_access(email,name,reason,status,can_edit,verified_at,decided_at,decided_by) VALUES ('niki.este.2022@ksz.edu-zg.ch','Estelle Lily Nikischer','Onsite','approved',true,now(),now(),'andras@hejj.xyz')");
+  await signIn(request,'niki.este.2022@ksz.edu-zg.ch');
+  const plan=await (await request.get('/api/plan')).json();
+  expect(plan.canEdit).toBe(true);
+  const r=await request.patch('/api/plan/tasks/e01-1',{headers:{origin},data:{status:'doing',version:1}});
+  expect(r.status()).toBe(200);expect((await r.json()).task.ownerId).toBe('estelle');
+});

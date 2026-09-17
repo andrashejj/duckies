@@ -1,4 +1,5 @@
 import type { OrganiserKid } from "./records";
+import { rosterCell, rosterCellLabel, rosterTone } from "../members-ui";
 
 type Kid = { id: string; name: string };
 export function rosterSearch(kid: Kid, organiser: boolean) {
@@ -18,11 +19,11 @@ export function matchesRosterFilter(kid: OrganiserKid, filter: string) {
     default: return true;
   }
 }
-function cell(label: string, value: string, tone = "") {
+function cell(label: string, value: string, tone?: keyof typeof rosterTone) {
   const element = document.createElement("span");
-  element.className = `roster-cell ${tone}`;
+  element.className = `${rosterCell} ${tone ? rosterTone[tone] : ""}`;
   const caption = document.createElement("span");
-  caption.className = "roster-cell-label";
+  caption.className = rosterCellLabel;
   caption.textContent = label;
   const text = document.createElement("span");
   text.textContent = value;
@@ -35,9 +36,9 @@ export function rosterCells(kid: OrganiserKid) {
   return [
     cell("Age", kid.age === null ? "—" : String(kid.age)),
     cell("Legal guardians", r?.guardians.map(g => g.name).join(", ") || "Not supplied"),
-    cell("Waiver", kid.waiverId ? "Signed" : "Not signed", kid.waiverId ? "roster-ok" : "roster-pending"),
-    cell("Media", r?.media === "yes" ? "Yes" : r?.media === "no" ? "No consent" : "Pending", r?.media === "no" ? "roster-alert" : r?.media === "yes" ? "roster-ok" : "roster-pending"),
-    cell("Parent in water", r?.parentInWater ? "Confirmed" : "Pending", r?.parentInWater ? "roster-ok" : "roster-pending"),
-    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : "Unpaid", paid ? "roster-ok" : "roster-pending"),
+    cell("Waiver", kid.waiverId ? "Signed" : "Not signed", kid.waiverId ? "ok" : "pending"),
+    cell("Media", r?.media === "yes" ? "Yes" : r?.media === "no" ? "No consent" : "Pending", r?.media === "no" ? "alert" : r?.media === "yes" ? "ok" : "pending"),
+    cell("Parent in water", r?.parentInWater ? "Confirmed" : "Pending", r?.parentInWater ? "ok" : "pending"),
+    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : "Unpaid", paid ? "ok" : "pending"),
   ];
 }

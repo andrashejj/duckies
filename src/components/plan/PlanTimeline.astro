@@ -1,0 +1,32 @@
+---
+import { outlineButton } from "../../lib/plan-ui";
+// Numbered timeline: rail with code + date (+ optional owner / "now" flag),
+// body with title, deliverable, tasks and links.
+export interface Step {
+  date: string; title: string; deliverable: string; tasks: string[];
+  links?: { label: string; file: string }[]; status?: "now"; owner?: string;
+}
+interface Props { steps: Step[]; prefix?: string; start?: number; compact?: boolean; class?: string; }
+const { steps, prefix = "", start = 1, compact = true, class: className } = Astro.props as Props;
+---
+<ol class:list={["m-0 list-none border-t border-line p-0", className]}>
+  {steps.map((step, index) => {
+    const current = step.status === "now";
+    return (
+      <li class:list={["grid border-b border-line max-[680px]:block md:grid-cols-[170px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)]", current && "bg-accent/4"]}>
+        <div class="flex flex-col items-start border-r border-line py-9 pr-8 max-[680px]:flex-row max-[680px]:items-center max-[680px]:gap-4 max-[680px]:border-r-0 max-[680px]:border-b max-[680px]:py-6 max-[680px]:pr-0">
+          <span class:list={["font-brand text-[3.5rem] leading-none font-normal", current ? "text-accent-text" : "text-fg/28"]}>{prefix}{String(index + start).padStart(2, "0")}</span>
+          <time class="mt-4 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-fg-muted max-[680px]:m-0">{step.date}</time>
+          {current && <em class="mt-[0.7rem] bg-accent px-[0.55rem] py-[0.4rem] font-mono text-[0.68rem] font-semibold not-italic uppercase tracking-[0.1em] text-accent-fg max-[680px]:m-0">Do this now</em>}
+          {step.owner && <em class="mt-[0.7rem] font-mono text-[0.65rem] leading-[1.4] font-semibold not-italic uppercase tracking-[0.1em] text-fg-muted max-[680px]:m-0">{step.owner}</em>}
+        </div>
+        <div class:list={["pl-12 max-[680px]:px-0 max-[680px]:pt-8 max-[680px]:pb-10 md:pl-8", compact ? "py-8" : "pt-[2.35rem] pb-11"]}>
+          <h3 class="m-0 mb-3 max-w-[740px] font-display text-[clamp(1.6rem,2.5vw,2.2rem)] font-[650] leading-[1.05] tracking-[-0.035em] text-fg">{step.title}</h3>
+          <p class="m-0 flex max-w-[860px] gap-[0.9rem] border-l-2 border-accent bg-accent/4 px-4 py-[0.8rem] text-[0.92rem] leading-[1.5] text-fg max-[680px]:block"><span class="flex-none pt-[0.1rem] font-mono text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-accent-text max-[680px]:mb-[0.4rem] max-[680px]:block">Deliverable</span>{step.deliverable}</p>
+          <ul class:list={["m-0 mt-5 grid list-none gap-2 p-0", !compact && "gap-x-10 gap-y-[0.8rem] md:grid-cols-2"]}>{step.tasks.map((task) => <li class="relative pl-[1.15rem] text-[0.88rem] leading-[1.6] text-fg/78 before:absolute before:left-0 before:text-accent-text before:content-['/']">{task}</li>)}</ul>
+          {step.links && step.links.length > 0 && <div class="mt-5 flex flex-wrap gap-3 border-t border-line pt-[1.1rem]">{step.links.map((link) => <a href={link.file} target="_blank" rel="noreferrer" class={outlineButton}>{link.label} ↗</a>)}</div>}
+        </div>
+      </li>
+    );
+  })}
+</ol>

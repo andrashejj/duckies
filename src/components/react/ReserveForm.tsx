@@ -1,6 +1,7 @@
 import { useHydrated } from "./useHydrated";
 import { useMemo, useState } from "react";
 import { productSizes } from "../../lib/sizes";
+import { ctaClass } from "../../lib/ui";
 
 type ReserveResponse =
   | { ok: true; orderId: string; guestToken: string; whatsappUrl: string }
@@ -116,7 +117,7 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
 
       {sizeOptions.length > 1 && (
         <div>
-          <p className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/70">
+          <p className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/70">
             Size
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -133,7 +134,7 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
       )}
 
       <div className="flex items-end gap-4">
-        <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/70">
+        <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/70">
           <span>Quantity</span>
           <input
             type="number"
@@ -143,24 +144,24 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
             onChange={(e) =>
               setQuantity(Math.max(1, Math.min(20, Number(e.target.value) || 1)))
             }
-            className="mt-2 w-24 rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+            className="mt-2 w-24 rounded-[0.8rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
           />
         </label>
       </div>
 
-      <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/70">
+      <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/70">
         <span>Anything we should know? (optional)</span>
         <textarea
           value={customerNote}
           onChange={(e) => setCustomerNote(e.target.value)}
           rows={2}
-          className="mt-2 w-full rounded-[0.9rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] p-3 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+          className="mt-2 w-full rounded-[0.9rem] border-2 border-edge bg-surface p-3 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
           placeholder="Sizing notes, pickup window, gift…"
         />
       </label>
 
       {error && (
-        <p className="rounded-[0.8rem] border-2 border-[var(--color-coral-500)] bg-[var(--color-coral-500)]/10 p-3 font-mono text-[0.74rem] uppercase tracking-[0.14em] text-[var(--color-coral-500)]">
+        <p className="rounded-[0.8rem] border-2 border-coral-500 bg-coral-500/10 p-3 font-mono text-[0.74rem] uppercase tracking-[0.14em] text-coral-500">
           {error}
         </p>
       )}
@@ -169,17 +170,17 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
         <button
           type="submit"
           disabled={submitting}
-          className="cta-primary w-full justify-center disabled:opacity-60"
+          className={ctaClass("primary", "md", "w-full")}
         >
           {submitting ? "Locking it in…" : `Reserve ${product.name}`}
         </button>
-        <p className="text-center font-mono text-[0.62rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/55">
+        <p className="text-center font-mono text-[0.62rem] uppercase tracking-[0.18em] text-fg/55">
           Sizing questions?{" "}
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="underline-offset-4 hover:text-[var(--color-coral-500)] hover:underline"
+            className="underline-offset-4 hover:text-coral-500 hover:underline"
           >
             DM us on WhatsApp →
           </a>
@@ -208,10 +209,10 @@ function Field({
   placeholder?: string;
 }) {
   return (
-    <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-[var(--color-ink-950)]/70">
+    <label className="block font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/70">
       <span>
         {label}
-        {required && <span className="ml-1 text-[var(--color-coral-500)]">*</span>}
+        {required && <span className="ml-1 text-coral-500">*</span>}
       </span>
       <input
         type={type}
@@ -220,7 +221,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="mt-2 w-full rounded-[0.8rem] border-2 border-[var(--color-ink-950)] bg-[var(--color-cream-soft)] px-3 py-2 font-sans text-sm text-[var(--color-ink-950)] shadow-[2px_2px_0_0_var(--color-ink-950)] focus:outline-none focus:ring-2 focus:ring-[var(--color-coral-500)]"
+        className="mt-2 w-full rounded-[0.8rem] border-2 border-edge bg-surface px-3 py-2 font-sans text-sm text-fg shadow-sticker-xs focus:outline-none focus:ring-2 focus:ring-coral-500"
       />
     </label>
   );
@@ -237,10 +238,10 @@ function SizeChip({
 }) {
   return (
     <label
-      className={`cursor-pointer rounded-full border-2 border-[var(--color-ink-950)] px-4 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] shadow-[2px_2px_0_0_var(--color-ink-950)] transition ${
+      className={`cursor-pointer rounded-full border-2 border-edge px-4 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] shadow-sticker-xs transition ${
         checked
-          ? "bg-[var(--color-sun-500)] text-[var(--color-ink-950)]"
-          : "bg-[var(--color-cream-soft)] text-[var(--color-ink-950)]/75 hover:bg-[var(--color-cream-deep)]"
+          ? "bg-sun-500 text-ink-950"
+          : "bg-surface text-fg/75 hover:bg-surface-2"
       }`}
     >
       <input
