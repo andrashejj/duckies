@@ -22,13 +22,13 @@ Semester tracking and profile photos additionally require the semester and photo
 
 The production database has been provisioned as `sunsetduckies-production` (Neon free plan, Frankfurt), and migrations 001–009 have been applied (through the plan board on 17 September 2026). Runtime credentials are configured on the Vercel production environment; keep preview and development disconnected from this database. The canonical auth origin is `https://www.sunsetduckies.com`. Migration commands should use the provider's unpooled connection, with `sslmode=verify-full`; runtime uses the pooled connection with the same TLS verification. The shop's founding catalogue is seeded as drafts for organiser review.
 
-To apply a new migration to production from a linked checkout, pull the production environment and run the migrator over the unpooled connection. The Neon integration names that connection `DATABASE_URL_UNPOOLED` (same endpoint and database as the runtime `DUCKIES_DATABASE_URL`, without the pooler host); it is pulled with `sslmode=require`, so the command upgrades it to `verify-full`. The pulled file is gitignored — delete it afterwards.
+To apply a new migration to production, run it over the direct (unpooled) connection before pushing the code that needs it:
 
 ```bash
-vercel env pull .env.production.local --environment=production --yes
-DUCKIES_DATABASE_URL="$(grep '^DATABASE_URL_UNPOOLED=' .env.production.local | cut -d= -f2- | tr -d '"' | sed 's/sslmode=require/sslmode=verify-full/')" pnpm db:migrate
-rm .env.production.local
+pnpm db:migrate:production
 ```
+
+`scripts/db-target.ts` reads `PRODUCTION_DATABASE_URL` (and `STAGING_DATABASE_URL` for `pnpm db:migrate:staging`) from the local `.env`: the unpooled Neon URL with `sslmode=verify-full`. `pnpm db:status:production` reports pending migrations without changing anything. Code deploys from Git: `main` is production, `staging` is the staging preview. The Neon integration's other variables (`DATABASE_URL`, `POSTGRES_*`) are unused by the app.
 
 `vercel.json` places the Node functions in Frankfurt alongside the database. Production deployments build from Git on Vercel; do not upload the locally built macOS Sharp binaries as a prebuilt Linux deployment.
 
