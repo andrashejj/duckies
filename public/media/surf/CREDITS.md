@@ -1,6 +1,6 @@
 # Surf imagery
 
-Two kinds of file live here. `whitewater`, `surf-kit` and `beach-crew` are real club photos from the members' WhatsApp group (2026-09-17). `hero-wave` and `grom-hero` are still generated scenes (image_gen, 2026-09-14) — nothing in the group matched them. Originals for the real photos are in `.local-data/whatsapp/sunset-duckies/photos/` (not committed); production derivatives here are WebP.
+Two kinds of file live here. `whitewater`, `surf-kit` and `beach-crew` are real club photos from the members' WhatsApp group, and `hero-wave` is a frame from the club's drone footage (2026-09-17). Only `grom-hero` is still a generated scene (image_gen, 2026-09-14). Originals for the real photos are in `.local-data/whatsapp/sunset-duckies/photos/` (not committed); production derivatives here are WebP.
 
 ## Real photos
 
@@ -21,18 +21,17 @@ Source: `20260505_1044_113.jpg`, 5 May 2026. Four soft-tops the Duckies painted,
 Files: beach-crew.webp (1280×960, native size — not upscaled), beach-crew-small.webp
 Source: `20260311_1911_006.jpg`, 11 March 2026 dusk, Tamarin Bay. Shot by Pierre Lamboray.
 
+### hero-wave
+
+Files: hero-wave.webp (1672×941), hero-wave-small.webp
+Source: `DJI_0521 (David).mp4` at 8.6 s, 12 July 2026, Le Morne. Club drone footage from the parents' dawn session (Nextcloud share `wtLrqrgfGCi5w6i`, originals in `.local-data/nextcloud-drone/`).
+
 ### Home hero loop (lives one level up, in `public/media/`)
 
 Files: hero-loop.mp4 (1024×576, 15 s, silent, 1.2 MB), hero-loop-poster.webp
 Source: `20260712_0949_196.mp4`, 12 July 2026 sunrise lineup, Tamarin Bay. Shot by Holly. The steady 7.0–14.5 s window, played forward then reversed so it loops without a cut; light denoise for WhatsApp banding. Resolution is WhatsApp's — ask Holly for the original if it ever needs to be sharper.
 
 ## Generated scenes
-
-## hero-wave
-
-Files: hero-wave.webp, hero-wave-small.webp
-
-Prompt: Use case: photorealistic-natural. Create one full-bleed editorial surf photograph, natural and believable, fine 35mm film texture, warm late-afternoon sunlight, deep teal Indian Ocean water, pale warm sand, restrained amber highlights. Consistent visual series for Sunset Duckies kids surf club in Mauritius. No typography, lettering, logos, watermarks, pictograms, collage or borders. Landscape 16:9 website hero photograph, a powerful overhead tropical wave forming a dramatic hollow barrel and throwing sunlit spray, shot from water level looking diagonally down the wave. The wave curls across the upper centre and right, deep translucent teal face, warm sunlight catching the lip, real saltwater detail and force. Left lower third darker open water with relatively quiet detail for white headline overlay; barrel and crest still visible behind the upper-middle and right of a wide website. No people, no boards, no buildings. A substantially bigger wave than gentle beach whitewater. Not a disaster, just a magnificent surf wave.
 
 
 ## grom-hero

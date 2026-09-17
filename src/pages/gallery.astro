@@ -1,0 +1,133 @@
+---
+import { site } from "../data/site";
+import { gallery } from "../data/gallery";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Cta from "../components/ui/Cta.astro";
+import Kicker from "../components/ui/Kicker.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import Lightbox from "../components/Lightbox.astro";
+import { bodyCopy, mediaFrame } from "../lib/ui";
+
+const title = `${gallery.name} — ${site.name}`;
+const description = gallery.tagline;
+const photoCount = gallery.sections.reduce((n, section) => n + section.photos.length, 0);
+const cover = gallery.sections[0].photos[0];
+---
+
+<BaseLayout title={title} description={description} image={`/media/gallery/${cover.slug}.webp`} imageAlt={cover.alt} imageWidth={cover.w} imageHeight={cover.h}>
+  <!-- ===================== HERO ===================== -->
+  <section class="relative isolate overflow-hidden">
+    <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute top-10 -right-24 h-[280px] w-[280px] rounded-[60%_40%_55%_45%/42%_58%_42%_58%] bg-coral-500 opacity-40 blur-[44px]" aria-hidden="true"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
+      <div data-float>
+        <Kicker>📸 {photoCount} photos · {gallery.clips.length} clips</Kicker>
+      </div>
+      <h1 data-float class="mt-6 font-display text-[clamp(2.8rem,9vw,6.6rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
+        Straight from the
+        <span class="font-accent font-medium italic text-accent-text">lineup</span>.
+      </h1>
+      <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
+        {gallery.tagline}
+      </p>
+      <nav data-float aria-label="Gallery sections" class="mt-8 flex flex-wrap gap-2">
+        {gallery.sections.map((section) => (
+          <a href={`#${section.id}`} class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
+            {section.title}
+          </a>
+        ))}
+        <a href="#clips" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
+          Clips
+        </a>
+      </nav>
+    </div>
+  </section>
+
+  <div class="h-8 w-full bg-(image:--texture-wave) bg-repeat-x opacity-70" aria-hidden="true"></div>
+
+  <!-- ===================== SECTIONS ===================== -->
+  {gallery.sections.map((section, s) => (
+    <section id={section.id} class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+      <div class="mb-8 max-w-2xl" data-reveal>
+        <Kicker tone="outline">{String(s + 1).padStart(2, "0")}</Kicker>
+        <SectionTitle class="mt-4">{section.title}</SectionTitle>
+        <p class={`mt-4 ${bodyCopy}`}>{section.lead}</p>
+      </div>
+
+      <div class="columns-2 gap-4 sm:columns-3 sm:gap-[1.15rem] lg:columns-4 lg:gap-5" data-reveal>
+        {section.photos.map((photo, i) => (
+          <button
+            type="button"
+            class="mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-[1.1rem] border-2 border-edge bg-surface p-0 shadow-sticker-md transition-[translate,rotate,box-shadow] duration-200 nth-[3n]:-rotate-[1.1deg] nth-[4n]:rotate-[0.9deg] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-[7px_7px_0_0_var(--edge)] focus-visible:-translate-x-0.5 focus-visible:-translate-y-0.5 focus-visible:rotate-0 focus-visible:shadow-[7px_7px_0_0_var(--edge)] focus-visible:outline-none"
+            data-lb-trigger
+            data-full={`/media/gallery/${photo.slug}.webp`}
+            data-alt={photo.alt}
+            aria-label={`Open photo: ${photo.alt}`}
+          >
+            <img
+              src={`/media/gallery/${photo.slug}-small.webp`}
+              srcset={`/media/gallery/${photo.slug}-small.webp 800w, /media/gallery/${photo.slug}.webp 1600w`}
+              sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 50vw"
+              alt={photo.alt}
+              width={photo.w}
+              height={photo.h}
+              loading={s === 0 && i < 4 ? "eager" : "lazy"}
+              decoding="async"
+              class="block h-auto w-full"
+            />
+          </button>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <!-- ===================== CLIPS ===================== -->
+  <section id="clips" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+    <div class="mb-8 max-w-2xl" data-reveal>
+      <Kicker>🎬 Rolling clips</Kicker>
+      <SectionTitle class="mt-4">
+        Press play, turn the
+        <span class="font-accent italic">sound</span>
+        up in your head.
+      </SectionTitle>
+      <p class={`mt-4 ${bodyCopy}`}>Short and silent, straight off a parent's phone.</p>
+    </div>
+    <div class="grid gap-7 sm:grid-cols-2" data-reveal>
+      {gallery.clips.map((clip) => (
+        <figure class="m-0">
+          <div class={mediaFrame}>
+            <video
+              src={`/media/gallery/clips/${clip.slug}.mp4`}
+              poster={`/media/gallery/clips/${clip.slug}-poster.webp`}
+              muted
+              loop
+              playsinline
+              controls
+              preload="none"
+              class="aspect-video w-full"
+            ></video>
+          </div>
+          <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <span class="font-display text-[1.05rem] font-semibold text-fg">{clip.title}</span>
+            <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{clip.date} · {clip.credit}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <Lightbox id="gallery-lightbox" label="Photo viewer" />
+
+  <!-- ===================== CTA ===================== -->
+  <section class="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-10">
+    <div class="flex flex-col items-start gap-6 rounded-sticker border-2 border-edge bg-sticker-sun p-[clamp(1.5rem,4vw,3rem)] shadow-sticker md:flex-row md:items-center md:justify-between" data-reveal>
+      <div class="max-w-2xl">
+        <SectionTitle size="sm">Got a better shot?</SectionTitle>
+        <p class={`mt-3 ${bodyCopy}`}>Every photo here was taken by a parent on the sand. Drop yours in the club WhatsApp and it might end up on this page.</p>
+      </div>
+      <Cta href={site.whatsappUrl} target="_blank" rel="noreferrer" class="shrink-0">Share a photo</Cta>
+    </div>
+    <p class="mt-8 font-mono text-[0.65rem] leading-[1.7] opacity-65">Photos and clips by club parents, used with the families' media consent. Credits per photo are in the club's records.</p>
+  </section>
+</BaseLayout>

@@ -277,5 +277,123 @@ export const blog = {
         secondary: { label: "See the four product areas", href: "/product-ideas" },
       },
     },
+    {
+      slug: "cup-vol-2-friday-16-october",
+      title: "Cup Vol. 02:",
+      titleAccent: "Friday 16 October",
+      kicker: "Save the date · Vol. 02",
+      dateLabel: "17 September 2026",
+      dateISO: "2026-09-17",
+      location: "Tamarin Bay, Mauritius",
+      excerpt:
+        "The second Sunset Duckies Cup is a Friday: 16 October, Tamarin Bay. Heats for every level, crowns for the Duckie King and Queen, a grey goose heat for the parents — and something cooking for the day.",
+      facts: [
+        { value: "Fri 16 Oct", label: "one day, Tamarin Bay" },
+        { value: "Heats of 4", label: "every level surfs" },
+        { value: "Grey goose", label: "the parents' heat" },
+        { value: "Fri 25 Sep", label: "registration opens" },
+      ],
+      intro: [
+        "Vol. 01 was a Sunday in May: rashies, heats, a BBQ and a bonfire that went on longer than planned. Vol. 02 takes the Friday training slot and turns it into a whole afternoon.",
+        "Same beach, sharpened by everything the first Cup taught us — colour-coded rashies, four to a heat, an earlier start, gazebos and more food.",
+      ],
+      sections: [
+        {
+          title: "Every Duckie surfs",
+          accent: "coral",
+          body: "Divisions by age, a heat for everyone, prizes for more than the best wave. Ducklings get playful tick-box scoring; ducks get real points. Nobody sits on the sand all afternoon.",
+        },
+        {
+          title: "The grey goose heat",
+          accent: "teal",
+          body: "One heat for the parents. Same rules, same judges, considerably less grace. If you have been paddling out at Le Morne on Sunday mornings, this is where it counts.",
+        },
+        {
+          title: "Something is in the oven",
+          accent: "sun",
+          body: "The club is cooking something for the day — literally. First taste for club families at Friday training in two weeks; the full reveal is at the Cup, before the crowns.",
+        },
+        {
+          title: "Registration opens 25 September",
+          accent: "pink",
+          body: "Sign-up goes out in the parents' WhatsApp group next Friday. Judges, beach marshals and BBQ hands: we need you too, and the volunteer roles are on the Cup page.",
+        },
+      ],
+      outro:
+        "Block the afternoon, tell the grandparents, and see you Friday in the water.",
+      cover: {
+        src: "/media/logbook/cup-vol-2-cover.webp",
+        alt: "The whole club lined up behind their colourful surfboards on Tamarin beach at sunset.",
+        caption: "The lineup after a Friday session. Multiply by a Cup.",
+      },
+      heroGlyphs: "🏆 → 🦆 → 🔥",
+      cta: {
+        kicker: "Cup Vol. 02",
+        title: "Everything about",
+        titleAccent: "the day",
+        body: "Format, divisions, what changed since Vol. 01 and the volunteer roles are on the Cup page. Registration is in the WhatsApp group from 25 September.",
+        primary: { label: "The Cup Vol. 02 page", href: "/sunset-duckies-cup-vol-2" },
+        secondary: { label: "Photos from the sessions", href: "/gallery" },
+      },
+    },
+    {
+      slug: "le-morne-dawn-patrol",
+      title: "Dawn patrol:",
+      titleAccent: "the parents at Le Morne",
+      kicker: "Grey goose training · July",
+      dateLabel: "July 2026",
+      dateISO: "2026-07-12",
+      location: "Le Morne, Mauritius",
+      excerpt:
+        "One Sunday in July the parents drove south early, paddled out under the mountain and put a drone up. The Duckies had the beach. Everyone came home happy.",
+      facts: [
+        { value: "Sun 12 Jul", label: "one early session" },
+        { value: "Le Morne", label: "under the mountain" },
+        { value: "4K", label: "from the drone" },
+        { value: "0 kids", label: "in the lineup" },
+      ],
+      intro: [
+        "Sunset Duckies is a club for kids. It is also, quietly, a club for their parents — the ones who stand in the whitewater every Monday and Friday and never get a wave of their own.",
+        "So on 12 July a handful of them left Tamarin early, parked under Le Morne Brabant and paddled out before the wind.",
+      ],
+      sections: [
+        {
+          title: "Under the mountain",
+          accent: "teal",
+          body: "Glassy, green and a little bigger than it looked from the beach. Long lefts peeling over the reef with the mountain filling the sky behind — the wave the reef tour showed the Duckies from a boat in June.",
+        },
+        {
+          title: "The drone's view",
+          accent: "sun",
+          body: "A DJI over the lineup at 4K: Arjon, David, Teo and Andras each got a wave on camera. The best frames are on the gallery page and the clips will show up on Instagram in the run-up to the Cup.",
+        },
+        {
+          title: "Meanwhile, on the beach",
+          accent: "coral",
+          body: "Bron had the Duckies on the sand — a beach that looks, from above, like a postcard nobody would believe. Sandcastles and an empty lagoon while the parents surfed.",
+        },
+        {
+          title: "Why it matters",
+          accent: "lilac",
+          body: "The grey goose heat at Cup Vol. 02 is one heat for the parents, same rules, same judges. Consider this the training log. Bring your best Le Morne wave to Tamarin on 16 October.",
+        },
+      ],
+      outro:
+        "Back in Tamarin with sand in the car and Duckies asking when it is their turn. Soon.",
+      cover: {
+        src: "/media/logbook/le-morne-dawn-cover.webp",
+        alt: "Drone view over the Le Morne lagoon at sunrise, a surfer paddling and the mountain behind.",
+        caption: "The lineup from above, 12 July, before the wind.",
+      },
+      heroGlyphs: "🌄 → 🏄 → 🚁",
+      cta: {
+        kicker: "Cup Vol. 02",
+        title: "The grey goose heat",
+        titleAccent: "is on 16 October",
+        body: "One heat for the parents at Cup Vol. 02, Friday 16 October at Tamarin Bay. Registration opens in the WhatsApp group on 25 September.",
+        primary: { label: "The Cup Vol. 02 page", href: "/sunset-duckies-cup-vol-2" },
+        secondary: { label: "See the gallery", href: "/gallery" },
+      },
+    },
   ] as BlogPost[],
 };
