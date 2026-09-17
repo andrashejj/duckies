@@ -1,0 +1,14 @@
+---
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
+import PlanTable from "../../components/plan/PlanTable.astro";
+import { commsPlan, marketingIntro } from "../../data/molt";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+---
+
+<BrandingLayout title="Marketing plan" description="One WhatsApp message and one Instagram post a week until the Cup, and what each one says." kicker="Project Molt / Deliverables" heading="Marketing plan">
+  <p slot="lead">{marketingIntro}</p>
+  <section data-reveal>
+    <PlanTable columns={["When", "WhatsApp · parents group", "Instagram"]} rows={commsPlan.map(item => [item.when, item.whatsapp, item.instagram])} class="mt-0" />
+  </section>
+</BrandingLayout>

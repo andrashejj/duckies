@@ -1,0 +1,42 @@
+---
+import { bMono } from "../lib/plan-ui";
+import { deliverables, sections } from "../data/molt";
+// Section tabs for the Project Molt workspace plus the account strip. The
+// deliverable pages get a second row so their siblings stay one tap away.
+const access = Astro.locals.branding;
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const inDeliverables = path === "/branding-plan/deliverables" || deliverables.some(item => item.href === path);
+const current = (href: string) => href === "/branding-plan" ? path === href : path === href || path.startsWith(`${href}/`) || (href === "/branding-plan/deliverables" && inDeliverables);
+const tab = `${bMono} shrink-0 border-b-2 border-transparent py-3 font-semibold text-fg-muted no-underline transition-colors hover:text-fg aria-[current=page]:border-accent aria-[current=page]:text-fg sm:py-4`;
+const subTab = `${bMono} shrink-0 py-3 text-fg-muted no-underline hover:text-fg aria-[current=page]:text-accent-text aria-[current=page]:underline aria-[current=page]:underline-offset-[6px]`;
+---
+<div class="border-b border-line bg-surface/70">
+  <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-8 gap-y-1 px-[clamp(1.25rem,4vw,3rem)]">
+    <nav aria-label="Project Molt sections" class="flex min-w-0 max-w-full flex-wrap gap-x-5">
+      {sections.map(section => (
+        <a href={section.href} aria-current={current(section.href) ? "page" : undefined} class={tab}><span class="sm:hidden">{section.short}</span><span class="hidden sm:inline">{section.label}</span></a>
+      ))}
+    </nav>
+    <div class={`${bMono} ml-auto flex flex-wrap items-center gap-x-5 gap-y-1 py-2 text-accent-text max-sm:ml-0 max-sm:w-full max-sm:border-t max-sm:border-line [&>a:hover]:underline`}>
+      <span class="min-w-0 break-all text-fg-muted">{access?.email}</span>
+      {access?.owner && <a href="/branding-plan/access">Manage access →</a>}
+      <button class="min-h-11 cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-accent-text underline underline-offset-4 disabled:cursor-wait disabled:opacity-50" id="branding-signout">Sign out</button>
+    </div>
+  </div>
+  {inDeliverables && (
+    <nav aria-label="Deliverables" class="border-t border-line bg-accent/5">
+      <div class="mx-auto flex max-w-[1400px] gap-6 overflow-x-auto px-[clamp(1.25rem,4vw,3rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <a href="/branding-plan/deliverables" aria-current={path === "/branding-plan/deliverables" ? "page" : undefined} class={subTab}>All deliverables</a>
+        {deliverables.map(item => <a href={item.href} aria-current={path === item.href ? "page" : undefined} class={subTab}>{item.label}</a>)}
+        <a href="/branding-plan/deliverables#worksheets" class={subTab}>Worksheets</a>
+      </div>
+    </nav>
+  )}
+</div>
+<script>
+import { authClient } from "../lib/auth-client";
+document.querySelector<HTMLButtonElement>("#branding-signout")?.addEventListener("click",async event=>{
+ const button=event.currentTarget as HTMLButtonElement;button.disabled=true;
+ try{const {error}=await authClient.signOut();if(error)throw error;window.location.assign("/branding-plan");}catch{button.textContent="Retry sign out";button.disabled=false;}
+});
+</script>

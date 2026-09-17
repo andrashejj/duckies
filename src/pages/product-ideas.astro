@@ -1,6 +1,6 @@
 ---
 import BrandingTeaser from "../components/BrandingTeaser.astro";
-import BrandingToolbar from "../components/BrandingToolbar.astro";
+import BrandingNav from "../components/BrandingNav.astro";
 export const prerender=false;
 const approved=Astro.locals.branding?.canView??false;
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -201,22 +201,21 @@ const criteria = [
 ---
 
 <BaseLayout title={approved?title:"Project Molt | Sunset Duckies"} description={approved?description:"A surf brand taking shape in Tamarin. Request access to join the working group."} variant="performance">
-  {approved?<><BrandingToolbar/>
+  {approved?<><BrandingNav/>
   <div class="overflow-clip text-fg">
     <section class={`${section} pt-[clamp(3rem,6vw,6rem)]`} data-reveal>
-      <PlanSectionHead overline="Project Molt · product candidates" title="Draft four. Then choose one.">
+      <PlanSectionHead overline="Project Molt / Deliverables" title="Four product candidates">
         <p>
-          Complete all four concepts by 7 September. Interview against the same four, choose
-          one from the evidence, then build it for the end-of-October competition and launch.
-          Granola leads today, but it has not won. The <a href="/branding-plan">project brief</a>
-          defines the full sequence.
+          All four concepts were drafted by 7 September and interviewed against the same
+          nine tests. Granola advanced; the other three stay here with the reasons.
+          The <a href="/branding-plan/plan">plan</a> carries it from here.
         </p>
       </PlanSectionHead>
 
       <div class="mt-12 border border-line border-l-[3px] border-l-accent">
         <div class="border-b border-line p-8">
           <p class={overline}>How to read this</p>
-          <h3 class={`${subheading} mt-3`}>The same evidence is required for every candidate.</h3>
+          <h3 class={`${subheading} mt-3`}>Every candidate had to show the same evidence</h3>
         </div>
         <PlanDefinitions items={[
           { name: "Leading hypothesis", text: "The most likely route going in. It still competes on the same evidence." },
@@ -267,7 +266,7 @@ const criteria = [
     <div class={divider} aria-hidden="true"></div>
 
     <section id="evaluation" class={section} data-reveal>
-      <PlanSectionHead overline="Evaluation" title="The same nine tests for all four.">
+      <PlanSectionHead overline="Evaluation" title="Nine tests, four candidates">
         <p>
           Filled in during the research, not now. A candidate that wins on paper and loses at
           training has lost.
@@ -304,10 +303,10 @@ const criteria = [
         work and an end-of-October launch; the other three stay here with the reasons they did not pass.
       </p>
 
-      <a class="mt-12 flex flex-col gap-[0.6rem] border border-line border-l-[3px] border-l-accent bg-accent/5 p-8 transition-colors duration-200 hover:bg-accent/9" href="/branding-plan">
-        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-fg-muted">Back to the project brief</span>
-        <span class="font-display text-[clamp(1.3rem,2.2vw,1.8rem)] font-[650] leading-[1.15] tracking-[-0.03em] text-fg">How these get tested, compared and decided</span>
-        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-accent-text">Open the project brief <span aria-hidden="true">→</span></span>
+      <a class="mt-12 flex flex-col gap-[0.6rem] border border-line border-l-[3px] border-l-accent bg-accent/5 p-8 transition-colors duration-200 hover:bg-accent/9" href="/branding-plan/deliverables">
+        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-fg-muted">Deliverables</span>
+        <span class="font-display text-[clamp(1.3rem,2.2vw,1.8rem)] font-[650] leading-[1.15] tracking-[-0.03em] text-fg">The granola sheet, the marketing plan and the worksheets</span>
+        <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em] text-accent-text">All deliverables <span aria-hidden="true">→</span></span>
       </a>
     </section>
   </div>

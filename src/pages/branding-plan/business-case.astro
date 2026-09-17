@@ -1,0 +1,11 @@
+---
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
+import GranolaBusinessCase from "../../components/GranolaBusinessCase.astro";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+---
+
+<BrandingLayout title="Recipe & business case" description="The granola sheet: the mix, cost per bag, price and the monthly result, with the ingredient research behind it." kicker="Project Molt / Deliverables" heading="Recipe & business case">
+  <p slot="lead">Build the mix, then work the month on one sheet: paid time, other costs, price and sales beside the monthly lines they drive. Save the version worth testing. Estelle replaces every allowance with a receipt, a quote or a measured number by Friday 9 October.</p>
+  <GranolaBusinessCase />
+</BrandingLayout>

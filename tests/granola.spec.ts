@@ -73,7 +73,7 @@ test("concurrent saves accept one version and reject stale edits",async({request
 
 test("recipe editor saves added and removed rows, survives reload and restores a version",async({page})=>{
   await signIn(page.request,'organiser@example.com');
-  await page.goto('/branding-plan#granola-business-case');
+  await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');
   await expect(app.getByRole('button',{name:'Save version'})).toBeEnabled();
   await app.getByRole('button',{name:'Add ingredient',exact:false}).click();
@@ -94,7 +94,7 @@ test("recipe editor saves added and removed rows, survives reload and restores a
 
 test("mobile preview recalculates and keeps unsaved mixes while switching packs",async({page})=>{
   await signIn(page.request,'parent@example.com');
-  await page.setViewportSize({width:390,height:844});await page.goto('/branding-plan#granola-business-case');
+  await page.setViewportSize({width:390,height:844});await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   await app.getByLabel('Selling price',{exact:true}).fill('500');
   await expect(app.locator('.g-profit strong')).toContainText('Rs 255.');
@@ -105,7 +105,7 @@ test("mobile preview recalculates and keeps unsaved mixes while switching packs"
 });
 
 test("save failures and stale versions leave the edited recipe intact",async({page})=>{
-  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan#granola-business-case');
+  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app.getByRole('button',{name:'Save version'})).toBeEnabled();
   await app.getByLabel('Selling price',{exact:true}).fill('440');
   await page.route('**/api/granola/basic',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Saved recipes are temporarily unavailable.'})}));
@@ -130,7 +130,7 @@ test("custom granola types persist alongside starters with independent histories
 });
 
 test("new and duplicated granola types can be edited, saved and compared after reload",async({page})=>{
-  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan#granola-business-case');
+  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   await app.getByRole('button',{name:'New granola',exact:false}).click();
   await app.getByLabel('Pack name',{exact:true}).fill('Coconut coffee');
@@ -221,7 +221,7 @@ test("AI limits concurrent requests and missing configuration fails explicitly",
 });
 
 test("nutrition UI edits references; AI previews apply, undo and reject stale reviews",async({page})=>{
-  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan#granola-business-case');
+  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   const oats=app.locator('.g-ingredient').first();await oats.locator('summary').click();
   await oats.getByLabel('Oats Protein per 100 g',{exact:true}).fill('12');
@@ -242,7 +242,7 @@ test("nutrition UI edits references; AI previews apply, undo and reject stale re
 
 test("scenario changes update the whole draft immediately on desktop and mobile",async({page})=>{
   await signIn(page.request,'parent@example.com');
-  await page.goto('/branding-plan#granola-business-case');
+  await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   const explorer=app.getByLabel('Business scenario explorer',{exact:true});
   await expect(explorer.getByLabel('Scenario packs per month',{exact:true})).toHaveValue('100');
@@ -312,7 +312,7 @@ test("break-even is the first non-negative whole-pack result, including rounded 
 });
 
 test("sourcing and monthly assumptions change every result and survive save and reload",async({page})=>{
-  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan#granola-business-case');
+  await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   await app.getByLabel('Oats supplier discount',{exact:true}).fill('20');
   await app.getByLabel('Oats sourcing cost',{exact:true}).fill('10');

@@ -16,6 +16,8 @@ export const divider = "mx-auto h-px max-w-[1400px] bg-line";
 
 export const heading = "m-0 font-display text-[clamp(3rem,5.8vw,6rem)] font-[650] leading-[0.92] tracking-[-0.055em] text-fg max-[680px]:text-[clamp(2.8rem,14vw,4rem)]";
 export const subheading = "m-0 font-display text-[clamp(1.4rem,2.2vw,1.9rem)] font-[650] leading-[1.1] tracking-[-0.03em] text-fg";
+// Section heading inside a workspace page, sized to sit under the page title.
+export const sectionHeading = "m-0 font-display text-[clamp(1.9rem,3.4vw,3rem)] font-[650] leading-[1] tracking-[-0.04em] text-fg";
 export const cardTitle = "font-display font-[650] leading-[1.05] tracking-[-0.035em] text-fg";
 
 // Panels
@@ -51,3 +53,7 @@ export const bField = "w-full rounded-none border border-line bg-canvas p-3 text
 export const bPanel = "border border-line border-t-[5px] border-t-accent bg-surface p-8 max-[760px]:mt-0 max-[760px]:p-6";
 export const bPanelTitle = "m-0 mb-3 font-brand text-[32px] font-normal leading-[1.1] uppercase text-fg";
 export const bBadge = "b-badge border border-line px-[10px] py-[7px] font-mono text-[11px] uppercase tracking-[0.08em]";
+
+// Workspace pages (BrandingLayout): a kicker, a brand-face title and a lead.
+export const pageTitle = "m-0 max-w-[14ch] font-brand text-[clamp(2.9rem,7vw,5.6rem)] font-normal uppercase leading-[0.92] tracking-[0.005em] text-fg";
+export const pageLead = "m-0 max-w-[680px] text-[clamp(1.05rem,1.6vw,1.25rem)] leading-[1.6] text-fg-muted [&_a]:border-b [&_a]:border-accent [&_a]:text-fg";

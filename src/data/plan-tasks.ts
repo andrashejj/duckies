@@ -41,7 +41,7 @@ export const planMilestones: SeedMilestone[] = [
     id: "p1-02", track: "phase1", code: "02", title: "Test bakes and quotes", dateLabel: "Mon 21 – Fri 25 Sep", startsOn: "2026-09-21", endsOn: "2026-09-25", owner: "andras",
     deliverable: "Ingredient list locked on paper, a decided packaging provider, registration open.",
     links: [
-      { label: "Granola sheet", file: "/branding-plan#granola-business-case" },
+      { label: "Granola sheet", file: "/branding-plan/business-case" },
       { label: "Cup Vol. 02 page", file: "/sunset-duckies-cup-vol-2" },
     ],
     tasks: [
@@ -66,7 +66,7 @@ export const planMilestones: SeedMilestone[] = [
     id: "p1-04", track: "phase1", code: "04", title: "Build the buzz", dateLabel: "Mon 5 – Fri 9 Oct", startsOn: "2026-10-05", endsOn: "2026-10-09", owner: "estelle",
     deliverable: "Packaging in hand, launch quantity and price confirmed, heat list drafted.",
     tasks: [
-      t("Estelle: six shop visits, the second bake and business case v1 with actual cost per bag by Friday 9 October (section 04).", "estelle", "2026-10-09"),
+      t("Estelle: six shop visits, the second bake and business case v1 with actual cost per bag by Friday 9 October (see On the ground).", "estelle", "2026-10-09"),
       t("Set the first-batch quantity and the price from the granola sheet. Decide how many bags are for sale and how many are for tasting.", "andras", "2026-10-09"),
       t("Post the maker story: who bakes it, what goes in, why it exists. Tell families on WhatsApp that a limited first batch will be revealed at the Cup.", "estelle", "2026-10-09"),
       t("Check labels and pouches on delivery on Friday 9 October. If the printer slips, fall back to plain pouches with home-printed labels. Do not move the Cup.", "estelle", "2026-10-09"),

@@ -1,0 +1,23 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import BrandingNav from "../components/BrandingNav.astro";
+import { bKicker, pageLead, pageTitle } from "../lib/plan-ui";
+import { site } from "../data/site";
+// Shell for an approved Project Molt page: the section nav, a page head and
+// the content column. Pages check access themselves before rendering this.
+interface Props { title: string; description: string; kicker: string; heading: string; }
+const { title, description, kicker, heading } = Astro.props;
+---
+<BaseLayout title={`${title} | ${site.name}`} description={description} variant="performance">
+  <BrandingNav />
+  <div class="mx-auto max-w-[1400px] px-[clamp(1.5rem,5vw,5rem)] pt-[clamp(2.75rem,5vw,4.5rem)] pb-[clamp(4rem,7vw,7rem)] text-fg">
+    <header class="mb-[clamp(2.5rem,5vw,4rem)] grid items-end gap-x-16 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.55fr)]" data-float>
+      <div>
+        <p class={bKicker}>{kicker}</p>
+        <h1 class={pageTitle}>{heading}</h1>
+      </div>
+      <div class={pageLead}><slot name="lead" /></div>
+    </header>
+    <slot />
+  </div>
+</BaseLayout>

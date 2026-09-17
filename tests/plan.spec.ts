@@ -16,8 +16,10 @@ test.afterAll(async()=>{await db.end();});
 test("anonymous visitors get no plan data and are sent to the teaser",async({request})=>{
   expect((await request.get('/api/plan')).status()).toBe(401);
   expect((await request.patch('/api/plan/tasks/p1-01-1',{data:{status:'done',version:1}})).status()).toBe(401);
-  const page=await request.get('/branding-plan/board',{maxRedirects:0});
-  expect(page.status()).toBe(302);expect(page.headers().location).toBe('/branding-plan');
+  for(const url of ['/branding-plan/board','/branding-plan/plan','/branding-plan/onsite','/branding-plan/vision','/branding-plan/deliverables','/branding-plan/business-case','/branding-plan/marketing']){
+    const page=await request.get(url,{maxRedirects:0});
+    expect(page.status()).toBe(302);expect(page.headers().location).toBe('/branding-plan');
+  }
   expect((await db.query("SELECT count(*)::int AS n FROM plan_task")).rows[0].n).toBe(0);
 });
 
@@ -63,11 +65,14 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   const task=(await created.json()).task;expect(task).toMatchObject({milestoneId:'e03',ownerId:'abiguelle',dueOn:'2026-10-14',status:'todo',version:1});
   expect(task.sort).toBe(planMilestones.find(m=>m.id==='e03')!.tasks.length);
 
-  // The brief reads the same record: done and in-progress markers, the new task.
-  const brief=await (await request.get('/branding-plan')).text();
-  expect(brief).toContain('✔ Write the four-product decision record');
-  expect(brief).toContain('Print the price sign');
-  expect(brief).toContain('href="/branding-plan/board"');
+  // The plan and onsite pages read the same record: done and in-progress markers, the new task.
+  const plan=await (await request.get('/branding-plan/plan')).text();
+  expect(plan).toContain('✔ Write the four-product decision record');
+  expect(plan).toContain('href="/branding-plan/board"');
+  expect(plan).not.toContain('Print the price sign');
+  const onsite=await (await request.get('/branding-plan/onsite')).text();
+  expect(onsite).toContain('Print the price sign');
+  expect(onsite).toContain('href="/branding-plan/board"');
 
   // The board renders both views with live status.
   await page.goto('/branding-plan/board');

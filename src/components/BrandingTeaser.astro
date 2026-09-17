@@ -6,10 +6,10 @@ const access=Astro.locals.branding;
 <section class="mx-auto grid max-w-[1280px] items-start gap-20 px-7 pt-[72px] pb-24 text-fg max-[760px]:gap-6 max-[760px]:px-5 max-[760px]:pt-[38px] max-[760px]:pb-16 md:grid-cols-[1.2fr_1fr]">
   <div>
     <p class={bKicker}>Sunset Duckies / Project Molt</p>
-    <h1 class={bTitle}>Made here.<br/>Built <em class="not-italic text-accent-text">together.</em></h1>
-    <p class={bLead}>A surf brand taking shape in Tamarin. Useful products, paid local work and a community with a say in what comes next.</p>
+    <h1 class={bTitle}>Project <em class="not-italic text-accent-text">Molt</em></h1>
+    <p class={bLead}>Sunset Duckies is developing its first product in Tamarin: a granola made locally, on sale at Cup Vol. 02 in October.</p>
     <div class="relative mt-8 h-[190px] overflow-hidden border border-line md:h-[235px]"><img src="/media/young-rider.jpg" alt="A young surfer riding a wave in Tamarin" width="1200" height="1600" class="h-full w-full object-cover object-[50%_47%]"/><span class={`${bMono} absolute bottom-0 left-0 bg-accent px-[14px] py-[10px] text-accent-fg`}>Tamarin, Mauritius · Work in progress</span></div>
-    <p class={`${bMono} mt-[22px] leading-[1.8] text-fg-muted`}>The working plans, recipes and numbers are shared by invitation. Join the conversation.</p>
+    <p class={`${bMono} mt-[22px] leading-[1.8] text-fg-muted`}>Plans, recipes and numbers are shared by invitation.</p>
   </div>
   <BrandingAccess client:load email={access?.email??null} status={access?.entry?.status??null} verified={Boolean(access?.entry?.verified_at)} />
 </section>

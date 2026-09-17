@@ -1,0 +1,45 @@
+---
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
+import PlanCallout from "../../components/plan/PlanCallout.astro";
+import PlanDefinitions from "../../components/plan/PlanDefinitions.astro";
+import PlanSectionHead from "../../components/plan/PlanSectionHead.astro";
+import { cardTitle, overline, panel } from "../../lib/plan-ui";
+import { communitySteps, method, openDecision, projectGoals, visionStatement } from "../../data/molt";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+
+const goalCard = `${panel} border-r border-b border-line bg-surface-2/72 p-[1.6rem] [&>span]:font-mono [&>span]:text-[0.66rem] [&>span]:tracking-[0.12em] [&>span]:text-accent-text`;
+---
+
+<BrandingLayout title="Vision" description="What Sunset Duckies is trying to become, and how the project decides." kicker="Project Molt / Vision" heading="What we are building">
+  <p slot="lead">The end goal, the four things this project has to prove, and how decisions get made along the way.</p>
+
+  <section data-reveal>
+    <div class="max-w-[1120px] border border-line border-l-4 border-l-accent bg-linear-135 from-accent/8 to-surface-2/72 p-[clamp(1.75rem,4vw,3rem)]">
+      <p class="m-0 font-display text-[clamp(1.35rem,2.5vw,2.15rem)] font-[550] leading-[1.35] tracking-[-0.035em] text-fg">{visionStatement}</p>
+    </div>
+  </section>
+
+  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
+    <PlanSectionHead size="md" overline="Four goals" title="What Project Molt has to prove" class="mb-10">
+      <p>Every product choice, community agreement and decision about what happens after Tamarin is checked against these.</p>
+    </PlanSectionHead>
+    <div class="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:grid-cols-4">
+      {projectGoals.map(goal => (
+        <article class={goalCard}><span>{goal.code}</span><h3 class={`${cardTitle} mt-10 mb-[0.65rem] text-[1.35rem]`}>{goal.name}</h3><p class="m-0 text-[0.92rem] leading-[1.55] text-fg-muted">{goal.text}</p></article>
+      ))}
+    </div>
+    <PlanCallout label="Open decision" class="mt-8 mb-0">{openDecision}</PlanCallout>
+  </section>
+
+  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
+    <PlanSectionHead size="md" overline="Method" title="How decisions are made" class="mb-10">
+      <p>The same method from the first product drafts to the second live test. Evidence decides whether the work continues, changes or stops.</p>
+    </PlanSectionHead>
+    <PlanDefinitions items={method} signal />
+    <div class="mt-8 border border-line px-7 py-6">
+      <p class={`${overline} mb-4`}>Working with a community</p>
+      <ol class="m-0 grid list-none grid-cols-1 p-0 sm:grid-cols-2 lg:grid-cols-4">{communitySteps.map((item, index) => <li class="flex gap-3 py-[0.4rem] pr-5 text-[0.9rem] leading-[1.5] text-fg-muted"><span class="flex-none font-mono text-[0.65rem] text-accent-text">{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
+    </div>
+  </section>
+</BrandingLayout>

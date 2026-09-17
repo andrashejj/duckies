@@ -18,8 +18,8 @@ export default function BrandingAccess({email:initialEmail,status,verified}:{ema
     {decided?<><h2 className={bPanelTitle}>{status==="pending"?"Your request is with Andras.":status==="denied"?"Access hasn’t been approved.":status==="revoked"?"Your access has been removed.":"You’re approved."}</h2>
       <p>{status==="pending"?"Check back here for a decision. Once approved, the workspace opens with this email.":"Andras manages access to this workspace."}</p>
       <p className="break-words">{initialEmail}</p><a className={bButton} href="/branding-plan">Check access</a></>:
-      <><h2 className={bPanelTitle}>{step==="request"?"Pull up a chair.":"Check your inbox."}</h2>
-      <p>{step==="request"?"Tell us who you are. Andras reviews every request.":`Enter the six-digit code sent to ${email}. It expires in 10 minutes.`}</p>
+      <><h2 className={bPanelTitle}>{step==="request"?"Request access":"Check your inbox"}</h2>
+      <p>{step==="request"?"Say who you are and what you would like to help with. Andras reviews every request.":`Enter the six-digit code sent to ${email}. It expires in 10 minutes.`}</p>
       <form onSubmit={event=>{event.preventDefault();void run(async()=>{
         if(step==="request"){
           const result=await submitRequest();if(initialEmail){window.location.assign("/branding-plan");return;}

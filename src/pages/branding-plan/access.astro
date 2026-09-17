@@ -1,12 +1,10 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import BrandingToolbar from "../../components/BrandingToolbar.astro";
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
 import BrandingApprovals from "../../components/react/BrandingApprovals";
-import { bKicker, bLead, bTitle } from "../../lib/plan-ui";
 export const prerender=false;
 if(!Astro.locals.branding?.owner)return Astro.redirect(Astro.locals.branding?.session?"/branding-plan":"/login?next=%2Fbranding-plan%2Faccess");
 ---
-<BaseLayout title="Branding access | Sunset Duckies" description="Manage invitations to the Project Molt workspace." variant="performance">
- <BrandingToolbar/>
- <section class="mx-auto max-w-[1040px] px-7 pt-[72px] pb-24 text-fg max-[760px]:px-5 max-[760px]:py-[38px]"><p class={bKicker}>Project Molt / Andras’s desk</p><h1 class={bTitle}>Who’s in.</h1><p class={bLead}>Approve people to read the plans and try the simulator. Enable recipe saving and AI when they need to contribute edits.</p><p class="leading-[1.7] text-fg-muted">Only verified email requests appear here. People can check their decision on the teaser page.</p><BrandingApprovals client:load/></section>
-</BaseLayout>
+<BrandingLayout title="Branding access" description="Manage invitations to the Project Molt workspace." kicker="Project Molt / Andras’s desk" heading="Access requests">
+ <p slot="lead">Approve people to read the plans and try the granola sheet. Enable recipe saving and AI when they need to contribute edits. Only verified email requests appear here; people check their decision on the teaser page.</p>
+ <div class="max-w-[1040px]"><BrandingApprovals client:load/></div>
+</BrandingLayout>

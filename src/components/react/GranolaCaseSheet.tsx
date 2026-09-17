@@ -15,7 +15,7 @@ export default function GranolaCaseSheet({recipe,result,change,cost}:{recipe:Rec
   const costInputs=`${sheetInputs} grid-cols-[1.6fr_0.9fr_1fr_1.1fr_30px] gap-[0.6rem] @max-[600px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_30px] @max-[600px]:[grid-template-areas:'name_name_remove'_'amount_basis_basis'_'calc_calc_calc'] @max-[600px]:[&>:nth-child(1)]:[grid-area:name] @max-[600px]:[&>:nth-child(2)]:[grid-area:amount] @max-[600px]:[&>:nth-child(3)]:[grid-area:calc] @max-[600px]:[&>:nth-child(4)]:[grid-area:basis] @max-[600px]:[&>:nth-child(5)]:[grid-area:remove]`;
   const total="flex items-baseline justify-between gap-4 border-b border-line py-[0.9rem] [&>span]:text-[0.8rem] [&>strong]:font-mono [&>strong]:font-medium [&>strong]:tabular-nums";
   return <section id="granola-business-sheet" className={`g-sheet @container ${editorSection}`} aria-label="Business case sheet">
-    <div className={sectionTitle}><span>02 / THE BUSINESS CASE</span><b>One month, on one sheet.</b></div>
+    <div className={sectionTitle}><span>02 / THE BUSINESS CASE</span><b>One month of costs and sales</b></div>
     <p className={explain}>Every assumption behind the monthly result is here. Change a figure on the left and its line on the right updates at once. Ingredients follow the mix above; everything else is set on this sheet.</p>
     <div className={`${sheetRow} mt-6 border-b-2 border-fg pb-[0.6rem] font-mono text-[0.6rem] tracking-[0.12em] text-fg-muted @max-[600px]:hidden [&>span:last-child]:text-right`} aria-hidden="true"><span>Assumptions</span><span>This month</span></div>
 

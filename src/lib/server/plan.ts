@@ -121,7 +121,7 @@ export async function createTask(input: { milestoneId: string; text: string; own
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
 }
 
-// ---------- The brief (branding-plan.astro) ----------
+// ---------- The plan and onsite pages (branding-plan/plan, /onsite) ----------
 export type BriefStep = { date: string; title: string; deliverable: string; tasks: string[]; links?: { label: string; file: string }[]; status?: "now"; owner?: string };
 export type BriefPlan = { explorationSteps: BriefStep[]; estelleWeeks: BriefStep[]; hardDates: { date: string; milestone: string; why: string }[]; live: boolean };
 const seedAsPlan = (): Omit<PlanData, "canEdit"> => ({

@@ -1,0 +1,43 @@
+---
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
+import PlanDefinitions from "../../components/plan/PlanDefinitions.astro";
+import PlanSectionHead from "../../components/plan/PlanSectionHead.astro";
+import PlanTimeline from "../../components/plan/PlanTimeline.astro";
+import { cardTitle, panel } from "../../lib/plan-ui";
+import { onsite, rhythm, streams } from "../../data/molt";
+import { loadPlanForBrief } from "../../lib/server/plan";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+const { estelleWeeks, live } = await loadPlanForBrief();
+
+const streamCard = `${panel} border-r border-b border-line bg-surface-2/72 p-[1.6rem] [&>span]:font-mono [&>span]:text-[0.66rem] [&>span]:tracking-[0.12em] [&>span]:text-accent-text`;
+---
+
+<BrandingLayout title="On the ground" description="Estelle's three weeks in Tamarin: five streams of work, week by week, and how the team works around her." kicker={`Project Molt / On the ground · ${onsite.dates}`} heading="Three weeks on the ground">
+  <p slot="lead">{onsite.intro} {onsite.handover}</p>
+
+  <section data-reveal>
+    <PlanSectionHead size="md" overline="Five streams" title="What Estelle owns" class="mb-10">
+      <p>Each stream has a target she can tick off. Everything else on the <a href="/branding-plan/plan">plan</a> serves one of these.</p>
+    </PlanSectionHead>
+    <div class="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:grid-cols-5">
+      {streams.map(stream => (
+        <article class={streamCard}><span>{stream.code}</span><h3 class={`${cardTitle} mt-10 mb-[0.65rem] text-[1.35rem]`}>{stream.name}</h3><p class="mb-[0.6rem] font-mono text-[0.68rem] uppercase tracking-[0.06em] text-accent-text">{stream.target}</p><p class="m-0 text-[0.92rem] leading-[1.55] text-fg-muted">{stream.text}</p></article>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
+    <PlanSectionHead size="md" overline="Week by week" title="Land, bake, sell, hand over" class="mb-10">
+      <p>E00 is what Andras has ready before she lands. Status comes from the <a href="/branding-plan/board">board</a>; ✔ done, → in progress.{!live && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
+    </PlanSectionHead>
+    <PlanTimeline steps={estelleWeeks} prefix="E" start={0} />
+  </section>
+
+  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
+    <PlanSectionHead size="md" overline="Working rhythm" title="Who is around, and when" class="mb-10">
+      <p>Estelle does not wait on anyone. These are the fixed points in the week.</p>
+    </PlanSectionHead>
+    <PlanDefinitions items={rhythm} signal class="lg:grid-cols-4" />
+  </section>
+</BrandingLayout>

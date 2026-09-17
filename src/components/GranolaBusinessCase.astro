@@ -1,6 +1,6 @@
 ---
 import GranolaSimulator from "./react/GranolaSimulator";
-import PlanSectionHead from "./plan/PlanSectionHead.astro";
+// The granola sheet plus the supermarket research behind the starter mixes.
 // Historical research only. Live economics are calculated in granola.ts.
 const ingredients = [
   { name: "Oats", shelf: "Bokomo Morning Oats · Rs 82 / 500 g", note: "Winners listing; test flake size and crunch in the bake.", url: "https://www.winners.mu/cereales" },
@@ -11,10 +11,7 @@ const ingredients = [
   { name: "Cinnamon + salt", shelf: "Allowance · Rs 2 per pack", note: "Small seasoning allowance; replace with actual quantities and receipt prices.", url: null },
 ];
 ---
-<section id="granola-business-case" class="mx-auto max-w-[1400px] scroll-mt-32 px-[clamp(1.5rem,5vw,5rem)] py-[clamp(4rem,7vw,7rem)] [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-[0.2em]" aria-labelledby="granola-title">
-  <PlanSectionHead overline="07 / Granola business case" title="The granola kitchen." class="mb-12">
-    <p>Build the mix, then work the whole month on one sheet: paid time, other costs, price and sales sit beside the monthly lines they drive. Save the version worth testing.</p>
-  </PlanSectionHead>
+<section class="[&_a]:text-fg [&_a]:underline [&_a]:underline-offset-[0.2em]" aria-label="Granola sheet and sources">
   <GranolaSimulator client:load />
   <details class="[&>p]:my-5 [&>p]:max-w-[85ch] [&>p]:leading-[1.75] [&>p]:text-fg-muted">
     <summary class="cursor-pointer border-t border-line py-6 font-display text-[1.6rem] text-fg">Ingredient research &amp; sources <span class="mt-2 block font-mono text-[0.65rem] text-fg-muted">Historical supermarket snapshot · 14 September 2026</span></summary>

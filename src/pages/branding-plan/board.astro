@@ -1,18 +1,11 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import BrandingToolbar from "../../components/BrandingToolbar.astro";
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
 import PlanBoard from "../../components/react/PlanBoard";
-import { bKicker, bLead, bTitle } from "../../lib/plan-ui";
 export const prerender=false;
 if(!Astro.locals.branding?.canView)return Astro.redirect("/branding-plan");
 const view=Astro.url.searchParams.get("view")==="board"?"board":"timeline";
 ---
-<BaseLayout title="Plan board | Sunset Duckies" description="Project Molt milestones and tasks: who does what, by when, and where it stands." variant="performance">
- <BrandingToolbar/>
- <section class="mx-auto max-w-[1400px] px-7 pt-[72px] pb-24 text-fg max-[760px]:px-5 max-[760px]:py-[38px]">
-  <p class={bKicker}>Project Molt / To 18 October</p>
-  <h1 class={bTitle}>Who does what.</h1>
-  <p class={bLead}>Every milestone and task from the <a href="/branding-plan" class="border-b border-accent text-fg">brief</a>, with an owner and a status. The timeline is the plan by date; the board is the same tasks by what is to do, in progress and done. Drag a card, or use its status menu on a phone.</p>
-  <PlanBoard client:load initialView={view}/>
- </section>
-</BaseLayout>
+<BrandingLayout title="Plan board" description="Project Molt milestones and tasks: who does what, by when, and where it stands." kicker="Project Molt / Board" heading="Who does what.">
+ <p slot="lead">Every task from the <a href="/branding-plan/plan">plan</a> and the <a href="/branding-plan/onsite">three weeks onsite</a>, with an owner and a status. Timeline is by date; Board is by to do, doing and done. Drag a card, or use its status menu on a phone.</p>
+ <PlanBoard client:load initialView={view}/>
+</BrandingLayout>

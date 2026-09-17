@@ -1,0 +1,32 @@
+---
+import BrandingLayout from "../../layouts/BrandingLayout.astro";
+import PlanSectionHead from "../../components/plan/PlanSectionHead.astro";
+import PlanTable from "../../components/plan/PlanTable.astro";
+import { cardTitle } from "../../lib/plan-ui";
+import { deliverables, worksheets } from "../../data/molt";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+const card = "group flex flex-col gap-3 border-r border-b border-line bg-surface-2/60 p-8 no-underline transition-colors hover:bg-accent/8";
+---
+
+<BrandingLayout title="Deliverables" description="The Project Molt working documents: the granola sheet, the marketing plan, the product candidates and the worksheets." kicker="Project Molt / Deliverables" heading="The working documents">
+  <p slot="lead">Each one is where a decision gets recorded. The worksheets below are printable templates for the conversations and checks along the way.</p>
+
+  <section data-reveal>
+    <div class="grid grid-cols-1 border-t border-l border-line md:grid-cols-3">
+      {deliverables.map(item => (
+        <a href={item.href} class={card}>
+          <span class={`${cardTitle} text-[1.5rem] group-hover:text-accent-text`}>{item.label} →</span>
+          <span class="text-[0.92rem] leading-[1.55] text-fg-muted">{item.text}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="worksheets" class="mt-[clamp(3.5rem,6vw,6rem)] scroll-mt-32" data-reveal>
+    <PlanSectionHead size="md" overline="Worksheets" title="Which template, and when" class="mb-8">
+      <p>Print or copy the one that matches the week. They open in a new tab.</p>
+    </PlanSectionHead>
+    <PlanTable columns={["When", "Template", "Use it for"]} rows={worksheets.map(item => [item.when, { label: item.name, href: item.file }, item.use])} class="mt-0" />
+  </section>
+</BrandingLayout>

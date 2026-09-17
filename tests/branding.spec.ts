@@ -52,7 +52,8 @@ test("owner manages independent branding permissions with immediate revocation a
  expect((await request.post('/api/branding/approvals',{headers:{origin},data})).status()).toBe(409);
  const context=await browser.newContext();await signIn(context.request,'viewer@example.com');
  expect((await (await context.request.get('/api/granola')).json()).canEdit).toBe(false);
- expect((await context.request.get('/branding-plan')).status()).toBe(200);expect(await (await context.request.get('/branding-plan')).text()).toContain('Granola recipe simulator');
+ expect((await context.request.get('/branding-plan')).status()).toBe(200);expect(await (await context.request.get('/branding-plan')).text()).toContain('href="/branding-plan/business-case"');
+ expect(await (await context.request.get('/branding-plan/business-case')).text()).toContain('Granola recipe simulator');
  expect((await context.request.get('/templates/brand-concept.html')).status()).toBe(200);
  expect((await context.request.put('/api/granola/basic',{headers:{origin},data:{recipe:starterRecipe('basic'),version:0}})).status()).toBe(403);
  expect((await context.request.get('/api/branding/approvals')).status()).toBe(403);
@@ -63,6 +64,7 @@ test("owner manages independent branding permissions with immediate revocation a
  expect((await context.request.get('/api/granola/basic/history')).status()).toBe(403);
  expect((await context.request.post('/api/granola/advice',{headers:{origin},data:{}})).status()).toBe(403);
  expect(await (await context.request.get('/branding-plan')).text()).not.toContain('Granola recipe simulator');
+ expect((await context.request.get('/branding-plan/business-case',{maxRedirects:0})).status()).toBe(302);
  expect((await context.request.get('/templates/brand-concept.html',{maxRedirects:0})).status()).toBe(302);
  expect((await db.query('SELECT status FROM branding_access_event ORDER BY id')).rows.map(r=>r.status)).toEqual(['approved','approved','revoked']);
  expect((await request.post('/api/branding/approvals',{headers:{origin},data:{...data,email:owner,decision:'revoked'}})).status()).toBe(403);
@@ -82,7 +84,8 @@ test("request, verify, approve and sign out work in the UI",async({page,browser}
  const admin=await browser.newContext();await signIn(admin.request,owner);const ap=await admin.newPage();await ap.goto('/branding-plan/access');
  const row=ap.getByRole('article').filter({hasText:'partner@example.com'});await expect(row).toContainText('Kitchen trials and packaging');await row.getByLabel('Allow recipe saving & AI').check();await ap.evaluate(()=>window.scrollTo({top:0,behavior:"instant"}));await ap.screenshot({path:'test-results/branding-approvals-desktop.png',fullPage:true});await ap.setViewportSize({width:390,height:844});expect(await ap.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await ap.evaluate(()=>window.scrollTo({top:0,behavior:"instant"}));await ap.screenshot({path:'test-results/branding-approvals-mobile.png',fullPage:true});
  await row.getByRole('button',{name:'Approve access'}).click();await expect(row.locator('.b-badge')).toHaveText('approved');
- await page.getByRole('link',{name:'Check access',exact:true}).click();await page.getByLabel('Granola recipe simulator').scrollIntoViewIfNeeded();await expect(page.getByLabel('Granola recipe simulator')).toBeVisible();await expect(page.getByRole('button',{name:'Save version'})).toBeEnabled();
+ await page.getByRole('link',{name:'Check access',exact:true}).click();await expect(page.getByRole('heading',{name:'Project Molt'})).toBeVisible();
+ await page.getByRole('link',{name:'Recipe & business case →'}).click();await page.getByLabel('Granola recipe simulator').scrollIntoViewIfNeeded();await expect(page.getByLabel('Granola recipe simulator')).toBeVisible();await expect(page.getByRole('button',{name:'Save version'})).toBeEnabled();
  await page.getByRole('button',{name:'Sign out',exact:true}).click();await expect(page.getByRole('button',{name:'Request access',exact:true})).toBeVisible();
  await row.getByRole('button',{name:'Revoke access'}).click();await expect(row.locator('.b-badge')).toHaveText('revoked');await admin.close();
 });
