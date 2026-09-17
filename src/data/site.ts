@@ -288,7 +288,7 @@ export const site = {
   cupVol2: {
     name: "Sunset Duckies Cup",
     edition: "Vol. 02",
-    dateLabel: "Date TBD",
+    dateLabel: "Friday 16 October 2026",
     timeLabel: "Earlier start · daylight finish",
     location: "Tamarin Bay, Mauritius",
     registerCtaLabel: "Get updates on WhatsApp",

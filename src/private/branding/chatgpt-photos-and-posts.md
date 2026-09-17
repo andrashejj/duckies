@@ -41,7 +41,7 @@ Posts 3, 4, 6 and 7 below use **real photos** — the test bake, Estelle in the 
 
 - **Name:** Sunset Duckies
 - **Picture:** the logo (`public/media/instagram/profile.jpg`, already prepared)
-- **Bio:** Kids' surf club in Tamarin Bay 🌅 · Mon + Fri, 4–6pm · Cup Vol. 02: 17/18 October
+- **Bio:** Kids' surf club in Tamarin Bay 🌅 · Mon + Fri, 4–6pm · Cup Vol. 02: Friday 16 October
 - **Website:** https://sunsetduckies.com
 - **Category:** Sports club
 
@@ -50,7 +50,7 @@ Posts 3, 4, 6 and 7 below use **real photos** — the test bake, Estelle in the 
 Hashtags for every post: `#sunsetduckies #tamarin #tamarinbay #mauritius #kidssurf #groms #surfclub`
 
 **1 · Fri 18 Sep · Save the date** — image 6
-Sunset Duckies Cup Vol. 02: 17/18 October, Tamarin Bay. Heats for every level, crowns for the Duckie King and Queen, the grey goose heat for the parents. We are also cooking something for the day. Save the date; registration opens next week.
+Sunset Duckies Cup Vol. 02: Friday 16 October, Tamarin Bay. Heats for every level, crowns for the Duckie King and Queen, the grey goose heat for the parents. We are also cooking something for the day. Save the date; registration opens next week.
 
 **2 · Fri 25 Sep · Registration open** — image 7
 Registration for Cup Vol. 02 is open. Every Duckie surfs, whatever the level: divisions by age, a heat for everyone, prizes for more than the best wave. Sign up through the link in bio or the parents' WhatsApp. Judges, beach marshals and BBQ hands: we need you too.
@@ -61,13 +61,13 @@ Something is in the oven in Tamarin. First test batch this week, tasted by the f
 **4 · Fri 9 Oct · The maker** — real photo: Estelle in the kitchen
 Meet the baker. Estelle is in Tamarin for three weeks, in the kitchen and on the beach, making something for surf mornings. Oats, nuts and honey, made by hand a few streets from the bay. What it is and what it's called: at the Cup.
 
-**5 · Mon 12 – Fri 16 Oct · Countdown** — image 8, then a packaging detail (real, no name visible)
-Five days. Heats start at [time] on [Saturday/Sunday]; the schedule is on sunsetduckies.com. Bring sunscreen, water and your cheering voice. The first batch gets revealed at the stall before the crowns.
+**5 · Mon 12 – Thu 15 Oct · Countdown** — image 8, then a packaging detail (real, no name visible)
+Five days. Heats start at [time] on Friday; the schedule is on sunsetduckies.com. Bring sunscreen, water and your cheering voice. The first batch gets revealed at the stall before the crowns.
 
-**6 · Sat 17 / Sun 18 Oct · The reveal** — real photo of the stall, plus stories from the beach
+**6 · Fri 16 Oct · The reveal** — real photo of the stall, plus stories from the beach
 Here it is: [name], the first Sunset Duckies granola, baked in Tamarin. Rs [price] a bag at the stall today; pre-orders for the next batch through the link in bio.
 
-**7 · Mon 19 – Tue 20 Oct · Results** — real photo of the crowns (photo permissions on file)
+**7 · Sat 17 – Sun 18 Oct · Results** — real photo of the crowns (photo permissions on file)
 Cup Vol. 02, done. [Duckie King and Queen, Duckling King and Queen.] Thank you to the judges, the marshals, the BBQ crew and every parent on the sand. [X] bags left / sold out: order the next batch through the link in bio.
 
 Two rules from the plan: no photo of a kid goes out before that family's permission form is back (task on the board, due 2 Oct), and nothing shows the product — name, bag or label — before the reveal on the day.
