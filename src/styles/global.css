@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Dark mode follows data-theme on <html>, set before paint by the inline script
+   in BaseLayout (stored choice, else the system preference). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @font-face {
   font-family: "Sunset Anton";
   src: url("/brand/anton-regular.ttf") format("truetype");
@@ -20,9 +24,10 @@
    Design tokens. This file is the only place a colour value is written.
    Components use semantic utilities (bg-canvas, text-fg, border-edge,
    shadow-sticker …) that resolve through the variables below, so every page
-   follows the system light/dark preference and the two themed scopes
+   follows the light/dark choice on <html data-theme> and the two themed scopes
    (.theme-performance for the branding pages, .theme-studio for the granola
-   kitchen) without page-level CSS.
+   kitchen) without page-level CSS. Dark blocks keep the specificity of their
+   light block (:where) so a themed scope still wins over the base tokens.
    ------------------------------------------------------------------------ */
 @theme {
   /* Distinctive type: variable Bricolage Grotesque for display (weird + playful),
@@ -155,7 +160,7 @@
 
 @layer base {
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
 
     --canvas: var(--color-cream);
     --surface: var(--color-cream-soft);
@@ -197,32 +202,31 @@
     --texture-wave: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='32' viewBox='0 0 80 32'><path d='M0 16 Q 20 0 40 16 T 80 16' fill='none' stroke='%230b1620' stroke-width='2' stroke-linecap='round'/></svg>");
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --canvas: var(--color-ink-950);
-      --surface: var(--color-ink-900);
-      --surface-2: var(--color-ink-800);
-      --fg: var(--color-cream);
-      --fg-muted: color-mix(in oklab, var(--color-cream) 72%, transparent);
-      --line: color-mix(in oklab, var(--color-cream) 22%, transparent);
-      --edge: var(--color-cream-deep);
-      --accent-text: var(--color-coral-400);
-      --sticker-coral: color-mix(in oklab, var(--color-coral-500) 26%, var(--color-ink-900));
-      --sticker-teal: color-mix(in oklab, var(--color-teal-500) 24%, var(--color-ink-900));
-      --sticker-sun: color-mix(in oklab, var(--color-sun-500) 22%, var(--color-ink-900));
-      --sticker-pink: color-mix(in oklab, var(--color-pink-400) 24%, var(--color-ink-900));
-      --sticker-lilac: color-mix(in oklab, var(--color-lilac-400) 26%, var(--color-ink-900));
-      --board: var(--color-ink-800);
-      --danger-fg: var(--color-peach);
-      --ok: #8fd6b3;
-      --caution: #e6c07a;
-      --alert: var(--color-peach);
-      --texture-canvas:
-        radial-gradient(ellipse 60% 45% at 5% 0%, color-mix(in oklab, var(--color-pink-400) 16%, transparent), transparent 60%),
-        radial-gradient(ellipse 55% 45% at 95% 5%, color-mix(in oklab, var(--color-sun-500) 14%, transparent), transparent 60%),
-        radial-gradient(ellipse 80% 50% at 50% 100%, color-mix(in oklab, var(--color-teal-500) 14%, transparent), transparent 65%);
-      --texture-wave: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='32' viewBox='0 0 80 32'><path d='M0 16 Q 20 0 40 16 T 80 16' fill='none' stroke='%23fff5de' stroke-width='2' stroke-linecap='round'/></svg>");
-    }
+  :root:where([data-theme="dark"]) {
+    color-scheme: dark;
+    --canvas: var(--color-ink-950);
+    --surface: var(--color-ink-900);
+    --surface-2: var(--color-ink-800);
+    --fg: var(--color-cream);
+    --fg-muted: color-mix(in oklab, var(--color-cream) 72%, transparent);
+    --line: color-mix(in oklab, var(--color-cream) 22%, transparent);
+    --edge: var(--color-cream-deep);
+    --accent-text: var(--color-coral-400);
+    --sticker-coral: color-mix(in oklab, var(--color-coral-500) 26%, var(--color-ink-900));
+    --sticker-teal: color-mix(in oklab, var(--color-teal-500) 24%, var(--color-ink-900));
+    --sticker-sun: color-mix(in oklab, var(--color-sun-500) 22%, var(--color-ink-900));
+    --sticker-pink: color-mix(in oklab, var(--color-pink-400) 24%, var(--color-ink-900));
+    --sticker-lilac: color-mix(in oklab, var(--color-lilac-400) 26%, var(--color-ink-900));
+    --board: var(--color-ink-800);
+    --danger-fg: var(--color-peach);
+    --ok: #8fd6b3;
+    --caution: #e6c07a;
+    --alert: var(--color-peach);
+    --texture-canvas:
+      radial-gradient(ellipse 60% 45% at 5% 0%, color-mix(in oklab, var(--color-pink-400) 16%, transparent), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 95% 5%, color-mix(in oklab, var(--color-sun-500) 14%, transparent), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, color-mix(in oklab, var(--color-teal-500) 14%, transparent), transparent 65%);
+    --texture-wave: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='32' viewBox='0 0 80 32'><path d='M0 16 Q 20 0 40 16 T 80 16' fill='none' stroke='%23fff5de' stroke-width='2' stroke-linecap='round'/></svg>");
   }
 
   /* Branding workspace: mono, hard rules, acid signal on deep ink. */
@@ -249,22 +253,20 @@
       linear-gradient(90deg, color-mix(in oklab, #0e1a17 4%, transparent) 1px, transparent 1px),
       radial-gradient(circle at 82% 5%, color-mix(in oklab, var(--color-acid) 22%, transparent), transparent 28rem);
   }
-  @media (prefers-color-scheme: dark) {
-    .theme-performance {
-      --canvas: var(--color-slate-950);
-      --surface: var(--color-slate-900);
-      --surface-2: var(--color-slate-800);
-      --fg: var(--color-bone);
-      --fg-muted: var(--color-slate-300);
-      --line: color-mix(in oklab, var(--color-bone) 16%, transparent);
-      --edge: color-mix(in oklab, var(--color-bone) 28%, transparent);
-      --accent-text: var(--color-acid);
-      --board: var(--color-slate-900);
-      --texture-canvas:
-        linear-gradient(color-mix(in oklab, var(--color-bone) 3.5%, transparent) 1px, transparent 1px),
-        linear-gradient(90deg, color-mix(in oklab, var(--color-bone) 3.5%, transparent) 1px, transparent 1px),
-        radial-gradient(circle at 82% 5%, color-mix(in oklab, #44716d 22%, transparent), transparent 28rem);
-    }
+  .theme-performance:where([data-theme="dark"], [data-theme="dark"] *) {
+    --canvas: var(--color-slate-950);
+    --surface: var(--color-slate-900);
+    --surface-2: var(--color-slate-800);
+    --fg: var(--color-bone);
+    --fg-muted: var(--color-slate-300);
+    --line: color-mix(in oklab, var(--color-bone) 16%, transparent);
+    --edge: color-mix(in oklab, var(--color-bone) 28%, transparent);
+    --accent-text: var(--color-acid);
+    --board: var(--color-slate-900);
+    --texture-canvas:
+      linear-gradient(color-mix(in oklab, var(--color-bone) 3.5%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--color-bone) 3.5%, transparent) 1px, transparent 1px),
+      radial-gradient(circle at 82% 5%, color-mix(in oklab, #44716d 22%, transparent), transparent 28rem);
   }
 
   /* Granola kitchen: paper, moss ink and the pine results board. */
@@ -293,30 +295,28 @@
     --danger: #f4d9c8;
     --danger-fg: #853e2b;
   }
-  @media (prefers-color-scheme: dark) {
-    .theme-studio {
-      --canvas: #111c17;
-      --surface: #182720;
-      --surface-2: #1d2e26;
-      --fg: #e8ecdc;
-      --fg-muted: #9aa897;
-      --line: #2c3c33;
-      --edge: #3b4e44;
-      --accent: #e8ecdc;
-      --accent-fg: #111c17;
-      --accent-text: #b9d16e;
-      --highlight: #233b30;
-      --highlight-fg: #e8ecdc;
-      --board: #253d34;
-      --board-fg: #eff0d8;
-      --board-muted: #aabcab;
-      --board-line: #3d574c;
-      --tint: #26382c;
-      --tint-2: #1a2a22;
-      --warn: #3d3520;
-      --danger: #452520;
-      --danger-fg: var(--color-peach);
-    }
+  .theme-studio:where([data-theme="dark"], [data-theme="dark"] *) {
+    --canvas: #111c17;
+    --surface: #182720;
+    --surface-2: #1d2e26;
+    --fg: #e8ecdc;
+    --fg-muted: #9aa897;
+    --line: #2c3c33;
+    --edge: #3b4e44;
+    --accent: #e8ecdc;
+    --accent-fg: #111c17;
+    --accent-text: #b9d16e;
+    --highlight: #233b30;
+    --highlight-fg: #e8ecdc;
+    --board: #253d34;
+    --board-fg: #eff0d8;
+    --board-muted: #aabcab;
+    --board-line: #3d574c;
+    --tint: #26382c;
+    --tint-2: #1a2a22;
+    --warn: #3d3520;
+    --danger: #452520;
+    --danger-fg: var(--color-peach);
   }
 
   /* Progressive-enhancement initial state for the Motion reveal script in

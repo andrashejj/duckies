@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import SignOutButton from "../components/react/SignOutButton";
 import Chip from "../components/ui/Chip.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import { site } from "../data/site";
 
 interface Props {
@@ -29,6 +31,7 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+    <ThemeScript />
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png?v=duckies-20260914" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,7 +57,10 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
               </p>
             </div>
           </a>
-          <Chip as="a" href="/" class="hidden hover:bg-sun-500 hover:text-ink-950 sm:inline-flex">← Site</Chip>
+          <div class="flex items-center gap-2">
+            <ThemeToggle class="border-cream-soft/40 bg-transparent text-cream-soft hover:bg-sun-500 hover:text-ink-950 lg:hidden" />
+            <Chip as="a" href="/" class="hidden hover:bg-sun-500 hover:text-ink-950 sm:inline-flex">← Site</Chip>
+          </div>
         </div>
 
         <nav class="hidden lg:block px-3 pb-6">
@@ -106,8 +112,9 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
           <p class="truncate font-mono text-[0.68rem] text-cream-soft/65">
             {session?.user?.email}
           </p>
-          <div class="mt-2">
+          <div class="mt-2 flex items-center justify-between gap-3">
             <SignOutButton client:load className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-coral-500 underline-offset-4 hover:underline" />
+            <ThemeToggle class="h-8 w-8 border-cream-soft/40 bg-transparent text-cream-soft hover:bg-sun-500 hover:text-ink-950" />
           </div>
         </div>
       </aside>

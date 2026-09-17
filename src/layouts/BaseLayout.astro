@@ -5,6 +5,8 @@ import Chip from "../components/ui/Chip.astro";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 
 import { site } from "../data/site";
 
@@ -73,6 +75,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
     <script is:inline>
       document.documentElement.classList.add("js");
     </script>
+    <ThemeScript />
   </head>
   <body class:list={[
     "min-h-screen overflow-x-clip font-sans tracking-[-0.005em] text-fg antialiased [font-feature-settings:'ss01','cv11']",
@@ -99,7 +102,10 @@ const absoluteImage = new URL(image, siteOrigin).toString();
 
           <ClubNavigation variant={variant} />
 
-          <Cta href="/login" variant={performance ? "performance" : "primary"} size="sm" class="shrink-0">Member sign-in</Cta>
+          <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+            <ThemeToggle variant={variant} />
+            <Cta href="/login" variant={performance ? "performance" : "primary"} size="sm" class="shrink-0">Member sign-in</Cta>
+          </div>
         </div>
       </header>
 

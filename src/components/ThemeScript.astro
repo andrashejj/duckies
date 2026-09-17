@@ -1,0 +1,14 @@
+---
+// Sets <html data-theme> before first paint: the stored choice ("theme" in
+// localStorage), else the system preference. Re-applies on system changes only
+// while no choice is stored. Inline so it runs before the stylesheet paints.
+---
+<script is:inline>
+  (function () {
+    var root = document.documentElement, media = matchMedia("(prefers-color-scheme: dark)");
+    function stored() { try { return localStorage.getItem("theme"); } catch (e) { return null; } }
+    function apply() { var choice = stored(); root.dataset.theme = choice === "dark" || choice === "light" ? choice : media.matches ? "dark" : "light"; }
+    apply();
+    media.addEventListener("change", function () { if (!stored()) apply(); });
+  })();
+</script>
