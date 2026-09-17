@@ -28,6 +28,8 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
   const [busy, setBusy] = useState<Set<string>>(new Set());
   const [dragging, setDragging] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
+  // Lanes start collapsed except the one that is up next.
+  const [openLanes, setOpenLanes] = useState<Set<string> | null>(null);
 
   async function load() {
     setLoading(true); setError("");
@@ -78,6 +80,8 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
   // Numbered by due order, so the rank on screen matches the row order.
   const rank = (milestone: PlanMilestone) => String(milestones.indexOf(milestone) + 1).padStart(2, "0");
   const next = useMemo(() => nextMilestone(plan?.milestones ?? []), [plan]);
+  const open = openLanes ?? new Set(next ? [next.id] : []);
+  const toggleLane = (id: string) => setOpenLanes(new Set(open.has(id) ? [...open].filter(lane => lane !== id) : [...open, id]));
   const matches = (task: PlanTask) => owner === "all" || (owner === "none" ? task.ownerId === null : task.ownerId === owner);
   const lanes = milestones.map(milestone => ({ milestone, tasks: milestone.tasks.filter(matches).sort((a, b) => (a.dueOn ?? "9999").localeCompare(b.dueOn ?? "9999") || a.sort - b.sort) })).filter(lane => owner === "all" || lane.tasks.length > 0);
   const totals = progress(plan?.milestones ?? []);
@@ -110,6 +114,12 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
           </select>
         </label>
         {next && <p className={`${monoTag} m-0 text-fg-muted`}><span className="text-accent-text">Up next</span> {next.title} · {next.dateLabel}</p>}
+        {view === "board" && plan && (
+          <div className={`flex gap-3 ${monoTag}`}>
+            <button type="button" className="text-fg-muted underline underline-offset-4 hover:text-fg" onClick={() => setOpenLanes(new Set(milestones.map(m => m.id)))}>Expand all</button>
+            <button type="button" className="text-fg-muted underline underline-offset-4 hover:text-fg" onClick={() => setOpenLanes(new Set())}>Collapse all</button>
+          </div>
+        )}
         <div className="ml-auto flex items-center gap-4">
           <p className={`${monoTag} m-0 text-fg-muted`}>
             <span className="text-fg">{mine.done}</span> / {mine.total} done{owner !== "all" && <span> · {totals.done} / {totals.total} overall</span>}
@@ -174,16 +184,22 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
             {lanes.map(({ milestone, tasks }) => {
               const current = milestone.id === next?.id;
               const done = milestone.tasks.filter(t => t.status === "done").length;
+              const expanded = open.has(milestone.id);
+              const waiting = tasks.filter(t => t.status === "review").length;
               return (
                 <section key={milestone.id} aria-label={milestone.title} className={`border border-line ${current ? "border-accent" : ""}`}>
-                  <header className={`flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-line px-4 py-3 ${current ? "bg-accent/8" : "bg-surface/60"}`}>
-                    <span className={`font-brand text-[1.5rem] leading-none ${current ? "text-accent-text" : "text-fg/40"}`}>{rank(milestone)}</span>
-                    <h3 className="m-0 font-display text-[1.15rem] font-[650] leading-none tracking-[-0.02em] text-fg">{milestone.title}</h3>
-                    {current && <span className={`${monoTag} bg-accent px-2 py-1 text-accent-fg`}>Up next</span>}
-                    <span className={`${monoTag} text-fg-muted`}>Due {milestone.dateLabel} · {personName(people, milestone.ownerId)}</span>
-                    <span className={`${monoTag} ml-auto text-fg-muted`}>{done} / {milestone.tasks.length} done</span>
-                  </header>
-                  <div className="grid gap-px bg-line md:grid-cols-4">
+                  <h3 className="m-0">
+                    <button type="button" aria-expanded={expanded} onClick={() => toggleLane(milestone.id)}
+                      className={`flex w-full flex-wrap items-baseline gap-x-4 gap-y-1 px-4 py-3 text-left ${expanded ? "border-b border-line" : ""} ${current ? "bg-accent/8" : "bg-surface/60 hover:bg-surface"}`}>
+                      <span className={`font-mono text-[0.7rem] ${expanded ? "text-fg" : "text-fg-muted"}`} aria-hidden="true">{expanded ? "▾" : "▸"}</span>
+                      <span className={`font-brand text-[1.5rem] leading-none ${current ? "text-accent-text" : "text-fg/40"}`}>{rank(milestone)}</span>
+                      <span className="font-display text-[1.15rem] font-[650] leading-none tracking-[-0.02em] text-fg">{milestone.title}</span>
+                      {current && <span className={`${monoTag} bg-accent px-2 py-1 text-accent-fg`}>Up next</span>}
+                      <span className={`${monoTag} text-fg-muted`}>Due {milestone.dateLabel} · {personName(people, milestone.ownerId)}</span>
+                      <span className={`${monoTag} ml-auto flex gap-4 text-fg-muted`}>{waiting > 0 && <span className="text-caution">{waiting} for Dori</span>}<span>{done} / {milestone.tasks.length} done</span></span>
+                    </button>
+                  </h3>
+                  {expanded && <div className="grid gap-px bg-line md:grid-cols-4">
                     {taskStatuses.map(status => {
                       const cards = tasks.filter(task => task.status === status);
                       const key = dropKey(milestone, status);
@@ -214,7 +230,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                         </section>
                       );
                     })}
-                  </div>
+                  </div>}
                 </section>
               );
             })}

@@ -90,6 +90,10 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   await page.goto('/branding-plan/board');
   await expect(page.getByRole('heading',{name:'Who does what.'})).toBeVisible();
   await expect(page.getByRole('tab',{name:'Board'})).toHaveAttribute('aria-selected','true');
+  // Lanes start collapsed except the one up next.
+  await expect(page.getByRole('region',{name:'Design · To do'})).toBeVisible();
+  await expect(page.getByRole('region',{name:'Recipe · To do'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Expand all'}).click();
   await expect(page.getByRole('region',{name:'Recipe · To do'})).toBeVisible();
   await expect(page.getByRole('region',{name:'Recipe · Review'}).getByText('First bake',{exact:false})).toBeVisible();
   await expect(page.getByRole('region',{name:'Design',exact:true})).toContainText('Up next');
