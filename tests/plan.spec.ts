@@ -33,7 +33,9 @@ test("the first approved read seeds the plan; readers cannot change it",async({r
   expect(plan.milestones).toHaveLength(planMilestones.length);
   expect(plan.milestones.flatMap((m:{tasks:unknown[]})=>m.tasks)).toHaveLength(seededTasks);
   const event=plan.milestones.find((m:{id:string})=>m.id==='event');expect(event.dueOn).toBe('2026-10-17');expect(event.ownerId).toBe('estelle');expect(event.links.length).toBeGreaterThan(0);
-  const first=plan.milestones[0].tasks[0];expect(first).toMatchObject({id:'design-1',ownerId:'andras',dueOn:'2026-09-25',status:'todo',version:1});
+  const first=plan.milestones[0].tasks[0];expect(first).toMatchObject({id:'design-1',ownerId:'estelle',dueOn:'2026-09-25',status:'todo',version:1});
+  expect(plan.milestones.flatMap((m:{tasks:{ownerId:string|null}[]})=>m.tasks).filter((t:{ownerId:string|null})=>t.ownerId==='andras')).toHaveLength(0);
+  expect(plan.milestones.find((m:{id:string})=>m.id==='design').ownerId).toBe('dori');
   expect((await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{status:'doing',version:1}})).status()).toBe(403);
   expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'recipe',text:'Reader task',ownerId:null,dueOn:null}})).status()).toBe(403);
   // A second read does not seed twice.
@@ -49,14 +51,18 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   expect((await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{status:'doing',ownerId:'nobody',version:1}})).status()).toBe(400);
   expect((await request.patch('/api/plan/tasks/missing',{headers:{origin},data:{status:'doing',version:1}})).status()).toBe(404);
   const moved=await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{status:'doing',version:1}});
-  expect(moved.status()).toBe(200);expect((await moved.json()).task).toMatchObject({status:'doing',ownerId:'andras',version:2});
+  expect(moved.status()).toBe(200);expect((await moved.json()).task).toMatchObject({status:'doing',ownerId:'estelle',version:2});
   expect((await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{status:'done',version:1}})).status()).toBe(409);
   const reassigned=await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{ownerId:'estelle',version:2}});
   expect((await reassigned.json()).task).toMatchObject({status:'doing',ownerId:'estelle',version:3});
   const cleared=await request.patch('/api/plan/tasks/recipe-1',{headers:{origin},data:{ownerId:null,status:'done',version:3}});
   expect((await cleared.json()).task).toMatchObject({status:'done',ownerId:null,version:4});
   expect((await db.query("SELECT status,owner_id,actor FROM plan_task_event WHERE task_id='recipe-1' ORDER BY id")).rows).toEqual([
-    {status:'doing',owner_id:'andras',actor:'organiser@example.com'},{status:'doing',owner_id:'estelle',actor:'organiser@example.com'},{status:'done',owner_id:null,actor:'organiser@example.com'}]);
+    {status:'doing',owner_id:'estelle',actor:'organiser@example.com'},{status:'doing',owner_id:'estelle',actor:'organiser@example.com'},{status:'done',owner_id:null,actor:'organiser@example.com'}]);
+  // Review sits between doing and done.
+  const review=await request.patch('/api/plan/tasks/recipe-2',{headers:{origin},data:{status:'review',version:1}});
+  expect(review.status()).toBe(200);expect((await review.json()).task).toMatchObject({status:'review',ownerId:'estelle',version:2});
+  expect((await request.patch('/api/plan/tasks/recipe-3',{headers:{origin},data:{status:'approved',version:1}})).status()).toBe(400);
 
   expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'recipe',text:'no',ownerId:null,dueOn:null}})).status()).toBe(400);
   expect((await request.post('/api/plan',{headers:{origin},data:{milestoneId:'nowhere',text:'Print the price sign',ownerId:null,dueOn:null}})).status()).toBe(400);
@@ -68,15 +74,16 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   // The overview, plan and onsite pages read the same record: the done task, the new task, the milestones in due order.
   const plan=await (await request.get('/branding-plan/plan')).text();
   expect(plan).toContain('Done: </span>Lock the ingredient list, bag weight and product name');
+  expect(plan).toContain('In review: </span>First bake. Weigh the cooled yield');
   expect(plan).toContain('Print the price sign');
   expect(plan).toContain('href="/branding-plan/board"');
   expect(plan.indexOf('>Design<')).toBeLessThan(plan.indexOf('>Recipe<'));
   const onsite=await (await request.get('/branding-plan/onsite')).text();
   expect(onsite).toContain('Print the price sign');
   expect(onsite).toContain('Week 3 · Go / no-go, first batch, the Cup');
-  expect(onsite).not.toContain('Check which food-handling');
+  expect(onsite).not.toContain('Go / no-go: pouches');
   const overview=await (await request.get('/branding-plan')).text();
-  expect(overview).toContain('First bake. Weigh the cooled yield');
+  expect(overview).toContain('First bake. Weigh the cooled yield');expect(overview).toContain('with Dori for review');
   expect(overview).not.toContain('Lock the ingredient list, bag weight');
 
   // The board opens on the swimlanes and renders both views with live status.
@@ -84,6 +91,7 @@ test("editors move tasks, reassign owners and add tasks, with version and origin
   await expect(page.getByRole('heading',{name:'Who does what.'})).toBeVisible();
   await expect(page.getByRole('tab',{name:'Board'})).toHaveAttribute('aria-selected','true');
   await expect(page.getByRole('region',{name:'Recipe · To do'})).toBeVisible();
+  await expect(page.getByRole('region',{name:'Recipe · Review'}).getByText('First bake',{exact:false})).toBeVisible();
   await expect(page.getByRole('region',{name:'Design',exact:true})).toContainText('Up next');
   await page.getByRole('tab',{name:'Timeline'}).click();
   await expect(page).toHaveURL(/view=timeline/);

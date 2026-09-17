@@ -17,7 +17,7 @@ const done = progress(plan.milestones);
 ---
 
 <BrandingLayout title="Plan" description="Project Molt: seven milestones with a due date each, and the tasks under them with owners." kicker="Project Molt / Plan" heading="Seven milestones">
-  <p slot="lead">Each milestone has one due date, one owner and a line that says when it is done. The tasks under it have owners too. Move a task on the <a href="/branding-plan/board">board</a> and it moves here. ✔ done, → in progress, {done.done} of {done.total} done.{next && ` Up next: ${next.title}, due ${next.dateLabel}.`}{!live && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
+  <p slot="lead">Each milestone has one due date, one owner and a line that says when it is done. The tasks under it have owners too. Estelle does the work and moves it to review; Dori signs it off. Move a task on the <a href="/branding-plan/board">board</a> and it moves here. → in progress, ○ in review, ✔ done: {done.done} of {done.total}.{next && ` Up next: ${next.title}, due ${next.dateLabel}.`}{!live && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
 
   <section id="milestones" class="scroll-mt-24" data-reveal>
     <PlanTimeline steps={steps} codes={codes} />

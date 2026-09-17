@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 // Project Molt plan: seven milestones with one due date each, and the tasks
-// under them, each with an owner and a to-do / doing / done status. Shared by
+// under them, each with an owner and a to do / doing / review / done status
+// (Estelle does the work and moves it to review; Dori signs it off). Shared by
 // the plan, onsite and overview pages and the board; stored in plan_* tables
-// (009, reshaped by 010).
+// (009, reshaped by 010 and 011).
 
-export const taskStatuses = ["todo", "doing", "done"] as const;
+export const taskStatuses = ["todo", "doing", "review", "done"] as const;
 export type TaskStatus = (typeof taskStatuses)[number];
-export const statusLabels: Record<TaskStatus, string> = { todo: "To do", doing: "Doing", done: "Done" };
+export const statusLabels: Record<TaskStatus, string> = { todo: "To do", doing: "Doing", review: "Review", done: "Done" };
 
 export type PlanPerson = { id: string; name: string; email: string | null; sort: number };
 export type PlanLink = { label: string; file: string };
@@ -47,7 +48,7 @@ export function personName(people: PlanPerson[], id: string | null) {
 export function progress(milestones: PlanMilestone[]) {
   const tasks = milestones.flatMap(milestone => milestone.tasks);
   const count = (status: TaskStatus) => tasks.filter(task => task.status === status).length;
-  return { total: tasks.length, todo: count("todo"), doing: count("doing"), done: count("done") };
+  return { total: tasks.length, todo: count("todo"), doing: count("doing"), review: count("review"), done: count("done") };
 }
 
 /** Milestones in the order they fall due. */

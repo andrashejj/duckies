@@ -7,7 +7,7 @@ import type { Step, StepTask } from "../../lib/plan-view";
 // status, owner, due date and urgency; a plain string is a bare task.
 interface Props { steps: Step[]; prefix?: string; start?: number; codes?: string[]; compact?: boolean; class?: string; }
 const { steps, prefix = "", start = 1, codes, compact = true, class: className } = Astro.props as Props;
-const glyph: Record<TaskStatus, string> = { todo: "/", doing: "→", done: "✔" };
+const glyph: Record<TaskStatus, string> = { todo: "/", doing: "→", review: "○", done: "✔" };
 const dueTone: Record<NonNullable<Urgency>, string> = { overdue: "text-alert", soon: "text-caution" };
 const asTask = (task: string | StepTask): StepTask => (typeof task === "string" ? { text: task } : task);
 ---
@@ -29,7 +29,7 @@ const asTask = (task: string | StepTask): StepTask => (typeof task === "string" 
             {step.tasks.map(asTask).map(task => (
               <li class:list={["relative grid gap-x-4 gap-y-1 pl-[1.15rem] text-[0.88rem] leading-[1.6] sm:grid-cols-[minmax(0,1fr)_auto]", task.status === "done" ? "text-fg-muted" : "text-fg/78"]} data-status={task.status ?? "todo"}>
                 <span class="absolute left-0 font-mono text-accent-text" aria-hidden="true">{glyph[task.status ?? "todo"]}</span>
-                <span class:list={[task.status === "done" && "line-through decoration-fg/30"]}>{task.status === "done" && <span class="sr-only">Done: </span>}{task.status === "doing" && <span class="sr-only">In progress: </span>}{task.text}</span>
+                <span class:list={[task.status === "done" && "line-through decoration-fg/30"]}>{task.status === "done" && <span class="sr-only">Done: </span>}{task.status === "doing" && <span class="sr-only">In progress: </span>}{task.status === "review" && <span class="sr-only">In review: </span>}{task.text}</span>
                 {(task.owner || task.due) && <span class="flex flex-wrap gap-x-3 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-fg-muted sm:justify-end">{task.owner && <span>{task.owner}</span>}{task.due && <span class:list={[task.urgency && dueTone[task.urgency]]}>{task.due}{task.urgency === "overdue" && " · late"}</span>}</span>}
               </li>
             ))}

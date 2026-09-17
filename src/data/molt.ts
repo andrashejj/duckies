@@ -77,7 +77,8 @@ export const onsite = {
 };
 
 export const rhythm = [
-  { name: "Andras, remote", text: "Ten minutes on WhatsApp every evening in week one, then a 30-minute call Tuesday and Friday. Anything that costs money or changes the label goes through Andras." },
+  { name: "Dori reviews", text: "Estelle moves a task to Review when it is ready. Dori signs it off or sends it back within a day, and makes the calls: design, packaging, price, go / no-go, heat draw." },
+  { name: "Andras, remote", text: "A 30-minute call Tuesday and Friday. No tasks of his own; money questions still go through him." },
   { name: "Abiguelle, three moments", text: "Shop introductions, the first-batch bake and the granola stall on Cup day. Estelle does not wait on her in between." },
   { name: "Friday numbers", text: "Sheet updated with actuals, logs photographed, a five-line WhatsApp update to Andras." },
   { name: "Training days", text: "Monday and Friday, 4–6 pm at the beach. Tastings, photo permissions, pre-orders and the maker story all happen there." },

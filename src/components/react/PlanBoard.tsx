@@ -4,12 +4,14 @@ import { monoTag, outlineButton } from "../../lib/plan-ui";
 
 // Two views of the Project Molt plan tables. Board: one swimlane per milestone
 // in due order (the soonest unfinished one flagged "up next"), to do / doing /
-// done across. Timeline: the same milestones as a list. Same data, same filters.
+// review / done across. Timeline: the same milestones as a list. Same data,
+// same filters.
 type View = "timeline" | "board";
 type OwnerFilter = "all" | "none" | string;
 const statusTone: Record<TaskStatus, string> = {
   todo: "border-line text-fg-muted",
   doing: "border-accent bg-accent/10 text-accent-text",
+  review: "border-caution text-caution",
   done: "border-line bg-fg/5 text-fg-muted line-through decoration-fg/40",
 };
 const dueTone: Record<NonNullable<Urgency>, string> = { overdue: "text-alert", soon: "text-caution" };
@@ -165,8 +167,8 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
               </form>
             </details>
           )}
-          <div className="mt-4 hidden grid-cols-3 gap-4 md:grid" aria-hidden="true">
-            {taskStatuses.map(status => <p key={status} className={`m-0 border-b-2 border-line pb-2 ${monoTag} ${status === "doing" ? "text-accent-text" : "text-fg"}`}>{statusLabels[status]}</p>)}
+          <div className="mt-4 hidden grid-cols-4 gap-4 md:grid" aria-hidden="true">
+            {taskStatuses.map(status => <p key={status} className={`m-0 border-b-2 border-line pb-2 ${monoTag} ${status === "doing" ? "text-accent-text" : status === "review" ? "text-caution" : "text-fg"}`}>{statusLabels[status]}{status === "review" && <span className="ml-2 font-normal normal-case tracking-normal text-fg-muted">for Dori</span>}</p>)}
           </div>
           <div className="mt-2 flex flex-col gap-6">
             {lanes.map(({ milestone, tasks }) => {
@@ -181,7 +183,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                     <span className={`${monoTag} text-fg-muted`}>Due {milestone.dateLabel} · {personName(people, milestone.ownerId)}</span>
                     <span className={`${monoTag} ml-auto text-fg-muted`}>{done} / {milestone.tasks.length} done</span>
                   </header>
-                  <div className="grid gap-px bg-line md:grid-cols-3">
+                  <div className="grid gap-px bg-line md:grid-cols-4">
                     {taskStatuses.map(status => {
                       const cards = tasks.filter(task => task.status === status);
                       const key = dropKey(milestone, status);
@@ -195,6 +197,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                               <li key={task.id} draggable={plan.canEdit && !busy.has(task.id)} onDragStart={e => { setDragging(task.id); e.dataTransfer.effectAllowed = "move"; }} onDragEnd={() => { setDragging(null); setDropTarget(null); }}
                                 className={`border border-line bg-surface p-3 ${plan.canEdit ? "cursor-grab active:cursor-grabbing" : ""} ${dragging === task.id ? "opacity-40" : ""} ${busy.has(task.id) ? "opacity-60" : ""}`}>
                                 <p className={`m-0 text-[0.88rem] leading-[1.55] ${status === "done" ? "text-fg-muted line-through decoration-fg/40" : "text-fg"}`}>{task.text}</p>
+                                {status === "review" && <p className={`mt-2 mb-0 ${monoTag} text-caution`}>Waiting for Dori</p>}
                                 <div className="mt-3 flex flex-wrap items-center gap-2">
                                   <OwnerControl task={task} plan={plan} busy={busy.has(task.id)} onChange={ownerId => void patchTask(task, { ownerId })} />
                                   <DueTag task={task} now={now} />
@@ -246,7 +249,7 @@ function TaskRow({ task, plan, now, busy, onPatch }: { task: PlanTask; plan: Pla
           <div role="group" aria-label="Status" className="flex h-fit flex-none border border-line">
             {taskStatuses.map(status => (
               <button key={status} type="button" disabled={busy} aria-pressed={task.status === status} onClick={() => task.status !== status && onPatch({ status })} title={statusLabels[status]}
-                className={`min-h-8 min-w-8 px-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-50 ${task.status === status ? (status === "done" ? "bg-fg text-canvas" : status === "doing" ? "bg-accent text-accent-fg" : "bg-line text-fg") : "text-fg-muted hover:text-fg"}`}>
+                className={`min-h-8 min-w-8 px-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-50 ${task.status === status ? (status === "done" ? "bg-fg text-canvas" : status === "doing" ? "bg-accent text-accent-fg" : status === "review" ? "bg-caution text-canvas" : "bg-line text-fg") : "text-fg-muted hover:text-fg"}`}>
                 {statusLabels[status]}
               </button>
             ))}
