@@ -20,7 +20,15 @@ Child registration additionally requires `WAIVER_SIGNING_PRIVATE_KEY` before inv
 
 Semester tracking and profile photos additionally require `004-semesters-photos.sql`, applied through the same migration command before deploying the updated app. This preserves existing payments under their original semester and seeds September 2026 as current. The Node function bundle includes Sharp for image validation and processing. Photos live in PostgreSQL; no public bucket or extra storage credentials are needed. Verify semester switching preserves old payment statuses, only Andras can change them, and a private registration upload appears on the organiser overview after signing. Include photo tables in database backups.
 
-The production database has been provisioned as `sunsetduckies-production` (Neon free plan, Frankfurt), and migrations 001–008 have been applied (through branding access on 14 September 2026). Runtime credentials are configured on the Vercel production environment; keep preview and development disconnected from this database. The canonical auth origin is `https://www.sunsetduckies.com`. Migration commands should use the provider's unpooled connection, with `sslmode=verify-full`; runtime uses the pooled connection with the same TLS verification. The shop's founding catalogue is seeded as drafts for organiser review.
+The production database has been provisioned as `sunsetduckies-production` (Neon free plan, Frankfurt), and migrations 001–009 have been applied (through the plan board on 17 September 2026). Runtime credentials are configured on the Vercel production environment; keep preview and development disconnected from this database. The canonical auth origin is `https://www.sunsetduckies.com`. Migration commands should use the provider's unpooled connection, with `sslmode=verify-full`; runtime uses the pooled connection with the same TLS verification. The shop's founding catalogue is seeded as drafts for organiser review.
+
+To apply a new migration to production from a linked checkout, pull the production environment and run the migrator over the unpooled connection. The Neon integration names that connection `DATABASE_URL_UNPOOLED` (same endpoint and database as the runtime `DUCKIES_DATABASE_URL`, without the pooler host); it is pulled with `sslmode=require`, so the command upgrades it to `verify-full`. The pulled file is gitignored — delete it afterwards.
+
+```bash
+vercel env pull .env.production.local --environment=production --yes
+DUCKIES_DATABASE_URL="$(grep '^DATABASE_URL_UNPOOLED=' .env.production.local | cut -d= -f2- | tr -d '"' | sed 's/sslmode=require/sslmode=verify-full/')" pnpm db:migrate
+rm .env.production.local
+```
 
 `vercel.json` places the Node functions in Frankfurt alongside the database. Production deployments build from Git on Vercel; do not upload the locally built macOS Sharp binaries as a prebuilt Linux deployment.
 
