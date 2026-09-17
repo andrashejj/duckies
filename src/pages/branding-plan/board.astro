@@ -6,6 +6,6 @@ if(!Astro.locals.branding?.canView)return Astro.redirect("/branding-plan");
 const view=Astro.url.searchParams.get("view")==="timeline"?"timeline":"board";
 ---
 <BrandingLayout title="Plan board" description="Project Molt milestones and tasks: who does what, by when, and where it stands." kicker="Project Molt / Board" heading="Who does what.">
- <p slot="lead">Every task from the <a href="/branding-plan/plan">plan</a> and the <a href="/branding-plan/onsite">three weeks onsite</a>, with an owner and a status. Board is by to do, doing and done; Timeline is the same tasks by date. Drag a card, or use its status menu on a phone.</p>
+ <p slot="lead">One row per milestone, soonest due first, with the next one marked. To do, doing and done across. Late tasks and tasks due this week are flagged. Drag a card, or use its status menu on a phone. The <a href="/branding-plan/plan">plan</a> and <a href="/branding-plan/onsite">on the ground</a> read the same rows.</p>
  <PlanBoard client:load initialView={view}/>
 </BrandingLayout>

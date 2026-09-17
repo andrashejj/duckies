@@ -39,19 +39,19 @@ export async function readPlanBody(request: Request) {
   try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { throw new PlanError("Invalid JSON."); }
 }
 
-type MilestoneRow = { id: string; track: PlanMilestone["track"]; code: string; title: string; date_label: string; starts_on: string; ends_on: string; deliverable: string; owner_id: string | null; links: PlanMilestone["links"]; sort: number };
+type MilestoneRow = { id: string; code: string; title: string; date_label: string; due_on: string; deliverable: string; owner_id: string | null; links: PlanMilestone["links"]; sort: number };
 type TaskRow = { id: string; milestone_id: string; text: string; owner_id: string | null; due_on: string | null; status: TaskStatus; sort: number; version: number; updated_at: Date };
 const taskFromRow = (row: TaskRow): PlanTask => ({ id: row.id, milestoneId: row.milestone_id, text: row.text, ownerId: row.owner_id, dueOn: row.due_on, status: row.status, sort: row.sort, version: row.version, updatedAt: row.updated_at.toISOString() });
 
 async function readPlan(client: pg.PoolClient | pg.Pool): Promise<Omit<PlanData, "canEdit">> {
   // Dates come back as text so calendar days never shift with the server timezone.
   const people = await client.query<PlanPerson>("SELECT id,name,email,sort FROM plan_person ORDER BY sort,id");
-  const milestones = await client.query<MilestoneRow>("SELECT id,track,code,title,date_label,starts_on::text,ends_on::text,deliverable,owner_id,links,sort FROM plan_milestone ORDER BY sort,id");
+  const milestones = await client.query<MilestoneRow>("SELECT id,code,title,date_label,due_on::text,deliverable,owner_id,links,sort FROM plan_milestone ORDER BY sort,id");
   const tasks = await client.query<TaskRow>("SELECT id,milestone_id,text,owner_id,due_on::text,status,sort,version,updated_at FROM plan_task ORDER BY sort,created_at,id");
   return {
     people: people.rows,
     milestones: milestones.rows.map(row => ({
-      id: row.id, track: row.track, code: row.code, title: row.title, dateLabel: row.date_label, startsOn: row.starts_on, endsOn: row.ends_on,
+      id: row.id, code: row.code, title: row.title, dateLabel: row.date_label, dueOn: row.due_on,
       deliverable: row.deliverable, ownerId: row.owner_id, links: row.links, sort: row.sort,
       tasks: tasks.rows.filter(task => task.milestone_id === row.id).map(taskFromRow),
     })),
@@ -74,8 +74,8 @@ async function seedPlan() {
     for (const [index, person] of planPeople.entries())
       await client.query("INSERT INTO plan_person(id,name,email,sort) VALUES($1,$2,$3,$4) ON CONFLICT(id) DO NOTHING", [person.id, person.name, person.email, index]);
     for (const [index, milestone] of planMilestones.entries()) {
-      await client.query("INSERT INTO plan_milestone(id,track,code,title,date_label,starts_on,ends_on,deliverable,owner_id,links,sort) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
-        [milestone.id, milestone.track, milestone.code, milestone.title, milestone.dateLabel, milestone.startsOn, milestone.endsOn, milestone.deliverable, milestone.owner, JSON.stringify(milestone.links ?? []), index]);
+      await client.query("INSERT INTO plan_milestone(id,code,title,date_label,due_on,deliverable,owner_id,links,sort) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+        [milestone.id, milestone.code, milestone.title, milestone.dateLabel, milestone.dueOn, milestone.deliverable, milestone.owner, JSON.stringify(milestone.links ?? []), index]);
       for (const [taskIndex, task] of milestone.tasks.entries())
         await client.query("INSERT INTO plan_task(id,milestone_id,text,owner_id,due_on,sort) VALUES($1,$2,$3,$4,$5,$6)",
           [`${milestone.id}-${taskIndex + 1}`, milestone.id, task.text, task.owner, task.due, taskIndex]);
@@ -121,29 +121,16 @@ export async function createTask(input: { milestoneId: string; text: string; own
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
 }
 
-// ---------- The plan and onsite pages (branding-plan/plan, /onsite) ----------
-export type BriefStep = { date: string; title: string; deliverable: string; tasks: string[]; links?: { label: string; file: string }[]; status?: "now"; owner?: string };
-export type BriefPlan = { explorationSteps: BriefStep[]; estelleWeeks: BriefStep[]; hardDates: { date: string; milestone: string; why: string }[]; live: boolean };
+// ---------- Server-rendered pages (overview, plan, onsite) ----------
 const seedAsPlan = (): Omit<PlanData, "canEdit"> => ({
   people: planPeople.map((person, sort) => ({ ...person, sort })),
   milestones: planMilestones.map((m, sort) => ({
-    id: m.id, track: m.track, code: m.code, title: m.title, dateLabel: m.dateLabel, startsOn: m.startsOn, endsOn: m.endsOn, deliverable: m.deliverable, ownerId: m.owner, links: m.links ?? [], sort,
+    id: m.id, code: m.code, title: m.title, dateLabel: m.dateLabel, dueOn: m.dueOn, deliverable: m.deliverable, ownerId: m.owner, links: m.links ?? [], sort,
     tasks: m.tasks.map((task, index) => ({ id: `${m.id}-${index + 1}`, milestoneId: m.id, text: task.text, ownerId: task.owner, dueOn: task.due, status: "todo" as const, sort: index, version: 1, updatedAt: "" })),
   })),
 });
-/** Milestones and tasks shaped for the brief's timelines; the seed stands in when the database is unreachable. */
-export async function loadPlanForBrief(today = new Date().toISOString().slice(0, 10)): Promise<BriefPlan> {
-  let plan: Omit<PlanData, "canEdit">; let live = true;
-  try { plan = await loadPlan(); } catch { console.error("Plan could not be read for the brief; showing the seed."); plan = seedAsPlan(); live = false; }
-  const name = (id: string | null) => (id ? plan.people.find(person => person.id === id)?.name : undefined);
-  const mark = (task: PlanTask) => (task.status === "done" ? `✔ ${task.text}` : task.status === "doing" ? `→ ${task.text}` : task.text);
-  const steps = (track: PlanMilestone["track"]) => plan.milestones.filter(m => m.track === track).sort((a, b) => a.sort - b.sort);
-  const current = steps("phase1").find(m => m.startsOn <= today && today <= m.endsOn) ?? steps("phase1").find(m => today <= m.endsOn);
-  const toStep = (m: PlanMilestone): BriefStep => ({ date: m.dateLabel, title: m.title, deliverable: m.deliverable, tasks: m.tasks.map(mark), links: m.links, owner: name(m.ownerId), status: m.id === current?.id ? "now" : undefined });
-  return {
-    explorationSteps: steps("phase1").map(toStep),
-    estelleWeeks: steps("estelle").map(toStep),
-    hardDates: steps("dates").map(m => ({ date: m.dateLabel, milestone: m.title, why: m.deliverable })),
-    live,
-  };
+/** The plan for a server-rendered page; the seed stands in (flagged `live: false`) when the database is unreachable. */
+export async function loadPlanForPages(): Promise<{ plan: Omit<PlanData, "canEdit">; live: boolean }> {
+  try { return { plan: await loadPlan(), live: true }; }
+  catch { console.error("Plan could not be read; showing the seed."); return { plan: seedAsPlan(), live: false }; }
 }

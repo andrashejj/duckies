@@ -1,53 +1,41 @@
 ---
 import BrandingLayout from "../../layouts/BrandingLayout.astro";
-import PlanCallout from "../../components/plan/PlanCallout.astro";
 import PlanSectionHead from "../../components/plan/PlanSectionHead.astro";
-import PlanTable from "../../components/plan/PlanTable.astro";
 import PlanTimeline from "../../components/plan/PlanTimeline.astro";
-import { cardTitle } from "../../lib/plan-ui";
-import { gates, pilotSteps } from "../../data/molt";
-import { loadPlanForBrief } from "../../lib/server/plan";
+import { cardTitle, outlineButton } from "../../lib/plan-ui";
+import { after } from "../../data/molt";
+import { nextMilestone, progress } from "../../lib/plan";
+import { milestoneSteps, todayIso } from "../../lib/plan-view";
+import { loadPlanForPages } from "../../lib/server/plan";
 export const prerender = false;
 if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
-const { explorationSteps, hardDates, live } = await loadPlanForBrief();
-
-const gate = "bg-surface p-8 [&_li]:relative [&_li]:border-t [&_li]:border-line [&_li]:py-[0.65rem] [&_li]:pl-6 [&_li]:text-[0.92rem] [&_li]:text-fg-muted [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:text-accent-text [&_li]:before:content-['✓']";
+const { plan, live } = await loadPlanForPages();
+const today = todayIso();
+const { steps, codes } = milestoneSteps(plan, today);
+const next = nextMilestone(plan.milestones);
+const done = progress(plan.milestones);
 ---
 
-<BrandingLayout title="Plan" description="Project Molt in two phases: the first batch at the Cup on 17/18 October, then the Tamarin pilot to 28 February." kicker="Project Molt / Plan" heading="Two phases, two dates">
-  <p slot="lead">Phase 1 gets the first batch of granola to the Cup on 17/18 October. Phase 2 runs the Tamarin pilot and ends with the rollout decision on 28 February. Owners and status live on the <a href="/branding-plan/board">board</a>; ✔ marks a task done, → one in progress.{!live && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
+<BrandingLayout title="Plan" description="Project Molt: seven milestones with a due date each, and the tasks under them with owners." kicker="Project Molt / Plan" heading="Seven milestones">
+  <p slot="lead">Each milestone has one due date, one owner and a line that says when it is done. The tasks under it have owners too. Move a task on the <a href="/branding-plan/board">board</a> and it moves here. ✔ done, → in progress, {done.done} of {done.total} done.{next && ` Up next: ${next.title}, due ${next.dateLabel}.`}{!live && " The database is unreachable right now, so this shows the seed plan without live status."}</p>
 
-  <section id="phase-1" class="scroll-mt-24" data-reveal>
-    <PlanSectionHead size="md" overline="Phase 1 · Now to 18 October" title="Get the granola to the Cup" class="mb-10">
-      <p>Four and a half weeks to lock the recipe, get it into a bag, tell people it is coming and sell the first batch at Sunset Duckies Cup Vol. 02.</p>
-    </PlanSectionHead>
-    <PlanCallout label="Due 17/18 October">First batch revealed and on sale at the Cup, a completed competition, a 48-hour report, and by 31 October an approved plan through February.</PlanCallout>
-    <PlanTimeline steps={explorationSteps} />
+  <section id="milestones" class="scroll-mt-24" data-reveal>
+    <PlanTimeline steps={steps} codes={codes} />
   </section>
 
-  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
-    <PlanSectionHead size="md" level="h3" overline="Working back from Saturday 17 October" title="Hard dates" class="mb-8">
-      <p>Stock pouches with printed labels are the only packaging route that fits. Custom-printed pouches take four to eight weeks plus shipping and are out for this batch.</p>
+  <section id="after" class="mt-[clamp(3.5rem,6vw,6rem)] scroll-mt-24" data-reveal>
+    <PlanSectionHead size="md" overline="After the Cup" title="November to February" class="mb-8">
+      <p>Not planned in tasks yet. What happens next depends on what the Cup shows.</p>
     </PlanSectionHead>
-    <PlanTable columns={["Date", "Milestone", "Why then"]} rows={hardDates.map(item => [item.date, item.milestone, item.why])} class="mt-0" />
-  </section>
-
-  <section id="phase-2" class="mt-[clamp(3.5rem,6vw,6rem)] scroll-mt-24" data-reveal>
-    <PlanSectionHead size="md" overline="Phase 2 · November to February" title="Prove it again" class="mb-10">
-      <p>Improve after the launch, prove repeat demand, move agreed work into local hands and turn the Tamarin evidence into the rollout plan.</p>
-    </PlanSectionHead>
-    <PlanCallout label="Due 28 February">Two product cycles, tested local ownership, actual economics and a costed rollout plan.</PlanCallout>
-    <PlanTimeline steps={pilotSteps} prefix="P" />
-  </section>
-
-  <section class="mt-[clamp(3.5rem,6vw,6rem)]" data-reveal>
-    <PlanSectionHead size="md" overline="Delivery gates" title="A date is done when all of this exists" class="mb-10">
-      <p>Each gate is a checklist. Missing one item means the date is not met.</p>
-    </PlanSectionHead>
-    <div class="grid grid-cols-1 gap-px border border-line bg-line md:grid-cols-2">
-      {gates.map(item => (
-        <article class={gate}><time class="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-accent-text">{item.date}</time><h3 class={`${cardTitle} mt-[0.8rem] mb-6 text-[1.6rem] tracking-[-0.03em]`}>{item.title}</h3><ul class="m-0 list-none p-0">{item.items.map(line => <li>{line}</li>)}</ul></article>
+    <ol class="m-0 grid list-none grid-cols-1 border-t border-l border-line p-0 md:grid-cols-3">
+      {after.map(item => (
+        <li class="flex flex-col border-r border-b border-line bg-surface-2/60 p-7">
+          <span class="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-accent-text">{item.when}</span>
+          <h3 class={`${cardTitle} mt-6 mb-3 text-[1.35rem]`}>{item.title}</h3>
+          <p class="m-0 text-[0.92rem] leading-[1.55] text-fg-muted">{item.text}</p>
+          {"link" in item && item.link && <a href={item.link.file} target="_blank" rel="noreferrer" class={`${outlineButton} mt-6 self-start`}>{item.link.label} ↗</a>}
+        </li>
       ))}
-    </div>
+    </ol>
   </section>
 </BrandingLayout>

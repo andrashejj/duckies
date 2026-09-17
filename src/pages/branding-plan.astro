@@ -3,10 +3,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import BrandingNav from "../components/BrandingNav.astro";
 import BrandingTeaser from "../components/BrandingTeaser.astro";
 import { bKicker, cardTitle, monoMeta, overline, pageLead, pageTitle, sectionHeading } from "../lib/plan-ui";
-import { chain, deliverables, endGoal, molt, streams } from "../data/molt";
+import { chain, deliverables, endGoal, molt } from "../data/molt";
 import { site } from "../data/site";
+import { openTasks, todayIso } from "../lib/plan-view";
+import { loadPlanForPages } from "../lib/server/plan";
 export const prerender = false;
 const approved = Astro.locals.branding?.canView ?? false;
+// Only approved readers touch the plan tables; the teaser never queries them.
+const next = approved ? openTasks((await loadPlanForPages()).plan, "estelle", todayIso(), 6) : [];
+const dueTone = { overdue: "text-alert", soon: "text-caution" } as const;
 
 const places = [
   { href: "/branding-plan/board", label: "Board", text: "Every task with an owner and a status." },
@@ -64,16 +69,18 @@ const linkCard = "group flex flex-col gap-3 border-r border-b border-line bg-sur
           <a href="/branding-plan/vision" class="mt-8 inline-block font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-fg underline underline-offset-4 hover:text-accent-text">Vision →</a>
         </div>
         <div class="px-[clamp(1.5rem,5vw,5rem)] py-[clamp(3rem,5vw,5rem)]">
-          <p class={overline}>Estelle's three weeks · 29 Sep – 19 Oct</p>
-          <ol class="m-0 list-none p-0">
-            {streams.map(stream => (
-              <li class="grid grid-cols-[2rem_minmax(0,1fr)] items-baseline gap-x-3 border-t border-line py-[0.8rem] first:border-t-0">
-                <span class="font-brand text-[1.4rem] leading-none text-fg/40">{stream.code}</span>
-                <div><strong class="font-display text-[1.05rem] font-[650] text-fg">{stream.name}</strong><span class="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.06em] text-accent-text">{stream.target}</span></div>
-              </li>
-            ))}
-          </ol>
-          <a href="/branding-plan/onsite" class="mt-8 inline-block font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-fg underline underline-offset-4 hover:text-accent-text">On the ground →</a>
+          <p class={overline}>Estelle's next tasks · 29 Sep – 19 Oct onsite</p>
+          {next.length > 0 ? (
+            <ol class="m-0 list-none p-0">
+              {next.map(task => (
+                <li class="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 border-t border-line py-[0.8rem] first:border-t-0">
+                  <div><span class="text-[0.95rem] leading-[1.5] text-fg">{task.text}</span><span class="mt-1 block font-mono text-[0.62rem] uppercase tracking-[0.08em] text-accent-text">{task.milestone}{task.status === "doing" && " · in progress"}</span></div>
+                  <span class:list={["font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-fg-muted", task.urgency && dueTone[task.urgency]]}>{task.due}{task.urgency === "overdue" && " · late"}</span>
+                </li>
+              ))}
+            </ol>
+          ) : <p class="m-0 text-[0.95rem] text-fg-muted">Nothing open. Everything Estelle owns is done.</p>}
+          <a href="/branding-plan/onsite" class="mt-8 inline-block font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-fg underline underline-offset-4 hover:text-accent-text">All her tasks, week by week →</a>
         </div>
       </div>
     </section>

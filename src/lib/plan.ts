@@ -1,21 +1,19 @@
 import { z } from "zod";
 
-// Project Molt plan: milestones (timeline steps and hard dates) and the tasks
+// Project Molt plan: seven milestones with one due date each, and the tasks
 // under them, each with an owner and a to-do / doing / done status. Shared by
-// the brief, the timeline and the board; stored in plan_* tables (009).
+// the plan, onsite and overview pages and the board; stored in plan_* tables
+// (009, reshaped by 010).
 
-export const planTracks = ["phase1", "estelle", "dates"] as const;
-export type PlanTrack = (typeof planTracks)[number];
 export const taskStatuses = ["todo", "doing", "done"] as const;
 export type TaskStatus = (typeof taskStatuses)[number];
 export const statusLabels: Record<TaskStatus, string> = { todo: "To do", doing: "Doing", done: "Done" };
-export const trackLabels: Record<PlanTrack, string> = { phase1: "Phase 1", estelle: "Estelle onsite", dates: "Hard date" };
 
 export type PlanPerson = { id: string; name: string; email: string | null; sort: number };
 export type PlanLink = { label: string; file: string };
 export type PlanTask = { id: string; milestoneId: string; text: string; ownerId: string | null; dueOn: string | null; status: TaskStatus; sort: number; version: number; updatedAt: string };
 export type PlanMilestone = {
-  id: string; track: PlanTrack; code: string; title: string; dateLabel: string; startsOn: string; endsOn: string;
+  id: string; code: string; title: string; dateLabel: string; dueOn: string;
   deliverable: string; ownerId: string | null; links: PlanLink[]; sort: number; tasks: PlanTask[];
 };
 export type PlanData = { people: PlanPerson[]; milestones: PlanMilestone[]; canEdit: boolean };
@@ -50,4 +48,43 @@ export function progress(milestones: PlanMilestone[]) {
   const tasks = milestones.flatMap(milestone => milestone.tasks);
   const count = (status: TaskStatus) => tasks.filter(task => task.status === status).length;
   return { total: tasks.length, todo: count("todo"), doing: count("doing"), done: count("done") };
+}
+
+/** Milestones in the order they fall due. */
+export function byDue(milestones: PlanMilestone[]) {
+  return [...milestones].sort((a, b) => a.dueOn.localeCompare(b.dueOn) || a.sort - b.sort);
+}
+/** The soonest milestone that still has open tasks: the one the board flags as up next. */
+export function nextMilestone(milestones: PlanMilestone[]) {
+  return byDue(milestones).find(milestone => milestone.tasks.some(task => task.status !== "done")) ?? null;
+}
+/** Days from `today` to an ISO date; negative when it has passed. */
+export function daysUntil(iso: string, today: string) {
+  return Math.round((Date.parse(iso) - Date.parse(today)) / 86_400_000);
+}
+export type Urgency = "overdue" | "soon" | null;
+/** Open tasks that have slipped, or fall due within the week, get flagged on every page. */
+export function urgency(task: Pick<PlanTask, "dueOn" | "status">, today: string): Urgency {
+  if (!task.dueOn || task.status === "done") return null;
+  const days = daysUntil(task.dueOn, today);
+  return days < 0 ? "overdue" : days <= 7 ? "soon" : null;
+}
+
+// Estelle's onsite weeks: the same tasks bucketed by when they fall due.
+export const onsiteWeeks = [
+  { id: "before", title: "Before she lands", dateLabel: "By Mon 28 Sep", until: "2026-09-28" },
+  { id: "w1", title: "Week 1 · Land, bake, first taste", dateLabel: "Tue 29 Sep – Sun 4 Oct", until: "2026-10-04" },
+  { id: "w2", title: "Week 2 · Shops, customers, the numbers", dateLabel: "Mon 5 – Sun 11 Oct", until: "2026-10-11" },
+  { id: "w3", title: "Week 3 · Go / no-go, first batch, the Cup", dateLabel: "Mon 12 – Sun 18 Oct", until: "2026-10-18" },
+  { id: "after", title: "Handover", dateLabel: "From Mon 19 Oct", until: "9999-12-31" },
+] as const;
+export function tasksByWeek(milestones: PlanMilestone[], ownerId: string) {
+  const tasks = milestones.flatMap(milestone => milestone.tasks.filter(task => task.ownerId === ownerId).map(task => ({ task, milestone })));
+  tasks.sort((a, b) => (a.task.dueOn ?? "9999").localeCompare(b.task.dueOn ?? "9999") || a.milestone.sort - b.milestone.sort || a.task.sort - b.task.sort);
+  let rest = tasks;
+  return onsiteWeeks.map(week => {
+    const inWeek = rest.filter(entry => (entry.task.dueOn ?? "9999-12-31") <= week.until);
+    rest = rest.filter(entry => !inWeek.includes(entry));
+    return { ...week, entries: inWeek };
+  });
 }
