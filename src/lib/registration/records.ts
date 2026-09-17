@@ -9,7 +9,7 @@ import {
 } from "node:crypto";
 import { getDatabase } from "../server/db";
 import { waiver, WAIVER_VERSION } from "./policy";
-import { registrationSchema, type RegistrationInput } from "./schema";
+import { ageAt, registrationSchema, type RegistrationInput } from "./schema";
 import { getSemester } from "./semesters";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
 export const sha256 = (value: string | Buffer) =>
@@ -38,6 +38,14 @@ function key() {
     throw new Error("An Ed25519 waiver key is required.");
   return result;
 }
+// The latest payment event decides: registration only opens once the semester is paid.
+export async function isPaid(kidId: string, term: string) {
+  const { rows } = await getDatabase().query(
+    "SELECT status FROM club_payment_event WHERE kid_id=$1 AND term=$2 ORDER BY recorded_at DESC, id DESC LIMIT 1",
+    [kidId, term],
+  );
+  return rows[0]?.status === "paid";
+}
 export async function issueLink(
   kidId: string,
   userId: string,
@@ -45,6 +53,11 @@ export async function issueLink(
 ) {
   const semester = await getSemester(termId);
   key(); // Never issue a link whose signature cannot be stored.
+  if (!(await isPaid(kidId, semester.id)))
+    throw new RegistrationError(
+      `Record the ${semester.label} payment first. Registration links go out once the membership is paid.`,
+      409,
+    );
   const db = await getDatabase().connect();
   try {
     await db.query("BEGIN");
@@ -131,22 +144,32 @@ export async function completeRegistration(
     const link = links.rows[0];
     if (!link)
       throw new RegistrationError("This link is invalid or has expired.", 404);
-    if (link.completed_at)
+    // A completed link can only be re-signed as an explicit correction of the
+    // record it produced, so a replayed first submission still fails.
+    const previous = await db.query(
+      "SELECT id FROM club_signed_waiver WHERE link_id=$1 ORDER BY signed_at DESC LIMIT 1",
+      [link.id],
+    );
+    const { supersedes, ...registration } = parsed.data;
+    if (link.completed_at && supersedes !== previous.rows[0]?.id)
       throw new RegistrationError(
-        "This form has already been signed. Download the saved copy or ask the club for a correction link.",
+        "This form has already been signed. Reload the page to edit the signed details.",
         409,
       );
+    if (!link.completed_at && supersedes)
+      throw new RegistrationError("There is no signed record to correct yet.");
     const snapshot: SignedSnapshot = {
       id: randomUUID(),
       kidId: link.kid_id,
       term: link.term,
       signedAt: new Date().toISOString(),
       version: WAIVER_VERSION,
-      registration: parsed.data,
+      registration,
       policy: waiver,
       evidence: {
         method: "private-link-electronic-signature",
         linkId: link.id,
+        ...(supersedes ? { supersedes } : {}),
         issuedAt: link.created_at.toISOString(),
         ip: evidence.ip.slice(0, 100),
         userAgent: evidence.userAgent.slice(0, 500),
@@ -231,17 +254,6 @@ export function auditRecord(record: any) {
     signatureBase64: record.seal,
     publicKey: record.public_key,
   };
-}
-export function ageAt(dateOfBirth: string, today = new Date()) {
-  const birth = new Date(dateOfBirth + "T00:00:00Z");
-  let age = today.getUTCFullYear() - birth.getUTCFullYear();
-  if (
-    today.getUTCMonth() < birth.getUTCMonth() ||
-    (today.getUTCMonth() === birth.getUTCMonth() &&
-      today.getUTCDate() < birth.getUTCDate())
-  )
-    age--;
-  return age;
 }
 export type OrganiserKid = {
   id: string;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { WAIVER_VERSION } from "./policy";
+import { MINIMUM_AGE, WAIVER_VERSION } from "./policy";
 const text = (max: number) =>
   z
     .string()
@@ -29,24 +29,29 @@ export const registrationSchema = z
   .object({
     version: z.literal(WAIVER_VERSION),
     childName: text(80),
-    dateOfBirth: z.iso.date().refine((value) => {
-      const date = new Date(value + "T00:00:00Z");
-      const earliest = new Date();
-      earliest.setUTCFullYear(earliest.getUTCFullYear() - 25);
-      return date <= new Date() && date >= earliest;
-    }, "Enter a valid child's date of birth."),
+    dateOfBirth: z.iso
+      .date()
+      .refine((value) => {
+        const date = new Date(value + "T00:00:00Z");
+        const earliest = new Date();
+        earliest.setUTCFullYear(earliest.getUTCFullYear() - 25);
+        return date <= new Date() && date >= earliest;
+      }, "Enter a valid child's date of birth.")
+      .refine(
+        (value) => ageAt(value) >= MINIMUM_AGE,
+        `Sunset Duckies is for kids aged ${MINIMUM_AGE} and up. Message the club if your child is younger.`,
+      ),
     guardians: z.array(guardian).min(1).max(4),
     emergencyName: text(120),
     emergencyRelationship: text(60),
     emergencyPhone: phone,
     medicalNotes: z.string().trim().max(2000),
-    division: z.enum(["duckling", "duck"]),
-    rashieSize: text(40),
-    rashieName: text(80),
-    membership: z.enum(["child", "family"]),
+    // Training is all that membership covers; families pick the rhythm.
+    sessionsPerWeek: z.enum(["1", "2"]),
     media: z.enum(["yes", "no"]),
     parentInWater: z.literal(true),
     swimming: z.literal(true),
+    reef: z.literal(true),
     gear: z.literal(true),
     waiverAccepted: z.literal(true),
     electronicConsent: z.literal(true),
@@ -61,6 +66,9 @@ export const registrationSchema = z
       )
       .max(30)
       .default([]),
+    // Set when a guardian re-signs through the same link to correct details:
+    // the id of the record they are replacing. Absent on a first signature.
+    supersedes: z.uuid().optional(),
   })
   .strict()
   .refine(
@@ -72,6 +80,17 @@ export const registrationSchema = z
     },
   );
 export type RegistrationInput = z.infer<typeof registrationSchema>;
+export function ageAt(dateOfBirth: string, today = new Date()) {
+  const birth = new Date(dateOfBirth + "T00:00:00Z");
+  let age = today.getUTCFullYear() - birth.getUTCFullYear();
+  if (
+    today.getUTCMonth() < birth.getUTCMonth() ||
+    (today.getUTCMonth() === birth.getUTCMonth() &&
+      today.getUTCDate() < birth.getUTCDate())
+  )
+    age--;
+  return age;
+}
 export const paymentSchema = z
   .object({
     term: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,39}$/),

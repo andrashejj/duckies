@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type APIRequestContext } from "@playwright/test";
 import pg from "pg";
 import sharp from "sharp";
 import { signIn } from "./auth-helpers";
@@ -39,19 +39,25 @@ const registration = () => ({
   emergencyRelationship: "Aunt",
   emergencyPhone: "+230 5555 9999",
   medicalNotes: "",
-  division: "duck",
-  rashieSize: "M",
-  rashieName: "Duckie",
-  membership: "child",
+  sessionsPerWeek: "2",
   media: "no",
   parentInWater: true,
   swimming: true,
+  reef: true,
   gear: true,
   waiverAccepted: true,
   electronicConsent: true,
   signerName: "Parent Example",
   signature: [],
 });
+// Registration links only open once the semester is paid.
+async function pay(request: APIRequestContext, term = "2026-S2") {
+  const result = await request.post(`/api/kids/${kidId}/payment`, {
+    headers: { origin },
+    data: { term, status: "paid", amountMur: null, note: "Paid before registration" },
+  });
+  expect(result.status()).toBe(201);
+}
 test.beforeEach(async ({ request }) => {
   await db.query(
     'TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,club_semester CASCADE',
@@ -277,6 +283,7 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   request,
   playwright,
 }) => {
+  await pay(request);
   const invite = await (
     await request.post(`/api/kids/${kidId}/link`, { headers: { origin } })
   ).json();
@@ -300,11 +307,26 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   expect(
     (await db.query("SELECT * FROM club_registration_photo")).rowCount,
   ).toBe(0);
+  // The signed link stays open for corrections: a replacement photo is staged
+  // again and only reaches the profile with the corrected signature.
+  const before = (await db.query("SELECT updated_at FROM club_kid_photo")).rows[0].updated_at;
   expect(
     (
       await guest.put("/api/registration/photo", { headers, data: await png() })
     ).status(),
-  ).toBe(404);
+  ).toBe(200);
+  expect((await db.query("SELECT updated_at FROM club_kid_photo")).rows[0].updated_at).toEqual(before);
+  const info = await (await guest.get("/api/registration", { headers })).json();
+  expect(info.signed.hasPhoto).toBe(true);
+  expect(
+    (
+      await guest.post("/api/registration", {
+        headers,
+        data: { ...registration(), supersedes: info.signed.id },
+      })
+    ).status(),
+  ).toBe(201);
+  expect((await db.query("SELECT updated_at FROM club_kid_photo")).rows[0].updated_at).not.toEqual(before);
   await request.post("/api/semesters", { headers: { origin }, data: newTerm });
   const roster = await (
     await request.get(`/api/kids?term=${newTerm.id}`)
@@ -313,6 +335,14 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   expect(roster.kids[0].waiverId).toBeTruthy();
   expect(roster.kids[0].payment).toBeNull();
   expect(roster.kids[0].photoVersion).toBeTruthy();
+  expect(
+    (
+      await request.post(`/api/kids/${kidId}/link?term=${newTerm.id}`, {
+        headers: { origin },
+      })
+    ).status(),
+  ).toBe(409);
+  await pay(request, newTerm.id);
   const next = await (
     await request.post(`/api/kids/${kidId}/link?term=${newTerm.id}`, {
       headers: { origin },
@@ -321,13 +351,13 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   const newToken = new URLSearchParams(new URL(next.url).hash.slice(1)).get(
     "token",
   );
-  const info = await (
+  const nextInfo = await (
     await guest.get("/api/registration", {
       headers: { Authorization: `Bearer ${newToken}` },
     })
   ).json();
-  expect(info.termLabel).toBe(newTerm.label);
-  expect(info.childFeeMur).toBe(3500);
+  expect(nextInfo.termLabel).toBe(newTerm.label);
+  expect(nextInfo.signed).toBeNull(); // a fresh link never prefills earlier records
   await guest.dispose();
 });
 
@@ -335,6 +365,7 @@ test("revoked photo invitations cannot mutate a profile", async ({
   request,
   playwright,
 }) => {
+  await pay(request);
   const invite = await (
     await request.post(`/api/kids/${kidId}/link`, { headers: { origin } })
   ).json();

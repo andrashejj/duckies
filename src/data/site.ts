@@ -20,9 +20,9 @@ export const site = {
     familyFeeMur: 5000,
     feeLabel: "Rs 3,000 one kid · Rs 5,000 family",
     feeLabelLong: "Rs 3,000 for one child or Rs 5,000 for a family, per semester",
-    bringYourOwn: ["surfboard", "wetsuit"],
+    bringYourOwn: ["surfboard", "wetsuit or rashie"],
     fundingNote:
-      "Dues support regular training, club lycras, and safety gear so the focus stays on surfing.",
+      "Dues cover regular training — one or two sessions a week — and nothing else. Bring your own board and wetsuit; the Cup and other events are ticketed separately.",
   },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
@@ -51,6 +51,7 @@ export const site = {
     ] },
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
     { label: "Blog", labelFull: "The Logbook", href: "/blog" },
+    { label: "Photos", labelFull: "Gallery", href: "/gallery" },
     { label: "Branding", labelFull: "Branding", href: "/branding-plan" },
   ],
   stats: [
@@ -379,7 +380,7 @@ export const site = {
     rules: [
       {
         title: "BYO surfboard + wetsuit",
-        text: "New duckies may borrow or share a board for their free first session. After that, every kid brings their own board and wetsuit. We don't rent, lend, or store gear.",
+        text: "Every kid brings their own surfboard and a wetsuit or rashie — we recommend a wetsuit. No borrowing: the club doesn't rent, lend, or store gear, and there's no club rashie.",
       },
       {
         title: "One parent gets wet",
@@ -396,7 +397,7 @@ export const site = {
     rangeLabel: "7 yrs +",
     headline: "Built for kids 7 and up.",
     intro:
-      "We surf the shorebreak, so every duckie has to be water-confident from day one. Kids are usually ready from around 7 — but age is a guide, not a gate. The one thing that really matters:",
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. The minimum age is 7, and the one thing that really matters:",
     requirements: [
       {
         photo: "whitewater",
@@ -414,7 +415,7 @@ export const site = {
     kicker: "★ How to join · 4 steps",
     headline: "How to join the club, in four steps.",
     intro:
-      "We're volunteer-run, no online portal. The path is short: meet the crew on WhatsApp, sign the waiver, take one free first session, then make it official before joining regular training. Email anything signed straight to Andras.",
+      "We're volunteer-run. The path is short: meet the crew on WhatsApp, sign the waiver, take one free first session, then pay the semester fee — your private registration link follows on WhatsApp.",
     steps: [
       {
         id: "whatsapp",
@@ -483,30 +484,18 @@ export const site = {
         id: "register",
         accent: "coral",
         tag: "Step 04 · make it official",
-        title: "Join the club.",
+        title: "Pay, then register.",
         body:
-          "Once you know you're in, fill the club registration form and email it to Andras. Membership is Rs 3,000 per semester for one child, or Rs 5,000 for a family. It covers regular Monday and Friday training; competitions like the Cup are ticketed separately.",
+          "Once you know you're in, pay the semester fee — Rs 3,000 for one child or Rs 5,000 for a family. Andras then sends you a private registration link on WhatsApp: fill it in once, sign, done. Membership covers regular Monday and Friday training (you pick one or two sessions a week) and nothing else — gear, the Cup and other events are separate.",
         actions: [
           {
-            label: "Open club registration form",
-            href: "/templates/club-registration-form.html",
-            variant: "secondary",
+            label: "Ask Andras for payment details",
+            href: "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",
+            variant: "primary",
             external: true,
           },
-          {
-            label: "Email registration",
-            href:
-              "mailto:andras@sunsetduckies.com?subject=" +
-              encodeURIComponent("Sunset Duckies · club membership registration") +
-              "&body=" +
-              encodeURIComponent(
-                "Hi Andras,\n\nAttached is our completed Sunset Duckies club membership registration form.\n\nChild's name:\nAge:\nRashie size + name to print:\nParent / guardian name:\nPhone:\n\nWe've also signed the liability waiver (sent separately / attached).\n\nThanks!\n",
-              ),
-            variant: "primary",
-            external: false,
-          },
         ],
-        footnote: "We'll confirm by WhatsApp once you're in. Cup-only? That's a separate form on the cup page.",
+        footnote: "Your registration link is private, expires in 14 days, and can be reopened to correct a detail. Cup-only? That's a separate form on the cup page.",
       },
     ],
     waiverSummary: [
@@ -515,6 +504,7 @@ export const site = {
       "The club is volunteer-run. Safety measures are in place, but participation is at your own risk.",
       "Your kid can swim confidently in open water — waves up to ~2 m and currents, agreed with the head coach.",
       "Every family has at least one parent or guardian in the water for the full session, including a new duckie's free first session.",
+      "The crew surfs the reef at Dal from time to time — your kid may join when the coach calls it.",
       "Coaches may make reasonable medical decisions in an emergency if you can't be reached.",
       "Photo / video opt-in is your choice, ticked on the form.",
     ],

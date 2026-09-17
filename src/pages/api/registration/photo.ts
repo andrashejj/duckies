@@ -16,15 +16,13 @@ const update = safeRoute(async ({ request, clientAddress }) => {
     throw new RegistrationError("Invalid request origin.", 403);
   await registrationRateLimit(clientAddress);
   const hash = bearer(request);
-  const invitation = await linkInfo(hash);
-  if (invitation.completed_at)
-    throw new RegistrationError("This invitation is already signed.", 404);
+  await linkInfo(hash); // A signed link stays open for corrections until it expires.
   const image = request.method === "PUT" ? await readPhoto(request) : null;
   const db = await getDatabase().connect();
   try {
     await db.query("BEGIN");
     const { rows } = await db.query(
-      `SELECT l.id FROM club_registration_link l JOIN club_kid k ON k.id=l.kid_id WHERE l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now() AND l.completed_at IS NULL AND k.archived_at IS NULL FOR UPDATE OF l`,
+      `SELECT l.id FROM club_registration_link l JOIN club_kid k ON k.id=l.kid_id WHERE l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now() AND k.archived_at IS NULL FOR UPDATE OF l`,
       [hash],
     );
     if (!rows[0])

@@ -9,11 +9,12 @@ export type SignedSnapshot = {
   term: string;
   signedAt: string;
   version: string;
-  registration: RegistrationInput;
+  registration: Omit<RegistrationInput, "supersedes">;
   policy: typeof waiver;
   evidence: {
     method: string;
     linkId: string;
+    supersedes?: string;
     issuedAt: string;
     userAgent: string;
     ip: string;
@@ -87,11 +88,18 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
   paragraph(r.childName, 23);
   paragraph(`${snapshot.term} | Signed ${snapshot.signedAt}`);
   paragraph(`Record ${snapshot.id}`, 9);
+  if (snapshot.evidence.supersedes)
+    paragraph(
+      `Corrected version. Replaces record ${snapshot.evidence.supersedes}.`,
+      9,
+    );
   heading("The child and family");
   paragraph(
-    `Date of birth: ${r.dateOfBirth}. Division: ${r.division}. Membership: ${r.membership}.`,
+    `Date of birth: ${r.dateOfBirth}. Training: ${r.sessionsPerWeek === "2" ? "twice a week (Monday + Friday)" : "once a week"}.`,
   );
-  paragraph(`Rashie: ${r.rashieSize}. Printed name: ${r.rashieName}.`);
+  paragraph(
+    "Membership covers club training only. Gear, competitions and other events are not included.",
+  );
   r.guardians.forEach((g, index) =>
     paragraph(
       `Legal guardian ${index + 1}: ${g.name} (${g.relationship}). Phone: ${g.phone}. Email: ${g.email}.`,
@@ -115,8 +123,9 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
   );
   heading("Registration acknowledgements");
   paragraph(
-    "Parent / guardian in the water for the entire session: acknowledged. Open-water swimming: acknowledged. Waiver: accepted.",
+    "Parent / guardian in the water for the entire session: acknowledged. Minimum age and open-water swimming: acknowledged. Waiver: accepted.",
   );
+  paragraph(snapshot.policy.reef);
   paragraph(snapshot.policy.gear);
   heading("Electronic signature");
   paragraph(snapshot.policy.electronic);

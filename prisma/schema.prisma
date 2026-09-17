@@ -279,7 +279,7 @@ model ClubRegistrationLink {
   club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_registration_photo ClubRegistrationPhoto?
-  club_signed_waiver      ClubSignedWaiver?
+  club_signed_waiver      ClubSignedWaiver[]
 
   @@index([kid_id, created_at(sort: Desc)], map: "club_registration_link_kid")
 
@@ -314,7 +314,7 @@ model ClubSemester {
 model ClubSignedWaiver {
   id                     String                 @id @db.Uuid
   kid_id                 String                 @db.Uuid
-  link_id                String                 @unique @db.Uuid
+  link_id                String                 @db.Uuid
   term                   String
   signed_at              DateTime               @db.Timestamptz(6)
   snapshot               Json
@@ -329,6 +329,7 @@ model ClubSignedWaiver {
   club_semester          ClubSemester          @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([kid_id, signed_at(sort: Desc)], map: "club_signed_waiver_kid")
+  @@index([link_id, signed_at(sort: Desc)], map: "club_signed_waiver_link")
 
   @@map("club_signed_waiver")
 }

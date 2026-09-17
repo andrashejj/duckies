@@ -88,16 +88,30 @@ export function kidOverview(
       ? "Acknowledged for every full session"
       : "Not acknowledged",
   );
-  fact("Swimming + gear", r ? "Both acknowledged" : "Not acknowledged");
+  fact(
+    "Swimming · reef · gear",
+    r
+      ? r.reef
+        ? "All acknowledged"
+        : "Swimming + gear acknowledged (signed before reef sessions were added)"
+      : "Not acknowledged",
+  );
   fact("Medical notes", r ? r.medicalNotes || "None reported" : "Not supplied");
   fact(
-    "Rashie / membership",
-    r ? `${r.rashieSize} · ${r.rashieName} · ${r.membership}` : "Not supplied",
+    "Training rhythm",
+    r
+      ? r.sessionsPerWeek === "2"
+        ? "Twice a week · Monday + Friday"
+        : r.sessionsPerWeek === "1"
+          ? "Once a week"
+          : "Not chosen (older form)"
+      : "Not supplied",
   );
+  const paid = kid.payment?.status === "paid";
   fact(
     `Payment · ${semester.label}`,
     kid.payment
-      ? `${kid.payment.status === "paid" ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
+      ? `${paid ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
       : "Unpaid · no payment recorded for this semester",
   );
   if (kid.contactName || kid.contactPhone)
@@ -109,11 +123,15 @@ export function kidOverview(
     "Registration invitation",
     kid.link
       ? kid.link.completedAt
-        ? "Completed"
+        ? new Date(kid.link.expiresAt) < new Date()
+          ? "Completed"
+          : `Completed · family can still correct it until ${new Date(kid.link.expiresAt).toLocaleDateString()}`
         : new Date(kid.link.expiresAt) < new Date()
           ? "Expired — generate a new link"
           : `Pending · expires ${new Date(kid.link.expiresAt).toLocaleDateString()}`
-      : "Not issued",
+      : paid
+        ? "Not issued — generate and send the link"
+        : "Not issued · record the payment first",
   );
   section.append(facts);
   const actions = document.createElement("div");
@@ -121,7 +139,14 @@ export function kidOverview(
   const share = document.createElement("div");
   share.className = duckieShare;
   share.hidden = true;
+  // Registration follows payment: the link only goes out once the semester is paid.
   const generate = button("Generate registration link", async () => {
+    if (!paid) {
+      report(
+        `Record the ${semester.label} payment first. Registration links go out once the membership is paid.`,
+      );
+      return;
+    }
     generate.disabled = true;
     try {
       const data = await api(
@@ -149,7 +174,7 @@ export function kidOverview(
         /\D/g,
         "",
       );
-      const message = `Hi! Please complete and sign ${kid.name}'s Sunset Duckies registration here: ${data.url}\nNo login needed. This link is private and expires in 14 days.`;
+      const message = `Hi! Thanks for paying ${kid.name}'s Sunset Duckies membership. Please complete and sign the registration here: ${data.url}\nNo login needed. This link is private and expires in 14 days — you can also use it to correct any details after signing.`;
       const whatsapp = link(
         "Send via WhatsApp",
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -186,6 +211,7 @@ export function kidOverview(
       report(String(error));
     }
   });
+  if (!paid) generate.title = "Record the payment first";
   actions.append(generate, revoke);
   if (kid.waiverId)
     actions.append(
