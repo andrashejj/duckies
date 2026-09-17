@@ -31,12 +31,19 @@ const glow = "pointer-events-none absolute rounded-full";
     <div class="absolute inset-0 -z-10">
       <img
         data-hero-image
-        src="/media/surf/grom-hero.webp"
-        alt="A young surfer carving a clean teal wave."
-        width="1672" height="941"
+        src="/media/hero-loop-poster.webp"
+        alt="Sunrise over Tamarin Bay, the lineup waiting in silhouette."
+        width="1024" height="576"
         fetchpriority="high" loading="eager"
-        class="h-full w-full object-cover object-[76%_center] max-sm:h-[360px]"
+        class="h-full w-full object-cover object-center max-sm:h-[360px]"
       />
+      <video
+        data-hero-video
+        class="absolute inset-0 h-full w-full object-cover object-center opacity-0 transition-opacity duration-700 max-sm:h-[360px] motion-reduce:hidden"
+        muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"
+      >
+        <source src="/media/hero-loop.mp4" type="video/mp4" />
+      </video>
       <div class="absolute inset-0 bg-linear-to-r from-ink-950/65 to-ink-950/12 to-65% max-sm:hidden"></div>
       <div class="absolute inset-0 bg-linear-to-t from-ink-950/72 to-transparent to-75% max-sm:hidden"></div>
       <div class="absolute inset-0 bg-linear-to-b from-transparent from-[220px] to-ink-950 to-[360px] sm:hidden"></div>
@@ -390,7 +397,7 @@ const glow = "pointer-events-none absolute rounded-full";
         <div class={`${mediaFrame} aspect-[1.08/0.95] rotate-[1.6deg] transition-transform duration-500 hover:rotate-0`}>
           <img
             src="/media/surf/surf-kit.webp"
-            alt="Surfboards and a rash vest ready on a sandy beach."
+            alt="Four soft-top boards the Duckies painted themselves, laid out on the floor."
             loading="eager"
             class="h-full w-full object-cover"
           />
@@ -637,3 +644,22 @@ const glow = "pointer-events-none absolute rounded-full";
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Sunrise loop behind the hero: the poster stays put and the video fades in once it is
+  // actually playing. Skipped entirely for reduced-motion and data-saver visitors, so it
+  // is never even fetched for them (preload="none").
+  const heroVideo = document.querySelector<HTMLVideoElement>("[data-hero-video]");
+  const wantsMotion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const savesData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
+  if (heroVideo && wantsMotion && !savesData) {
+    const play = () => heroVideo.play().catch(() => {});
+    heroVideo.addEventListener("playing", () => heroVideo.classList.remove("opacity-0"), { once: true });
+    // Browsers pause muted autoplay in background tabs; pick it up when the tab is shown.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && heroVideo.paused) play();
+    });
+    play();
+  }
+</script>

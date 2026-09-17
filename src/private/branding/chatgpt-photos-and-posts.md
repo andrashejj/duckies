@@ -1,5 +1,7 @@
 # Sunset Duckies — photo prompts and Instagram posts
 
+**Status 17 Sep:** the members' WhatsApp group turned out to hold most of what this pack asks for, so several slots are now real photos and the prompts below only matter for the gaps. Real: `whitewater`, `surf-kit`, `beach-crew` (in `public/media/surf/`), the home hero (now a sunrise loop, `public/media/hero-loop.mp4`), and real versions of images 6, 7, 8, 9 and 11 in `public/media/instagram/photos/` plus Stories in `stories/` — see `public/media/instagram/CREDITS.md` for who shot what and which ones need a media-consent check against the signed waivers. Still generated, nothing real matched: `hero-wave`, `grom-hero` (kept as the share image), image 10 (duck dive). The generated `01/02/05` Instagram files stay as fallbacks.
+
 For ChatGPT's image generator. Paste the **house style** block once at the start of the chat, then one image prompt per message, asking for the size given. Save each result under the filename given; drop everything into `public/media/incoming/` and Claude converts them to WebP, the `-small` variants and the Instagram crops.
 
 Every image is an invented scene, not a photograph of a club member. Faces are turned away, hidden by spray, or too far to recognise, on purpose.

@@ -33,3 +33,6 @@ src/generated/prisma/
 # Private local development database, keys and import files
 .local-data/
 .env.local
+
+# Local dev-server launch config for the Claude Code browser preview
+.claude/launch.json
