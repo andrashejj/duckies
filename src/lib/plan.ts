@@ -3,8 +3,8 @@ import { z } from "zod";
 // Project Molt plan: seven milestones with one due date each, and the tasks
 // under them, each with an owner and a to do / doing / review / done status
 // (Estelle does the work and moves it to review; Dori signs it off). Shared by
-// the plan, onsite and overview pages and the board; stored in plan_* tables
-// (009, reshaped by 010 and 011).
+// the plan, onsite and overview pages and the board; stored in the plan_*
+// tables (prisma/schema.prisma).
 
 export const taskStatuses = ["todo", "doing", "review", "done"] as const;
 export type TaskStatus = (typeof taskStatuses)[number];

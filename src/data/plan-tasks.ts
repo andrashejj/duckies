@@ -1,7 +1,7 @@
 import type { PlanLink } from "../lib/plan";
 
-// Seed for the Project Molt plan tables (db/009-plan-board.sql, reshaped by
-// 010-plan-milestones.sql). Loaded into plan_person / plan_milestone /
+// Seed for the Project Molt plan tables (plan_person / plan_milestone /
+// plan_task in prisma/schema.prisma). Loaded into plan_person / plan_milestone /
 // plan_task the first time the plan is read from an empty database; after
 // that the database is the record and this file is history.
 //

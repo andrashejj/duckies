@@ -1,8 +1,9 @@
 // Sunset Duckies — Prisma schema
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
@@ -11,34 +12,19 @@ datasource db {
 
 // ---------- Catalogue ----------
 
-enum ProductCategory {
-  APPAREL
-  HEADWEAR
-  ACCESSORIES
-  BOARD_CARE
-  STATIONERY
-  BUNDLE
-}
-
-enum DropStatus {
-  DRAFT
-  LIVE
-  CLOSED
-}
-
 model Drop {
-  id          String      @id @default(cuid())
-  slug        String      @unique
+  id          String     @id @default(cuid())
+  slug        String     @unique
   name        String
   description String?
-  status      DropStatus  @default(DRAFT)
+  status      DropStatus @default(DRAFT)
   opensAt     DateTime?
   closesAt    DateTime?
   pickupNote  String?
-  sortOrder   Int         @default(0)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   products    Product[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
 
   @@index([status, sortOrder])
 }
@@ -63,11 +49,11 @@ model Product {
   stock       Int?
   sortOrder   Int             @default(0)
   dropId      String?
-  drop        Drop?           @relation(fields: [dropId], references: [id], onDelete: SetNull)
-  images      ProductImage[]
-  orderItems  OrderItem[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+  orderItems  OrderItem[]
+  drop        Drop?           @relation(fields: [dropId], references: [id])
+  images      ProductImage[]
 
   @@index([active, sortOrder])
   @@index([category])
@@ -85,22 +71,425 @@ model ProductImage {
   @@index([productId, sortOrder])
 }
 
-// Better Auth owns this table. Prisma only reads it and relates shop records.
+// ---------- Auth (Better Auth owns these tables; the baseline migration created them) ----------
+
 model User {
-  id            String       @id
-  email         String       @unique
-  emailVerified Boolean
-  name          String
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  orders        Order[]
-  orderEvents   OrderEvent[]
+  id                     String                   @id
+  name                   String
+  email                  String                   @unique
+  emailVerified          Boolean
+  image                  String?
+  createdAt              DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime                 @default(now()) @db.Timestamptz(6)
+  orders                 Order[]
+  orderEvents            OrderEvent[]
+  accounts               Account[]
+  kids                   ClubKid[]
+  kidPhotos              ClubKidPhoto[]
+  registrationLinks      ClubRegistrationLink[]
+  sessions               Session[]
 
   @@map("user")
 }
 
 // ---------- Orders ----------
+
+model Order {
+  id                    String       @id @default(cuid())
+  guestToken            String       @unique
+  confirmationEmailSent Boolean      @default(false)
+  requestKey            String?      @unique
+  requestHash           String?
+  userId                String?
+  email                 String
+  name                  String
+  phone                 String?
+  status                OrderStatus  @default(PENDING)
+  pickupMethod          PickupMethod @default(SESH)
+  pickupNote            String?
+  customerNote          String?
+  internalNotes         String?
+  subtotalCents         Int
+  totalCents            Int
+  currency              String       @default("MUR")
+  paidAt                DateTime?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  user                  User?        @relation(fields: [userId], references: [id])
+  events                OrderEvent[]
+  items                 OrderItem[]
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([userId])
+  @@index([paidAt])
+}
+
+model OrderItem {
+  id                 String  @id @default(cuid())
+  orderId            String
+  productId          String
+  sku                String
+  nameSnapshot       String
+  priceCentsSnapshot Int
+  quantity           Int
+  size               String?
+  kidName            String?
+  lineTotalCents     Int
+  stockReserved      Boolean @default(false)
+  order              Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product            Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderEvent {
+  id        String         @id @default(cuid())
+  orderId   String
+  type      OrderEventType
+  message   String?
+  actorId   String?
+  createdAt DateTime       @default(now())
+  actor     User?          @relation(fields: [actorId], references: [id])
+  order     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime? @db.Timestamptz(6)
+  refreshTokenExpiresAt DateTime? @db.Timestamptz(6)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime  @db.Timestamptz(6)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId])
+
+  @@map("account")
+}
+
+// ---------- Branding workspace: access, granola sheet, plan board ----------
+
+model BrandingAccess {
+  email                 String                  @id
+  name                  String
+  reason                String                  @default("")
+  status                String                  @default("pending")
+  can_edit              Boolean                 @default(false)
+  verified_at           DateTime?               @db.Timestamptz(6)
+  requested_at          DateTime                @default(now()) @db.Timestamptz(6)
+  decided_at            DateTime?               @db.Timestamptz(6)
+  decided_by            String?
+  version               Int                     @default(1)
+  branding_access_event BrandingAccessEvent[]
+
+  @@map("branding_access")
+}
+
+model BrandingAccessEvent {
+  id              BigInt          @id @default(autoincrement())
+  email           String
+  status          String
+  can_edit        Boolean
+  actor           String
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  branding_access BrandingAccess @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("branding_access_event")
+}
+
+// ---------- Club: members, kids, registration, semesters ----------
+
+model ClubKid {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String
+  created_by             String
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  archived_at            DateTime?                @db.Timestamptz(6)
+  contact_name           String?
+  contact_phone          String?
+  user                   User                     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_kid_photo         ClubKidPhoto?
+  club_payment_event     ClubPaymentEvent[]
+  registrationLinks      ClubRegistrationLink[]
+  club_signed_waiver     ClubSignedWaiver[]
+
+  @@map("club_kid")
+}
+
+model ClubKidPhoto {
+  kid_id      String   @id @db.Uuid
+  image       Bytes
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+  uploaded_by String?
+  source      String
+  club_kid    ClubKid @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user        User?    @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("club_kid_photo")
+}
+
+model ClubMember {
+  email      String   @id
+  role       String   @default("member")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("club_member")
+}
+
+
+model ClubPaymentEvent {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kid_id        String        @db.Uuid
+  term          String
+  status        String
+  amount_mur    Decimal?      @db.Decimal(10, 2)
+  note          String
+  actor_email   String
+  recorded_at   DateTime      @default(now()) @db.Timestamptz(6)
+  club_kid      ClubKid      @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_semester ClubSemester @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([kid_id, term, recorded_at(sort: Desc)], map: "club_payment_event_kid")
+
+  @@map("club_payment_event")
+}
+
+model ClubRegistrationLink {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kid_id                  String                   @db.Uuid
+  token_hash              String                   @unique
+  term                    String
+  created_by              String
+  created_at              DateTime                 @default(now()) @db.Timestamptz(6)
+  expires_at              DateTime                 @db.Timestamptz(6)
+  revoked_at              DateTime?                @db.Timestamptz(6)
+  completed_at            DateTime?                @db.Timestamptz(6)
+  user                    User                     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_registration_photo ClubRegistrationPhoto?
+  club_signed_waiver      ClubSignedWaiver?
+
+  @@index([kid_id, created_at(sort: Desc)], map: "club_registration_link_kid")
+
+  @@map("club_registration_link")
+}
+
+model ClubRegistrationPhoto {
+  link_id                String                 @id @db.Uuid
+  image                  Bytes
+  uploaded_at            DateTime               @default(now()) @db.Timestamptz(6)
+  club_registration_link ClubRegistrationLink @relation(fields: [link_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("club_registration_photo")
+}
+
+model ClubSemester {
+  id                     String                   @id
+  label                  String
+  starts_on              DateTime?                @db.Date
+  ends_on                DateTime?                @db.Date
+  child_fee_mur          Decimal                  @db.Decimal(10, 2)
+  family_fee_mur         Decimal                  @db.Decimal(10, 2)
+  is_current             Boolean                  @unique(map: "one_current_club_semester", where: raw("is_current")) @default(false)
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  club_payment_event     ClubPaymentEvent[]
+  registrationLinks      ClubRegistrationLink[]
+  club_signed_waiver     ClubSignedWaiver[]
+
+  @@map("club_semester")
+}
+
+model ClubSignedWaiver {
+  id                     String                 @id @db.Uuid
+  kid_id                 String                 @db.Uuid
+  link_id                String                 @unique @db.Uuid
+  term                   String
+  signed_at              DateTime               @db.Timestamptz(6)
+  snapshot               Json
+  canonical_payload      String
+  payload_sha256         String
+  pdf                    Bytes
+  pdf_sha256             String
+  seal                   String
+  public_key             String
+  club_kid               ClubKid               @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_registration_link ClubRegistrationLink @relation(fields: [link_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_semester          ClubSemester          @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([kid_id, signed_at(sort: Desc)], map: "club_signed_waiver_kid")
+
+  @@map("club_signed_waiver")
+}
+
+model GranolaAiLimit {
+  key      String   @id
+  count    Int
+  reset_at DateTime @db.Timestamptz(6)
+
+  @@map("granola_ai_limit")
+}
+
+model GranolaPack {
+  id               String             @id
+  recipe           Json
+  version          Int
+  updated_at       DateTime           @default(now()) @db.Timestamptz(6)
+  updated_by       String
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  granola_revision GranolaRevision[]
+
+  @@map("granola_pack")
+}
+
+model GranolaRevision {
+  pack_id      String
+  version      Int
+  recipe       Json
+  created_at   DateTime     @default(now()) @db.Timestamptz(6)
+  created_by   String
+  granola_pack GranolaPack @relation(fields: [pack_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([pack_id, version])
+
+  @@map("granola_revision")
+}
+
+model PlanMilestone {
+  id          String       @id
+  code        String
+  title       String
+  date_label  String
+  due_on      DateTime     @db.Date
+  deliverable String       @default("")
+  owner_id    String?
+  links       Json         @default("[]")
+  sort        Int
+  plan_person PlanPerson? @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  plan_task   PlanTask[]
+
+  @@map("plan_milestone")
+}
+
+model PlanPerson {
+  id             String           @id
+  name           String
+  email          String?          @unique
+  sort           Int              @default(0)
+  plan_milestone PlanMilestone[]
+  plan_task      PlanTask[]
+
+  @@map("plan_person")
+}
+
+model PlanTask {
+  id              String            @id
+  milestone_id    String
+  text            String
+  owner_id        String?
+  due_on          DateTime?         @db.Date
+  status          String            @default("todo")
+  sort            Int
+  version         Int               @default(1)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  created_by      String            @default("seed")
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_by      String            @default("seed")
+  plan_milestone  PlanMilestone    @relation(fields: [milestone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  plan_person     PlanPerson?      @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  plan_task_event PlanTaskEvent[]
+
+  @@index([milestone_id, sort], map: "plan_task_milestone_idx")
+  @@index([owner_id, status], map: "plan_task_owner_idx")
+
+  @@map("plan_task")
+}
+
+model PlanTaskEvent {
+  id         BigInt    @id @default(autoincrement())
+  task_id    String
+  status     String
+  owner_id   String?
+  actor      String
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  plan_task  PlanTask @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("plan_task_event")
+}
+
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@map("rateLimit")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime @db.Timestamptz(6)
+  token     String   @unique
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @db.Timestamptz(6)
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId])
+
+  @@map("session")
+}
+
+// ---------- Shop rate limiting ----------
+
+model ShopRequestLimit {
+  key      String   @id
+  count    Int
+  reset_at DateTime @db.Timestamptz(6)
+
+  @@map("shop_request_limit")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([identifier])
+
+  @@map("verification")
+}
+
+enum ProductCategory {
+  APPAREL
+  HEADWEAR
+  ACCESSORIES
+  BOARD_CARE
+  STATIONERY
+  BUNDLE
+}
+
+enum DropStatus {
+  DRAFT
+  LIVE
+  CLOSED
+}
 
 enum OrderStatus {
   PENDING
@@ -126,65 +515,4 @@ enum OrderEventType {
   EMAIL_SENT
 }
 
-model Order {
-  id             String         @id @default(cuid())
-  guestToken     String         @unique
-  confirmationEmailSent Boolean @default(false)
-  requestKey     String?        @unique
-  requestHash    String?
-  userId         String?
-  user           User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
-  email          String
-  name           String
-  phone          String?
-  status         OrderStatus    @default(PENDING)
-  pickupMethod   PickupMethod   @default(SESH)
-  pickupNote     String?
-  customerNote   String?
-  internalNotes  String?
-  subtotalCents  Int
-  totalCents     Int
-  currency       String         @default("MUR")
-  paidAt         DateTime?
-  items          OrderItem[]
-  events         OrderEvent[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
 
-  @@index([status, createdAt])
-  @@index([email])
-  @@index([userId])
-  @@index([paidAt])
-}
-
-model OrderItem {
-  id                String  @id @default(cuid())
-  orderId           String
-  order             Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId         String
-  product           Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-  sku               String
-  nameSnapshot      String
-  priceCentsSnapshot Int
-  quantity          Int
-  size              String?
-  kidName           String?
-  lineTotalCents    Int
-  stockReserved     Boolean @default(false)
-
-  @@index([orderId])
-  @@index([productId])
-}
-
-model OrderEvent {
-  id        String         @id @default(cuid())
-  orderId   String
-  order     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  type      OrderEventType
-  message   String?
-  actorId   String?
-  actor     User?          @relation(fields: [actorId], references: [id], onDelete: SetNull)
-  createdAt DateTime       @default(now())
-
-  @@index([orderId, createdAt])
-}
