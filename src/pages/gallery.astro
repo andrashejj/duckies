@@ -13,7 +13,6 @@ import { bodyCopy, mediaFrame } from "../lib/ui";
 const title = `${gallery.name} — ${site.name}`;
 const description = gallery.tagline;
 const photoCount = gallery.sections.reduce((n, section) => n + section.photos.length, 0);
-const cover = gallery.sections[0].photos[0];
 
 // Photos members added through /gallery/share (the middleware makes sure only
 // a signed-in club member gets this far). The page still renders without them
@@ -23,7 +22,7 @@ try { shared = await listUploads("approved"); } catch { console.error("Gallery u
 const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a club member";
 ---
 
-<BaseLayout title={title} description={description} image={`/media/gallery/${cover.slug}.webp`} imageAlt={cover.alt} imageWidth={cover.w} imageHeight={cover.h}>
+<BaseLayout title={title} description={description} image="/media/og-home.jpg" imageAlt="The Sunset Duckies lined up behind their colourful boards on Tamarin beach at sunset." imageWidth={1200} imageHeight={630}>
   <!-- ===================== HERO ===================== -->
   <section class="relative isolate overflow-hidden">
     <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
@@ -71,13 +70,13 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
             type="button"
             class="mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-[1.1rem] border-2 border-edge bg-surface p-0 shadow-sticker-md transition-[translate,rotate,box-shadow] duration-200 nth-[3n]:-rotate-[1.1deg] nth-[4n]:rotate-[0.9deg] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-[7px_7px_0_0_var(--edge)] focus-visible:-translate-x-0.5 focus-visible:-translate-y-0.5 focus-visible:rotate-0 focus-visible:shadow-[7px_7px_0_0_var(--edge)] focus-visible:outline-none"
             data-lb-trigger
-            data-full={`/media/gallery/${photo.slug}.webp`}
+            data-full={`/gallery/asset/${photo.slug}.webp`}
             data-alt={photo.alt}
             aria-label={`Open photo: ${photo.alt}`}
           >
             <img
-              src={`/media/gallery/${photo.slug}-small.webp`}
-              srcset={`/media/gallery/${photo.slug}-small.webp 800w, /media/gallery/${photo.slug}.webp 1600w`}
+              src={`/gallery/asset/${photo.slug}-small.webp`}
+              srcset={`/gallery/asset/${photo.slug}-small.webp 800w, /gallery/asset/${photo.slug}.webp 1600w`}
               sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 50vw"
               alt={photo.alt}
               width={photo.w}
@@ -134,8 +133,8 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
         <figure class="m-0">
           <div class={mediaFrame}>
             <video
-              src={`/media/gallery/clips/${clip.slug}.mp4`}
-              poster={`/media/gallery/clips/${clip.slug}-poster.webp`}
+              src={`/gallery/asset/clips/${clip.slug}.mp4`}
+              poster={`/gallery/asset/clips/${clip.slug}-poster.webp`}
               muted
               loop
               playsinline

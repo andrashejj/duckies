@@ -51,7 +51,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await handle();
   if (privateResponse) {
     // Served gallery photos may sit in the member's own browser cache, never in a shared one.
-    response.headers.set("Cache-Control", path.startsWith("/gallery/photo/") && response.ok ? "private, max-age=86400" : "private, no-store");
+    response.headers.set("Cache-Control", /^\/gallery\/(photo|asset)\//.test(path) && (response.ok || response.status === 206) ? "private, max-age=86400" : "private, no-store");
     response.headers.set("CDN-Cache-Control", "no-store");
     response.headers.set("Vercel-CDN-Cache-Control", "no-store");
     response.headers.set("Vary", "Cookie");

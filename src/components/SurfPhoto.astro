@@ -1,6 +1,8 @@
 ---
-// Small decorative photo next to a list item. `scene` is a gallery slug
-// (public/media/gallery/<slug>-small.webp) or one of the four surf slots.
+// Small decorative photo next to a list item on a public page. `scene` is a
+// gallery slug — served from public/media/thumbs/, a 480px copy made for the
+// public pages, since the gallery itself (src/assets/gallery) sits behind the
+// member login — or one of the four surf slots.
 import type { GallerySlug } from "../data/gallery";
 export type SurfScene = GallerySlug | "hero-wave" | "whitewater" | "surf-kit" | "beach-crew";
 interface Props {
@@ -9,6 +11,6 @@ interface Props {
 }
 const { scene, wide = false } = Astro.props;
 const surfSlots = ["hero-wave", "whitewater", "surf-kit", "beach-crew"];
-const src = surfSlots.includes(scene) ? `/media/surf/${scene}-small.webp` : `/media/gallery/${scene}-small.webp`;
+const src = surfSlots.includes(scene) ? `/media/surf/${scene}-small.webp` : `/media/thumbs/${scene}.webp`;
 ---
 <img src={src} alt="" aria-hidden="true" width="600" height="450" loading="lazy" decoding="async" class:list={["block shrink-0 rounded-lg border border-edge object-cover", wide ? "aspect-video h-auto w-full" : "h-[clamp(5rem,9vw,7.5rem)] w-[clamp(5rem,9vw,7.5rem)]"]} />

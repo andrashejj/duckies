@@ -1,5 +1,6 @@
-// Photos on /gallery. Originals come from the members' WhatsApp group; the
-// WebP derivatives live in public/media/gallery/ (see CREDITS.md there).
+// Photos on /gallery (members only). Originals come from the members' WhatsApp
+// group and the club drone; the WebP derivatives live in src/assets/gallery/ and
+// are served through /gallery/asset/ behind the login (see CREDITS.md there).
 
 export type GallerySlug =
   | "sunset-ride-arms-out"
