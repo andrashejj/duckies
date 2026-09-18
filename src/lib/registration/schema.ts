@@ -102,6 +102,8 @@ export const signupSchema = z
   })
   .strict();
 export type SignupInput = z.infer<typeof signupSchema>;
+// The cup sign-up adds one choice: the Cup alone, or club membership with it.
+export const cupSignupSchema = signupSchema.extend({ join: z.boolean().default(false) }).strict();
 export const emailSchema = z
   .email()
   .max(200)

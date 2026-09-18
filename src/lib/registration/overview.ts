@@ -133,7 +133,7 @@ export function kidOverview(
       `${
         kid.memberPaid
           ? "Club member · free entry"
-          : kid.cup.member
+          : kid.cup.member || (kid.waiverTerm && !isCupTerm(kid.waiverTerm))
             ? `Club registration on file, semester unpaid · Rs ${CUP_ENTRY_FEE_MUR} entry unless the semester is paid first`
             : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry${kid.waiverTerm && isCupTerm(kid.waiverTerm) ? "" : " · cup form not signed yet"}`
       } · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,

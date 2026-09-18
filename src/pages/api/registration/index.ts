@@ -10,7 +10,7 @@ import {
   registrationRateLimit,
   safeRoute,
 } from "../../../lib/registration/http";
-import { isCupTerm } from "../../../lib/registration/cup";
+import { CUP_TERM, isCupTerm } from "../../../lib/registration/cup";
 import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
 import {
@@ -31,11 +31,14 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
     [link.id],
   );
   const signed = rows[0];
+  // Joining the club from the Cup page: membership covers the Cup, and the form says so.
+  const cupEntry = await getDatabase().query("SELECT 1 FROM club_cup_entry WHERE kid_id=$1 AND edition=$2", [link.kid_id, CUP_TERM]);
   return json({
     childName: link.name,
     term: link.term,
     termLabel: link.term_label,
     cup: isCupTerm(link.term),
+    cupIncluded: !isCupTerm(link.term) && Boolean(cupEntry.rowCount),
     // Registration comes first; the page says so unless the fee is already in.
     paid: await isPaid(link.kid_id, link.term),
     childFeeMur: Number(link.child_fee_mur),

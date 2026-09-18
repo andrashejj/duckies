@@ -1539,15 +1539,27 @@ export const site = {
     form: {
       title: "Lock in your spot.",
       intro:
-        "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Name + number, then we send you straight to the registration + waiver (≈5 min, no login).",
+        "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Name + number, pick the Cup alone or a semester membership with it, then we send you straight to the registration + waiver (≈5 min, no login).",
       footnote:
         "Siblings? Each kid gets their own entry. Friends + family don't need to register, just come along. Spots stay pending until Andras confirms the fee — members skip that part.",
-      memberLabel: "Already a Sunset Duckie (club member)",
+      memberLabel: "Already a Sunset Duckie",
+      memberSub: "club member · surfs free",
       guestLabel: "Not a member (yet)",
+      guestSub: "new family · Rs 1,000",
+      // Signed in, but no kid is registered under that email.
+      noKidsTitle: "No duckies under this email.",
+      noKidsText:
+        "We match kids to the guardian email on their club registration. Registered under another address — yours or the other parent's? Sign in with that one. New to the club? Register your kid as a non-member — Rs 1,000 entry, no login.",
       memberHint:
         "Sign in with the email on your club registration and we bring you back here to tick who's coming. Your waiver already covers the Cup — no form.",
       guestHint:
-        "We put your kid on the list, then send you straight to the registration form + waiver. Rs 1,000 entry, confirmed by Andras once it's paid.",
+        "We put your kid on the list, then send you straight to the registration form + waiver (≈5 min, no login). Andras confirms the spot once the fee is paid.",
+      // The Cup alone, or the club with it — the one choice a new family makes.
+      planLabel: "Just the Cup, or the whole semester?",
+      plans: [
+        { value: "cup", title: "Just the Cup", price: "Rs 1,000", text: "One afternoon of heats on 16 October. No training, no membership.", submitLabel: "Count us in" },
+        { value: "club", title: "Join the club too", price: "Rs 3,000 · semester", text: "Training twice a week all semester — and the Cup is free for members.", submitLabel: "Join the club + Cup" },
+      ],
       submitLabel: "Count us in",
     },
   },

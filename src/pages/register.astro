@@ -44,7 +44,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       </section>
       <section id="membership-covers" class={registrationPanel}>
         <h2 class="font-display text-2xl">What your membership covers</h2>
-        <ul class="mt-3 list-disc space-y-2 pl-5">{membershipCovers.included.map(text => <li>{text}</li>)}</ul>
+        <ul class="mt-3 list-disc space-y-2 pl-5">{membershipCovers.included.map(text => <li>{text}</li>)}<li id="cup-included" hidden>Entry to the {CUP_LABEL} on Friday 16 October at Tamarin Bay — free for members, no separate form.</li></ul>
         <h3 class="mt-5 font-bold">Nothing else is included</h3>
         <ul class="mt-2 list-disc space-y-2 pl-5">{membershipCovers.excluded.map(text => <li>{text}</li>)}</ul>
         <p class="mt-4 text-sm">Sunset Duckies is for kids aged {MINIMUM_AGE} and up who swim confidently in open water, and at least one parent or guardian from every family joins them in the water for the full session.</p>
@@ -231,6 +231,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       intro.textContent = cup ? intro.dataset.cup! : data.paid ? intro.dataset.paid! : intro.dataset.pending!.replace("{child}", fee(data.childFeeMur)).replace("{family}", fee(data.familyFeeMur));
       document.querySelector<HTMLElement>("#cup-covers")!.hidden = !cup;
       document.querySelector<HTMLElement>("#membership-covers")!.hidden = cup;
+      document.querySelector<HTMLElement>("#cup-included")!.hidden = !data.cupIncluded;
       const rhythm = document.querySelector<HTMLElement>("#training-rhythm")!;
       rhythm.hidden = cup; rhythm.classList.toggle("contents", !cup);
       (form.elements.namedItem("sessionsPerWeek") as HTMLSelectElement).required = !cup;

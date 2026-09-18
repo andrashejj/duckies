@@ -8,12 +8,18 @@ import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import StickerCard from "../components/ui/StickerCard.astro";
 import Underline from "../components/ui/Underline.astro";
+import CupLineup from "../components/react/CupLineup";
 import { bodyCopy, eyebrowBadge, field, label, miniCard, stickerTones, type StickerTone } from "../lib/ui";
+import { textButton } from "../lib/members-ui";
 
 const cup = site.cupVol2;
 const title = `${cup.name} — Vol. 02 | ${site.name}`;
 const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Arrival from 12:00, first heat 14:00, bonfire 18:30. Music, BBQ, age 7+, no divisions — every surfer gets their own score. Bring your own board. Register on the page.`;
-const toggle = "inline-flex w-full cursor-pointer items-center justify-center rounded-full border-2 border-edge bg-surface px-4 py-3 text-center font-display text-[0.95rem] font-bold text-fg transition [font-variation-settings:'wdth'_108] peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
+// The two ways in, as equal-height pills: a title plus the one fact that decides it (free vs. Rs 1,000).
+const toggle = "flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-full border-2 border-edge bg-surface px-4 py-3 text-center text-fg transition peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
+const toggleTitle = "font-display text-[0.95rem] font-bold leading-tight [font-variation-settings:'wdth'_108]";
+const toggleSub = "font-mono text-[0.58rem] uppercase tracking-[0.16em] opacity-75";
+const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-2 border-edge bg-canvas p-4 text-left transition peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
 ---
 
 <BaseLayout title={title} description={description} image="/media/cup/vol-2-og.jpg" imageAlt="The Final of Cup Vol. 01 at sunset, Tamarin Bay." imageWidth={1200} imageHeight={630}>
@@ -189,6 +195,32 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
     </StickerCard>
   </section>
 
+  <!-- ===================== THE LINEUP ===================== -->
+  <section id="lineup" class="relative isolate my-12 scroll-mt-24 overflow-hidden border-y-2 border-edge bg-ink-950 py-16 text-cream lg:py-24">
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-linear-135 from-ink-950 via-teal-500/25 via-55% to-coral-500/35"></div>
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_50%_40%_at_90%_10%,color-mix(in_oklab,var(--color-sun-500)_28%,transparent),transparent_70%)]"></div>
+    <div class="pointer-events-none absolute -left-10 bottom-8 -z-10 hidden rotate-[-8deg] lg:block" aria-hidden="true">
+      <p class="font-brand text-[11rem] leading-none text-cream/[0.05] select-none">LINEUP</p>
+    </div>
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+        <div class="max-w-2xl space-y-4">
+          <Kicker>The lineup</Kicker>
+          <SectionTitle class="text-cream">
+            Who's <Underline>in</Underline> so far.
+          </SectionTitle>
+          <p class="max-w-xl text-base leading-7 text-cream/80">
+            Every surfer who's locked in, in the order they signed up — straight from the registrations. Heats and rashie colours land on the cards on the day.
+          </p>
+        </div>
+        <a href="/sunset-duckies-cup-vol-2/live" class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-cream/80 underline decoration-teal-500 decoration-2 underline-offset-4 transition hover:text-cream">● Live board on the day →</a>
+      </div>
+      <div class="mt-10">
+        <CupLineup client:visible />
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== REGISTER ===================== -->
   <section id="register" class="mx-auto max-w-7xl scroll-mt-24 px-6 py-12 lg:px-10">
     <StickerCard tone="sun" class="p-8 md:p-12" data-reveal>
@@ -202,8 +234,8 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           <div class="mt-6 flex flex-wrap gap-3">
             <Chip>{cup.memberFeeLabel} for members</Chip>
             <Chip>{cup.entryFeeLabel} non-members</Chip>
+            <Chip>Rs 3,000 join the club</Chip>
             <Chip>Age 7+</Chip>
-            <Chip>Members: no form</Chip>
           </div>
           <p class="mt-6 max-w-xl text-sm leading-6 text-fg/70">{cup.form.footnote}</p>
         </div>
@@ -212,13 +244,19 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           <fieldset class="grid gap-3">
             <legend class={label}>Who's coming?</legend>
             <div class="mt-3 grid gap-3 sm:grid-cols-2">
-              <label>
+              <label class="grid">
                 <input class="peer sr-only" type="radio" name="member" value="yes" checked />
-                <span class={toggle}>{cup.form.memberLabel}</span>
+                <span class={toggle}>
+                  <span class={toggleTitle}>{cup.form.memberLabel}</span>
+                  <span class={toggleSub}>{cup.form.memberSub}</span>
+                </span>
               </label>
-              <label>
+              <label class="grid">
                 <input class="peer sr-only" type="radio" name="member" value="no" />
-                <span class={toggle}>{cup.form.guestLabel}</span>
+                <span class={toggle}>
+                  <span class={toggleTitle}>{cup.form.guestLabel}</span>
+                  <span class={toggleSub}>{cup.form.guestSub}</span>
+                </span>
               </label>
             </div>
           </fieldset>
@@ -231,14 +269,37 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
               <p class="text-sm leading-6 text-fg/70">No code arriving? Your email isn't approved for sign-in yet — <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">ping Andras on WhatsApp</a> and he'll sort it.</p>
             </div>
             <div data-member-kids hidden class="grid gap-4">
-              <p class="text-sm leading-6 text-fg/70">Signed in as <span data-member-email class="font-semibold text-fg"></span>. <a class="underline underline-offset-4" href="/login?next=%2Fsunset-duckies-cup-vol-2%23register">Not you?</a></p>
+              <p class="text-sm leading-6 text-fg/70">Signed in as <span data-member-email class="font-semibold text-fg"></span>. <button data-switch-account type="button" class={textButton}>Not you?</button></p>
               <ul data-kid-list class="grid gap-3"></ul>
-              <p data-no-kids hidden class="text-sm leading-6 text-fg/70">No club registration lists this email as a guardian. Sign in with the email you registered with — or, if you're new, switch to "{cup.form.guestLabel}" and we'll get you the form.</p>
+              <div data-no-kids hidden class="grid gap-4 rounded-2xl border-2 border-dashed border-edge bg-canvas p-5">
+                <p class="font-display text-xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110]">{cup.form.noKidsTitle}</p>
+                <p class="text-sm leading-6 text-fg/70">{cup.form.noKidsText}</p>
+                <div class="flex flex-wrap gap-3">
+                  <Cta size="sm" class="w-full sm:w-auto" data-switch-account>Use another email</Cta>
+                  <Cta variant="secondary" size="sm" class="w-full sm:w-auto" data-go-guest>Register your kid</Cta>
+                </div>
+                <p class="text-sm leading-6 text-fg/70">Sure you're a member? <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">Ping Andras on WhatsApp</a> and he'll link your email.</p>
+              </div>
             </div>
           </div>
 
           <!-- New families: name + number, then straight to the form. -->
           <div data-guest-panel hidden class="grid gap-5">
+            <fieldset class="grid gap-3">
+              <legend class={label}>{cup.form.planLabel}</legend>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                {cup.form.plans.map((option, index) => (
+                  <label class="grid">
+                    <input class="peer sr-only" type="radio" name="plan" value={option.value} data-submit-label={option.submitLabel} checked={index === 0} />
+                    <span class={plan}>
+                      <span class="font-display text-[1.1rem] font-bold leading-tight [font-variation-settings:'wdth'_108]">{option.title}</span>
+                      <span class="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em]">{option.price}</span>
+                      <span class="mt-1 text-sm leading-5 opacity-80">{option.text}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <p class="text-sm leading-6 text-fg/70">{cup.form.guestHint}</p>
             <label class="grid gap-2">
               <span class={label}>Kid's name</span>
@@ -293,6 +354,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
 </BaseLayout>
 
 <script>
+  import { authClient } from "../lib/auth-client";
   import { kidButton, kidRow, kidTag } from "../lib/cup-ui";
   // Members sign in and tick their kids (the waiver is on file); new families
   // continue to the private registration link the server issues for them.
@@ -306,8 +368,12 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
   const noKids = form.querySelector<HTMLElement>("[data-no-kids]")!;
   const guestPanel = form.querySelector<HTMLElement>("[data-guest-panel]")!;
   const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-  const guestFields = Array.from(guestPanel.querySelectorAll<HTMLInputElement>("input"));
-  const isMember = () => (form.elements.namedItem("member") as RadioNodeList).value === "yes";
+  const guestFields = Array.from(guestPanel.querySelectorAll<HTMLInputElement>('input:not([type="radio"])'));
+  const memberChoice = form.elements.namedItem("member") as RadioNodeList;
+  const isMember = () => memberChoice.value === "yes";
+  const planChoice = form.elements.namedItem("plan") as RadioNodeList;
+  const joining = () => planChoice.value === "club";
+  const lineupChanged = () => window.dispatchEvent(new CustomEvent("cup:lineup"));
   type GuardianKid = { id: string; name: string; member: boolean; registered: boolean };
 
   function syncPanels() {
@@ -316,8 +382,41 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
     // Only the visible fields are required, so switching never blocks the other path.
     for (const input of guestFields) input.required = !isMember();
   }
-  form.addEventListener("change", (event) => { if ((event.target as HTMLInputElement).name === "member") { status.textContent = ""; next.hidden = true; syncPanels(); } });
+  function choose(member: boolean) {
+    memberChoice.value = member ? "yes" : "no";
+    status.textContent = "";
+    next.hidden = true;
+    syncPanels();
+  }
+  function syncPlan() {
+    submit.textContent = form.querySelector<HTMLInputElement>('input[name="plan"]:checked')!.dataset.submitLabel!;
+  }
+  form.addEventListener("change", (event) => {
+    const { name } = event.target as HTMLInputElement;
+    if (name === "member") choose(isMember());
+    if (name === "plan") syncPlan();
+  });
   syncPanels();
+  syncPlan();
+  // Wrong email? The login page bounces a live session straight back here, so sign out first.
+  for (const button of form.querySelectorAll<HTMLButtonElement>("[data-switch-account]")) {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      status.textContent = "";
+      try {
+        const { error } = await authClient.signOut();
+        if (error) throw error;
+        window.location.assign("/login?next=%2Fsunset-duckies-cup-vol-2%23register");
+      } catch {
+        status.textContent = "Couldn't switch account. Try again in a sec.";
+        button.disabled = false;
+      }
+    });
+  }
+  form.querySelector<HTMLButtonElement>("[data-go-guest]")!.addEventListener("click", () => {
+    choose(false);
+    guestFields[0].focus();
+  });
 
   async function api(url: string, method = "GET") {
     const response = await fetch(url, { method, cache: "no-store", headers: { "Content-Type": "application/json" } });
@@ -351,6 +450,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           status.textContent = data.status === "member"
             ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, from 12:00.`
             : `${data.kidName} is on the list! We don't see this semester's fee yet — sort it with Andras and the Cup is free; otherwise it's Rs 1,000 on the day.`;
+          lineupChanged();
           await loadKids();
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Couldn't register. Try again in a sec.";
@@ -374,7 +474,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
     event.preventDefault();
     if (isMember()) return;
     const values = new FormData(form);
-    const body = { kidName: values.get("kidName"), contactName: values.get("contactName"), contactPhone: values.get("contactPhone") };
+    const body = { kidName: values.get("kidName"), contactName: values.get("contactName"), contactPhone: values.get("contactPhone"), join: joining() };
     submit.disabled = true;
     next.hidden = true;
     status.textContent = "Locking it in…";
@@ -388,7 +488,10 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
         status.textContent = `${data.kidName} is already fully registered — form and waiver done. See you on the sand!`;
         form.reset(); syncPanels();
       } else {
-        status.textContent = `${data.kidName} is on the list! One last thing: the registration form + waiver (≈5 min, no login). Taking you there now…`;
+        status.textContent = joining()
+          ? `${data.kidName} is on the list! One last thing: the club registration + waiver (≈5 min, no login) — membership covers the Cup. Taking you there now…`
+          : `${data.kidName} is on the list! One last thing: the registration form + waiver (≈5 min, no login). Taking you there now…`;
+        lineupChanged();
         next.href = data.url;
         next.hidden = false;
         window.setTimeout(() => window.location.assign(data.url), 2500);

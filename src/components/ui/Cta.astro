@@ -12,7 +12,7 @@ interface Props {
   target?: string;
   rel?: string;
   download?: string | boolean;
-  "data-member-link"?: boolean;
+  [hook: `data-${string}`]: string | boolean | undefined;
   id?: string;
 }
 const { as, href, variant = "primary", size = "md", class: className, type = "button", ...rest } = Astro.props as Props;

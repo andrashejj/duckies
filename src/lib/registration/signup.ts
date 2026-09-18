@@ -43,14 +43,25 @@ export async function hasSigned(kidId: string, term: string) {
   return Boolean(rowCount);
 }
 
-// Join the club: the kid is created pending and the family goes straight to
-// the registration form for the current semester. Payment follows.
-export async function joinClub(input: SignupInput): Promise<Signup> {
+// The semester families can join right now.
+export async function openSemester() {
   const semester = await getSemester();
   if (!semester.isCurrent)
     throw new RegistrationError("Registration is not open right now. Message the club on WhatsApp.", 503);
-  const kid = await findOrCreateKid(input);
-  if (await hasSigned(kid.id, semester.id)) return { status: "signed", kidName: kid.name };
-  const link = await issueLink(kid.id, null, semester.id);
+  return semester;
+}
+
+// The family continues to the registration form for a term — unless that
+// form is already signed.
+export async function formFor(kid: { id: string; name: string }, term: string): Promise<Signup> {
+  if (await hasSigned(kid.id, term)) return { status: "signed", kidName: kid.name };
+  const link = await issueLink(kid.id, null, term);
   return { status: "form", kidName: kid.name, url: link.url, expiresAt: link.expiresAt };
+}
+
+// Join the club: the kid is created pending and the family goes straight to
+// the registration form for the current semester. Payment follows.
+export async function joinClub(input: SignupInput): Promise<Signup> {
+  const semester = await openSemester();
+  return formFor(await findOrCreateKid(input), semester.id);
 }

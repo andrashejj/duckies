@@ -1,23 +1,24 @@
 import { getDatabase } from "../server/db";
 import { CUP_TERM } from "./cup";
-import { issueLink, memberPaidSql, RegistrationError } from "./records";
+import { memberPaidSql, RegistrationError } from "./records";
 import type { SignupInput } from "./schema";
 import { getSemester } from "./semesters";
-import { findOrCreateKid, hasSigned, type Signup } from "./signup";
+import { findOrCreateKid, formFor, hasSigned, openSemester, type Signup } from "./signup";
 
 // A new family: the kid is created with a cup entry and the family continues
-// to the registration form through the cup term. A family whose kid already
-// has a signed club registration is sent to sign in instead — no form needed.
-export async function registerCupGuest(input: SignupInput): Promise<Signup> {
+// to the registration form — the cup's own, or the semester's when they join
+// the club at the same time (membership covers the Cup, so that is the one
+// form they sign). A family whose kid already has a signed club registration
+// is sent to sign in instead — no form needed.
+export async function registerCupGuest(input: SignupInput, join = false): Promise<Signup> {
+  const term = join ? (await openSemester()).id : CUP_TERM;
   const kid = await findOrCreateKid(input);
   if (kid.signed && !(await hasSigned(kid.id, CUP_TERM))) return { status: "member", kidName: kid.name };
   await getDatabase().query(
     "INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone) VALUES ($1,$2,false,$3,$4) ON CONFLICT (kid_id, edition) DO NOTHING",
     [kid.id, CUP_TERM, input.contactName, input.contactPhone],
   );
-  if (await hasSigned(kid.id, CUP_TERM)) return { status: "signed", kidName: kid.name };
-  const link = await issueLink(kid.id, null, CUP_TERM);
-  return { status: "form", kidName: kid.name, url: link.url, expiresAt: link.expiresAt };
+  return formFor(kid, term);
 }
 
 export type GuardianKid = {

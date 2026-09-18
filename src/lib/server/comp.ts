@@ -1,8 +1,9 @@
 import type { APIRoute } from "astro";
 import type pg from "pg";
-import { CUP_LABEL, CUP_TERM } from "../registration/cup";
-import { RegistrationError } from "../registration/records";
+import { CUP_LABEL, CUP_TERM, publicName } from "../registration/cup";
+import { memberPaidSql, RegistrationError } from "../registration/records";
 import { ageAt } from "../registration/schema";
+import { getSemester } from "../registration/semesters";
 import {
   byRunningOrder, drawFinal, drawRound, formatScore, heatLabel, heatResults, MAX_WAVES, rashieDot, rashieLabel, RASHIES, standings,
   type CupConfig, type Entrant, type Heat, type HeatStatus, type Judge, type Rashie, type Slot, type Standing, type TickerItem, type Wave,
@@ -156,6 +157,32 @@ export async function loadLive(edition = CUP_TERM) {
     leaderboard: board.map(({ kidId: _kidId, ...row }) => row),
     final: final && { ...final, surfers: [...final.surfers].sort((a, b) => (b.score ?? -1) - (a.score ?? -1)) },
     heats: heats.map(publicHeat),
+  };
+}
+
+export type LineupSurfer = { number: number; name: string; age: number | null; member: boolean; heat: { label: string; colour: Rashie } | null };
+/** The public lineup for the Cup page: who is in, in the order they signed up.
+ *  Public names only; a heat and rashie colour once the board is live. */
+export async function loadLineup(edition = CUP_TERM): Promise<{ name: string; surfers: LineupSurfer[] }> {
+  const db = getDatabase();
+  const semester = await getSemester();
+  const [entries, event] = await Promise.all([
+    db.query(
+      `SELECT k.id, k.name, c.member OR ${memberPaidSql("k.id", "$2")} AS member,
+        (SELECT snapshot->'registration'->>'dateOfBirth' FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
+      FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id
+      WHERE c.edition=$1 AND k.archived_at IS NULL ORDER BY c.created_at, k.id`,
+      [edition, semester.id],
+    ),
+    db.query<{ live: boolean }>("SELECT live FROM cup_event WHERE edition=$1", [edition]),
+  ]);
+  const heats = event.rows[0]?.live ? (await readHeats(db, edition)).filter((heat) => heat.stage === "round" && heat.round === 1) : [];
+  const drawn = new Map(heats.flatMap((heat) => heat.slots.map((slot) => [slot.kidId, { label: heatLabel(heat), colour: slot.colour }])));
+  return {
+    name: CUP_LABEL,
+    surfers: entries.rows.map((row, index) => ({
+      number: index + 1, name: publicName(row.name), age: row.dob ? ageAt(row.dob) : null, member: Boolean(row.member), heat: drawn.get(row.id) ?? null,
+    })),
   };
 }
 
