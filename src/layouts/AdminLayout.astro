@@ -8,7 +8,7 @@ import { site } from "../data/site";
 
 interface Props {
   title?: string;
-  section?: "dashboard" | "orders" | "drops" | "products" | "customers" | "gallery";
+  section?: "dashboard" | "orders" | "drops" | "products" | "customers" | "gallery" | "cup";
 }
 
 const { title = `Admin · ${site.name}`, section = "dashboard" } = Astro.props;
@@ -21,6 +21,7 @@ const navItems: { href: string; label: string; key: Props["section"] }[] = [
   { href: "/admin/products", label: "Products", key: "products" },
   { href: "/admin/customers", label: "Customers", key: "customers" },
   { href: "/admin/gallery", label: "Gallery", key: "gallery" },
+  { href: "/admin/cup", label: "Cup day", key: "cup" },
 ];
 ---
 

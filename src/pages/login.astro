@@ -45,7 +45,7 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
   let email = "";
 
   const requestedPath = new URLSearchParams(window.location.search).get("next");
-  const destination = requestedPath && /^\/(account|admin|members|branding-plan|product-ideas|sunset-duckies-cup-vol-2)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
+  const destination = requestedPath && /^\/(account|admin|members|branding-plan|product-ideas|sunset-duckies-cup-vol-2|cup\/judge)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
     ? requestedPath : null;
   if (destination?.startsWith("/branding-plan") || destination?.startsWith("/product-ideas")) {
     document.querySelector("#login-kicker")!.textContent="Project Molt / Private workspace";
@@ -53,6 +53,9 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
   } else if (destination?.startsWith("/sunset-duckies-cup-vol-2")) {
     document.querySelector("#login-kicker")!.textContent="Cup Vol. 02 · members";
     document.querySelector("#login-intro")!.textContent="Sign in with the email on your club registration and we’ll take you back to the Cup page to pick who’s coming. No code arriving? Your email isn’t approved for sign-in yet — ping Andras on WhatsApp.";
+  } else if (destination?.startsWith("/cup/judge")) {
+    document.querySelector("#login-kicker")!.textContent="Cup Vol. 02 · Judges";
+    document.querySelector("#login-intro")!.textContent="Sign in with the email the club invited you on. We’ll send a six-digit code — no password, no club membership needed.";
   }
   authClient.getSession().then(({ data }) => {
     if (data) void finishSignIn();
@@ -61,7 +64,10 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
   async function finishSignIn() {
     if (destination) { window.location.replace(destination); return; }
     const membership = await fetch("/api/kids", { cache: "no-store" });
-    window.location.replace(membership.ok ? "/#our-duckies" : "/account");
+    if (membership.ok) { window.location.replace("/#our-duckies"); return; }
+    // Cup judges are not members: their home is the judge sheet.
+    const judging = await fetch("/api/cup/judge", { cache: "no-store" });
+    window.location.replace(judging.ok ? "/cup/judge" : "/account");
   }
 
   async function submit(form: HTMLFormElement, action: () => Promise<void>) {

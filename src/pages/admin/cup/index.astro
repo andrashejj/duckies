@@ -1,0 +1,22 @@
+---
+export const prerender = false;
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Kicker from "../../../components/ui/Kicker.astro";
+import SectionTitle from "../../../components/ui/SectionTitle.astro";
+import CupAdmin from "../../../components/react/CupAdmin";
+import { CUP_LABEL } from "../../../lib/registration/cup";
+import { bodyCopy, ctaClass } from "../../../lib/ui";
+// The middleware only lets organisers this far.
+---
+
+<AdminLayout title={`Cup day · Admin`} section="cup">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <Kicker>🏁 Cup day</Kicker>
+      <SectionTitle as="h1" class="mt-4">{CUP_LABEL}</SectionTitle>
+      <p class={`mt-3 max-w-2xl ${bodyCopy}`}>Draw the heats, move kids around, run the heats and keep the crowd posted. Judges score from their phones at <a class="underline" href="/cup/judge" target="_blank" rel="noreferrer">/cup/judge</a>; the public board lives at <a class="underline" href="/sunset-duckies-cup-vol-2/live" target="_blank" rel="noreferrer">/sunset-duckies-cup-vol-2/live</a> once you switch it live.</p>
+    </div>
+    <a class={ctaClass("secondary", "sm")} href="/#our-duckies" target="_blank" rel="noreferrer">↗ Roster</a>
+  </div>
+  <CupAdmin client:load liveHref="/sunset-duckies-cup-vol-2/live" judgeHref="/cup/judge" />
+</AdminLayout>

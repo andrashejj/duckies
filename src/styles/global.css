@@ -60,6 +60,13 @@
   --color-teal-600: #05a594;
   --color-lilac-400: #b49cff;
 
+  /* Heat rashies: the four contest colours the kids wear, constant in both
+     modes. Red and blue take cream type on top, yellow and green take ink. */
+  --color-rashie-red: #e8322d;
+  --color-rashie-yellow: #ffd23f;
+  --color-rashie-blue: #2d6cf6;
+  --color-rashie-green: #2fbf71;
+
   /* Performance / branding workspace: deep slate boards, bone type, acid + warm signals */
   --color-slate-950: #071015;
   --color-slate-900: #0b171d;
@@ -92,6 +99,8 @@
   --animate-wobble: wobble 4s ease-in-out infinite;
   --animate-marquee: marquee-x 38s linear infinite;
   --animate-crew-arrive: crew-arrive 350ms ease-out both;
+  --animate-ticker: marquee-x 60s linear infinite;
+  --animate-live-pulse: live-pulse 1.6s ease-in-out infinite;
 
   @keyframes gentle-float {
     0%, 100% { transform: translateY(0) rotate(-2deg); }
@@ -108,6 +117,10 @@
   @keyframes crew-arrive {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes live-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-coral-500) 70%, transparent); }
+    50% { box-shadow: 0 0 0 8px transparent; }
   }
 }
 

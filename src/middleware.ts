@@ -11,10 +11,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // The photo gallery, its share page, the served uploads and the upload API are for club members only.
   const gallery = /^\/(gallery|api\/gallery)(\/|$)/.test(path);
   const reservation = path === "/api/reserve";
+  // The judge sheet and its API need a session; whether that email may judge is checked in the route.
+  const judge = /^\/(cup\/judge|api\/cup\/(judge|photo))(\/|$)/.test(path);
   const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
   const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
   const granolaAPI=/^\/api\/granola(?:\/|$)/.test(path);
-  const privateResponse = brandingPage||brandingTemplate||gallery||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
+  const privateResponse = brandingPage||brandingTemplate||gallery||judge||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
     if(brandingPage||brandingTemplate||granolaAPI){
@@ -25,14 +27,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if(brandingTemplate)return context.redirect("/branding-plan");
       }
     }
-    if (admin || account || members || reservation || gallery) {
+    if (admin || account || members || reservation || gallery || judge) {
       try {
         context.locals.session = await getSession(context.request);
         context.locals.isAdmin = isAdmin(context.locals.session);
       } catch {
         return json({ error: "This service is temporarily unavailable. Please try again." }, 503);
       }
-      if ((admin || account || members || gallery) && !context.locals.session) {
+      if ((admin || account || members || gallery || judge) && !context.locals.session) {
         if (path.startsWith("/api/")) return json({ ok: false, error: "Please sign in." }, 401);
         return context.redirect(`/login?next=${encodeURIComponent(path)}`);
       }
@@ -41,7 +43,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if (gallery && !path.startsWith("/api/") && !path.startsWith("/gallery/photo/")) return context.redirect("/#how-to-join");
         return json({ ok: false, error: "You do not have access to this area." }, 403);
       }
-      if ((admin || reservation) && !["GET", "HEAD", "OPTIONS"].includes(context.request.method) && !sameOrigin(context.request)) {
+      if ((admin || reservation || judge) && !["GET", "HEAD", "OPTIONS"].includes(context.request.method) && !sameOrigin(context.request)) {
         return json({ ok: false, error: "Invalid request origin." }, 403);
       }
     }

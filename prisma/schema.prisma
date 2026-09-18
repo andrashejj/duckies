@@ -221,6 +221,8 @@ model ClubKid {
   user                   User?                    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_kid_photo         ClubKidPhoto?
   club_cup_entry         ClubCupEntry[]
+  cup_heat_slot          CupHeatSlot[]
+  cup_wave               CupWave[]
   club_payment_event     ClubPaymentEvent[]
   registrationLinks      ClubRegistrationLink[]
   club_signed_waiver     ClubSignedWaiver[]
@@ -349,6 +351,103 @@ model ClubSignedWaiver {
   @@index([link_id, signed_at(sort: Desc)], map: "club_signed_waiver_link")
 
   @@map("club_signed_waiver")
+}
+
+// ---------- Cup day: the draw, the judges' wave scores and the live ticker ----------
+
+// One row per Cup edition: how the day is drawn and whether the leaderboard
+// is public yet. Seeded by migration for cup-vol-2.
+model CupEvent {
+  edition    String      @id
+  rounds     Int         @default(2)
+  heat_size  Int         @default(4)
+  final_size Int         @default(4)
+  live       Boolean     @default(false)
+  version    Int         @default(1)
+  updated_at DateTime    @default(now()) @db.Timestamptz(6)
+  cup_heat   CupHeat[]
+  cup_judge  CupJudge[]
+  cup_ticker CupTicker[]
+
+  @@map("cup_event")
+}
+
+// A heat: up to heat_size kids, one rashie colour each. Qualifying rounds are
+// stage "round" 1..rounds; the final is stage "final" (round 0).
+model CupHeat {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  edition       String
+  stage         String        @default("round")
+  round         Int
+  number        Int
+  status        String        @default("scheduled")
+  started_at    DateTime?     @db.Timestamptz(6)
+  finished_at   DateTime?     @db.Timestamptz(6)
+  created_at    DateTime      @default(now()) @db.Timestamptz(6)
+  cup_event     CupEvent      @relation(fields: [edition], references: [edition], onDelete: NoAction, onUpdate: NoAction)
+  cup_heat_slot CupHeatSlot[]
+  cup_wave      CupWave[]
+
+  @@unique([edition, stage, round, number], map: "cup_heat_position")
+  @@map("cup_heat")
+}
+
+model CupHeatSlot {
+  heat_id  String   @db.Uuid
+  kid_id   String   @db.Uuid
+  colour   String
+  cup_heat CupHeat  @relation(fields: [heat_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  club_kid ClubKid  @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([heat_id, kid_id])
+  @@unique([heat_id, colour], map: "cup_heat_slot_colour")
+  @@map("cup_heat_slot")
+}
+
+// Judges sign in with the club's email code; they need no club membership.
+model CupJudge {
+  edition    String
+  email      String
+  name       String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_by String?
+  cup_event  CupEvent @relation(fields: [edition], references: [edition], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([edition, email])
+  @@map("cup_judge")
+}
+
+// One judge's score for one wave a kid rode in a heat. A judge's best two
+// waves per kid count; the kid's heat score averages the judges.
+model CupWave {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  heat_id     String   @db.Uuid
+  kid_id      String   @db.Uuid
+  judge_email String
+  wave        Int
+  score       Decimal  @db.Decimal(3, 1)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+  cup_heat    CupHeat  @relation(fields: [heat_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  club_kid    ClubKid  @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([heat_id, kid_id, judge_email, wave], map: "cup_wave_once")
+  @@index([heat_id, judge_email], map: "cup_wave_heat_judge")
+  @@map("cup_wave")
+}
+
+// The news strip on the public leaderboard: heat starts and results are
+// posted by the app, notes by the organisers.
+model CupTicker {
+  id         BigInt   @id @default(autoincrement())
+  edition    String
+  kind       String   @default("note")
+  message    String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  cup_event  CupEvent @relation(fields: [edition], references: [edition], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([edition, created_at(sort: Desc)], map: "cup_ticker_edition")
+  @@map("cup_ticker")
 }
 
 model GalleryUpload {

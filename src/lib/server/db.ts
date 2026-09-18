@@ -31,5 +31,7 @@ export async function canSignIn(email: string) {
   if (await findMember(email)) return true;
   const result = await getDatabase().query('SELECT 1 FROM "Order" WHERE email = $1 LIMIT 1', [email.trim().toLowerCase()]);
   if(result.rowCount!==0)return true;
-  return (await getDatabase().query("SELECT 1 FROM branding_access WHERE email=$1",[email])).rowCount!==0;
+  if((await getDatabase().query("SELECT 1 FROM branding_access WHERE email=$1",[email])).rowCount!==0)return true;
+  // Cup judges are invited by email; they need no club membership to score.
+  return (await getDatabase().query("SELECT 1 FROM cup_judge WHERE email=$1 LIMIT 1",[email])).rowCount!==0;
 }

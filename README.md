@@ -18,6 +18,7 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 - `/api/auth/*` — Better Auth endpoints (server-rendered)
 - `/api/kids` — authenticated roster; organisers can add kids
 - `/api/kids/:id` — organisers can rename or remove kids
+- `/admin/cup`, `/cup/judge`, `/sunset-duckies-cup-vol-2/live` — Cup day board, judge sheet and public leaderboard (see below)
 
 ## Commands
 
@@ -110,6 +111,14 @@ Removing a child archives them. Records remain accessible from **Archived kids a
 For trusted local administrative imports, `scripts/import-kid.ts` reads a private JSON file with `name`, `contactName`, `contactPhone`, and `payment: { term, status, amountMur, note }` (for example, `term: "2026-S2"`). This is a local operator command, not an HTTP endpoint, and records the action as Andras. Keep real child / payment import files outside Git (for example `.local-data/`). It does not invent a legal-guardian relationship, date of birth, payment amount/date, or signature. Repeating the same import avoids duplicate payment events.
 
 Local development data for this checkout is in the ignored `.local-data/postgres` PostgreSQL cluster on `127.0.0.1:54329`; `duckies_dev` contains development records and `duckies_test` is reserved for destructive tests. Start/stop this cluster with your PostgreSQL `pg_ctl -D "$PWD/.local-data/postgres"` commands; do not run Docker Compose on the same port concurrently. Local and production databases are separate. The supplied payment record has been deliberately imported into production; future local changes do not sync automatically.
+
+## Cup day: heats, judges and the live leaderboard
+
+`/admin/cup` is the organisers' board for the Cup Vol. 02 (`cup-vol-2`; the edition, rounds, heat size and final size live in `cup_event`). Every kid with a `club_cup_entry` is in the draw, with their age from the latest signed form. **Draw round 1** lines the kids up by age so the youngest surf together, in heats as even as the numbers allow (14 kids in heats of 4 is 4-4-3-3). Every later round is shuffled, keeping kids who already shared a heat apart where possible and rotating rashie colours, and every kid surfs exactly once per round. Organisers drag kids between heats (or use the menus on a phone), change a kid's rashie, take a kid out of a round, and **Start** / **Finish** each heat. **Build the final** takes the top of the leaderboard as it stands. A round can be redrawn or deleted until a judge has scored a heat in it; a kid with scores in a heat stays in that heat.
+
+Judges are invited by email on the same board (`cup_judge`). They sign in at `/login` with the usual six-digit code — no club membership, reservation or branding approval needed — and land on `/cup/judge`: pick the heat, see each kid with their rashie colour and private profile photo, and tap a score (0.5–10 in halves) per wave as it happens. Judges see and edit only their own scores (`cup_wave`); organisers can judge too. A kid's heat score is, for every judge who scored that heat, the sum of that judge's best two waves for the kid, averaged over those judges. The leaderboard adds the heat scores of the qualifying rounds; the final is ranked on its own.
+
+`/sunset-duckies-cup-vol-2/live` is the public board: a ticker (heat starts and results post themselves, organisers add notes), the heat in the water with a clock, the leaderboard and every finished heat. It reads `/api/cup/live`, which returns nothing but the Cup's name until an organiser switches **Leaderboard is LIVE** on the board. The feed carries names as they are on the roster, ages, colours and scores — never photos, contacts or ids. Uninviting a judge closes their sheet on the next request; their scores stay.
 
 ## Semester payments and profile photos
 

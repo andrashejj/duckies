@@ -1,0 +1,39 @@
+---
+export const prerender = false;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import SectionTitle from "../../components/ui/SectionTitle.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import CupJudge from "../../components/react/CupJudge";
+import SignOutButton from "../../components/react/SignOutButton";
+import { CUP_LABEL } from "../../lib/registration/cup";
+import { CompError, judgeAccess } from "../../lib/server/comp";
+import { bodyCopy } from "../../lib/ui";
+import { site } from "../../data/site";
+
+// The middleware has already sent anonymous visitors to /login. Whether this
+// email may judge is an invitation from the organisers.
+let invited = true;
+let reason = "";
+try { await judgeAccess(Astro.request); }
+catch (error) {
+  invited = false;
+  reason = error instanceof CompError ? error.message : "The judge sheet is temporarily unavailable. Please retry.";
+}
+---
+
+<BaseLayout title={`Judge sheet · ${CUP_LABEL}`} description="Judges' scoring sheet for the Sunset Duckies Cup.">
+  <section class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+    <Kicker>Judges · {CUP_LABEL}</Kicker>
+    <SectionTitle as="h1" class="mt-4">Score the <span class="font-accent italic">waves.</span></SectionTitle>
+    {invited ? (
+      <div class="mt-6"><CupJudge client:load /></div>
+    ) : (
+      <StickerCard tone="coral" class="mt-6 p-6 sm:p-8">
+        <p class={bodyCopy}>{reason}</p>
+        <p class="mt-4 text-sm">Signed in as {Astro.locals.session?.user.email}. Judges are invited by email — message the club on <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a> if you were expecting to be on the list.</p>
+        <div class="mt-4"><SignOutButton client:load /></div>
+      </StickerCard>
+    )}
+  </section>
+</BaseLayout>
