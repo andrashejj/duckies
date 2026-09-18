@@ -32,7 +32,7 @@ test("the first approved read seeds the plan; readers cannot change it",async({r
   expect(plan.people.find((p:{id:string})=>p.id==='estelle').email).toBe('niki.este.2022@ksz.edu-zg.ch');
   expect(plan.milestones).toHaveLength(planMilestones.length);
   expect(plan.milestones.flatMap((m:{tasks:unknown[]})=>m.tasks)).toHaveLength(seededTasks);
-  const event=plan.milestones.find((m:{id:string})=>m.id==='event');expect(event.dueOn).toBe('2026-10-17');expect(event.ownerId).toBe('estelle');expect(event.links.length).toBeGreaterThan(0);
+  const event=plan.milestones.find((m:{id:string})=>m.id==='event');expect(event.dueOn).toBe('2026-10-16');expect(event.ownerId).toBe('estelle');expect(event.links.length).toBeGreaterThan(0);
   const first=plan.milestones[0].tasks[0];expect(first).toMatchObject({id:'design-1',ownerId:'estelle',dueOn:'2026-09-25',status:'todo',version:1});
   expect(plan.milestones.flatMap((m:{tasks:{ownerId:string|null}[]})=>m.tasks).filter((t:{ownerId:string|null})=>t.ownerId==='andras')).toHaveLength(0);
   expect(plan.milestones.find((m:{id:string})=>m.id==='design').ownerId).toBe('dori');
