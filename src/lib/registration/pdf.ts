@@ -3,6 +3,7 @@ import { PDFDocument, rgb, type PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import type { RegistrationInput } from "./schema";
 import type { waiver } from "./policy";
+import { CUP_LABEL, isCupTerm } from "./cup";
 export type SignedSnapshot = {
   id: string;
   kidId: string;
@@ -94,12 +95,19 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
       9,
     );
   heading("The child and family");
-  paragraph(
-    `Date of birth: ${r.dateOfBirth}. Training: ${r.sessionsPerWeek === "2" ? "twice a week (Monday + Friday)" : "once a week"}.`,
-  );
-  paragraph(
-    "Membership covers club training only. Gear, competitions and other events are not included.",
-  );
+  if (isCupTerm(snapshot.term)) {
+    paragraph(`Date of birth: ${r.dateOfBirth}. Entry: ${CUP_LABEL}.`);
+    paragraph(
+      "This registration covers the cup entry only. Club training needs a separate membership.",
+    );
+  } else {
+    paragraph(
+      `Date of birth: ${r.dateOfBirth}. Training: ${r.sessionsPerWeek === "2" ? "twice a week (Monday + Friday)" : "once a week"}.`,
+    );
+    paragraph(
+      "Membership covers club training only. Gear, competitions and other events are not included.",
+    );
+  }
   r.guardians.forEach((g, index) =>
     paragraph(
       `Legal guardian ${index + 1}: ${g.name} (${g.relationship}). Phone: ${g.phone}. Email: ${g.email}.`,

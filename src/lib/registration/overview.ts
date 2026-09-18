@@ -104,7 +104,9 @@ export function kidOverview(
         ? "Twice a week · Monday + Friday"
         : r.sessionsPerWeek === "1"
           ? "Once a week"
-          : "Not chosen (older form)"
+          : kid.cup && !kid.cup.member
+            ? "None · cup entry only"
+            : "Not chosen (older form)"
       : "Not supplied",
   );
   const paid = kid.payment?.status === "paid";
@@ -114,6 +116,11 @@ export function kidOverview(
       ? `${paid ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
       : "Unpaid · no payment recorded for this semester",
   );
+  if (kid.cup)
+    fact(
+      "Duckies Cup Vol. 02",
+      `${kid.cup.member ? "Club member · free entry" : "Cup-only · Rs 1,000 entry, signs the cup form"} · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
+    );
   if (kid.contactName || kid.contactPhone)
     fact(
       "Contact supplied to club",

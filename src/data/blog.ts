@@ -30,6 +30,13 @@ export interface BlogPostSection {
   body: string;
 }
 
+export interface BlogRoll {
+  title: string;
+  titleAccent: string;
+  photos: { slug: string; alt: string }[];
+  clips: { slug: string; title: string }[];
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -57,6 +64,8 @@ export interface BlogPost {
     secondary?: { label: string; href: string };
   };
   media?: ShareConfig & { shareUrl: string };
+  /** Club photos and clips (public/media/logbook/roll/<slug>…) shown as the post's roll. */
+  roll?: BlogRoll;
 }
 
 export const blog = {
@@ -127,6 +136,23 @@ export const blog = {
         width: 240, height: 240,
       },
       heroGlyphs: "🌅 → 🦆 → 🏆",
+      roll: {
+        title: "The sessions,",
+        titleAccent: "so far.",
+        photos: [
+          { slug: "sunset-ride-arms-out", alt: "A Duckie rides a small evening wave towards the camera, arms out, under a sunset sky." },
+          { slug: "riding-the-shore", alt: "Riding a wave along the shore, filao trees behind." },
+          { slug: "into-the-dusk", alt: "Duckies carrying their boards into the water at dusk." },
+          { slug: "warm-up-circle", alt: "Warm-up circle on the sand under the big tree." },
+          { slug: "evening-glide", alt: "Evening glide across a glassy wave, sun rays on the water." },
+          { slug: "wading-in", alt: "Wading in with boards on a grey morning." },
+        ],
+        clips: [
+          { slug: "long-ride", title: "A long ride to the sand" },
+          { slug: "coach-push", title: "Coach push-off" },
+          { slug: "three-on-a-wave", title: "Three on one wave" },
+        ],
+      },
       cta: {
         kicker: "Kickoff + membership",
         title: "Come back to the",
@@ -186,6 +212,22 @@ export const blog = {
         caption: "The lineup from above: Duckies on the reef, 4 June.",
       },
       heroGlyphs: "⛰️ → 🚤 → 🤿",
+      roll: {
+        title: "Straight off the",
+        titleAccent: "boat.",
+        photos: [
+          { slug: "little-reef-lineup", alt: "Drone view of Duckies and their coach sitting on boards over the turquoise reef." },
+          { slug: "little-reef-paddle-out", alt: "Duckies paddling out over the reef at first light." },
+          { slug: "little-reef-kids-on-wave", alt: "Kids on soft-tops as a wave breaks over the reef, seen from above." },
+          { slug: "little-reef-over-the-reef", alt: "Two boards paddling over the coral, seen straight down from the drone." },
+          { slug: "little-reef-long-wave", alt: "A surfer takes off on a long peeling reef wave." },
+        ],
+        clips: [
+          { slug: "little-reef-kids-on-wave", title: "Little Reef: kids on a wave" },
+          { slug: "little-reef-long-wave", title: "Little Reef: the long wave" },
+          { slug: "little-reef-over-the-reef", title: "Over the coral" },
+        ],
+      },
       cta: {
         kicker: "Next trip",
         title: "Your duckie on the",
@@ -193,18 +235,6 @@ export const blog = {
         body: "Club trips are for members, and joining is four short steps. Say hi in the WhatsApp group and we'll take it from there.",
         primary: { label: "Join the crew", href: site.whatsappUrl, external: true },
         secondary: { label: "How to join the club", href: "/#join" },
-      },
-      media: {
-        // The trip lives in the same share as the Cup album (the original
-        // jZtkwTHpCzoxHaB share is password-protected now). Stills only: the
-        // folder's 4K drone originals are cut for /gallery instead of being
-        // streamed from Nextcloud.
-        shareUrl: "https://owncloud.justnet.pl/index.php/s/Doz36QepJBNrmfc",
-        base: "https://owncloud.justnet.pl",
-        token: "Doz36QepJBNrmfc",
-        path: "20260604 Little Reef Surfing/Part-1",
-        imagesOnly: true,
-        files: ["DJI_0503.JPG", "DJI_0513.JPG"],
       },
     },
     {
@@ -325,6 +355,22 @@ export const blog = {
         caption: "The lineup after a Friday session. Multiply by a Cup.",
       },
       heroGlyphs: "🏆 → 🦆 → 🔥",
+      roll: {
+        title: "Vol. 01,",
+        titleAccent: "in pictures.",
+        photos: [
+          { slug: "cup-the-final", alt: "The Final at sunset: a Duckie riding a wave in silhouette under a dramatic sky." },
+          { slug: "cup-arms-out", alt: "A Duckling rides the whitewater to the beach, arms out." },
+          { slug: "cup-final-golden-hour", alt: "A finalist rides a wave under a golden evening sky." },
+          { slug: "cup-grey-goose-heat", alt: "Two parents in wetsuits ride the same wave in the grey goose heat." },
+          { slug: "cup-boards-on-the-sand", alt: "Soft-top boards laid out in a row on the sand before the heats." },
+          { slug: "cup-duck-heat", alt: "A Duck in a pink rashie rides a wave in front of the beach, arms out." },
+          { slug: "cup-beach-sprint", alt: "Duckies sprint along the shoreline in a beach game." },
+          { slug: "cup-the-crew", alt: "The whole club with their boards on Tamarin beach after Cup Vol. 01, arms up." },
+        ],
+        clips: [
+        ],
+      },
       cta: {
         kicker: "Cup Vol. 02",
         title: "Everything about",
@@ -384,6 +430,21 @@ export const blog = {
         caption: "The lineup from above, 12 July, before the wind.",
       },
       heroGlyphs: "🌄 → 🏄 → 🚁",
+      roll: {
+        title: "From the",
+        titleAccent: "drone.",
+        photos: [
+          { slug: "le-morne-green-wall", alt: "A surfer rides a glassy green wave at Le Morne, seen from the drone." },
+          { slug: "le-morne-arjon-drop", alt: "A surfer on a red board drops into a Le Morne wave, whitewater behind." },
+          { slug: "le-morne-point-from-above", alt: "The sandy point at Le Morne from above: turquoise lagoon, filao trees and a small boat." },
+          { slug: "le-morne-sandcastles", alt: "Two Duckies and a parent on the empty Le Morne beach, seen from the drone." },
+          { slug: "reef-foam-from-above", alt: "Whitewater spreading over the Le Morne reef, seen from a low-flying drone." },
+        ],
+        clips: [
+          { slug: "le-morne-arjon", title: "Le Morne, the parents' turn" },
+          { slug: "le-morne-from-above", title: "The beach from above" },
+        ],
+      },
       cta: {
         kicker: "Cup Vol. 02",
         title: "The grey goose heat",

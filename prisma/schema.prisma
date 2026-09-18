@@ -213,18 +213,35 @@ model BrandingAccessEvent {
 model ClubKid {
   id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                   String
-  created_by             String
+  created_by             String?
   created_at             DateTime                 @default(now()) @db.Timestamptz(6)
   archived_at            DateTime?                @db.Timestamptz(6)
   contact_name           String?
   contact_phone          String?
-  user                   User                     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user                   User?                    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_kid_photo         ClubKidPhoto?
+  club_cup_entry         ClubCupEntry[]
   club_payment_event     ClubPaymentEvent[]
   registrationLinks      ClubRegistrationLink[]
   club_signed_waiver     ClubSignedWaiver[]
 
   @@map("club_kid")
+}
+
+// A kid coming to a Sunset Duckies Cup. Members ride on their signed club
+// registration; cup-only kids sign the same form through the cup's term.
+model ClubCupEntry {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kid_id        String   @db.Uuid
+  edition       String
+  member        Boolean
+  contact_name  String
+  contact_phone String
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  club_kid      ClubKid  @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([kid_id, edition], map: "club_cup_entry_kid_edition")
+  @@map("club_cup_entry")
 }
 
 model ClubKidPhoto {
@@ -270,12 +287,12 @@ model ClubRegistrationLink {
   kid_id                  String                   @db.Uuid
   token_hash              String                   @unique
   term                    String
-  created_by              String
+  created_by              String?
   created_at              DateTime                 @default(now()) @db.Timestamptz(6)
   expires_at              DateTime                 @db.Timestamptz(6)
   revoked_at              DateTime?                @db.Timestamptz(6)
   completed_at            DateTime?                @db.Timestamptz(6)
-  user                    User                     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user                    User?                    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_registration_photo ClubRegistrationPhoto?

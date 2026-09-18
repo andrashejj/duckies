@@ -2,6 +2,7 @@
 export const prerender = false;
 import "../styles/global.css";
 import { membershipCovers, MINIMUM_AGE, waiver, WAIVER_VERSION } from "../lib/registration/policy";
+import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
@@ -16,7 +17,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   <main class={registrationSheet}>
     <Kicker as="a" href="/">Sunset Duckies · Tamarin Bay</Kicker>
     <SectionTitle as="h1" class="mt-6">Ready for the <span class="font-accent italic">water.</span></SectionTitle>
-    <p class={`mt-4 ${bodyCopy}`}>One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account.</p>
+    <p id="registration-intro" data-membership="One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account.</p>
     <p id="registration-status" class={memberStatus} role="status" aria-live="polite">Opening your private invitation…</p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
@@ -27,7 +28,21 @@ const panel = `${registrationPanel} ${memberForm}`;
     </section>
     <form id="registration-form" data-waiver-version={WAIVER_VERSION} data-minimum-age={MINIMUM_AGE} class={memberForm} hidden>
       <p id="invitation-label" class={registrationPanel}></p>
-      <section class={registrationPanel}>
+      <section id="cup-covers" hidden class={registrationPanel}>
+        <h2 class="font-display text-2xl">What you're signing up for</h2>
+        <ul class="mt-3 list-disc space-y-2 pl-5">
+          <li>Entry to the {CUP_LABEL} — Friday 16 October 2026 at Tamarin Bay. Soft start at 12:00, first heat at 14:00, bonfire from 18:30.</li>
+          <li>Rs {CUP_ENTRY_FEE_MUR.toLocaleString("en-US")} entry fee for non-members, settled with the club before or on the day — we'll message you on WhatsApp.</li>
+          <li>Your child brings their own surfboard. Surfboards only, no boogie boards.</li>
+        </ul>
+        <h3 class="mt-5 font-bold">Not included</h3>
+        <ul class="mt-2 list-disc space-y-2 pl-5">
+          <li>Club membership and regular training. The Cup is a one-day event; joining the club is a separate step.</li>
+          <li>Gear: the club does not lend, rent or store boards, wetsuits or rashies.</li>
+        </ul>
+        <p class="mt-4 text-sm">The Cup is for kids aged {MINIMUM_AGE} and up who swim confidently in open water, and at least one parent or guardian from every family stays on the beach for the whole afternoon.</p>
+      </section>
+      <section id="membership-covers" class={registrationPanel}>
         <h2 class="font-display text-2xl">What your membership covers</h2>
         <ul class="mt-3 list-disc space-y-2 pl-5">{membershipCovers.included.map(text => <li>{text}</li>)}</ul>
         <h3 class="mt-5 font-bold">Nothing else is included</h3>
@@ -44,8 +59,10 @@ const panel = `${registrationPanel} ${memberForm}`;
         <p id="photo-status" role="status"></p>
         <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
         <p class="text-sm">Duckies are {MINIMUM_AGE} or older. Younger sibling keen to join? Message the club first.</p>
-        <label>Training rhythm<select aria-label="Training rhythm" name="sessionsPerWeek" required><option value="">Choose…</option><option value="2">Twice a week — Monday + Friday</option><option value="1">Once a week — Monday or Friday</option></select></label>
-        <p class="text-sm">Membership covers training and nothing else. You can change the rhythm with the coach during the semester.</p>
+        <div id="training-rhythm" class="contents">
+          <label>Training rhythm<select aria-label="Training rhythm" name="sessionsPerWeek" required><option value="">Choose…</option><option value="2">Twice a week — Monday + Friday</option><option value="1">Once a week — Monday or Friday</option></select></label>
+          <p class="text-sm">Membership covers training and nothing else. You can change the rhythm with the coach during the semester.</p>
+        </div>
         <label>Medical conditions, allergies or medication<textarea name="medicalNotes" maxlength="2000" rows="3" placeholder="Write none if there is nothing to flag."></textarea></label>
         <p class="text-sm">These details are available to club organisers. Please tell the head coach if anything changes.</p>
       </fieldset>
@@ -111,6 +128,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   const editButton = document.querySelector<HTMLButtonElement>("#edit-registration")!;
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
   let version = "";
+  let cup = false;
   let signed: Signed = null;
   let supersedes = "";
   let signature: [number, number][][] = [];
@@ -206,6 +224,15 @@ const panel = `${registrationPanel} ${memberForm}`;
       version = form.dataset.waiverVersion ?? "";
       if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
       signed = data.signed;
+      // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
+      cup = Boolean(data.cup);
+      const intro = document.querySelector<HTMLElement>("#registration-intro")!;
+      intro.textContent = cup ? intro.dataset.cup! : intro.dataset.membership!;
+      document.querySelector<HTMLElement>("#cup-covers")!.hidden = !cup;
+      document.querySelector<HTMLElement>("#membership-covers")!.hidden = cup;
+      const rhythm = document.querySelector<HTMLElement>("#training-rhythm")!;
+      rhythm.hidden = cup; rhythm.classList.toggle("contents", !cup);
+      (form.elements.namedItem("sessionsPerWeek") as HTMLSelectElement).required = !cup;
       field("childName").value = data.childName;
       document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
       if (data.completedAt) { completed(Boolean(data.canDownload)); editButton.hidden = !signed; return; }
@@ -217,7 +244,8 @@ const panel = `${registrationPanel} ${memberForm}`;
     submit.disabled=true; submit.textContent = "Saving…";
     const values = new FormData(form);
     const body: Record<string, unknown> = { version, signature };
-    for (const key of ["childName","dateOfBirth","sessionsPerWeek","medicalNotes","emergencyName","emergencyRelationship","emergencyPhone","media","signerName"]) body[key] = values.get(key);
+    for (const key of ["childName","dateOfBirth","medicalNotes","emergencyName","emergencyRelationship","emergencyPhone","media","signerName"]) body[key] = values.get(key);
+    if (!cup) body.sessionsPerWeek = values.get("sessionsPerWeek");
     for (const key of ["waiverAccepted","parentInWater","swimming","reef","gear","electronicConsent"]) body[key] = values.get(key) === "on";
     body.guardians = Array.from(document.querySelectorAll("[data-guardian]")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input")).map(input => [input.dataset.field, input.value])));
     if (supersedes) body.supersedes = supersedes;

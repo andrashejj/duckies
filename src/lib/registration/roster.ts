@@ -8,6 +8,7 @@ export function rosterSearch(kid: Kid, organiser: boolean) {
   return [kid.name, record.contactName, record.contactPhone,
     ...(record.registration?.guardians.flatMap(g => [g.name, g.phone, g.email]) ?? []),
     record.registration?.emergencyPhone,
+    record.cup?.contactName, record.cup?.contactPhone,
   ].filter(Boolean).join(" ").toLocaleLowerCase();
 }
 export function matchesRosterFilter(kid: OrganiserKid, filter: string) {
@@ -16,6 +17,7 @@ export function matchesRosterFilter(kid: OrganiserKid, filter: string) {
     case "unsigned": return !kid.waiverId;
     case "no-media": return kid.registration?.media !== "yes";
     case "water": return !kid.registration?.parentInWater;
+    case "cup": return Boolean(kid.cup);
     default: return true;
   }
 }

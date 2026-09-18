@@ -31,15 +31,25 @@ const description = post.excerpt;
 // post.media.files if the share is unreachable from the build environment).
 const mediaFiles = post.media ? await loadShareFiles(post.media) : [];
 const imageFiles = mediaFiles.filter((file) => !isVideo(file));
-const photos = imageFiles.map((file, i) => ({
-  alt: `${post.title} ${post.titleAccent} — photo ${i + 1} of ${imageFiles.length}`,
-  thumb: sharePreviewUrl(post.media!, file, 700),
-  full: sharePreviewUrl(post.media!, file, 2048),
-}));
-const clips = (post.media?.imagesOnly ? [] : mediaFiles.filter(isVideo)).map((file) => ({
-  src: shareDownloadUrl(post.media!, file),
-  poster: sharePreviewUrl(post.media!, file, 1200),
-}));
+// The post's roll: the club's own photos and clips (public/media/logbook/roll)
+// first, then whatever the Nextcloud share holds.
+const photos = [
+  ...(post.roll?.photos ?? []).map((photo) => ({ alt: photo.alt, thumb: `/media/logbook/roll/${photo.slug}-small.webp`, full: `/media/logbook/roll/${photo.slug}.webp` })),
+  ...imageFiles.map((file, i) => ({
+    alt: `${post.title} ${post.titleAccent} — photo ${i + 1} of ${imageFiles.length}`,
+    thumb: sharePreviewUrl(post.media!, file, 700),
+    full: sharePreviewUrl(post.media!, file, 2048),
+  })),
+];
+const clips = [
+  ...(post.roll?.clips ?? []).map((clip) => ({ src: `/media/logbook/roll/${clip.slug}.mp4`, poster: `/media/logbook/roll/${clip.slug}-poster.webp`, title: clip.title })),
+  ...(post.media?.imagesOnly ? [] : mediaFiles.filter(isVideo)).map((file) => ({
+    src: shareDownloadUrl(post.media!, file),
+    poster: sharePreviewUrl(post.media!, file, 1200),
+    title: null as string | null,
+  })),
+];
+const hasRoll = Boolean(post.media || post.roll);
 
 const heroImage = post.cover?.src ?? post.heroImage ?? photos[0]?.full;
 const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
@@ -59,7 +69,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
           </h1>
           <p class={`mt-6 ${bodyCopy}`}>{post.excerpt}</p>
           <p class="mt-6 font-mono text-xs leading-6 uppercase tracking-wider">{post.dateLabel} · {post.location}</p>
-          {post.media && <Cta variant="secondary" href="#gallery" class="mt-6">↓ The trip, in photos</Cta>}
+          {hasRoll && <Cta variant="secondary" href="#gallery" class="mt-6">↓ The day, in photos</Cta>}
         </div>
         {post.cover ? <LogbookIllustration image={post.cover} eager class="rotate-[1deg]" /> : heroImage && <img src={heroImage} alt={`${post.title} ${post.titleAccent}`} width="1536" height="1024" class="rounded-xl" />}
       </div>
@@ -121,31 +131,35 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
         </div>
         <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3" data-reveal>
           {clips.map((clip) => (
-            <div class={mediaFrame}>
-              <video
-                src={clip.src}
-                poster={clip.poster}
-                muted
-                loop
-                playsinline
-                controls
-                preload="none"
-                class="aspect-video w-full"
-              ></video>
-            </div>
+            <figure class="m-0">
+              <div class={mediaFrame}>
+                <video
+                  src={clip.src}
+                  poster={clip.poster}
+                  muted
+                  loop
+                  playsinline
+                  controls
+                  preload="metadata"
+                  class="aspect-video w-full"
+                  data-autoplay
+                ></video>
+              </div>
+              {clip.title && <figcaption class="mt-2 font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{clip.title}</figcaption>}
+            </figure>
           ))}
         </div>
       </section>
     )}
 
     <!-- ===================== GALLERY ===================== -->
-    {post.media && <section id="gallery" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+    {hasRoll && <section id="gallery" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
       <div class="mb-9 flex flex-wrap items-end justify-between gap-5" data-reveal>
         <div class="max-w-2xl">
           <Kicker>📸 The day, in pictures</Kicker>
           <SectionTitle class="mt-4">
-            Straight off the
-            <span class="font-accent italic">boat</span>.
+            {post.roll?.title ?? "Straight off the"}{" "}
+            <span class="font-accent italic">{post.roll?.titleAccent ?? "boat."}</span>
           </SectionTitle>
           {photos.length > 0 ? (
             <p class={`mt-4 ${bodyCopy}`}>Tap a photo to open it full-size.</p>
@@ -155,7 +169,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
             </p>
           )}
         </div>
-        <Cta variant="secondary" href={post.media.shareUrl} target="_blank" rel="noreferrer" class="shrink-0">↗ Full album</Cta>
+        {post.media && <Cta variant="secondary" href={post.media.shareUrl} target="_blank" rel="noreferrer" class="shrink-0">↗ Full album</Cta>}
       </div>
 
       {photos.length > 0 && (
@@ -183,9 +197,9 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
       )}
     </section>}
 
-    {post.media && <Lightbox id="post-lightbox" label="Photo viewer" />}
+    {hasRoll && <Lightbox id="post-lightbox" label="Photo viewer" />}
 
-    {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos by club parents and the club drone. {post.media && "The trip gallery contains the club’s original photos and videos."}</p>}
+    {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos and clips by club parents and the club drone. {post.media && "The full album holds the club’s original photos and videos."}</p>}
 
     <!-- ===================== CTA ===================== -->
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">
@@ -209,3 +223,18 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
     </section>
   </article>
 </BaseLayout>
+
+<script>
+  // Roll clips play while on screen, pause when scrolled away; reduced-motion visitors keep poster + controls.
+  const clips = Array.from(document.querySelectorAll<HTMLVideoElement>("[data-autoplay]"));
+  if (clips.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.intersectionRatio >= 0.4) video.play().catch(() => {});
+        else video.pause();
+      }
+    }, { threshold: [0, 0.4] });
+    clips.forEach((video) => observer.observe(video));
+  }
+</script>

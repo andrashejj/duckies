@@ -27,6 +27,7 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
         <option value="unsigned">Waiver not signed</option>
         <option value="no-media">No media consent</option>
         <option value="water">Parent in water not acknowledged</option>
+        <option value="cup">Coming to the Cup Vol. 02</option>
       </select></label>
     </div>
     <p data-roster-count role="status" aria-live="polite" class="mt-4 font-mono text-xs uppercase tracking-widest"></p>
@@ -49,7 +50,7 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
 <p data-member-load-error hidden class="mx-auto max-w-7xl px-6 py-4 text-sm" role="status">The members area couldn’t load. <button type="button" data-retry-members class={textButton}>Try again</button></p>
 
 <script>
-  import { duckieAvatar, duckieAvatarEmpty, duckieChevron, duckieEdit, duckieIdentity, duckieIdentityRow, duckieName, duckiePanel, duckieProfile, duckieRow, duckieSummary, duckieActions, textButton } from "../lib/members-ui";
+  import { duckieAvatar, duckieAvatarEmpty, duckieChevron, duckieEdit, duckieFlag, duckieIdentity, duckieIdentityRow, duckieName, duckiePanel, duckieProfile, duckieRow, duckieSummary, duckieActions, textButton } from "../lib/members-ui";
   import { semesterControls } from "../lib/registration/semester-controls";
   import type { Semester } from "../lib/registration/semesters";
   import { authClient } from "../lib/auth-client";
@@ -163,7 +164,10 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
         chevron.className = duckieChevron;
         chevron.textContent = "›";
         chevron.setAttribute("aria-hidden", "true");
-        identity.append(name, chevron);
+        identity.append(name);
+        const cup = (kid as OrganiserKid).cup;
+        if (cup) { const flag = document.createElement("span"); flag.className = duckieFlag; flag.textContent = cup.member ? "Cup 02" : "Cup 02 · new"; flag.title = cup.member ? "Club member coming to the Cup Vol. 02" : "Cup-only entry (not a club member)"; identity.append(flag); }
+        identity.append(chevron);
         summary.append(identity, ...rosterCells(kid as OrganiserKid));
         profile.append(summary);
         row.append(profile);

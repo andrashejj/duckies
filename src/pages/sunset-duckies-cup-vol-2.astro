@@ -8,11 +8,12 @@ import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import StickerCard from "../components/ui/StickerCard.astro";
 import Underline from "../components/ui/Underline.astro";
-import { bodyCopy, eyebrowBadge, stickerTones, type StickerTone } from "../lib/ui";
+import { bodyCopy, eyebrowBadge, field, label, miniCard, stickerTones, type StickerTone } from "../lib/ui";
 
 const cup = site.cupVol2;
 const title = `${cup.name} — Vol. 02 | ${site.name}`;
-const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 16 October 2026 — leveled up from the lessons of the first ever cup: colour-coded rashies, heats of 4, smarter scoring, an earlier start, branded gazebos and more food.`;
+const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Soft start 12:00, first heat 14:00, bonfire 18:30. Music, BBQ, age 7+, bring your own board. Register on the page.`;
+const toggle = "inline-flex w-full cursor-pointer items-center justify-center rounded-full border-2 border-edge bg-surface px-4 py-3 text-center font-display text-[0.95rem] font-bold text-fg transition [font-variation-settings:'wdth'_108] peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
 ---
 
 <BaseLayout title={title} description={description} image="/media/cup/vol-2-og.jpg" imageAlt="The Final of Cup Vol. 01 at sunset, Tamarin Bay." imageWidth={1200} imageHeight={630}>
@@ -35,7 +36,7 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 1
       <div class="animate-float motion-reduce:animate-none">
         <div class="-rotate-[8deg] rounded-full border-2 border-ink-950 bg-teal-500 px-5 py-3 shadow-[5px_5px_0_0_var(--color-ink-950)]">
           <p class="font-display text-lg font-bold text-ink-950 [font-variation-settings:'wdth'_112]">
-            ✦ the glow-up · vol. 02
+            ✦ free for duckies
           </p>
         </div>
       </div>
@@ -44,7 +45,7 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 1
       <div class="animate-wobble motion-reduce:animate-none">
         <div class="rotate-[6deg] rounded-full border-2 border-ink-950 bg-sun-500 px-4 py-2 shadow-[4px_4px_0_0_var(--color-ink-950)]">
           <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ink-950">
-            lessons → upgrades
+            byo board · no boogies
           </p>
         </div>
       </div>
@@ -78,15 +79,15 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 1
             {cup.blurb}
           </p>
           <p class="font-mono text-[0.78rem] uppercase tracking-[0.22em] text-white/75">
-             {cup.location}  ·   {cup.timeLabel}
+            {cup.location} · {cup.timeLabel}
           </p>
         </div>
 
         <div data-float class="flex flex-col gap-3">
-          <Cta href={site.whatsappUrl} target="_blank" rel="noreferrer" class="w-full">{cup.registerCtaLabel}</Cta>
-          <Cta variant="secondary" href="#lessons" class="w-full">↓ See what's changing</Cta>
+          <Cta href="#register" class="w-full">{cup.registerCtaLabel}</Cta>
+          <Cta variant="secondary" href="#day" class="w-full">↓ The plan for the day</Cta>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
-            {cup.lessons.length} fixes ★ all from vol. 01
+            friends + fam welcome ★ age 7+ ★ surf only
           </p>
         </div>
       </div>
@@ -98,77 +99,171 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 1
     <div class="mx-auto grid max-w-7xl grid-cols-2 gap-0 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">
       <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-ink-950/25">
         <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">16 Oct</p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">Friday · 2026</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">Friday · from 12:00</p>
+      </div>
+      <div class="flex flex-col items-start gap-1 py-6 pr-6 lg:border-r-2 lg:border-ink-950/25">
+        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">{cup.memberFeeLabel}</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">for club members</p>
       </div>
       <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-ink-950/25">
-        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">Heats of 4</p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">one colour each</p>
-      </div>
-      <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-ink-950/25">
-        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">2 scores</p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">playful + serious</p>
+        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">{cup.entryFeeLabel}</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">non-members</p>
       </div>
       <div class="flex flex-col items-start gap-1 py-6 pr-6">
-        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">{cup.lessons.length} fixes</p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">learned at vol. 01</p>
+        <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">Age 7+</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">surf only · byo board</p>
       </div>
     </div>
   </section>
 
-  <!-- ===================== LESSONS LEARNED ===================== -->
-  <section id="lessons" class="relative mx-auto max-w-7xl px-6 pb-12 pt-20 lg:px-10">
+  <!-- ===================== THE ESSENTIALS ===================== -->
+  <section id="essentials" class="relative mx-auto max-w-7xl px-6 pb-12 pt-20 lg:px-10">
     <div class="pointer-events-none absolute top-12 -left-20 -z-0 h-[280px] w-[280px] rounded-[60%_40%_55%_45%/42%_58%_42%_58%] bg-teal-500 opacity-50 blur-[44px]"></div>
     <div class="pointer-events-none absolute -right-24 bottom-10 -z-0 h-[320px] w-[320px] rounded-[52%_48%_40%_60%/55%_45%_55%_45%] bg-coral-500 opacity-45 blur-[40px]"></div>
 
     <div class="relative space-y-10">
       <div class="max-w-3xl space-y-5" data-reveal>
-        <Kicker>Lessons learned · Vol. 01 → 02</Kicker>
+        <Kicker>The essentials</Kicker>
         <SectionTitle>
-          What the first cup
-          <span class="font-accent italic">taught</span>
-          us.
+          The stuff you
+          <span class="font-accent italic">actually</span>
+          need to know.
         </SectionTitle>
         <p class={`max-w-2xl ${bodyCopy}`}>
-          Every wobble from round one, turned into a fix.
+          Six cards, no fine print. Then scroll down and register — it takes less time than waxing a board.
         </p>
       </div>
 
-      <ul class="grid max-w-3xl gap-3" data-reveal>
-        {cup.lessons.map((lesson) => (
-          <li class:list={["flex items-center gap-4 rounded-[1.3rem] border-2 border-edge p-4 shadow-sticker-sm sm:p-5", stickerTones[lesson.accent as StickerTone]]}>
-            <SurfPhoto scene={lesson.photo} />
-            <div class="min-w-0 flex-1">
-              <p class="font-display text-lg font-bold text-fg [font-variation-settings:'wdth'_110] sm:text-xl">
-                {lesson.title}
+      <ul class="grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-reveal>
+        {cup.essentials.map((item) => (
+          <li class:list={["flex flex-col gap-4 rounded-sticker border-2 border-edge p-5 shadow-sticker-sm sm:p-6", stickerTones[item.accent as StickerTone]]}>
+            <div class="flex items-center justify-between gap-4">
+              <span class="rounded-full border-[1.5px] border-edge bg-surface px-3 py-1 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-fg/80">
+                {item.tag}
+              </span>
+              <SurfPhoto scene={item.photo} />
+            </div>
+            <div>
+              <p class="font-display text-xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110] sm:text-2xl">
+                {item.title}
               </p>
-              <p class="mt-0.5 text-[0.88rem] leading-snug text-fg/75">
-                {lesson.change}
+              <p class="mt-2 text-[0.95rem] leading-relaxed text-fg/80">
+                {item.text}
               </p>
             </div>
-            <span class="hidden shrink-0 rounded-full border-[1.5px] border-edge bg-surface px-3 py-1 font-mono text-[0.56rem] font-semibold uppercase tracking-[0.16em] text-fg/80 sm:inline">
-              {lesson.tag}
-            </span>
           </li>
         ))}
       </ul>
     </div>
   </section>
 
-  <!-- ===================== LOCKED IN ===================== -->
-  <section class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-    <StickerCard tone="sun" class="p-8 md:p-10" data-reveal>
+  <!-- ===================== RUN OF SHOW ===================== -->
+  <section id="day" class="mx-auto max-w-7xl scroll-mt-24 px-6 py-12 lg:px-10">
+    <StickerCard class="p-8 md:p-10" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <Kicker>The plan for the day</Kicker>
+          <SectionTitle size="none" class="mt-4 text-[clamp(1.9rem,3.5vw,3rem)]">
+            12:00 till the <Underline>bonfire</Underline>.
+          </SectionTitle>
+        </div>
+        <p class="max-w-sm font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
+          Times are surf-ish. Heats run on the waves, not the clock.
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-3">
+        {cup.runOfShow.map((item) => (
+          <div class={`flex items-center gap-4 ${miniCard}`}>
+            <p class="w-20 shrink-0 font-mono text-sm font-semibold text-accent-text">
+              {item.time}
+            </p>
+            <p class="flex-1 font-display text-[1.05rem] font-semibold leading-6 text-fg/85 [font-variation-settings:'wdth'_108]">
+              {item.label}
+            </p>
+            <SurfPhoto scene={item.photo} />
+          </div>
+        ))}
+      </div>
+    </StickerCard>
+  </section>
+
+  <!-- ===================== REGISTER ===================== -->
+  <section id="register" class="mx-auto max-w-7xl scroll-mt-24 px-6 py-12 lg:px-10">
+    <StickerCard tone="sun" class="p-8 md:p-12" data-reveal>
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div>
+          <Kicker>Register</Kicker>
+          <SectionTitle class="mt-4">
+            Lock in your <Underline>spot</Underline>.
+          </SectionTitle>
+          <p class={`mt-4 max-w-xl ${bodyCopy}`}>{cup.form.intro}</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <Chip>{cup.memberFeeLabel} for members</Chip>
+            <Chip>{cup.entryFeeLabel} non-members</Chip>
+            <Chip>Age 7+</Chip>
+            <Chip>No login needed</Chip>
+          </div>
+          <p class="mt-6 max-w-xl text-sm leading-6 text-fg/70">{cup.form.footnote}</p>
+        </div>
+
+        <form data-cup-register class="grid gap-5 rounded-sticker border-2 border-edge bg-surface p-6 shadow-sticker-md sm:p-8" novalidate>
+          <fieldset class="grid gap-3">
+            <legend class={label}>Who's coming?</legend>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+              <label>
+                <input class="peer sr-only" type="radio" name="member" value="yes" checked />
+                <span class={toggle}>{cup.form.memberLabel}</span>
+              </label>
+              <label>
+                <input class="peer sr-only" type="radio" name="member" value="no" />
+                <span class={toggle}>{cup.form.guestLabel}</span>
+              </label>
+            </div>
+            <p data-member-hint class="text-sm leading-6 text-fg/70">Use the name they go by at the club and a guardian number from your club registration — that's how we find them.</p>
+            <p data-guest-hint hidden class="text-sm leading-6 text-fg/70">We'll put your kid on the list, then send you straight to the registration form + waiver. Rs 1,000 entry, sorted with the club.</p>
+          </fieldset>
+          <label class="grid gap-2">
+            <span class={label}>Kid's name</span>
+            <input class={field} name="kidName" required maxlength="80" autocomplete="off" placeholder="The name they surf under" />
+          </label>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2">
+              <span class={label}>Parent / guardian</span>
+              <input class={field} name="contactName" required maxlength="120" autocomplete="name" placeholder="Your name" />
+            </label>
+            <label class="grid gap-2">
+              <span class={label}>WhatsApp number</span>
+              <input class={field} name="contactPhone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+230 5…" />
+            </label>
+          </div>
+          <div class="flex flex-wrap items-center gap-4">
+            <Cta type="submit">{cup.form.submitLabel}</Cta>
+            <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{cup.dateLabel}</span>
+          </div>
+          <p data-cup-status role="status" aria-live="polite" class="text-[0.95rem] leading-relaxed not-empty:mt-1"></p>
+          <a data-cup-link hidden href="#" class="justify-self-start font-display text-[0.95rem] font-bold uppercase tracking-[-0.01em] underline decoration-accent decoration-2 underline-offset-4">Open the registration form →</a>
+        </form>
+      </div>
+    </StickerCard>
+  </section>
+
+  <!-- ===================== GLOW-UPS ===================== -->
+  <section id="glow-ups" class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <StickerCard tone="teal" class="p-8 md:p-10" data-reveal>
       <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
         <div>
-          <Kicker>Locked in</Kicker>
+          <Kicker>New since Vol. 01</Kicker>
           <SectionTitle size="md" class="mt-4">
-            Already <Underline>nailed down</Underline>.
+            Same beach, <Underline>glow-up</Underline> edition.
           </SectionTitle>
           <p class={`mt-4 max-w-md ${bodyCopy}`}>
-            Big calls made. Sign-up and draws drop closer to the day.
+            Everything the first Cup taught us is already baked in. No essay, just the receipts.
           </p>
+          <a href={cup.previousEdition.href} class="mt-5 inline-block font-mono text-[0.72rem] uppercase tracking-[0.18em] text-fg underline decoration-accent decoration-2 underline-offset-4">← How Vol. 01 ran</a>
         </div>
         <div class="flex flex-wrap gap-3">
-          {cup.lockedIn.map((item) => (
+          {cup.glowUps.map((item) => (
             <Chip>{item}</Chip>
           ))}
         </div>
@@ -176,28 +271,89 @@ const description = `Sunset Duckies Cup Vol. 02 comes to Tamarin Bay on Friday 1
     </StickerCard>
   </section>
 
-  <!-- ===================== SAVE THE DATE ===================== -->
+  <!-- ===================== SEE YOU THERE ===================== -->
   <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
     <StickerCard tone="coral" class="p-8 md:p-12" data-reveal>
       <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
-          <Kicker>Save the date</Kicker>
+          <Kicker>See you there</Kicker>
           <SectionTitle class="mt-4">
             Friday <Underline>16 October</Underline>.
           </SectionTitle>
           <p class={`mt-4 max-w-2xl ${bodyCopy}`}>
-            Same beach, levelled up. Jump in the WhatsApp group for sign-up and the draw first.
+            Tamarin Bay, 12:00 till the bonfire dies down. Bring a board, bring the fam, bring something for the grill.
           </p>
           <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
             {cup.dateLabel} · {cup.location}
           </p>
         </div>
         <div class="flex flex-col gap-3">
-          <Cta href={site.whatsappUrl} target="_blank" rel="noreferrer">{cup.registerCtaLabel}</Cta>
-          <Cta variant="secondary" href={cup.previousEdition.href}>← See how Vol. 01 ran</Cta>
+          <Cta href="#register">{cup.registerCtaLabel}</Cta>
+          <Cta variant="secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">Join the WhatsApp group</Cta>
         </div>
       </div>
     </StickerCard>
   </section>
 
 </BaseLayout>
+
+<script>
+  // Members land on the list straight away; cup-only kids continue to the
+  // private registration link the server issues for them.
+  const form = document.querySelector<HTMLFormElement>("[data-cup-register]")!;
+  const status = form.querySelector<HTMLElement>("[data-cup-status]")!;
+  const next = form.querySelector<HTMLAnchorElement>("[data-cup-link]")!;
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  const memberHint = form.querySelector<HTMLElement>("[data-member-hint]")!;
+  const guestHint = form.querySelector<HTMLElement>("[data-guest-hint]")!;
+  const isMember = () => (form.elements.namedItem("member") as RadioNodeList).value === "yes";
+  const kidName = form.elements.namedItem("kidName") as HTMLInputElement;
+  const syncHints = () => {
+    memberHint.hidden = !isMember();
+    guestHint.hidden = isMember();
+    kidName.placeholder = isMember() ? "The name they go by at the club" : "Full name";
+  };
+  form.addEventListener("change", syncHints);
+  syncHints();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const values = new FormData(form);
+    const body = {
+      kidName: values.get("kidName"),
+      member: isMember(),
+      contactName: values.get("contactName"),
+      contactPhone: values.get("contactPhone"),
+    };
+    submit.disabled = true;
+    next.hidden = true;
+    status.textContent = "Locking it in…";
+    try {
+      const response = await fetch("/api/cup/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
+      if (data.status === "member") {
+        status.textContent = `🔒 ${data.kidName} is locked in. See you Friday 16 October — pull up from 12:00, first heat at 14:00.`;
+        form.reset();
+        syncHints();
+      } else if (data.status === "signed") {
+        status.textContent = `${data.kidName} is already fully registered — form and waiver done. See you on the sand!`;
+        form.reset();
+        syncHints();
+      } else {
+        status.textContent = `${data.kidName} is on the list! One last thing: the registration form + waiver (≈5 min, no login). Taking you there now…`;
+        next.href = data.url;
+        next.hidden = false;
+        window.setTimeout(() => window.location.assign(data.url), 2500);
+      }
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : "Couldn't register. Try again in a sec.";
+    } finally {
+      submit.disabled = false;
+    }
+  });
+</script>

@@ -9,6 +9,7 @@ import {
   registrationRateLimit,
   safeRoute,
 } from "../../../lib/registration/http";
+import { isCupTerm } from "../../../lib/registration/cup";
 import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
 import {
@@ -33,6 +34,7 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
     childName: link.name,
     term: link.term,
     termLabel: link.term_label,
+    cup: isCupTerm(link.term),
     expiresAt: link.expires_at,
     completedAt: link.completed_at,
     canDownload:

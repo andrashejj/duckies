@@ -23,6 +23,8 @@ export const duckieSummary = `duckie-summary ${rosterColumns} cursor-pointer lis
 export const duckieIdentity = `flex min-w-0 items-center gap-[0.6rem] ${phone}col-span-full`;
 export const duckieIdentityRow = `${duckieIdentity} px-[0.6rem] py-3`;
 export const duckieName = "duckie-name min-w-0 flex-1 font-display text-[1.05rem] font-[650] leading-[1.25] break-words";
+// Flags a kid who is coming to the Cup; the brand yellow wants ink on top.
+export const duckieFlag = "duckie-flag shrink-0 rounded-full border border-edge bg-sun-500 px-2 py-[0.15rem] font-mono text-[0.55rem] font-semibold uppercase tracking-[0.1em] text-ink-950";
 export const duckieAvatar = "h-9 w-9 shrink-0 rounded-full border border-edge object-cover";
 export const duckieAvatarEmpty = `${duckieAvatar} grid place-items-center bg-sun-500 font-display text-[1.2rem] text-ink-950`;
 export const duckieChevron = "text-[1.4rem] leading-none transition-transform group-open:rotate-90 motion-reduce:transition-none";

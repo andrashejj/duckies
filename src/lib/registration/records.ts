@@ -11,6 +11,7 @@ import { getDatabase } from "../server/db";
 import { waiver, WAIVER_VERSION } from "./policy";
 import { ageAt, registrationSchema, type RegistrationInput } from "./schema";
 import { getSemester } from "./semesters";
+import { isCupTerm } from "./cup";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
 export const sha256 = (value: string | Buffer) =>
   createHash("sha256").update(value).digest("hex");
@@ -46,14 +47,17 @@ export async function isPaid(kidId: string, term: string) {
   );
   return rows[0]?.status === "paid";
 }
+// Organisers issue links after payment; the public cup form issues its own
+// (no user, no payment yet — the entry fee is settled on the day).
 export async function issueLink(
   kidId: string,
-  userId: string,
+  userId: string | null,
   termId?: string,
+  { requirePayment = true } = {},
 ) {
   const semester = await getSemester(termId);
   key(); // Never issue a link whose signature cannot be stored.
-  if (!(await isPaid(kidId, semester.id)))
+  if (requirePayment && !(await isPaid(kidId, semester.id)))
     throw new RegistrationError(
       `Record the ${semester.label} payment first. Registration links go out once the membership is paid.`,
       409,
@@ -158,6 +162,10 @@ export async function completeRegistration(
       );
     if (!link.completed_at && supersedes)
       throw new RegistrationError("There is no signed record to correct yet.");
+    // Membership is training, so a semester needs a rhythm; a cup entry has none.
+    if (isCupTerm(link.term)) delete registration.sessionsPerWeek;
+    else if (!registration.sessionsPerWeek)
+      throw new RegistrationError("Choose a training rhythm.");
     const snapshot: SignedSnapshot = {
       id: randomUUID(),
       kidId: link.kid_id,
@@ -268,12 +276,20 @@ export type OrganiserKid = {
   contactPhone: string | null;
   photoVersion: string | null;
   waiverTerm: string | null;
+  cup: {
+    edition: string;
+    member: boolean;
+    contactName: string;
+    contactPhone: string;
+    createdAt: string;
+  } | null;
 };
 export async function organiserRoster(term: string): Promise<OrganiserKid[]> {
   const { rows } = await getDatabase().query(
     `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
-    (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link
+    (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
+    (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup
     FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
     WHERE k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
     [term],
@@ -291,5 +307,6 @@ export async function organiserRoster(term: string): Promise<OrganiserKid[]> {
     contactPhone: row.contact_phone,
     photoVersion: row.photo_version,
     waiverTerm: row.waiver_term,
+    cup: row.cup,
   }));
 }

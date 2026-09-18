@@ -46,8 +46,9 @@ export const registrationSchema = z
     emergencyRelationship: text(60),
     emergencyPhone: phone,
     medicalNotes: z.string().trim().max(2000),
-    // Training is all that membership covers; families pick the rhythm.
-    sessionsPerWeek: z.enum(["1", "2"]),
+    // Training is all that membership covers; families pick the rhythm. A cup
+    // entry has no training, so the server only insists on it for semesters.
+    sessionsPerWeek: z.enum(["1", "2"]).optional(),
     media: z.enum(["yes", "no"]),
     parentInWater: z.literal(true),
     swimming: z.literal(true),
@@ -91,6 +92,16 @@ export function ageAt(dateOfBirth: string, today = new Date()) {
     age--;
   return age;
 }
+// The short form on the cup page: who is coming and how to reach the family.
+export const cupEntrySchema = z
+  .object({
+    kidName: text(80),
+    member: z.boolean(),
+    contactName: text(120),
+    contactPhone: phone,
+  })
+  .strict();
+export type CupEntryInput = z.infer<typeof cupEntrySchema>;
 export const paymentSchema = z
   .object({
     term: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,39}$/),
