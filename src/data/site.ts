@@ -52,6 +52,7 @@ export const site = {
     { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
     { label: "Blog", labelFull: "The Logbook", href: "/blog" },
     { label: "Photos", labelFull: "The Gallery", href: "/gallery" },
+    { label: "Shop", labelFull: "The Shop", href: "/shop" },
     { label: "Branding", labelFull: "Branding", href: "/branding-plan" },
   ],
   stats: [

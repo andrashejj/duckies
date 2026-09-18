@@ -13,6 +13,7 @@ import StickerCard from "../components/ui/StickerCard.astro";
 import Underline from "../components/ui/Underline.astro";
 import { bodyCopy, eyebrowBadge, stepBubble } from "../lib/ui";
 import { getActiveDrop } from "../lib/drops";
+import ShopTeaser from "../components/ShopTeaser.astro";
 
 const title = `${site.name} Shop`;
 const description =
@@ -20,19 +21,25 @@ const description =
 
 const { shop } = site;
 
+// The drop is for club members; everyone else gets the teaser and no catalogue query.
+const session = Astro.locals.session;
+const member = Boolean(session?.member);
+
 let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
 let loadError: string | null = null;
 let activeDrop: Awaited<ReturnType<typeof getActiveDrop>> = null;
 
-try {
-  [products, activeDrop] = await Promise.all([
-    listActiveProducts(),
-    getActiveDrop(),
-  ]);
-} catch (err) {
-  loadError = "Could not load products. Please try again shortly.";
-  Astro.response.status = 503;
-  console.error("[shop] product load failed:", err);
+if (member) {
+  try {
+    [products, activeDrop] = await Promise.all([
+      listActiveProducts(),
+      getActiveDrop(),
+    ]);
+  } catch (err) {
+    loadError = "Could not load products. Please try again shortly.";
+    Astro.response.status = 503;
+    console.error("[shop] product load failed:", err);
+  }
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
@@ -47,6 +54,8 @@ const dropDescription = activeDrop?.description ?? shop.intro;
 ---
 
 <BaseLayout title={title} description={description}>
+  {!member && <ShopTeaser email={session?.user.email ?? null} />}
+  {member && (
   <!-- ===================== SHOP HERO ===================== -->
   <section class="relative isolate overflow-hidden border-b-2 border-edge">
     <div class="absolute inset-0 -z-10 bg-surface"></div>
@@ -68,7 +77,7 @@ const dropDescription = activeDrop?.description ?? shop.intro;
           <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-coral-500"></span>
           {dropHeading}
         </span>
-        <Chip>{products.length} {products.length === 1 ? "flavour" : "flavours"} in the lineup</Chip>
+        <Chip>{`${products.length} ${products.length === 1 ? "flavour" : "flavours"} in the lineup`}</Chip>
         {closesLabel && <Chip>{closesLabel}</Chip>}
       </div>
 
@@ -201,4 +210,5 @@ const dropDescription = activeDrop?.description ?? shop.intro;
       </div>
     </div>
   </section>
+  )}
 </BaseLayout>

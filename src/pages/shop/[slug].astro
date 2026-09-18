@@ -19,7 +19,8 @@ import { bodyCopy, eyebrowBadge } from "../../lib/ui";
 
 const { slug } = Astro.params;
 
-if (!slug) {
+// Non-members land on the shop's coming-soon teaser instead of a product.
+if (!slug || !Astro.locals.session?.member) {
   return Astro.redirect("/shop");
 }
 

@@ -1,0 +1,78 @@
+---
+import { site } from "../data/site";
+import GranolaPouch from "./GranolaPouch.astro";
+import Chip from "./ui/Chip.astro";
+import Cta from "./ui/Cta.astro";
+import StickerCard from "./ui/StickerCard.astro";
+import Underline from "./ui/Underline.astro";
+import { bodyCopy, eyebrowBadge } from "../lib/ui";
+// The shop as seen by anyone who is not a signed-in club member: the unnamed
+// pouch, the three flavour names, and the way in. `email` is a signed-in
+// non-member; null is a visitor.
+interface Props { email: string | null }
+const { email } = Astro.props;
+const { shop, cupVol2 } = site;
+---
+<section class="relative isolate overflow-hidden border-b-2 border-edge">
+  <div class="absolute inset-0 -z-10 bg-surface"></div>
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_20%,color-mix(in_oklab,var(--color-coral-500)_28%,transparent),transparent_45%),radial-gradient(circle_at_90%_10%,color-mix(in_oklab,var(--color-sun-500)_55%,transparent),transparent_50%),radial-gradient(circle_at_70%_90%,color-mix(in_oklab,var(--color-teal-500)_30%,transparent),transparent_55%)] opacity-90"></div>
+
+  <div class="relative mx-auto grid max-w-7xl gap-12 px-4 pb-16 pt-20 sm:px-6 sm:pb-20 sm:pt-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10 lg:pb-24 lg:pt-28">
+    <div class="space-y-8">
+      <div data-float class="flex flex-wrap items-center gap-3">
+        <span class={`${eyebrowBadge} border-edge bg-ink-950`}>
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-coral-500"></span>
+          {shop.comingSoon.kicker}
+        </span>
+        <Chip>{`${cupVol2.name} ${cupVol2.edition} · ${cupVol2.dateLabel}`}</Chip>
+      </div>
+
+      <h1 data-float class="font-display text-[clamp(2.75rem,8vw,6.5rem)] font-bold leading-[0.9] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_114,'opsz'_96]">
+        <span class="block">Something's</span>
+        <span class="block"><Underline>baking</Underline> <span class="font-accent italic text-accent-text">in Tamarin.</span></span>
+      </h1>
+
+      <p class={`max-w-xl ${bodyCopy}`}>{shop.comingSoon.lead}</p>
+
+      <ul class="flex flex-wrap gap-2" aria-label="The three flavours">
+        {shop.products.map((product) => (
+          <Chip as="li">{product.name}</Chip>
+        ))}
+      </ul>
+
+      <StickerCard tone="sun" hover={false} class="max-w-xl space-y-4 p-6">
+        {email ? (
+          <p class={bodyCopy}>
+            Signed in as <span class="font-mono text-fg">{email}</span>, which isn't on the club roster yet. The drop opens to members first. {shop.comingSoon.joinNote}
+          </p>
+        ) : (
+          <p class={bodyCopy}>{shop.comingSoon.memberNote} {shop.comingSoon.joinNote}</p>
+        )}
+        <div class="flex flex-wrap gap-3">
+          {email ? (
+            <>
+              <Cta href="/#how-to-join">How to join</Cta>
+              <Cta variant="secondary" href={site.whatsappUrl} target="_blank" rel="noreferrer">Ask on WhatsApp</Cta>
+            </>
+          ) : (
+            <>
+              <Cta href="/login?next=/shop">Member sign-in</Cta>
+              <Cta variant="secondary" href="/#how-to-join">How to join</Cta>
+            </>
+          )}
+        </div>
+      </StickerCard>
+
+      <p class="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-fg/65">{shop.tagline}</p>
+    </div>
+
+    <div data-float class="relative mx-auto w-full max-w-sm lg:max-w-md">
+      <span class="absolute -top-3 left-4 z-[1] rotate-[-6deg] rounded-full border-2 border-edge bg-coral-500 px-4 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.22em] text-ink-950 shadow-sticker-xs">
+        Coming soon
+      </span>
+      <div class="animate-float motion-reduce:animate-none">
+        <GranolaPouch design="new" name="?" grams={shop.products[0].grams} title="An unnamed Sunset Duckies granola pouch, still to be revealed" class="h-auto w-full drop-shadow-[0_14px_24px_var(--line)]" />
+      </div>
+    </div>
+  </div>
+</section>

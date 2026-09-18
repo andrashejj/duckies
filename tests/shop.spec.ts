@@ -10,6 +10,7 @@ const db = getDatabase();
 const prisma = createPrismaClient();
 const origin = "http://127.0.0.1:4329";
 const organiser = "organiser@example.com";
+const member = "parent@example.com";
 let productId: string;
 let dropId: string;
 
@@ -28,9 +29,9 @@ async function order(request: APIRequestContext, email = "shopper@example.com") 
   return body as { orderId: string; guestToken: string; emailSent: boolean; whatsappUrl: string };
 }
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ request }) => {
   await db.query('TRUNCATE club_kid, club_member, "user", "session", account, verification, "rateLimit", "Drop", "Product", "Order", shop_request_limit CASCADE');
-  await db.query("INSERT INTO club_member (email, role) VALUES ($1, 'organiser'), ('parent@example.com', 'member')", [organiser]);
+  await db.query("INSERT INTO club_member (email, role) VALUES ($1, 'organiser'), ($2, 'member')", [organiser, member]);
   const drop = await prisma.drop.create({ data: { slug: "test-drop", name: "Test Drop", status: "LIVE" } });
   dropId = drop.id;
   const product = await prisma.product.create({ data: {
@@ -39,10 +40,41 @@ test.beforeEach(async () => {
     imageUrl: "/media/shop/tee-cream.png", imageAlt: "Cream surf tee", stock: 5, dropId,
   } });
   productId = product.id;
+  // The shop is for signed-in club members; the shared request context browses and reserves as one.
+  await signIn(request, member);
 });
 test.afterAll(async () => { await prisma.$disconnect(); await db.end(); });
 
-test("only active products in open drops are public and reservable", async ({ request }) => {
+test("visitors and signed-in non-members get the coming-soon teaser and cannot reserve", async ({ request, page }) => {
+  // A member reserves for shopper@example.com so that email can sign in as a customer without being on the roster.
+  await order(request);
+  const guest = page.request;
+  const teaser = await guest.get("/shop");
+  expect(teaser.status()).toBe(200);
+  const html = await teaser.text();
+  expect(html).toContain("Coming soon");
+  expect(html).toContain("Member sign-in");
+  expect(html).not.toContain("Test Surf Tee");
+  expect(teaser.headers()["cache-control"]).toContain("no-store");
+  expect(teaser.headers()["x-robots-tag"]).toContain("noindex");
+  const product = await guest.get("/shop/test-tee", { maxRedirects: 0 });
+  expect(product.status()).toBe(302);
+  expect(product.headers()["location"]).toBe("/shop");
+  expect((await guest.post("/api/reserve", { headers: { origin }, data: payload() })).status()).toBe(401);
+  await signIn(guest, "shopper@example.com");
+  const signedIn = await (await guest.get("/shop")).text();
+  expect(signedIn).toContain("shopper@example.com");
+  expect(signedIn).toContain("How to join");
+  expect(signedIn).not.toContain("Test Surf Tee");
+  expect((await guest.get("/shop/test-tee", { maxRedirects: 0 })).status()).toBe(302);
+  expect((await guest.post("/api/reserve", { headers: { origin }, data: payload() })).status()).toBe(403);
+  expect(await prisma.order.count()).toBe(1);
+  await page.goto("/shop", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("baking");
+  await page.screenshot({ path: "test-results/shop-teaser.png", fullPage: true });
+});
+
+test("only active products in open drops are shown to members and reservable", async ({ request }) => {
   expect(await (await request.get("/shop")).text()).toContain("Test Surf Tee");
   for (const state of [
     { status: "DRAFT" as const }, { status: "CLOSED" as const },
@@ -60,7 +92,7 @@ test("only active products in open drops are public and reservable", async ({ re
   expect((await reserve(request)).status()).toBe(400);
 });
 
-test("guest reservation validates size, snapshots server prices, and protects receipt links", async ({ request }) => {
+test("member reservation validates size, snapshots server prices, and protects receipt links", async ({ request }) => {
   const invalid = payload(); invalid.lines[0].size = "Not a size";
   expect((await reserve(request, invalid)).status()).toBe(400);
   const data = { ...payload(), priceCents: 1, totalCents: 1 };
@@ -131,6 +163,8 @@ test("organiser session governs catalogue administration, stock cancellation, pa
   expect(mail).not.toContain("INTERNAL-TEST-NOTE");
   expect((await request.post(`/api/admin/orders/${saved.orderId}/paid`, { data: {}, headers: { origin } })).status()).toBe(403);
   await db.query("INSERT INTO club_member (email,role) VALUES ('andras@hejj.xyz','organiser')");
+  // Fourth sign-in code this test; the OTP sender allows three a minute.
+  await db.query('DELETE FROM "rateLimit"');
   await signIn(request, "andras@hejj.xyz");
   const paid = await Promise.all([1, 2].map(() => request.post(`/api/admin/orders/${saved.orderId}/paid`, { data: {}, headers: { origin } })));
   expect(paid.map(response => response.status()).sort()).toEqual([200, 400]);
@@ -155,7 +189,7 @@ test("email delivery failure still returns the saved reservation without claimin
   expect(await prisma.order.count()).toBe(1);
 });
 
-test("reservation endpoint rejects cross-origin requests and rate limits guest requests", async ({ request }) => {
+test("reservation endpoint rejects cross-origin requests and rate limits member requests", async ({ request }) => {
   expect((await request.post("/api/reserve", { data: payload(), headers: { origin: "https://outside.example" } })).status()).toBe(403);
   expect((await request.post("/api/reserve", { data: payload() })).status()).toBe(403);
   await prisma.product.update({ where: { id: productId }, data: { stock: null } });
@@ -165,10 +199,11 @@ test("reservation endpoint rejects cross-origin requests and rate limits guest r
   expect(await prisma.order.count()).toBe(1);
 });
 
-test("mobile shopper can reserve, sign in with the receipt email, and view their account", async ({ page }) => {
+test("mobile member can reserve, sign in with the receipt email, and view their account", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
+  await signIn(page.request, member);
   await page.goto("/shop/test-tee", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { name: "Test Surf Tee", exact: true })).toBeVisible();
   await page.screenshot({ path: "test-results/shop-mobile-product.png", fullPage: true });
@@ -178,6 +213,8 @@ test("mobile shopper can reserve, sign in with the receipt email, and view their
   await expect(page).toHaveURL(/\/orders\/.+\?t=/);
   await expect(page.getByText("Your kit", { exact: true })).toBeVisible();
   await page.screenshot({ path: "test-results/shop-mobile-receipt.png", fullPage: true });
+  // The receipt email is not on the roster; it can still sign in and see its own reservation.
+  await page.context().clearCookies();
   await page.goto("/login?next=/account/orders", { waitUntil: "domcontentloaded" });
   await page.getByLabel("Your email address").fill("mobile-shopper@example.com");
   await page.getByRole("button", { name: "Email me a code" }).click();

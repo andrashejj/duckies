@@ -78,6 +78,14 @@ export const shop = {
       "Contains oats, almonds and honey. Made in a kitchen that handles nuts.",
       "Granola sales and club membership are accounted for separately.",
     ],
+    // What /shop shows anyone who is not a signed-in club member.
+    comingSoon: {
+      kicker: "Drop 001 · Coming soon",
+      lead:
+        "Sunset Duckies granola: three flavours, baked in small batches in Tamarin by the club's families, in 300 g pouches. The first drop is for club members and goes on sale at Cup Vol. 02.",
+      memberNote: "Already a member? Sign in and the drop is yours to reserve.",
+      joinNote: "Membership funds the kids' sessions; the granola is one of the perks.",
+    },
     teaserProductIds: [...starterPackIds],
     products,
   };
