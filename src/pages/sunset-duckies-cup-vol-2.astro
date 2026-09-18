@@ -12,7 +12,7 @@ import { bodyCopy, eyebrowBadge, field, label, miniCard, stickerTones, type Stic
 
 const cup = site.cupVol2;
 const title = `${cup.name} — Vol. 02 | ${site.name}`;
-const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Soft start 12:00, first heat 14:00, bonfire 18:30. Music, BBQ, age 7+, bring your own board. Register on the page.`;
+const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Arrival from 12:00, first heat 14:00, bonfire 18:30. Music, BBQ, age 7+, no divisions — every surfer gets their own score. Bring your own board. Register on the page.`;
 const toggle = "inline-flex w-full cursor-pointer items-center justify-center rounded-full border-2 border-edge bg-surface px-4 py-3 text-center font-display text-[0.95rem] font-bold text-fg transition [font-variation-settings:'wdth'_108] peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
 ---
 
@@ -87,7 +87,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           <Cta href="#register" class="w-full">{cup.registerCtaLabel}</Cta>
           <Cta variant="secondary" href="#day" class="w-full">↓ The plan for the day</Cta>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
-            friends + fam welcome ★ age 7+ ★ surf only
+            friends + family welcome ★ age 7+ ★ surf only
           </p>
         </div>
       </div>
@@ -130,7 +130,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           need to know.
         </SectionTitle>
         <p class={`max-w-2xl ${bodyCopy}`}>
-          Six cards, no fine print. Then scroll down and register — it takes less time than waxing a board.
+          Six cards, no fine print. Then scroll down and register — it takes a minute.
         </p>
       </div>
 
@@ -164,18 +164,18 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
         <div>
           <Kicker>The plan for the day</Kicker>
           <SectionTitle size="none" class="mt-4 text-[clamp(1.9rem,3.5vw,3rem)]">
-            12:00 till the <Underline>bonfire</Underline>.
+            12:00 to the <Underline>bonfire</Underline>.
           </SectionTitle>
         </div>
         <p class="max-w-sm font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
-          Times are surf-ish. Heats run on the waves, not the clock.
+          Times are approximate. Heats run on the waves, not the clock.
         </p>
       </div>
 
       <div class="mt-8 grid gap-3">
         {cup.runOfShow.map((item) => (
           <div class={`flex items-center gap-4 ${miniCard}`}>
-            <p class="w-14 shrink-0 font-mono text-sm font-semibold text-accent-text sm:w-20">
+            <p class="w-16 shrink-0 font-mono text-sm font-semibold leading-tight text-accent-text sm:w-24">
               {item.time}
             </p>
             <p class="flex-1 font-display text-[1.05rem] font-semibold leading-6 text-fg/85 [font-variation-settings:'wdth'_108]">
@@ -265,29 +265,6 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
     </StickerCard>
   </section>
 
-  <!-- ===================== GLOW-UPS ===================== -->
-  <section id="glow-ups" class="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-    <StickerCard tone="teal" class="p-8 md:p-10" data-reveal>
-      <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-        <div>
-          <Kicker>New since Vol. 01</Kicker>
-          <SectionTitle size="md" class="mt-4">
-            Same beach, <Underline>glow-up</Underline> edition.
-          </SectionTitle>
-          <p class={`mt-4 max-w-md ${bodyCopy}`}>
-            Everything the first Cup taught us is already baked in. No essay, just the receipts.
-          </p>
-          <a href={cup.previousEdition.href} class="mt-5 inline-block font-mono text-[0.72rem] uppercase tracking-[0.18em] text-fg underline decoration-accent decoration-2 underline-offset-4">← How Vol. 01 ran</a>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          {cup.glowUps.map((item) => (
-            <Chip>{item}</Chip>
-          ))}
-        </div>
-      </div>
-    </StickerCard>
-  </section>
-
   <!-- ===================== SEE YOU THERE ===================== -->
   <section class="mx-auto max-w-7xl px-6 pb-24 pt-6 lg:px-10">
     <StickerCard tone="coral" class="p-8 md:p-12" data-reveal>
@@ -298,7 +275,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
             Friday <Underline>16 October</Underline>.
           </SectionTitle>
           <p class={`mt-4 max-w-2xl ${bodyCopy}`}>
-            Tamarin Bay, 12:00 till the bonfire dies down. Bring a board, bring the fam, bring something for the grill.
+            Tamarin Bay, from 12:00 until the bonfire dies down. Bring a board, bring the family, bring something for the grill.
           </p>
           <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
             {cup.dateLabel} · {cup.location}
@@ -371,7 +348,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
           const { response, data } = await api(`/api/cup/kids/${kid.id}`, "POST");
           if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
           status.textContent = data.status === "member"
-            ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, pull up from 12:00.`
+            ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, from 12:00.`
             : `${data.kidName} is on the list! We don't see this semester's fee yet — sort it with Andras and the Cup is free; otherwise it's Rs 1,000 on the day.`;
           await loadKids();
         } catch (error) {

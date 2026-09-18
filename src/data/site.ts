@@ -1472,7 +1472,7 @@ export const site = {
     edition: "Vol. 02",
     dateLabel: "Friday 16 October 2026",
     dateISO: "2026-10-16",
-    timeLabel: "Soft start 12:00 · first heat 14:00 · bonfire 18:30",
+    timeLabel: "Doors 12:00 · first heat 14:00 · bonfire 18:30",
     location: "Tamarin Bay, Mauritius",
     memberFeeLabel: "Free",
     entryFeeLabel: "Rs 1,000",
@@ -1482,7 +1482,7 @@ export const site = {
       href: "/sunset-duckies-cup",
     },
     blurb:
-      "Round two at Tamarin Bay. Heats, music, a BBQ and a bonfire — the whole vibe. Free for duckies, Rs 1,000 if you're not one (yet). Pull up.",
+      "Round two at Tamarin Bay. Heats, music, a BBQ and a bonfire. Free for duckies, Rs 1,000 if you're not one (yet). Come along, bring the family.",
     // The stuff a family actually needs to know, in the order they ask it.
     essentials: [
       {
@@ -1490,7 +1490,7 @@ export const site = {
         accent: "sun",
         tag: "When",
         title: "Fri 16 Oct · from 12:00",
-        text: "Soft start at 12:00 — roll in, warm up, find your people. First heat drops at 14:00, heats wrap at 18:00, bonfire from 18:30.",
+        text: "Arrive from 12:00: check in, warm up, find your people. First heat at 14:00, heats end at 18:00, bonfire from 18:30.",
       },
       {
         photo: "heart-cake",
@@ -1503,22 +1503,22 @@ export const site = {
         photo: "crew-and-boards",
         accent: "coral",
         tag: "Who",
-        title: "Age 7+. Friends + fam welcome.",
-        text: "Kids from 7 up surf the heats. Parents, siblings, grandparents, the neighbour's dog — everyone's welcome on the sand.",
+        title: "Age 7+. Friends + family welcome.",
+        text: "Kids from 7 up surf the heats — no divisions, every surfer gets their own score. Parents, siblings, grandparents, friends: everyone's welcome on the sand.",
       },
       {
         photo: "boards-under-the-mountain",
         accent: "pink",
         tag: "Gear",
         title: "Bring your own board.",
-        text: "Surfboards only — no boogie boards, sorry bestie. Rashie or wetsuit, sunscreen, water. Colour-coded rashies for the heats are on us.",
+        text: "Surfboards only — no boogie boards, sorry. Rashie or wetsuit, sunscreen, water, a towel.",
       },
       {
         photo: "bonfire-circle",
         accent: "lilac",
-        tag: "The vibes",
+        tag: "The extras",
         title: "Music. BBQ. Bonfire. Much more.",
-        text: "Tunes all afternoon. We bring the grill — you bring whatever you want to throw on it. Bonfire once the sun drops. Plus a few surprises.",
+        text: "Music all afternoon. We bring the grill — you bring whatever you want to put on it. Bonfire once the sun goes down. Plus a few surprises.",
       },
       {
         photo: "warm-up-circle",
@@ -1529,30 +1529,18 @@ export const site = {
       },
     ],
     runOfShow: [
-      { time: "12:00", label: "Soft start — pull up, warm up, claim some shade", photo: "warm-up-circle" },
-      { time: "14:00", label: "First heat — heats of 4, one rashie colour each", photo: "first-waves-blue-sky" },
-      { time: "all day", label: "Music + BBQ keep rolling between heats", photo: "sand-games" },
-      { time: "18:00", label: "Last heat wraps — crowns for the king + queen", photo: "sunset-ride-arms-out" },
+      { time: "12:00", label: "Arrival — check in at the desk, warm-up on the sand, free surf", photo: "warm-up-circle" },
+      { time: "14:00", label: "First heat — heats of 4, every surfer scored individually", photo: "first-waves-blue-sky" },
+      { time: "all afternoon", label: "Music + BBQ between heats", photo: "sand-games" },
+      { time: "18:00", label: "Last heat ends — scores tallied, awards", photo: "sunset-ride-arms-out" },
       { time: "18:30", label: "Bonfire on the sand", photo: "bonfire-circle" },
-    ],
-    // Everything Vol. 01 taught us, already baked in. Kept to a chip each.
-    glowUps: [
-      "Colour-coded rashies",
-      "Heats of 4",
-      "Wave size counts",
-      "A score per division",
-      "Earlier start, daylight crowns",
-      "Branded gazebos",
-      "More food",
-      "Better-briefed judges",
-      "Side games between heats",
     ],
     form: {
       title: "Lock in your spot.",
       intro:
         "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Name + number, then we send you straight to the registration + waiver (≈5 min, no login).",
       footnote:
-        "Siblings? Each kid gets their own entry. Friends + family don't need to register, just pull up. Spots stay pending until Andras confirms the fee — members skip that part.",
+        "Siblings? Each kid gets their own entry. Friends + family don't need to register, just come along. Spots stay pending until Andras confirms the fee — members skip that part.",
       memberLabel: "Already a Sunset Duckie (club member)",
       guestLabel: "Not a member (yet)",
       memberHint:
