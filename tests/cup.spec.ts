@@ -23,14 +23,23 @@ let guest: APIRequestContext;
 test.beforeEach(async ({ playwright }) => {
   await db.query('TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser')", [owner, organiser]);
+  // The semesters suite truncates club_semester; put the migration's cup term back the way it seeds it.
+  await db.query(
+    "INSERT INTO club_semester (id,label,starts_on,ends_on,child_fee_mur,family_fee_mur) VALUES ($1,'Sunset Duckies Cup Vol. 02','2026-10-16','2026-10-16',1000,1000) ON CONFLICT (id) DO NOTHING",
+    [CUP_TERM],
+  );
   guest = await playwright.request.newContext({ baseURL: origin });
 });
 test.afterEach(async () => { await guest.dispose(); });
 test.afterAll(async () => { await db.end(); });
 
-test("the cup term exists with the entry fee and is never the current semester", async () => {
+test("the cup term is a regular term with the entry fee, never the current semester", async ({ request }) => {
   const { rows } = await db.query("SELECT label, child_fee_mur::float AS fee, is_current, starts_on::text AS starts FROM club_semester WHERE id=$1", [CUP_TERM]);
   expect(rows[0]).toMatchObject({ label: "Sunset Duckies Cup Vol. 02", fee: 1000, is_current: false, starts: "2026-10-16" });
+  await signIn(request, organiser);
+  const roster = await (await request.get("/api/kids")).json();
+  expect(roster.term.id).toBe("2026-S2");
+  expect(roster.semesters.find((s: { id: string }) => s.id === CUP_TERM)).toMatchObject({ childFeeMur: 1000, isCurrent: false });
 });
 
 test("a cup-only kid gets a private link, signs the club form without a training rhythm and shows up flagged", async ({ request }) => {
@@ -104,7 +113,9 @@ test("a member registers with the kid's name and a number from the signed regist
 
 test("the cup page form takes a member and sends a new family to the registration form", async ({ page }) => {
   await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
-  const form = page.locator("[data-cup-register]");
+  // The dev server may reload the page once while it optimises dependencies; type only once the form script is live.
+  const form = page.locator("[data-cup-register][data-ready]");
+  await expect(form).toBeVisible();
   await expect(form.getByText("that's how we find them")).toBeVisible();
   await form.getByLabel("Kid's name").fill("Nobody Here");
   await form.getByLabel("Parent / guardian").fill("A Parent");

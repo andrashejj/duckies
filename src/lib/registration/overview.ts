@@ -1,5 +1,6 @@
 import type { Semester } from "./semesters";
 import type { OrganiserKid } from "./records";
+import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "./cup";
 import { ctaClass } from "../ui";
 import { duckieActions, duckieBox, duckieDetails, duckieFacts, duckiePhotoForm, duckieShare, textButton } from "../members-ui";
 const text = (tag: string, value: string) => {
@@ -118,8 +119,8 @@ export function kidOverview(
   );
   if (kid.cup)
     fact(
-      "Duckies Cup Vol. 02",
-      `${kid.cup.member ? "Club member · free entry" : "Cup-only · Rs 1,000 entry, signs the cup form"} · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
+      CUP_LABEL,
+      `${kid.cup.member ? "Club member · free entry" : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry, signs the cup form`} · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
     );
   if (kid.contactName || kid.contactPhone)
     fact(
