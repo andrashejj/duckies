@@ -331,7 +331,7 @@ export const blog = {
         titleAccent: "the day",
         body: "Format, divisions, what changed since Vol. 01 and the volunteer roles are on the Cup page. Registration is in the WhatsApp group from 25 September.",
         primary: { label: "The Cup Vol. 02 page", href: "/sunset-duckies-cup-vol-2" },
-        secondary: { label: "Photos from the sessions", href: "/gallery" },
+        secondary: { label: "The gallery (members)", href: "/gallery" },
       },
     },
     {

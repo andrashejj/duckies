@@ -68,7 +68,7 @@ export type GallerySection = { id: string; title: string; lead: string; photos: 
 export type GalleryClip = { slug: string; title: string; credit: string; date: string };
 
 export const gallery = {
-  name: "Gallery",
+  name: "The Gallery",
   tagline: "The club, in pictures. Real sessions, real Duckies, shot by the parents on the sand.",
   sections: [
     { id: "water", title: "In the water", lead: "Small waves, big grins. Every session ends with a ride to the sand.", photos: [
