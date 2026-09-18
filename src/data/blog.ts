@@ -145,7 +145,7 @@ export const blog = {
           { slug: "into-the-dusk", alt: "Duckies carrying their boards into the water at dusk." },
           { slug: "warm-up-circle", alt: "Warm-up circle on the sand under the big tree." },
           { slug: "evening-glide", alt: "Evening glide across a glassy wave, sun rays on the water." },
-          { slug: "wading-in", alt: "Wading in with boards on a grey morning." },
+          { slug: "first-waves-blue-sky", alt: "A kid on a soft-top rides a small wave under blue sky and clouds." },
         ],
         clips: [
           { slug: "long-ride", title: "A long ride to the sand" },
@@ -215,12 +215,9 @@ export const blog = {
       roll: {
         title: "Straight off the",
         titleAccent: "boat.",
+        // The lineup shot is the cover, and the other stills are frames of the clips: one picture, once.
         photos: [
-          { slug: "little-reef-lineup", alt: "Drone view of Duckies and their coach sitting on boards over the turquoise reef." },
           { slug: "little-reef-paddle-out", alt: "Duckies paddling out over the reef at first light." },
-          { slug: "little-reef-kids-on-wave", alt: "Kids on soft-tops as a wave breaks over the reef, seen from above." },
-          { slug: "little-reef-over-the-reef", alt: "Two boards paddling over the coral, seen straight down from the drone." },
-          { slug: "little-reef-long-wave", alt: "A surfer takes off on a long peeling reef wave." },
         ],
         clips: [
           { slug: "little-reef-kids-on-wave", title: "Little Reef: kids on a wave" },

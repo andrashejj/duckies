@@ -269,7 +269,7 @@ export const site = {
         title: "Parent WhatsApp message",
         file: "/templates/parent-whatsapp-message.txt",
         description: "Drop straight into the parents' group — copy, paste, send.",
-        photo: "sunrise-rays-2",
+        photo: "wading-in",
         accent: "lilac",
       },
     ],
@@ -1507,7 +1507,7 @@ export const site = {
         text: "Kids from 7 up surf the heats — no divisions, every surfer gets their own score. Parents, siblings, grandparents, friends: everyone's welcome on the sand.",
       },
       {
-        photo: "boards-under-the-mountain",
+        photo: "painted-boards",
         accent: "pink",
         tag: "Gear",
         title: "Bring your own board.",
@@ -1521,7 +1521,7 @@ export const site = {
         text: "Music all afternoon. We bring the grill — you bring whatever you want to put on it. Bonfire once the sun goes down. Plus a few surprises.",
       },
       {
-        photo: "warm-up-circle",
+        photo: "three-on-the-inside",
         accent: "sun",
         tag: "Registering",
         title: "Members: 30 seconds. Everyone else: ~5 min.",
@@ -1533,7 +1533,7 @@ export const site = {
       { time: "14:00", label: "First heat — heats of 4, every surfer scored individually", photo: "first-waves-blue-sky" },
       { time: "all afternoon", label: "Music + BBQ between heats", photo: "sand-games" },
       { time: "18:00", label: "Last heat ends — scores tallied, awards", photo: "sunset-ride-arms-out" },
-      { time: "18:30", label: "Bonfire on the sand", photo: "bonfire-circle" },
+      { time: "18:30", label: "Bonfire on the sand", photo: "bonfire-blue-hour" },
     ],
     form: {
       title: "Lock in your spot.",
