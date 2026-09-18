@@ -8,24 +8,23 @@ import { bodyCopy, ctaClass, field, label } from "../../../lib/ui";
 
 let uploads: GalleryUpload[] = [];
 let loadError: string | null = null;
-try { uploads = await listUploads(); } catch { loadError = "The gallery queue could not be loaded. Check the database connection and reload."; }
+try { uploads = await listUploads(); } catch { loadError = "The members' photos could not be loaded. Check the database connection and reload."; }
 
 const groups = [
-  { status: "pending", title: "Waiting for review", tone: "sun", empty: "Nothing waiting. Share the link and the queue fills itself: /gallery/share" },
-  { status: "approved", title: "On the gallery page", tone: "teal", empty: "No parent photos published yet." },
-  { status: "rejected", title: "Rejected", tone: "none", empty: "Nothing rejected." },
+  { status: "approved", title: "Live in the members' gallery", empty: "No member photos yet. Members add them at /gallery/share." },
+  { status: "rejected", title: "Hidden", empty: "Nothing hidden." },
 ] as const;
 const when = (iso: string) => new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Indian/Mauritius" });
 ---
 
-<AdminLayout title="Gallery photos · Admin" section="gallery">
+<AdminLayout title="Members' photos · Admin" section="gallery">
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-      <Kicker>📸 Parent uploads</Kicker>
-      <SectionTitle as="h1" class="mt-4">Gallery queue</SectionTitle>
-      <p class={`mt-3 max-w-2xl ${bodyCopy}`}>Photos sent through <a class="underline" href="/gallery/share" target="_blank" rel="noreferrer">/gallery/share</a>. Approve to publish under "From the parents" on the gallery page; reject to keep it out. Check the family's media consent on the waiver before approving anything with a recognisable Duckie.</p>
+      <Kicker>📸 Members' photos</Kicker>
+      <SectionTitle as="h1" class="mt-4">Gallery uploads</SectionTitle>
+      <p class={`mt-3 max-w-2xl ${bodyCopy}`}>Photos club members added through <a class="underline" href="/gallery/share" target="_blank" rel="noreferrer">/gallery/share</a>. They are live for members as soon as they are uploaded; hide or delete anything a family would rather not have up. Who uploaded each photo is shown here and nowhere else.</p>
     </div>
-    <a class={ctaClass("secondary", "sm")} href="/gallery#from-the-parents" target="_blank" rel="noreferrer">↗ Gallery page</a>
+    <a class={ctaClass("secondary", "sm")} href="/gallery#from-the-members" target="_blank" rel="noreferrer">↗ Gallery page</a>
   </div>
 
   {loadError && <p class="mt-8 rounded-xl border-2 border-coral-500 bg-sticker-coral px-4 py-3 text-ink-950">{loadError}</p>}
@@ -36,24 +35,28 @@ const when = (iso: string) => new Date(iso).toLocaleString("en-GB", { day: "nume
       <section class="mt-12" data-group={group.status}>
         <div class="flex items-baseline gap-3">
           <h2 class="font-display text-2xl font-semibold text-fg">{group.title}</h2>
-          <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-fg/60" data-count>{rows.length}</span>
+          <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-fg/60">{rows.length}</span>
         </div>
-        <p class:list={["mt-3", bodyCopy, rows.length && "hidden"]} data-empty>{group.empty}</p>
-        <ul class="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3" data-list>
+        <p class:list={["mt-3", bodyCopy, rows.length && "hidden"]}>{group.empty}</p>
+        <ul class="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map((u) => (
-            <li class="overflow-hidden rounded-sticker border-2 border-edge bg-surface shadow-sticker-sm" data-upload={u.id} data-status={u.status}>
+            <li class="overflow-hidden rounded-sticker border-2 border-edge bg-surface shadow-sticker-sm" data-upload={u.id}>
               <a href={`/gallery/photo/${u.id}.webp`} target="_blank" rel="noreferrer" class="block bg-ink-950">
                 <img src={`/gallery/photo/${u.id}.webp?size=thumb`} alt="" width={u.width} height={u.height} loading="lazy" class="aspect-[4/3] w-full object-contain" />
               </a>
               <div class="p-4">
-                <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{when(u.createdAt)} · {u.uploaderName ?? "no name"}{u.width}×{u.height}</p>
+                <p class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{when(u.createdAt)} · {u.width}×{u.height}</p>
+                <p class="mt-1 font-mono text-[0.72rem] text-fg">{u.uploadedBy ?? "unknown member"}</p>
                 {u.note && <p class="mt-2 text-sm text-fg">“{u.note}”</p>}
-                <label class={`mt-3 ${label}`} for={`caption-${u.id}`}>Caption on the site</label>
-                <input id={`caption-${u.id}`} type="text" maxlength="200" value={u.caption ?? u.note ?? ""} class={`mt-1 ${field} py-2 text-sm`} data-caption placeholder="Optional" />
+                <label class={`mt-3 ${label}`} for={`caption-${u.id}`}>Caption on the page</label>
+                <input id={`caption-${u.id}`} type="text" maxlength="200" value={u.caption ?? ""} class={`mt-1 ${field} py-2 text-sm`} data-caption placeholder={u.note ?? "Optional"} />
                 <div class="mt-3 flex flex-wrap gap-2">
-                  {u.status !== "approved" && <button type="button" class={ctaClass("primary", "sm")} data-action="approved">Approve</button>}
-                  {u.status === "approved" && <button type="button" class={ctaClass("secondary", "sm")} data-action="pending">Unpublish</button>}
-                  {u.status !== "rejected" && <button type="button" class={ctaClass("secondary", "sm")} data-action="rejected">Reject</button>}
+                  {u.status === "approved" ? (
+                    <button type="button" class={ctaClass("secondary", "sm")} data-action="rejected">Hide</button>
+                  ) : (
+                    <button type="button" class={ctaClass("primary", "sm")} data-action="approved">Show again</button>
+                  )}
+                  <button type="button" class={ctaClass("secondary", "sm")} data-action="caption">Save caption</button>
                   <button type="button" class="ml-auto font-mono text-[0.68rem] uppercase tracking-[0.16em] text-fg/60 underline underline-offset-4 hover:text-coral-500" data-action="delete">Delete</button>
                 </div>
                 <p class="mt-2 hidden text-sm text-coral-500" data-error role="alert"></p>
@@ -67,7 +70,7 @@ const when = (iso: string) => new Date(iso).toLocaleString("en-GB", { day: "nume
 </AdminLayout>
 
 <script>
-  // Approve / reject / unpublish / delete without leaving the page; the card moves to its new group.
+  // Hide / show / re-caption / delete without leaving the page.
   document.addEventListener("click", async (event) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action]");
     if (!button) return;
@@ -80,9 +83,10 @@ const when = (iso: string) => new Date(iso).toLocaleString("en-GB", { day: "nume
     button.disabled = true;
     try {
       const caption = card.querySelector<HTMLInputElement>("[data-caption]")?.value ?? "";
+      const body = action === "caption" ? { caption } : { status: action, caption };
       const response = action === "delete"
         ? await fetch(`/api/admin/gallery/${id}`, { method: "DELETE" })
-        : await fetch(`/api/admin/gallery/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: action, caption }) });
+        : await fetch(`/api/admin/gallery/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error ?? "That did not work.");
       location.reload();

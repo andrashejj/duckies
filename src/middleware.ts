@@ -8,11 +8,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const admin = /^\/(admin|api\/admin)(\/|$)/.test(path);
   const account = /^\/account(\/|$)/.test(path);
   const members = /^\/members(\/|$)/.test(path);
+  // The photo gallery, its share page, the served uploads and the upload API are for club members only.
+  const gallery = /^\/(gallery|api\/gallery)(\/|$)/.test(path);
   const reservation = path === "/api/reserve";
   const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
   const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
   const granolaAPI=/^\/api\/granola(?:\/|$)/.test(path);
-  const privateResponse = brandingPage||brandingTemplate||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
+  const privateResponse = brandingPage||brandingTemplate||gallery||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
     if(brandingPage||brandingTemplate||granolaAPI){
@@ -23,18 +25,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if(brandingTemplate)return context.redirect("/branding-plan");
       }
     }
-    if (admin || account || members || reservation) {
+    if (admin || account || members || reservation || gallery) {
       try {
         context.locals.session = await getSession(context.request);
         context.locals.isAdmin = isAdmin(context.locals.session);
       } catch {
         return json({ error: "This service is temporarily unavailable. Please try again." }, 503);
       }
-      if ((admin || account || members) && !context.locals.session) {
+      if ((admin || account || members || gallery) && !context.locals.session) {
         if (path.startsWith("/api/")) return json({ ok: false, error: "Please sign in." }, 401);
         return context.redirect(`/login?next=${encodeURIComponent(path)}`);
       }
-      if ((admin && !context.locals.isAdmin) || (members && !context.locals.session?.member)) {
+      if ((admin && !context.locals.isAdmin) || ((members || gallery) && !context.locals.session?.member)) {
+        // Signed in but not a club member: the gallery is a membership perk, so point at how to join.
+        if (gallery && !path.startsWith("/api/") && !path.startsWith("/gallery/photo/")) return context.redirect("/#how-to-join");
         return json({ ok: false, error: "You do not have access to this area." }, 403);
       }
       if ((admin || reservation) && !["GET", "HEAD", "OPTIONS"].includes(context.request.method) && !sameOrigin(context.request)) {
@@ -46,7 +50,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const response = await handle();
   if (privateResponse) {
-    response.headers.set("Cache-Control", "private, no-store");
+    // Served gallery photos may sit in the member's own browser cache, never in a shared one.
+    response.headers.set("Cache-Control", path.startsWith("/gallery/photo/") && response.ok ? "private, max-age=86400" : "private, no-store");
     response.headers.set("CDN-Cache-Control", "no-store");
     response.headers.set("Vercel-CDN-Cache-Control", "no-store");
     response.headers.set("Vary", "Cookie");

@@ -16,11 +16,11 @@ Sunset Duckies Cup Vol. 02: Friday 16 October, Tamarin Bay. Heats for every leve
 
 Alt text (Cup version): A Duckie rides a wave in silhouette under a golden sky in the Final of Cup Vol. 01.
 
-## 2 · Mon 21 Sep · The gallery is live — carousel, 5 slides · check consent (slides 1 and 4)
+## 2 · Mon 21 Sep · The members' gallery — carousel, 5 slides · check consent (slides 1 and 4)
 
 Slides: `photos/feed-lineup.jpg` (4:3) · `stories/story-sunrise-rays-1.jpg` crop to 4:5 · `photos/01-save-the-date.jpg` · `photos/feed-beach-run.jpg` · `photos/feed-boards.jpg` (4:3) — Instagram forces one ratio per carousel: use 4:5 and let the two 4:3 ones crop, or post all at 1:1.
 
-Six months of Mondays and Fridays, shot by the parents on the sand. The gallery is now on sunsetduckies.com — link in bio. Every photo there is a real session, a real Duckie and a real sunset. Got a better one? Drop it in the club WhatsApp.
+Six months of Mondays and Fridays, shot by the parents on the sand. Club members now have their own gallery on sunsetduckies.com — sign in with your club email, add your own photos from the sessions, and see everyone else's. Members only, so the kids' photos stay in the club.
 
 ## 3 · Wed 23 Sep · Reel — `feed-long-ride.mp4` (4:5, 10 s, silent) · check consent (one kid, face small)
 
@@ -103,7 +103,7 @@ Two boards, one reef, all turquoise. Straight down from the drone at the Little 
 `stories/story-sunrise-rays-1.jpg`, `story-sunrise-rays-2.jpg`, `story-sunrise-red-sun.jpg`, `story-sunrise-sky.jpg`, `story-bonfire.jpg` — stills.
 `story-evening-ride.mp4`, `story-pastel-sunset-surf.mp4` — safe. `story-kids-tandem.mp4`, `story-beach-games.mp4`, `story-board-carry.mp4` — check consent.
 
-Sticker ideas: "Cup Vol. 02 · Fri 16 Oct" countdown sticker on any of the sunrise stills; link sticker to sunsetduckies.com/gallery on the first Story after post 2.
+Sticker ideas: "Cup Vol. 02 · Fri 16 Oct" countdown sticker on any of the sunrise stills; link sticker to sunsetduckies.com/login on the first Story after post 2 (the gallery itself is members-only).
 
 ## Bio
 

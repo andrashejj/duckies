@@ -20,7 +20,8 @@ export const PATCH = guard(async ({ params, request, locals }) => {
   const body = await request.json().catch(() => ({})) as { status?: unknown; caption?: unknown };
   const status = typeof body.status === "string" && (galleryStatuses as readonly string[]).includes(body.status) ? body.status as GalleryStatus : undefined;
   if (body.status !== undefined && !status) throw new GalleryError("Unknown status.");
-  const patch: { status?: GalleryStatus; caption?: string | null } = { status };
+  const patch: { status?: GalleryStatus; caption?: string | null } = {};
+  if (status) patch.status = status;
   if (body.caption !== undefined) patch.caption = cleanText(body.caption, 200);
   return json(await reviewUpload(params.id!, patch, locals.session?.user.email ?? "admin"));
 });

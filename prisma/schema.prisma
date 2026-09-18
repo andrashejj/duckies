@@ -337,14 +337,14 @@ model ClubSignedWaiver {
 model GalleryUpload {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  uploader_name String?
+  uploaded_by   String?
   note          String?
   caption       String?
   image         Bytes
   thumb         Bytes
   width         Int
   height        Int
-  status        String    @default("pending")
+  status        String    @default("approved")
   reviewed_at   DateTime? @db.Timestamptz(6)
   reviewed_by   String?
   ip_hash       String?

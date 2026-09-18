@@ -35,9 +35,9 @@ export function sendNewOrderAdminAlert(order: OrderWithItems): Promise<Delivery>
   return send(to, `New reservation ${order.id.slice(-6).toUpperCase()} — Sunset Duckies`,
     `${order.name} placed a reservation.\n\n${items(order)}\n\nReview it: ${getSiteUrl()}/admin/orders/${order.id}`);
 }
-export function sendNewUploadAdminAlert(upload: { id: string; uploaderName: string | null; note: string | null }): Promise<Delivery> {
+export function sendNewUploadAdminAlert(upload: { id: string; note: string | null }): Promise<Delivery> {
   const to = getAdminNotifyAddress();
   if (!to) return Promise.resolve({ ok: false, error: "EMAIL_ADMIN_NOTIFY is not configured." });
-  return send(to, "New gallery photo to review — Sunset Duckies",
-    `${upload.uploaderName ?? "A parent"} sent a photo for the gallery.${upload.note ? `\n\n"${upload.note}"` : ""}\n\nIt stays hidden until you approve it: ${getSiteUrl()}/admin/gallery`);
+  return send(to, "New photo in the members' gallery — Sunset Duckies",
+    `A club member added a photo to the gallery.${upload.note ? `\n\n"${upload.note}"` : ""}\n\nIt is live for members already; hide or remove it here if needed: ${getSiteUrl()}/admin/gallery`);
 }

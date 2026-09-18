@@ -1,4 +1,5 @@
 ---
+export const prerender = false; // the middleware only gates pages rendered per request
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Kicker from "../../components/ui/Kicker.astro";
@@ -7,7 +8,7 @@ import StickerCard from "../../components/ui/StickerCard.astro";
 import { bodyCopy, ctaClass, field, label } from "../../lib/ui";
 
 const title = `Share a photo — ${site.name}`;
-const description = "Send your photos from a session to the Sunset Duckies gallery. Nothing goes online until the club has looked at it.";
+const description = "Members: add your photos from a session to the club gallery.";
 ---
 
 <BaseLayout title={title} description={description}>
@@ -19,7 +20,7 @@ const description = "Send your photos from a session to the Sunset Duckies galle
         Your shot, <span class="font-accent font-medium italic text-accent-text">our wall</span>.
       </h1>
       <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
-        Took a good one at training? Send it here. Andras looks at every photo before it goes on the gallery page, so nothing is published by accident.
+        Took a good one at training? Add it here. The gallery is for club members only, and your photos show up there the moment they are uploaded.
       </p>
     </div>
   </section>
@@ -40,37 +41,31 @@ const description = "Send your photos from a session to the Sunset Duckies galle
           <ul class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4" data-previews aria-live="polite"></ul>
         </div>
 
-        <div class="mt-6 grid gap-5 sm:grid-cols-2">
-          <div>
-            <label class={label} for="share-name">Your name <span class="normal-case tracking-normal text-fg/50">(optional, for the credit)</span></label>
-            <input id="share-name" name="name" type="text" maxlength="80" autocomplete="name" class={`mt-2 ${field}`} placeholder="e.g. Holly" />
-          </div>
-          <div>
-            <label class={label} for="share-note">When and where? <span class="normal-case tracking-normal text-fg/50">(optional)</span></label>
-            <input id="share-note" name="note" type="text" maxlength="280" class={`mt-2 ${field}`} placeholder="Friday session, 12 September" />
-          </div>
+        <div class="mt-6">
+          <label class={label} for="share-note">When and where? <span class="normal-case tracking-normal text-fg/50">(optional, shown as the caption)</span></label>
+          <input id="share-note" name="note" type="text" maxlength="280" class={`mt-2 ${field}`} placeholder="Friday session, 12 September" />
         </div>
 
         <label class="mt-6 flex items-start gap-3 rounded-xl border-2 border-edge bg-canvas p-4">
           <input name="consent" type="checkbox" required class="mt-1 h-5 w-5 shrink-0 accent-[var(--color-coral-500)]" />
-          <span class={`text-[0.95rem] leading-[1.6] text-fg`}>I took these photos (or have the photographer's OK), and I'm fine with them being on the Sunset Duckies website and social channels. Families decide about their own kids on the club waiver; the club checks that before publishing.</span>
+          <span class={`text-[0.95rem] leading-[1.6] text-fg`}>These are my photos (or I have the photographer's OK) and I'm fine with other club members seeing them in the gallery. If a family would rather their Duckie wasn't in a shot, the club takes it down.</span>
         </label>
 
         <p class="mt-4 hidden rounded-xl border-2 border-coral-500 bg-sticker-coral px-4 py-3 text-sm text-ink-950" data-form-error role="alert"></p>
 
         <div class="mt-6 flex flex-wrap items-center gap-4">
-          <button type="submit" class={ctaClass("primary", "md")} data-submit>Send for review</button>
+          <button type="submit" class={ctaClass("primary", "md")} data-submit>Add to the gallery</button>
           <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60" data-progress></p>
         </div>
       </StickerCard>
 
       <div class="space-y-5">
         <StickerCard tone="sun" tilt="right" class="p-6">
-          <p class="font-display text-xl font-semibold text-fg">What happens next</p>
+          <p class="font-display text-xl font-semibold text-fg">How it works</p>
           <ol class={`mt-3 list-decimal space-y-2 pl-5 ${bodyCopy}`}>
-            <li>Your photos land in a private review queue.</li>
-            <li>Andras checks each one against the families' media consent.</li>
-            <li>Approved photos appear in <a class="underline" href="/gallery#from-the-parents">From the parents</a> on the gallery page, with your name if you gave one.</li>
+            <li>Your photos go straight into <a class="underline" href="/gallery#from-the-members">From the members</a> on the gallery page.</li>
+            <li>Only signed-in club members can see the gallery; nothing here is public.</li>
+            <li>The club keeps a record of who uploaded what, but names are not shown on the page.</li>
           </ol>
         </StickerCard>
         <StickerCard tone="teal" tilt="left" class="p-6">
@@ -78,7 +73,7 @@ const description = "Send your photos from a session to the Sunset Duckies galle
           <ul class={`mt-3 space-y-2 ${bodyCopy}`}>
             <li>Photos are resized and re-saved on upload; location data and the original file are not kept.</li>
             <li>Videos don't work here yet — drop those in the club WhatsApp.</li>
-            <li>Changed your mind? Message Andras and the photo comes down.</li>
+            <li>Changed your mind, or spotted a photo a family would rather not have up? Message Andras and it comes down.</li>
           </ul>
         </StickerCard>
       </div>
@@ -143,9 +138,8 @@ const description = "Send your photos from a session to the Sunset Duckies galle
     const consent = form.querySelector<HTMLInputElement>("[name=consent]")?.checked;
     if (!pending.length) return showError("Choose at least one photo first.");
     if (!consent) return showError("Please tick the box to confirm the photos are yours to share.");
-    const name = form.querySelector<HTMLInputElement>("[name=name]")?.value ?? "";
     const note = form.querySelector<HTMLInputElement>("[name=note]")?.value ?? "";
-    const query = new URLSearchParams({ name, note }).toString();
+    const query = new URLSearchParams({ note }).toString();
     if (submit) submit.disabled = true;
     let sent = 0, failed = 0;
     for (const item of pending) {
@@ -156,14 +150,14 @@ const description = "Send your photos from a session to the Sunset Duckies galle
         const response = await fetch(`/api/gallery/uploads?${query}`, { method: "POST", body, headers: { "Content-Type": body.type || "application/octet-stream" } });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error ?? "Upload failed.");
-        item.status.textContent = "In review ✓"; item.done = true; sent++;
+        item.status.textContent = "Added ✓"; item.done = true; sent++;
       } catch (error) {
         item.status.textContent = "Failed"; failed++;
         showError(error instanceof Error ? error.message : "Upload failed.");
       }
     }
     if (submit) submit.disabled = false;
-    if (progress) progress.textContent = sent ? `${sent} photo${sent === 1 ? "" : "s"} in the review queue. Thank you!` : "";
+    if (progress) progress.innerHTML = sent ? `${sent} photo${sent === 1 ? "" : "s"} added. <a class="underline" href="/gallery#from-the-members">See the gallery →</a>` : "";
     if (sent && !failed) showError("");
   });
 </script>

@@ -5,17 +5,19 @@ import { cleanText, GalleryError, galleryRateLimit, insertUpload, readUpload } f
 import { json, sameOrigin } from "../../../lib/server/http";
 export const prerender = false;
 
-// One photo per request, raw bytes in the body; who sent it and any note come
-// as query parameters so the body can stream straight into sharp.
-export const POST: APIRoute = async ({ request, clientAddress, url }) => {
+// One photo per request, raw bytes in the body, an optional note as a query
+// parameter so the body can stream straight into sharp. The middleware has
+// already required a signed-in club member; their email goes on the row.
+export const POST: APIRoute = async ({ request, clientAddress, url, locals }) => {
   try {
     if (!sameOrigin(request)) throw new GalleryError("Invalid request origin.", 403);
+    const member = locals.session?.member;
+    if (!member) throw new GalleryError("Please sign in as a club member.", 401);
     await galleryRateLimit(clientAddress);
-    const uploaderName = cleanText(url.searchParams.get("name"), 80);
     const note = cleanText(url.searchParams.get("note"), 280);
     const photo = await readUpload(request);
-    const id = await insertUpload({ uploaderName, note, ipHash: sha256(`gallery:${process.env.BETTER_AUTH_SECRET}:${clientAddress}`), ...photo });
-    void sendNewUploadAdminAlert({ id, uploaderName, note });
+    const id = await insertUpload({ uploadedBy: member.email, note, ipHash: sha256(`gallery:${process.env.BETTER_AUTH_SECRET}:${clientAddress}`), ...photo });
+    void sendNewUploadAdminAlert({ id, note });
     return json({ id }, 201);
   } catch (error) {
     if (error instanceof GalleryError) return json({ error: error.message }, error.status);

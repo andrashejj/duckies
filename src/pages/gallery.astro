@@ -15,11 +15,12 @@ const description = gallery.tagline;
 const photoCount = gallery.sections.reduce((n, section) => n + section.photos.length, 0);
 const cover = gallery.sections[0].photos[0];
 
-// Photos parents sent through /gallery/share and an admin approved. The page
-// still renders without them if the database is unreachable.
+// Photos members added through /gallery/share (the middleware makes sure only
+// a signed-in club member gets this far). The page still renders without them
+// if the database is unreachable. Who uploaded what stays in the database.
 let shared: GalleryUpload[] = [];
 try { shared = await listUploads("approved"); } catch { console.error("Gallery uploads could not be read; showing the curated set only."); }
-const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo shared by ${u.uploaderName}` : "Photo shared by a club parent");
+const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a club member";
 ---
 
 <BaseLayout title={title} description={description} image={`/media/gallery/${cover.slug}.webp`} imageAlt={cover.alt} imageWidth={cover.w} imageHeight={cover.h}>
@@ -30,7 +31,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo sh
 
     <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
       <div data-float>
-        <Kicker>📸 {photoCount + shared.length} photos · {gallery.clips.length} clips</Kicker>
+        <Kicker>📸 {photoCount + shared.length} photos · {gallery.clips.length} clips · members only</Kicker>
       </div>
       <h1 data-float class="mt-6 font-display text-[clamp(2.8rem,9vw,6.6rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
         Straight from the
@@ -45,7 +46,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo sh
             {section.title}
           </a>
         ))}
-        {shared.length > 0 && <a href="#from-the-parents" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">From the parents</a>}
+        {shared.length > 0 && <a href="#from-the-members" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">From the members</a>}
         <a href="#clips" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
           Clips
         </a>
@@ -91,13 +92,13 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo sh
     </section>
   ))}
 
-  <!-- ===================== FROM THE PARENTS ===================== -->
+  <!-- ===================== FROM THE MEMBERS ===================== -->
   {shared.length > 0 && (
-    <section id="from-the-parents" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+    <section id="from-the-members" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
       <div class="mb-8 max-w-2xl" data-reveal>
         <Kicker tone="outline">{String(gallery.sections.length + 1).padStart(2, "0")}</Kicker>
-        <SectionTitle class="mt-4">From the parents</SectionTitle>
-        <p class={`mt-4 ${bodyCopy}`}>Sent in through the <a class="underline" href="/gallery/share">share page</a> and checked by the club before going up. Newest first.</p>
+        <SectionTitle class="mt-4">From the members</SectionTitle>
+        <p class={`mt-4 ${bodyCopy}`}>Added by club members through the <a class="underline" href="/gallery/share">share page</a>. Newest first.</p>
       </div>
       <div class="columns-2 gap-4 sm:columns-3 sm:gap-[1.15rem] lg:columns-4 lg:gap-5" data-reveal>
         {shared.map((photo) => (
@@ -110,7 +111,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo sh
             aria-label={`Open photo: ${sharedAlt(photo)}`}
           >
             <img src={`/gallery/photo/${photo.id}.webp?size=thumb`} alt={sharedAlt(photo)} width={photo.width} height={photo.height} loading="lazy" decoding="async" class="block h-auto w-full" />
-            {photo.uploaderName && <span class="block px-3 py-2 text-left font-mono text-[0.62rem] uppercase tracking-[0.16em] text-fg/60">📷 {photo.uploaderName}</span>}
+            {(photo.caption ?? photo.note) && <span class="block px-3 py-2 text-left font-mono text-[0.62rem] uppercase tracking-[0.16em] text-fg/60">{photo.caption ?? photo.note}</span>}
           </button>
         ))}
       </div>
@@ -160,11 +161,11 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? (u.uploaderName ? `Photo sh
     <div class="flex flex-col items-start gap-6 rounded-sticker border-2 border-edge bg-sticker-sun p-[clamp(1.5rem,4vw,3rem)] shadow-sticker md:flex-row md:items-center md:justify-between" data-reveal>
       <div class="max-w-2xl">
         <SectionTitle size="sm">Got a better shot?</SectionTitle>
-        <p class={`mt-3 ${bodyCopy}`}>Every photo here was taken by a parent on the sand. Send yours in — Andras checks each one before it goes up, so nothing is published by accident.</p>
+        <p class={`mt-3 ${bodyCopy}`}>Every photo here was taken by a parent on the sand. Add yours — it goes straight into "From the members", and only members can see this page.</p>
       </div>
       <Cta href="/gallery/share" class="shrink-0">Share a photo</Cta>
     </div>
-    <p class="mt-8 font-mono text-[0.65rem] leading-[1.7] opacity-65">Photos and clips by club parents, used with the families' media consent. Credits per photo are in the club's records.</p>
+    <p class="mt-8 font-mono text-[0.65rem] leading-[1.7] opacity-65">A members-only page. Photos and clips by club parents and the club drone; credits per photo are in the club's records. If a family would rather a photo came down, message Andras.</p>
   </section>
 </BaseLayout>
 
