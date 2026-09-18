@@ -15,6 +15,7 @@ type ProductFormValues = {
   price: string; // rupees, human-facing
   currency: string;
   category:
+    | "GRANOLA"
     | "APPAREL"
     | "HEADWEAR"
     | "ACCESSORIES"
@@ -33,6 +34,7 @@ type ProductFormValues = {
 };
 
 const CATEGORIES: ProductFormValues["category"][] = [
+  "GRANOLA",
   "APPAREL",
   "HEADWEAR",
   "ACCESSORIES",
@@ -56,7 +58,7 @@ const EMPTY: ProductFormValues = {
   description: "",
   price: "",
   currency: "MUR",
-  category: "APPAREL",
+  category: "GRANOLA",
   sizes: "",
   colorway: "ink",
   imageUrl: "",

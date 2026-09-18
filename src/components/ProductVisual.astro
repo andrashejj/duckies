@@ -1,9 +1,12 @@
 ---
 import type { Product } from "../generated/prisma/client";
+import GranolaPouch from "./GranolaPouch.astro";
+import { isPouchFlavour } from "../lib/granola-pouch";
 import { themeFor } from "../lib/products";
-// Product artwork or the big wordmark fallback, tinted by the product colourway.
+// Product artwork: the drawn pouch for a granola flavour, else the product
+// image, else the big wordmark fallback — all tinted by the product colourway.
 interface Props {
-  product: Pick<Product, "name" | "colorway" | "imageUrl" | "imageAlt" | "kind">;
+  product: Pick<Product, "name" | "slug" | "colorway" | "imageUrl" | "imageAlt" | "kind" | "sizes">;
   size?: "sm" | "md" | "lg";
   as?: "div" | "a";
   href?: string;
@@ -13,6 +16,8 @@ interface Props {
 const { product, size = "md", as, href, class: className, eager = false } = Astro.props as Props;
 const Tag = as ?? (href ? "a" : "div");
 const theme = themeFor(product.colorway);
+const pouch = isPouchFlavour(product.slug) ? product.slug : null;
+const grams = Number.parseInt(product.sizes.find((size) => /\d+\s*g$/i.test(size)) ?? "300", 10);
 const wordmark = { sm: "px-4 text-[clamp(1.8rem,4.5vw,3rem)]", md: "px-6 text-[clamp(2.2rem,5.5vw,3.8rem)]", lg: "px-6 text-[clamp(3rem,7vw,5.5rem)]" }[size];
 ---
 <Tag
@@ -25,7 +30,11 @@ const wordmark = { sm: "px-4 text-[clamp(1.8rem,4.5vw,3rem)]", md: "px-6 text-[c
   ]}
   aria-label={href ? `${product.name} details` : undefined}
 >
-  {product.imageUrl ? (
+  {pouch ? (
+    <span class:list={["absolute inset-0 flex items-center justify-center py-3", href && "transition-transform duration-500 ease-out group-hover/visual:scale-[1.035]"]}>
+      <GranolaPouch design={pouch} name={product.name} grams={grams} title={product.imageAlt ?? product.name} class="h-full w-auto drop-shadow-[0_10px_18px_var(--line)]" />
+    </span>
+  ) : product.imageUrl ? (
     <img
       src={product.imageUrl}
       alt={product.imageAlt ?? product.name}

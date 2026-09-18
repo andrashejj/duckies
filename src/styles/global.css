@@ -207,6 +207,58 @@
     --caution: #745121;
     --alert: #a12d26;
 
+    /* Granola pouch artwork (src/lib/granola-pouch.ts). A printed pouch looks
+       the same in both modes, so these stay put under data-theme: shared ink,
+       cream and granola tones, one row per flavour, and the blank "?" pouch a
+       new recipe wears. Plain variables: nothing here needs a utility. */
+    --pouch-ink: #1d2a2f;
+    --pouch-cream: #fff6e6;
+    --pouch-granola: #b07a3c;
+    --pouch-cluster-1: #d8a15c;
+    --pouch-cluster-2: #c68b44;
+    --pouch-cluster-3: #8d5a2c;
+    --pouch-cluster-4: #e9c98f;
+    --pouch-raisin: #4b2c2a;
+    --pouch-coconut: #f5ead4;
+    --pouch-og-bg: #f4e8d4;
+    --pouch-og-sun: #f2b63a;
+    --pouch-og-palm: #2f5d3a;
+    --pouch-og-mountain: #6f8a4b;
+    --pouch-og-mountain-shade: #4f6a38;
+    --pouch-og-sand: #f6dfc4;
+    --pouch-og-wave-1: #f0b08f;
+    --pouch-og-wave-2: #dc8465;
+    --pouch-og-wave-3: #b8503c;
+    --pouch-og-accent: #d9502f;
+    --pouch-dawn-bg: #dcecf1;
+    --pouch-dawn-palm: #1f5d63;
+    --pouch-dawn-moon: #f7efd9;
+    --pouch-dawn-mountain: #4d8a7e;
+    --pouch-dawn-mountain-shade: #35695f;
+    --pouch-dawn-sand: #e9e3cf;
+    --pouch-dawn-wave-1: #9dcbd7;
+    --pouch-dawn-wave-2: #5ba8ba;
+    --pouch-dawn-wave-3: #2f7f93;
+    --pouch-dawn-wave-4: #1f6273;
+    --pouch-dawn-accent: #1f6f7d;
+    --pouch-power-bg: #e7ecd7;
+    --pouch-power-leaf-1: #7ea85c;
+    --pouch-power-leaf-2: #4e7e3f;
+    --pouch-power-leaf-3: #38622f;
+    --pouch-power-sun: #f2a9a2;
+    --pouch-power-halo: #f7c8c2;
+    --pouch-power-flower: #e4573f;
+    --pouch-power-stamen: #f5c542;
+    --pouch-power-wave-1: #b9d18f;
+    --pouch-power-wave-2: #8cb46a;
+    --pouch-power-wave-3: #5c8f45;
+    --pouch-power-accent: #4e8a3a;
+    --pouch-new-bg: #ece9e2;
+    --pouch-new-wave-1: #d3cfc6;
+    --pouch-new-wave-2: #b5b0a6;
+    --pouch-new-wave-3: #8c877e;
+    --pouch-new-accent: #8c877e;
+
     --texture-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.04  0 0 0 0 0.08  0 0 0 0 0.12  0 0 0 0.14 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     --texture-canvas:
       radial-gradient(ellipse 60% 45% at 5% 0%, color-mix(in oklab, var(--color-pink-400) 35%, transparent), transparent 60%),

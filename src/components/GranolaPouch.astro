@@ -1,0 +1,8 @@
+---
+import { pouchSvg, type PouchDesign } from "../lib/granola-pouch";
+// The granola pouch as inline SVG, so the page fonts print its labels.
+interface Props { design: PouchDesign; name: string; grams: number; class?: string; title?: string }
+const { design, name, grams, class: className = "", title } = Astro.props;
+const id = `pouch-${design}-${Math.random().toString(36).slice(2, 8)}`;
+---
+<Fragment set:html={pouchSvg(design, { name, grams, id, className, title })} />

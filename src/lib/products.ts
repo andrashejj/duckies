@@ -50,3 +50,9 @@ export async function listActiveProducts(): Promise<Product[]> {
 export async function getProductBySlug(slug: string) {
   return prisma.product.findFirst({ where: { slug, ...availableProductWhere() }, include: { drop: true } });
 }
+
+/** How a product comes: a pack weight for the granola ("Pack · 300 g"), sizes for anything else. */
+export function packLabel(product: Pick<Product, "sizes">): { label: string; value: string } {
+  if (product.sizes.length && product.sizes.every((size) => /\d\s*g$/i.test(size))) return { label: "Pack", value: product.sizes.join(" · ") };
+  return { label: "Sizes", value: product.sizes.length ? product.sizes.join(" · ") : "One size" };
+}

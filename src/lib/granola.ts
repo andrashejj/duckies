@@ -2,7 +2,9 @@ import { z } from "zod";
 import { nutritionSchema } from "./granola-nutrition-data";
 
 const number = (max = 1_000_000) => z.number().min(0).max(max);
-export const starterPackIds = ["basic", "sports", "champ"] as const;
+// The three printed flavours. Their ids double as the pouch designs
+// (src/lib/granola-pouch.ts) and the shop slugs (src/data/shop.ts).
+export const starterPackIds = ["the-og", "dawn-patrol", "power-up"] as const;
 export type StarterPackId = typeof starterPackIds[number];
 export type PackId = string;
 export const customPackIdPattern = /^mix-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -126,18 +128,19 @@ const common = {
     {id:"wear",name:"Equipment wear + overhead",amount:1000,basis:"month"},
   ] as OtherCost[],
 };
+export const starterNames: Record<StarterPackId, string> = { "the-og": "The OG", "dawn-patrol": "Dawn Patrol", "power-up": "Power Up" };
 export function starterRecipe(id: StarterPackId): Recipe {
   const ingredients = structuredClone(baseIngredients);
-  if (id === "sports") {
+  if (id === "dawn-patrol") {
     ingredients[0].grams = 150;
     ingredients.push({id:"sunflower",name:"Sunflower seeds",grams:30,packSize:250,packPrice:112,source:"DodoFresh · NeoFoods 250 g · 14 Sep 2026; retail alternative"});
   }
-  if (id === "champ") { ingredients[0].grams=165; ingredients[1].grams=60; ingredients[2].grams=30; }
-  return structuredClone({...common, name: id === "basic" ? "Basic" : id === "sports" ? "Sports" : "Champ", ingredients,
-    price: id === "basic" ? 350 : id === "sports" ? 375 : 425,
-    note: id === "basic" ? "The everyday oat, almond and raisin mix. Start here and cost a real kitchen batch."
-      : id === "sports" ? "A seed-forward recipe idea for after a session. A concept name, not a tested sports nutrition claim."
-      : "A more generous almond mix. Test whether the taste earns a higher price.",
+  if (id === "power-up") { ingredients[0].grams=165; ingredients[1].grams=60; ingredients[2].grams=30; }
+  return structuredClone({...common, name: starterNames[id], ingredients,
+    price: id === "the-og" ? 350 : id === "dawn-patrol" ? 375 : 425,
+    note: id === "the-og" ? "The original: oats, almonds, raisins and honey. Start here and cost a real kitchen batch."
+      : id === "dawn-patrol" ? "Seed-forward for the early session. A recipe idea to test, not a tested sports nutrition claim."
+      : "Double the almonds. Test whether the taste earns the higher price.",
   });
 }
 export function starterPacks(): SavedPack[] { return starterPackIds.map(id => ({id,recipe:starterRecipe(id),version:0,updatedAt:null})); }

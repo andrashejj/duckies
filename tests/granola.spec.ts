@@ -17,7 +17,7 @@ test.beforeEach(async()=>{
 test.afterAll(async()=>{await db.end();});
 
 test("recipe mass, yield and operating costs reconcile",()=>{
-  const r=starterRecipe("basic"), c=calculate(r);
+  const r=starterRecipe("the-og"), c=calculate(r);
   expect(c.rows.reduce((s,i)=>s+i.input,0)).toBeCloseTo(320,8);
   expect(c.ingredients).toBeCloseTo(142.148260869565,8);
   expect(c.production).toBeCloseTo(c.ingredients*1.05+85,8);
@@ -30,7 +30,7 @@ test("recipe mass, yield and operating costs reconcile",()=>{
 });
 
 test("invalid recipes and unprofitable cases have explicit boundaries",()=>{
-  const r=starterRecipe("basic");
+  const r=starterRecipe("the-og");
   for(const patch of [{batchPacks:0},{yieldPercent:0},{packGrams:0},{monthlyPacks:1.5},{feePercent:60,retailerPercent:50},{ingredients:[]},{ingredients:[{...r.ingredients[0],packSize:0}]},{ingredients:r.ingredients.map(i=>({...i,grams:0}))}]) expect(recipeSchema.safeParse({...r,...patch}).success).toBe(false);
   const none=calculate({...r,price:0,sellThroughPercent:0});expect(none.margin).toBeNull();expect(none.breakEvenProduced).toBeNull();expect(Number.isFinite(none.monthlyProfit)).toBe(true);
   expect(calculate({...r,retailerPercent:70,feePercent:2}).targetPrice).toBeNull();
@@ -38,37 +38,37 @@ test("invalid recipes and unprofitable cases have explicit boundaries",()=>{
 
 test("approved reads do not seed the DB; writes require edit access and origin",async({request})=>{
   expect((await request.get('/api/granola')).status()).toBe(401);
-  expect((await request.put('/api/granola/basic',{headers:{origin},data:{recipe:starterRecipe('basic'),version:0}})).status()).toBe(401);
+  expect((await request.put('/api/granola/the-og',{headers:{origin},data:{recipe:starterRecipe('the-og'),version:0}})).status()).toBe(401);
   await signIn(request,'parent@example.com');
   const response=await request.get('/api/granola');expect(response.status()).toBe(200);expect(response.headers()['cache-control']).toContain('no-store');
-  const data=await response.json();expect(data.packs.map((p:any)=>p.id)).toEqual(['basic','sports','champ']);expect(data.canEdit).toBe(false);
+  const data=await response.json();expect(data.packs.map((p:any)=>p.id)).toEqual(['the-og','dawn-patrol','power-up']);expect(data.canEdit).toBe(false);
   expect((await db.query('SELECT count(*)::int count FROM granola_pack')).rows[0].count).toBe(0);
-  const body={recipe:starterRecipe('basic'),version:0};
-  expect((await request.put('/api/granola/basic',{headers:{origin},data:body})).status()).toBe(403);
+  const body={recipe:starterRecipe('the-og'),version:0};
+  expect((await request.put('/api/granola/the-og',{headers:{origin},data:body})).status()).toBe(403);
   await signIn(request,'organiser@example.com');
-  expect((await request.put('/api/granola/basic',{headers:{origin:'https://untrusted.example'},data:body})).status()).toBe(403);
-  expect((await request.put('/api/granola/basic',{data:body})).status()).toBe(403);
-  expect((await request.put('/api/granola/basic',{headers:{origin},data:{...body,recipe:{...body.recipe,yieldPercent:0}}})).status()).toBe(400);
+  expect((await request.put('/api/granola/the-og',{headers:{origin:'https://untrusted.example'},data:body})).status()).toBe(403);
+  expect((await request.put('/api/granola/the-og',{data:body})).status()).toBe(403);
+  expect((await request.put('/api/granola/the-og',{headers:{origin},data:{...body,recipe:{...body.recipe,yieldPercent:0}}})).status()).toBe(400);
   expect((await request.put('/api/granola/unknown',{headers:{origin},data:body})).status()).toBe(404);
-  expect((await request.put('/api/granola/basic',{headers:{origin,'content-type':'application/json'},data:'x'.repeat(65000)})).status()).toBe(413);
+  expect((await request.put('/api/granola/the-og',{headers:{origin,'content-type':'application/json'},data:'x'.repeat(65000)})).status()).toBe(413);
 });
 
 test("saves survive fresh reads and preserve immutable version history",async({request})=>{
   await signIn(request,'organiser@example.com');
-  const recipe=starterRecipe('sports');recipe.note='Kitchen test: more seeds';recipe.costs.push({id:'delivery',name:'Delivery',amount:12,basis:'pack'});
-  const first=await request.put('/api/granola/sports',{headers:{origin},data:{recipe,version:0}});expect(first.status()).toBe(200);expect((await first.json()).pack.version).toBe(1);
+  const recipe=starterRecipe('dawn-patrol');recipe.note='Kitchen test: more seeds';recipe.costs.push({id:'delivery',name:'Delivery',amount:12,basis:'pack'});
+  const first=await request.put('/api/granola/dawn-patrol',{headers:{origin},data:{recipe,version:0}});expect(first.status()).toBe(200);expect((await first.json()).pack.version).toBe(1);
   const next={...recipe,price:420};
-  expect((await request.put('/api/granola/sports',{headers:{origin},data:{recipe:next,version:1}})).status()).toBe(200);
-  const current=(await (await request.get('/api/granola')).json()).packs.find((p:any)=>p.id==='sports');expect(current.recipe).toEqual(next);expect(current.version).toBe(2);
-  const history=(await (await request.get('/api/granola/sports/history')).json()).revisions;expect(history.map((r:any)=>r.version)).toEqual([2,1]);expect(history[1].recipe).toEqual(recipe);
-  expect((await db.query("SELECT recipe->>'price' price FROM granola_pack WHERE id='sports'")).rows[0].price).toBe('420');
+  expect((await request.put('/api/granola/dawn-patrol',{headers:{origin},data:{recipe:next,version:1}})).status()).toBe(200);
+  const current=(await (await request.get('/api/granola')).json()).packs.find((p:any)=>p.id==='dawn-patrol');expect(current.recipe).toEqual(next);expect(current.version).toBe(2);
+  const history=(await (await request.get('/api/granola/dawn-patrol/history')).json()).revisions;expect(history.map((r:any)=>r.version)).toEqual([2,1]);expect(history[1].recipe).toEqual(recipe);
+  expect((await db.query("SELECT recipe->>'price' price FROM granola_pack WHERE id='dawn-patrol'")).rows[0].price).toBe('420');
 });
 
 test("concurrent saves accept one version and reject stale edits",async({request})=>{
   await signIn(request,'organiser@example.com');
-  const responses=await Promise.all([380,390].map(price=>request.put('/api/granola/champ',{headers:{origin},data:{recipe:{...starterRecipe('champ'),price},version:0}})));
+  const responses=await Promise.all([380,390].map(price=>request.put('/api/granola/power-up',{headers:{origin},data:{recipe:{...starterRecipe('power-up'),price},version:0}})));
   expect(responses.map(r=>r.status()).sort()).toEqual([200,409]);
-  expect((await db.query("SELECT count(*)::int count FROM granola_revision WHERE pack_id='champ'")).rows[0].count).toBe(1);
+  expect((await db.query("SELECT count(*)::int count FROM granola_revision WHERE pack_id='power-up'")).rows[0].count).toBe(1);
 });
 
 test("recipe editor saves added and removed rows, survives reload and restores a version",async({page})=>{
@@ -88,7 +88,7 @@ test("recipe editor saves added and removed rows, survives reload and restores a
   await page.reload();await expect(app.getByLabel('Coconut shelf price',{exact:true})).toHaveValue('90');expect(await app.getByLabel('Remove Raisins',{exact:true}).count()).toBe(0);
   await expect(app.getByLabel('Transport extra basis',{exact:true})).toHaveValue('month');
   await app.getByLabel('Selling price',{exact:true}).fill('410');await app.getByRole('button',{name:'Save version'}).click();await expect(app.getByRole('status')).toContainText('version 2');
-  await app.getByRole('button',{name:'Versions',exact:true}).click();await app.getByRole('button',{name:/v1 · Basic/}).click();
+  await app.getByRole('button',{name:'Versions',exact:true}).click();await app.getByRole('button',{name:/v1 · The OG/}).click();
   await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('350');await app.getByRole('button',{name:'Save version'}).click();await expect(app.getByRole('status')).toContainText('version 3');
 });
 
@@ -98,8 +98,8 @@ test("mobile preview recalculates and keeps unsaved mixes while switching packs"
   const app=page.getByLabel('Granola recipe simulator');await expect(app).toHaveAttribute('aria-busy','false');
   await app.getByLabel('Selling price',{exact:true}).fill('500');
   await expect(app.locator('.g-profit strong')).toContainText('Rs 255.');
-  await app.getByRole('button',{name:/Sports After the session/}).click();await expect(app.getByLabel('Pack name',{exact:true})).toHaveValue('Sports');
-  await app.getByRole('button',{name:/Basic The everyday mix/}).click();await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('500');
+  await app.getByRole('button',{name:/Dawn Patrol Seeds for the early session/}).click();await expect(app.getByLabel('Pack name',{exact:true})).toHaveValue('Dawn Patrol');
+  await app.getByRole('button',{name:/The OG The original mix/}).click();await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('500');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await expect(app.getByRole('button',{name:'Save version'})).toBeDisabled();
 });
@@ -108,22 +108,22 @@ test("save failures and stale versions leave the edited recipe intact",async({pa
   await signIn(page.request,'organiser@example.com');await page.goto('/branding-plan/business-case');
   const app=page.getByLabel('Granola recipe simulator');await expect(app.getByRole('button',{name:'Save version'})).toBeEnabled();
   await app.getByLabel('Selling price',{exact:true}).fill('440');
-  await page.route('**/api/granola/basic',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Saved recipes are temporarily unavailable.'})}));
+  await page.route('**/api/granola/the-og',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Saved recipes are temporarily unavailable.'})}));
   await app.getByRole('button',{name:'Save version'}).click();await expect(app.getByRole('alert')).toContainText('temporarily unavailable');await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('440');
-  await page.unroute('**/api/granola/basic');
-  expect((await page.request.put('/api/granola/basic',{headers:{origin},data:{recipe:starterRecipe('basic'),version:0}})).status()).toBe(200);
+  await page.unroute('**/api/granola/the-og');
+  expect((await page.request.put('/api/granola/the-og',{headers:{origin},data:{recipe:starterRecipe('the-og'),version:0}})).status()).toBe(200);
   await app.getByRole('button',{name:'Save version'}).click();await expect(app.getByRole('alert')).toContainText('another window');await expect(app.getByLabel('Selling price',{exact:true})).toHaveValue('440');
 });
 
 test("custom granola types persist alongside starters with independent histories",async({request})=>{
   await signIn(request,'organiser@example.com');
   const id=`mix-${crypto.randomUUID()}`;
-  const recipe={...starterRecipe('basic'),name:'Coconut coffee'};
+  const recipe={...starterRecipe('the-og'),name:'Coconut coffee'};
   expect((await request.put(`/api/granola/${id}`,{headers:{origin},data:{recipe,version:0}})).status()).toBe(200);
   const renamed={...recipe,name:'Coffee crunch',price:480};
   expect((await request.put(`/api/granola/${id}`,{headers:{origin},data:{recipe:renamed,version:1}})).status()).toBe(200);
   const packs=(await (await request.get('/api/granola')).json()).packs;
-  expect(packs).toHaveLength(4);expect(packs.slice(0,3).map((p:any)=>p.id)).toEqual(['basic','sports','champ']);
+  expect(packs).toHaveLength(4);expect(packs.slice(0,3).map((p:any)=>p.id)).toEqual(['the-og','dawn-patrol','power-up']);
   expect(packs[3]).toMatchObject({id,version:2,recipe:renamed});
   const revisions=(await (await request.get(`/api/granola/${id}/history`)).json()).revisions;
   expect(revisions.map((r:any)=>r.recipe.name)).toEqual(['Coffee crunch','Coconut coffee']);
@@ -153,7 +153,7 @@ test("new and duplicated granola types can be edited, saved and compared after r
 });
 
 test("nutrition scales by mass and yield, and unknown data never becomes zero",()=>{
-  const base=starterRecipe('basic');
+  const base=starterRecipe('the-og');
   const r={...base,ingredients:[base.ingredients[0]],packGrams:300,yieldPercent:100};
   const n=calculateNutrition(r);
   expect(n.values.energy.value).toBeCloseTo(379/2,8);
@@ -175,17 +175,17 @@ test("nutrition scales by mass and yield, and unknown data never becomes zero",(
 
 test("nutrition references and serving size survive saves and version restoration",async({request})=>{
   await signIn(request,'organiser@example.com');
-  const recipe=starterRecipe('basic');recipe.servingGrams=60;
+  const recipe=starterRecipe('the-og');recipe.servingGrams=60;
   recipe.ingredients[0].nutrition={source:'Bokomo label checked in kitchen',values:{...profileNutrition(nutritionProfiles.find(p=>p.id==='08120')!).values,protein:12}};
-  expect((await request.put('/api/granola/basic',{headers:{origin},data:{recipe,version:0}})).status()).toBe(200);
+  expect((await request.put('/api/granola/the-og',{headers:{origin},data:{recipe,version:0}})).status()).toBe(200);
   const current=(await (await request.get('/api/granola')).json()).packs[0].recipe;
   expect(current.servingGrams).toBe(60);expect(current.ingredients[0].nutrition).toEqual(recipe.ingredients[0].nutrition);
-  const history=(await (await request.get('/api/granola/basic/history')).json()).revisions;
+  const history=(await (await request.get('/api/granola/the-og/history')).json()).revisions;
   expect(history[0].recipe).toEqual(recipe);
 });
 
 test("AI endpoint enforces access and origin, validates changes and recalculates costs",async({request})=>{
-  const recipe=starterRecipe('basic');const body={recipe,goal:'less-sugar',brief:''};
+  const recipe=starterRecipe('the-og');const body={recipe,goal:'less-sugar',brief:''};
   expect((await request.post('/api/granola/advice',{headers:{origin},data:body})).status()).toBe(401);
   await signIn(request,'parent@example.com');
   expect((await request.post('/api/granola/advice',{headers:{origin},data:body})).status()).toBe(403);
@@ -204,7 +204,7 @@ test("invalid AI responses and provider failure preserve recipes and hide provid
   await signIn(request,'organiser@example.com');
   for(const brief of ['fixture-invalid-id','fixture-empty-mix','fixture-incomplete','fixture-refusal','fixture-malformed','fixture-provider-failure']) {
     await db.query('TRUNCATE granola_ai_limit');
-    const response=await request.post('/api/granola/advice',{headers:{origin},data:{recipe:starterRecipe('basic'),goal:'balanced',brief}});
+    const response=await request.post('/api/granola/advice',{headers:{origin},data:{recipe:starterRecipe('the-og'),goal:'balanced',brief}});
     expect(response.status(),brief).toBe(502);expect(await response.text()).not.toContain('secret provider details');
   }
   expect((await db.query('SELECT count(*)::int count FROM granola_revision')).rows[0].count).toBe(0);
@@ -212,10 +212,10 @@ test("invalid AI responses and provider failure preserve recipes and hide provid
 
 test("AI limits concurrent requests and missing configuration fails explicitly",async({request})=>{
   const prior=process.env.OPENAI_API_KEY;
-  try{delete process.env.OPENAI_API_KEY;await expect(generateAdvice(starterRecipe('basic'),'balanced','','test')).rejects.toThrow('not connected');}
+  try{delete process.env.OPENAI_API_KEY;await expect(generateAdvice(starterRecipe('the-og'),'balanced','','test')).rejects.toThrow('not connected');}
   finally{if(prior!==undefined)process.env.OPENAI_API_KEY=prior;}
   await signIn(request,'organiser@example.com');
-  const responses=await Promise.all(Array.from({length:6},()=>request.post('/api/granola/advice',{headers:{origin},data:{recipe:starterRecipe('basic'),goal:'balanced',brief:''}})));
+  const responses=await Promise.all(Array.from({length:6},()=>request.post('/api/granola/advice',{headers:{origin},data:{recipe:starterRecipe('the-og'),goal:'balanced',brief:''}})));
   expect(responses.map(r=>r.status()).sort()).toEqual([200,200,200,200,200,429]);
   expect((await db.query("SELECT count FROM granola_ai_limit WHERE key LIKE '%:day'")).rows[0].count).toBe(5);
 });
@@ -273,7 +273,7 @@ test("scenario changes update the whole draft immediately on desktop and mobile"
 });
 
 test("monthly ledger reconciles sourcing, batch costs, paid admin and sold-only costs",()=>{
-  const recipe=starterRecipe('basic');
+  const recipe=starterRecipe('the-og');
   recipe.monthlyPacks=33;recipe.sellThroughPercent=80;recipe.hourlyCost=300;
   recipe.ingredients[0]={...recipe.ingredients[0],discountPercent:20,sourcingCost:10};
   recipe.costs.push({id:'dispatch',name:'Dispatch',amount:0.1,calculation:'labour',basis:'sold'});
@@ -294,12 +294,12 @@ test("monthly ledger reconciles sourcing, batch costs, paid admin and sold-only 
 
 test("break-even is the first non-negative whole-pack result, including rounded sell-through and batch jumps",()=>{
   for(const batchCostMode of ['whole','proportional'] as const) for(const sellThroughPercent of [100,90,73,51]) {
-    const recipe={...starterRecipe('basic'),batchCostMode,sellThroughPercent,price:650};
+    const recipe={...starterRecipe('the-og'),batchCostMode,sellThroughPercent,price:650};
     const c=calculate(recipe);expect(c.breakEvenProduced).not.toBeNull();
     expect(calculate({...recipe,monthlyPacks:c.breakEvenProduced!}).monthlyProfit).toBeGreaterThanOrEqual(0);
     for(let monthlyPacks=0;monthlyPacks<c.breakEvenProduced!;monthlyPacks++) expect(calculate({...recipe,monthlyPacks},{includeBreakEven:false}).monthlyProfit).toBeLessThan(0);
   }
-  const recipe=starterRecipe('basic');
+  const recipe=starterRecipe('the-og');
   expect(calculate({...recipe,monthlyPacks:41}).monthlyProfit).toBeLessThan(calculate({...recipe,monthlyPacks:40}).monthlyProfit);
   expect(calculate({...recipe,sellThroughPercent:0}).breakEvenPrice).toBeNull();
   expect(calculate({...recipe,feePercent:100}).breakEvenPrice).toBeNull();
@@ -320,7 +320,7 @@ test("sourcing and monthly assumptions change every result and survive save and 
   await app.getByLabel('Loaded hourly cost',{exact:true}).fill('300');
   await app.getByLabel('Order handling + admin basis',{exact:true}).selectOption('sold');
   await app.getByLabel('Order handling + admin amount',{exact:true}).fill('0.1');
-  const recipe=starterRecipe('basic');recipe.hourlyCost=300;
+  const recipe=starterRecipe('the-og');recipe.hourlyCost=300;
   recipe.ingredients[0]={...recipe.ingredients[0],discountPercent:20,sourcingCost:10,source:'Supplier quote for delivered oats'};
   recipe.costs[3]={...recipe.costs[3],basis:'sold',amount:0.1};
   const expected=`Rs ${calculate(recipe).monthlyProfit.toLocaleString('en-GB',{maximumFractionDigits:0})}`;
@@ -340,7 +340,7 @@ test("sourcing and monthly assumptions change every result and survive save and 
 
 
 test("price, supplier size, recipe proportions, overhead and fees have the expected financial effects",()=>{
-  const recipe=starterRecipe('basic'),base=calculate(recipe);
+  const recipe=starterRecipe('the-og'),base=calculate(recipe);
   expect(calculate({...recipe,price:400}).monthlyProfit-base.monthlyProfit).toBeCloseTo(100*50*.98,8);
   expect(calculate({...recipe,hourlyCost:300}).monthlyProfit-base.monthlyProfit).toBeCloseTo(-35*100,8);
   const bulk={...recipe,ingredients:recipe.ingredients.map(i=>i.id==='oats'?{...i,packSize:1000}:i)};

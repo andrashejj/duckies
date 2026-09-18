@@ -7,6 +7,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   getProductBySlug,
   listActiveProducts,
+  packLabel,
 } from "../../lib/products";
 import ProductVisual from "../../components/ProductVisual.astro";
 import Chip from "../../components/ui/Chip.astro";
@@ -42,25 +43,25 @@ if (!product && !loadError) {
   return new Response(null, { status: 404, statusText: "Product not found" });
 }
 
-const dropLabel = product?.drop?.name ?? "Club kit";
-const sizesLabel = product && product.sizes.length ? product.sizes.join(" · ") : "One size";
+const dropLabel = product?.drop?.name ?? "Club granola";
+const pack = product ? packLabel(product) : null;
 
 const title = product
   ? `${product.name} | ${site.name} Shop`
   : `${site.name} Shop`;
 const description = product
   ? `${product.name}. ${product.description}`
-  : "Sunset Duckies kit. Reserve online and arrange pickup with the club.";
+  : "Sunset Duckies granola. Reserve online and pick up at the session.";
 ---
 
 <BaseLayout title={title} description={description}>
   {loadError || !product ? (
     <section class="mx-auto max-w-3xl px-6 py-32 text-center">
       <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">
-        Off the rack
+        Off the shelf
       </p>
       <h1 class="mt-4 font-display text-4xl font-bold [font-variation-settings:'wdth'_112]">
-        Couldn't load this piece.
+        Couldn't load this flavour.
       </h1>
       <p class="mt-3 text-[0.95rem] leading-7 text-fg/75">
         Either it's retired, or the shop isn't responding right now. Head back to the drop or ping us on WhatsApp.
@@ -105,10 +106,10 @@ const description = product
             <dl class="grid grid-cols-2 gap-4 border-y-2 border-edge py-5">
               <div>
                 <dt class="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-fg/60">
-                  Sizes
+                  {pack?.label}
                 </dt>
                 <dd class="mt-1 text-sm leading-6 text-fg/85">
-                  {sizesLabel}
+                  {pack?.value}
                 </dd>
               </div>
               <div>
@@ -122,7 +123,7 @@ const description = product
             </dl>
 
             <StickerCard class="space-y-4 p-6">
-              <Kicker>Reserve your kit</Kicker>
+              <Kicker>Reserve your granola</Kicker>
               {product.stock === 0 ? <Chip>Currently sold out</Chip> : <ReserveForm
                 client:load
                 product={{
@@ -144,7 +145,7 @@ const description = product
       {others.length > 0 && (
         <section class="mx-auto max-w-7xl px-6 pb-24 lg:px-10">
           <div class="mb-6 flex items-end justify-between gap-4">
-            <SectionTitle>Keep stacking</SectionTitle>
+            <SectionTitle>Try the others</SectionTitle>
             <a class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-fg/70 hover:text-accent-text" href="/shop">
               See full drop →
             </a>

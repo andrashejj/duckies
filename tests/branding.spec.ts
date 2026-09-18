@@ -15,7 +15,7 @@ test("anonymous HTML, direct APIs and worksheets expose only the teaser",async({
   const r=await request.get(url);expect(r.status()).toBe(200);expect(r.headers()['cache-control']).toContain('no-store');expect(r.headers()['vercel-cdn-cache-control']).toBe('no-store');
   const html=await r.text();expect(html).toContain('Request access');expect(html).not.toContain('Granola recipe simulator');expect(html).not.toContain('granola-business-case');expect(html).not.toContain('Compare fairly');expect(html).not.toContain('Leading hypothesis');expect(html).not.toContain('GranolaSimulator');
  }
- for(const url of ['/api/granola','/api/%67ranola','/api/granola/basic/history','/api/granola/advice','/api/branding/approvals'])expect((await request.get(url)).status()).toBe(401);
+ for(const url of ['/api/granola','/api/%67ranola','/api/granola/the-og/history','/api/granola/advice','/api/branding/approvals'])expect((await request.get(url)).status()).toBe(401);
  const template=await request.get('/templates/brand-concept.html',{maxRedirects:0});expect(template.status()).toBe(302);expect(template.headers().location).toBe('/branding-plan');
  await page.goto('/branding-plan');await expect(page.getByRole('button',{name:'Request access',exact:true})).toBeVisible();
  await page.screenshot({path:'test-results/branding-teaser-desktop.png',fullPage:true});
@@ -55,13 +55,13 @@ test("owner manages independent branding permissions with immediate revocation a
  expect((await context.request.get('/branding-plan')).status()).toBe(200);expect(await (await context.request.get('/branding-plan')).text()).toContain('href="/branding-plan/business-case"');
  expect(await (await context.request.get('/branding-plan/business-case')).text()).toContain('Granola recipe simulator');
  expect((await context.request.get('/templates/brand-concept.html')).status()).toBe(200);
- expect((await context.request.put('/api/granola/basic',{headers:{origin},data:{recipe:starterRecipe('basic'),version:0}})).status()).toBe(403);
+ expect((await context.request.put('/api/granola/the-og',{headers:{origin},data:{recipe:starterRecipe('the-og'),version:0}})).status()).toBe(403);
  expect((await context.request.get('/api/branding/approvals')).status()).toBe(403);
  await request.post('/api/branding/approvals',{headers:{origin},data:{...data,version:2,canEdit:true}});
- expect((await context.request.put('/api/granola/basic',{headers:{origin},data:{recipe:starterRecipe('basic'),version:0}})).status()).toBe(200);
+ expect((await context.request.put('/api/granola/the-og',{headers:{origin},data:{recipe:starterRecipe('the-og'),version:0}})).status()).toBe(200);
  await request.post('/api/branding/approvals',{headers:{origin},data:{...data,version:3,decision:'revoked'}});
  expect((await context.request.get('/api/granola')).status()).toBe(403);
- expect((await context.request.get('/api/granola/basic/history')).status()).toBe(403);
+ expect((await context.request.get('/api/granola/the-og/history')).status()).toBe(403);
  expect((await context.request.post('/api/granola/advice',{headers:{origin},data:{}})).status()).toBe(403);
  expect(await (await context.request.get('/branding-plan')).text()).not.toContain('Granola recipe simulator');
  expect((await context.request.get('/branding-plan/business-case',{maxRedirects:0})).status()).toBe(302);

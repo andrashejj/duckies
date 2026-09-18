@@ -193,19 +193,26 @@ test("mobile shopper can reserve, sign in with the receipt email, and view their
 test("seeding is additive and migration reruns preserve existing products and roster", async ({ request }) => {
   await signIn(request, organiser);
   await request.post("/api/kids", { headers: { origin }, data: { name: "Preserved Duckie" } });
+  // The founding-kit concepts an older seed left behind come off the rack; nothing is deleted.
+  const kit = await prisma.drop.create({ data: { slug: "drop-001", name: "Drop 001 — Founding kit", status: "DRAFT" } });
+  await prisma.product.create({ data: { slug: "cap", sku: "CAP", name: "Duckies Cap", kind: "Headwear", description: "Old concept", priceCents: 65000, category: "HEADWEAR", dropId: kit.id } });
   execFileSync("pnpm", ["db:seed"], { env: process.env, stdio: "pipe" });
-  const seeded = await prisma.product.findUniqueOrThrow({ where: { slug: "tee-cream" } });
+  const seeded = await prisma.product.findUniqueOrThrow({ where: { slug: "the-og" } });
+  expect(seeded).toMatchObject({ name: "The OG", kind: "Granola", category: "GRANOLA", sizes: ["300 g"], priceCents: 35000, imageUrl: null, active: true });
+  expect((await prisma.product.findMany({ where: { category: "GRANOLA" }, orderBy: { sortOrder: "asc" } })).map((p) => p.slug)).toEqual(["the-og", "dawn-patrol", "power-up"]);
+  expect((await prisma.product.findUniqueOrThrow({ where: { slug: "cap" } })).active).toBe(false);
+  expect((await prisma.drop.findUniqueOrThrow({ where: { slug: "drop-001" } })).status).toBe("CLOSED");
   await prisma.product.update({ where: { id: seeded.id }, data: { priceCents: 123400 } });
   execFileSync("pnpm", ["db:seed"], { env: process.env, stdio: "pipe" });
   execFileSync("pnpm", ["db:migrate"], { env: process.env, stdio: "pipe" });
   expect((await prisma.product.findUniqueOrThrow({ where: { id: seeded.id } })).priceCents).toBe(123400);
   expect((await prisma.product.findUniqueOrThrow({ where: { id: productId } })).active).toBe(true);
-  expect((await prisma.drop.findUniqueOrThrow({ where: { slug: "drop-001" } })).status).toBe("DRAFT");
+  expect((await prisma.drop.findUniqueOrThrow({ where: { slug: "granola-001" } })).status).toBe("DRAFT");
   expect((await db.query("SELECT name FROM club_kid")).rows[0].name).toBe("Preserved Duckie");
-  await prisma.drop.update({ where: { slug: "drop-001" }, data: { status: "LIVE" } });
-  await prisma.product.delete({ where: { slug: "cap" } });
+  await prisma.drop.update({ where: { slug: "granola-001" }, data: { status: "LIVE" } });
+  await prisma.product.delete({ where: { slug: "power-up" } });
   execFileSync("pnpm", ["db:seed"], { env: process.env, stdio: "pipe" });
-  expect((await prisma.product.findUniqueOrThrow({ where: { slug: "cap" } })).active).toBe(false);
+  expect((await prisma.product.findUniqueOrThrow({ where: { slug: "power-up" } })).active).toBe(false);
   expect((await prisma.product.findUniqueOrThrow({ where: { id: seeded.id } })).priceCents).toBe(123400);
 });
 

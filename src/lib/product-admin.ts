@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const CATEGORY_VALUES = [
+  "GRANOLA",
   "APPAREL",
   "HEADWEAR",
   "ACCESSORIES",
@@ -49,6 +50,7 @@ export const productSchema = z.object({
 export type ProductInput = z.infer<typeof productSchema>;
 
 export const CATEGORY_LABEL: Record<ProductCategoryValue, string> = {
+  GRANOLA: "Granola",
   APPAREL: "Apparel",
   HEADWEAR: "Headwear",
   ACCESSORIES: "Accessories",

@@ -613,6 +613,7 @@ model Verification {
 }
 
 enum ProductCategory {
+  GRANOLA
   APPAREL
   HEADWEAR
   ACCESSORIES
