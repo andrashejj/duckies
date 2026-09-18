@@ -116,14 +116,10 @@ test("individual links are hashed, replaceable, revocable, expiring, and do not 
   request,
   playwright,
 }) => {
+  // Registration comes before payment: an unpaid kid still gets a link.
   await pay("unpaid");
-  expect(
-    (
-      await request.post(`/api/kids/${kidId}/link`, { headers: { origin } })
-    ).status(),
-  ).toBe(409);
-  await pay("paid");
   const first = await issue(request);
+  await pay("paid");
   const second = await issue(request);
   expect(
     (
@@ -524,10 +520,12 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
     .getByRole("button", { name: /^Save payment status/ })
     .click();
   await expect(page.getByText(/Unpaid · amount not recorded · Refunded/)).toBeVisible();
+  await expect(page.getByText("Pending · registered, current semester not paid", { exact: true })).toBeVisible();
+  // Links no longer wait for payment; the WhatsApp text says the place is pending.
   await page
     .getByRole("button", { name: "Generate registration link", exact: true })
     .click();
-  await expect(page.getByText(/Record the September 2026 semester payment first/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Send via WhatsApp" })).toHaveAttribute("href", /confirmed%20once%20the%20semester%20fee/);
   await page
     .getByRole("button", { name: "Update payment", exact: true })
     .click();

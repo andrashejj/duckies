@@ -1550,11 +1550,15 @@ export const site = {
     form: {
       title: "Lock in your spot.",
       intro:
-        "Members: your kid's name + a guardian's number and you're in — no form, your club waiver already covers the Cup. Not a member yet? Same short form, then we send you straight to the registration + waiver (≈5 min, no login).",
+        "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Name + number, then we send you straight to the registration + waiver (≈5 min, no login).",
       footnote:
-        "One kid per entry — siblings, just send it again. Friends + family don't need to register, just pull up.",
+        "Siblings? Each kid gets their own entry. Friends + family don't need to register, just pull up. Spots stay pending until Andras confirms the fee — members skip that part.",
       memberLabel: "Already a Sunset Duckie (club member)",
       guestLabel: "Not a member (yet)",
+      memberHint:
+        "Sign in with the email on your club registration and we bring you back here to tick who's coming. Your waiver already covers the Cup — no form.",
+      guestHint:
+        "We put your kid on the list, then send you straight to the registration form + waiver. Rs 1,000 entry, confirmed by Andras once it's paid.",
       submitLabel: "Count us in",
     },
   },
@@ -1601,7 +1605,7 @@ export const site = {
     kicker: "★ How to join · 4 steps",
     headline: "How to join the club, in four steps.",
     intro:
-      "We're volunteer-run. The path is short: meet the crew on WhatsApp, sign the waiver, take one free first session, then pay the semester fee — your private registration link follows on WhatsApp.",
+      "We're volunteer-run. The path is short: meet the crew on WhatsApp, register your duckie and sign the waiver online, take one free first session, then pay the semester fee — Andras confirms it and you're a member.",
     steps: [
       {
         id: "whatsapp",
@@ -1623,31 +1627,19 @@ export const site = {
       {
         id: "waiver",
         accent: "sun",
-        tag: "Step 02 · sign the waiver",
-        title: "Sign the liability waiver.",
+        tag: "Step 02 · register online",
+        title: "Register your duckie + sign the waiver.",
         body:
-          "Open the waiver, print or save it, fill it in, sign, then email a photo or scan back to Andras. Standard ocean-sports release — the short version below covers the gist.",
+          "One short form, no login: your child's details, legal guardians, an emergency contact, the club waiver and your signature. It takes about five minutes and your duckie is on the list as pending straight away. The short version of the waiver is below.",
         actions: [
           {
-            label: "Open the waiver",
-            href: "/templates/liability-waiver.html",
-            variant: "secondary",
-            external: true,
-          },
-          {
-            label: "Email signed waiver",
-            href:
-              "mailto:andras@sunsetduckies.com?subject=" +
-              encodeURIComponent("Sunset Duckies · signed liability waiver") +
-              "&body=" +
-              encodeURIComponent(
-                "Hi Andras,\n\nAttached is the signed liability waiver for my child to join Sunset Duckies.\n\nChild's name:\nParent / guardian name:\nPhone:\n\nThanks!\n",
-              ),
+            label: "Register your duckie",
+            href: "/join",
             variant: "primary",
             external: false,
           },
         ],
-        footnote: "Attach the photo/scan in your email client.",
+        footnote: "Already registered and want to fix a detail? Reopen your private link, or message Andras for a new one.",
       },
       {
         id: "try",
@@ -1670,9 +1662,9 @@ export const site = {
         id: "register",
         accent: "coral",
         tag: "Step 04 · make it official",
-        title: "Pay, then register.",
+        title: "Pay the semester fee.",
         body:
-          "Once you know you're in, pay the semester fee — Rs 3,000 for one child or Rs 5,000 for a family. Andras then sends you a private registration link on WhatsApp: fill it in once, sign, done. Membership covers regular Monday and Friday training (you pick one or two sessions a week) and nothing else — gear, the Cup and other events are separate.",
+          "Once you know you're in, pay the semester fee — Rs 3,000 for one child or Rs 5,000 for a family, cash or transfer to Andras. Only he marks it as paid, and that's the moment your duckie goes from pending to member. Membership covers regular Monday and Friday training (you pick one or two sessions a week) and nothing else — gear, the Cup and other events are separate.",
         actions: [
           {
             label: "Ask Andras for payment details",
@@ -1681,7 +1673,7 @@ export const site = {
             external: true,
           },
         ],
-        footnote: "Your registration link is private, expires in 14 days, and can be reopened to correct a detail. Cup-only? That's a separate form on the cup page.",
+        footnote: "Cup-only? That's a separate form on the cup page — members register there for free.",
       },
     ],
     waiverSummary: [

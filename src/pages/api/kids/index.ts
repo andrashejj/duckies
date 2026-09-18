@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ request, url }) => {
     const member = await getMemberSession(request.headers);
     if (!member) return json({ error: "Please sign in with a club-approved email address." }, 401);
     const term = await getSemester(member.role === "organiser" ? url.searchParams.get("term") : undefined);
-    const kids = member.role === "organiser" ? await organiserRoster(term.id) : (await getDatabase().query("SELECT id, name FROM club_kid WHERE archived_at IS NULL ORDER BY lower(name), id")).rows;
+    const kids = member.role === "organiser" ? await organiserRoster(term.id, (await getSemester()).id) : (await getDatabase().query("SELECT id, name FROM club_kid WHERE archived_at IS NULL ORDER BY lower(name), id")).rows;
     return json({ member: { email: member.email, role: member.role, canManagePayments: member.role === "organiser" && canManagePayments(member.email) }, termLabel: term.label, term, semesters: member.role === "organiser" ? await semesters() : [], kids });
   } catch (error) {
     if (error instanceof RegistrationError) return json({ error: error.message }, error.status);

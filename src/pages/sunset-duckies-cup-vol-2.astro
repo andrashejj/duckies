@@ -202,7 +202,7 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
             <Chip>{cup.memberFeeLabel} for members</Chip>
             <Chip>{cup.entryFeeLabel} non-members</Chip>
             <Chip>Age 7+</Chip>
-            <Chip>No login needed</Chip>
+            <Chip>Members: no form</Chip>
           </div>
           <p class="mt-6 max-w-xl text-sm leading-6 text-fg/70">{cup.form.footnote}</p>
         </div>
@@ -220,26 +220,43 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
                 <span class={toggle}>{cup.form.guestLabel}</span>
               </label>
             </div>
-            <p data-member-hint class="text-sm leading-6 text-fg/70">Use the name they go by at the club and a guardian number from your club registration — that's how we find them.</p>
-            <p data-guest-hint hidden class="text-sm leading-6 text-fg/70">We'll put your kid on the list, then send you straight to the registration form + waiver. Rs 1,000 entry, sorted with the club.</p>
           </fieldset>
-          <label class="grid gap-2">
-            <span class={label}>Kid's name</span>
-            <input class={field} name="kidName" required maxlength="80" autocomplete="off" placeholder="The name they surf under" />
-          </label>
-          <div class="grid gap-5 sm:grid-cols-2">
-            <label class="grid gap-2">
-              <span class={label}>Parent / guardian</span>
-              <input class={field} name="contactName" required maxlength="120" autocomplete="name" placeholder="Your name" />
-            </label>
-            <label class="grid gap-2">
-              <span class={label}>WhatsApp number</span>
-              <input class={field} name="contactPhone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+230 5…" />
-            </label>
+
+          <!-- Members: sign in, then tick who's coming. The waiver is already on file. -->
+          <div data-member-panel class="grid gap-4">
+            <div data-member-signin class="grid gap-4">
+              <p class="text-sm leading-6 text-fg/70">{cup.form.memberHint}</p>
+              <Cta href="/login?next=%2Fsunset-duckies-cup-vol-2%23register" class="justify-self-start">Sign in to register</Cta>
+              <p class="text-sm leading-6 text-fg/70">No code arriving? Your email isn't approved for sign-in yet — <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">ping Andras on WhatsApp</a> and he'll sort it.</p>
+            </div>
+            <div data-member-kids hidden class="grid gap-4">
+              <p class="text-sm leading-6 text-fg/70">Signed in as <span data-member-email class="font-semibold text-fg"></span>. <a class="underline underline-offset-4" href="/login?next=%2Fsunset-duckies-cup-vol-2%23register">Not you?</a></p>
+              <ul data-kid-list class="grid gap-3"></ul>
+              <p data-no-kids hidden class="text-sm leading-6 text-fg/70">No club registration lists this email as a guardian. Sign in with the email you registered with — or, if you're new, switch to "{cup.form.guestLabel}" and we'll get you the form.</p>
+            </div>
           </div>
-          <div class="flex flex-wrap items-center gap-4">
-            <Cta type="submit">{cup.form.submitLabel}</Cta>
-            <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{cup.dateLabel}</span>
+
+          <!-- New families: name + number, then straight to the form. -->
+          <div data-guest-panel hidden class="grid gap-5">
+            <p class="text-sm leading-6 text-fg/70">{cup.form.guestHint}</p>
+            <label class="grid gap-2">
+              <span class={label}>Kid's name</span>
+              <input class={field} name="kidName" maxlength="80" autocomplete="off" placeholder="Full name" />
+            </label>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <label class="grid gap-2">
+                <span class={label}>Parent / guardian</span>
+                <input class={field} name="contactName" maxlength="120" autocomplete="name" placeholder="Your name" />
+              </label>
+              <label class="grid gap-2">
+                <span class={label}>WhatsApp number</span>
+                <input class={field} name="contactPhone" type="tel" maxlength="40" autocomplete="tel" placeholder="+230 5…" />
+              </label>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+              <Cta type="submit">{cup.form.submitLabel}</Cta>
+              <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">{cup.dateLabel}</span>
+            </div>
           </div>
           <p data-cup-status role="status" aria-live="polite" class="text-[0.95rem] leading-relaxed not-empty:mt-1"></p>
           <a data-cup-link hidden href="#" class="justify-self-start font-display text-[0.95rem] font-bold uppercase tracking-[-0.01em] underline decoration-accent decoration-2 underline-offset-4">Open the registration form →</a>
@@ -298,51 +315,100 @@ const toggle = "inline-flex w-full cursor-pointer items-center justify-center ro
 </BaseLayout>
 
 <script>
-  // Members land on the list straight away; cup-only kids continue to the
-  // private registration link the server issues for them.
+  import { kidButton, kidRow, kidTag } from "../lib/cup-ui";
+  // Members sign in and tick their kids (the waiver is on file); new families
+  // continue to the private registration link the server issues for them.
   const form = document.querySelector<HTMLFormElement>("[data-cup-register]")!;
   const status = form.querySelector<HTMLElement>("[data-cup-status]")!;
   const next = form.querySelector<HTMLAnchorElement>("[data-cup-link]")!;
+  const memberPanel = form.querySelector<HTMLElement>("[data-member-panel]")!;
+  const signIn = form.querySelector<HTMLElement>("[data-member-signin]")!;
+  const memberKids = form.querySelector<HTMLElement>("[data-member-kids]")!;
+  const kidList = form.querySelector<HTMLUListElement>("[data-kid-list]")!;
+  const noKids = form.querySelector<HTMLElement>("[data-no-kids]")!;
+  const guestPanel = form.querySelector<HTMLElement>("[data-guest-panel]")!;
   const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-  const memberHint = form.querySelector<HTMLElement>("[data-member-hint]")!;
-  const guestHint = form.querySelector<HTMLElement>("[data-guest-hint]")!;
+  const guestFields = Array.from(guestPanel.querySelectorAll<HTMLInputElement>("input"));
   const isMember = () => (form.elements.namedItem("member") as RadioNodeList).value === "yes";
-  const kidName = form.elements.namedItem("kidName") as HTMLInputElement;
-  const syncHints = () => {
-    memberHint.hidden = !isMember();
-    guestHint.hidden = isMember();
-    kidName.placeholder = isMember() ? "The name they go by at the club" : "Full name";
-  };
-  form.addEventListener("change", syncHints);
-  syncHints();
+  type GuardianKid = { id: string; name: string; member: boolean; registered: boolean };
+
+  function syncPanels() {
+    memberPanel.hidden = !isMember();
+    guestPanel.hidden = isMember();
+    // Only the visible fields are required, so switching never blocks the other path.
+    for (const input of guestFields) input.required = !isMember();
+  }
+  form.addEventListener("change", (event) => { if ((event.target as HTMLInputElement).name === "member") { status.textContent = ""; next.hidden = true; syncPanels(); } });
+  syncPanels();
+
+  async function api(url: string, method = "GET") {
+    const response = await fetch(url, { method, cache: "no-store", headers: { "Content-Type": "application/json" } });
+    const data = await response.json().catch(() => ({}));
+    return { response, data };
+  }
+  function renderKids(email: string, kids: GuardianKid[]) {
+    kidList.replaceChildren();
+    memberKids.querySelector("[data-member-email]")!.textContent = email;
+    noKids.hidden = kids.length > 0;
+    for (const kid of kids) {
+      const row = document.createElement("li");
+      row.className = kidRow;
+      const name = document.createElement("span");
+      name.className = "font-display text-lg font-bold [font-variation-settings:'wdth'_110]";
+      name.textContent = kid.name;
+      const tag = document.createElement("span");
+      tag.className = kidTag;
+      tag.textContent = kid.registered ? "on the list ✓" : kid.member ? "member · free" : "semester fee pending";
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = kidButton;
+      button.textContent = kid.registered ? "Locked in" : `Count ${kid.name.split(" ")[0]} in`;
+      button.disabled = kid.registered;
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        status.textContent = "Locking it in…";
+        try {
+          const { response, data } = await api(`/api/cup/kids/${kid.id}`, "POST");
+          if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
+          status.textContent = data.status === "member"
+            ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, pull up from 12:00.`
+            : `${data.kidName} is on the list! We don't see this semester's fee yet — sort it with Andras and the Cup is free; otherwise it's Rs 1,000 on the day.`;
+          await loadKids();
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Couldn't register. Try again in a sec.";
+          button.disabled = false;
+        }
+      });
+      row.append(name, tag, button);
+      kidList.append(row);
+    }
+  }
+  async function loadKids() {
+    const { response, data } = await api("/api/cup/kids");
+    const signedIn = response.ok;
+    signIn.hidden = signedIn;
+    memberKids.hidden = !signedIn;
+    if (signedIn) renderKids(data.email, data.kids);
+  }
+  void loadKids();
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (isMember()) return;
     const values = new FormData(form);
-    const body = {
-      kidName: values.get("kidName"),
-      member: isMember(),
-      contactName: values.get("contactName"),
-      contactPhone: values.get("contactPhone"),
-    };
+    const body = { kidName: values.get("kidName"), contactName: values.get("contactName"), contactPhone: values.get("contactPhone") };
     submit.disabled = true;
     next.hidden = true;
     status.textContent = "Locking it in…";
     try {
-      const response = await fetch("/api/cup/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const response = await fetch("/api/cup/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
       if (data.status === "member") {
-        status.textContent = `🔒 ${data.kidName} is locked in. See you Friday 16 October — pull up from 12:00, first heat at 14:00.`;
-        form.reset();
-        syncHints();
+        status.textContent = `Looks like ${data.kidName} already has a club registration — no form needed. Pick "Already a Sunset Duckie" above and sign in to register.`;
       } else if (data.status === "signed") {
         status.textContent = `${data.kidName} is already fully registered — form and waiver done. See you on the sand!`;
-        form.reset();
-        syncHints();
+        form.reset(); syncPanels();
       } else {
         status.textContent = `${data.kidName} is on the list! One last thing: the registration form + waiver (≈5 min, no login). Taking you there now…`;
         next.href = data.url;

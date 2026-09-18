@@ -335,13 +335,14 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   expect(roster.kids[0].waiverId).toBeTruthy();
   expect(roster.kids[0].payment).toBeNull();
   expect(roster.kids[0].photoVersion).toBeTruthy();
+  // Registration comes before payment: a new semester's link issues while unpaid.
   expect(
     (
       await request.post(`/api/kids/${kidId}/link?term=${newTerm.id}`, {
         headers: { origin },
       })
     ).status(),
-  ).toBe(409);
+  ).toBe(201);
   await pay(request, newTerm.id);
   const next = await (
     await request.post(`/api/kids/${kidId}/link?term=${newTerm.id}`, {
@@ -442,7 +443,7 @@ test("mobile owner creates a semester, records payment and uploads an avatar", a
     .getByRole("combobox", { name: "Payment semester", exact: true })
     .selectOption("2026-S2");
   await expect(
-    page.getByText("Unpaid · no payment recorded for this semester", {
+    page.getByText("Pending · no payment recorded for this semester", {
       exact: true,
     }),
   ).toBeVisible();

@@ -1,6 +1,6 @@
 import type { Semester } from "./semesters";
 import type { OrganiserKid } from "./records";
-import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "./cup";
+import { CUP_ENTRY_FEE_MUR, CUP_LABEL, isCupTerm } from "./cup";
 import { ctaClass } from "../ui";
 import { duckieActions, duckieBox, duckieDetails, duckieFacts, duckiePhotoForm, duckieShare, textButton } from "../members-ui";
 const text = (tag: string, value: string) => {
@@ -115,12 +115,28 @@ export function kidOverview(
     `Payment · ${semester.label}`,
     kid.payment
       ? `${paid ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
-      : "Unpaid · no payment recorded for this semester",
+      : "Pending · no payment recorded for this semester",
+  );
+  // Membership is the signed registration plus the current semester paid —
+  // whatever term the roster is showing right now.
+  fact(
+    "Membership",
+    kid.memberPaid
+      ? "Member · registered and current semester paid"
+      : kid.waiverId
+        ? "Pending · registered, current semester not paid"
+        : "Pending · registration not signed yet",
   );
   if (kid.cup)
     fact(
       CUP_LABEL,
-      `${kid.cup.member ? "Club member · free entry" : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry, signs the cup form`} · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
+      `${
+        kid.memberPaid
+          ? "Club member · free entry"
+          : kid.cup.member
+            ? `Club registration on file, semester unpaid · Rs ${CUP_ENTRY_FEE_MUR} entry unless the semester is paid first`
+            : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry${kid.waiverTerm && isCupTerm(kid.waiverTerm) ? "" : " · cup form not signed yet"}`
+      } · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
     );
   if (kid.contactName || kid.contactPhone)
     fact(
@@ -137,24 +153,44 @@ export function kidOverview(
         : new Date(kid.link.expiresAt) < new Date()
           ? "Expired — generate a new link"
           : `Pending · expires ${new Date(kid.link.expiresAt).toLocaleDateString()}`
-      : paid
-        ? "Not issued — generate and send the link"
-        : "Not issued · record the payment first",
+      : "Not issued — generate and send the link",
   );
   section.append(facts);
+  // Sign-in access is approved by hand, guardian by guardian. Payment never
+  // grants it on its own.
+  if (r) {
+    const access = document.createElement("div");
+    access.className = duckieBox;
+    access.append(text("h3", "Sign-in access"));
+    access.append(text("p", "Approved guardians can sign in, see the lineup and register this kid for the Cup."));
+    for (const guardian of r.guardians) {
+      const email = guardian.email.toLowerCase();
+      const approved = (kid.approvedGuardians ?? []).includes(email);
+      const row = document.createElement("div");
+      row.className = duckieActions;
+      row.append(text("span", `${guardian.name} · ${email} · ${approved ? "can sign in" : "no access"}`));
+      row.append(
+        button(approved ? "Revoke sign-in" : "Approve sign-in", async () => {
+          try {
+            await api(approved ? `/api/members?email=${encodeURIComponent(email)}` : "/api/members", approved ? "DELETE" : "POST", approved ? undefined : { email });
+            await reload();
+            report(approved ? `${email} can no longer sign in.` : `${email} can sign in now.`);
+          } catch (error) {
+            report(error instanceof Error ? error.message : "Couldn't change sign-in access.");
+          }
+        }),
+      );
+      access.append(row);
+    }
+    section.append(access);
+  }
   const actions = document.createElement("div");
   actions.className = duckieActions;
   const share = document.createElement("div");
   share.className = duckieShare;
   share.hidden = true;
-  // Registration follows payment: the link only goes out once the semester is paid.
+  // Registration comes first; the link goes out whether or not the fee is in yet.
   const generate = button("Generate registration link", async () => {
-    if (!paid) {
-      report(
-        `Record the ${semester.label} payment first. Registration links go out once the membership is paid.`,
-      );
-      return;
-    }
     generate.disabled = true;
     try {
       const data = await api(
@@ -182,7 +218,9 @@ export function kidOverview(
         /\D/g,
         "",
       );
-      const message = `Hi! Thanks for paying ${kid.name}'s Sunset Duckies membership. Please complete and sign the registration here: ${data.url}\nNo login needed. This link is private and expires in 14 days — you can also use it to correct any details after signing.`;
+      const message = paid
+        ? `Hi! Thanks for paying ${kid.name}'s Sunset Duckies membership. Please complete and sign the registration here: ${data.url}\nNo login needed. This link is private and expires in 14 days — you can also use it to correct any details after signing.`
+        : `Hi! Here is ${kid.name}'s Sunset Duckies registration: ${data.url}\nNo login needed — fill it in and sign, about five minutes. The place is confirmed once the semester fee is paid. This link is private and expires in 14 days; you can also use it to correct any details after signing.`;
       const whatsapp = link(
         "Send via WhatsApp",
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -219,7 +257,6 @@ export function kidOverview(
       report(String(error));
     }
   });
-  if (!paid) generate.title = "Record the payment first";
   actions.append(generate, revoke);
   if (kid.waiverId)
     actions.append(

@@ -17,7 +17,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   <main class={registrationSheet}>
     <Kicker as="a" href="/">Sunset Duckies · Tamarin Bay</Kicker>
     <SectionTitle as="h1" class="mt-6">Ready for the <span class="font-accent italic">water.</span></SectionTitle>
-    <p id="registration-intro" data-membership="One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account.</p>
+    <p id="registration-intro" data-paid="One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One child, one form. Fill it in and sign now; the place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. A parent or legal guardian can fill it in and sign without an account.</p>
     <p id="registration-status" class={memberStatus} role="status" aria-live="polite">Opening your private invitation…</p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
@@ -227,7 +227,8 @@ const panel = `${registrationPanel} ${memberForm}`;
       // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
       cup = Boolean(data.cup);
       const intro = document.querySelector<HTMLElement>("#registration-intro")!;
-      intro.textContent = cup ? intro.dataset.cup! : intro.dataset.membership!;
+      const fee = (value: number) => value.toLocaleString("en-US");
+      intro.textContent = cup ? intro.dataset.cup! : data.paid ? intro.dataset.paid! : intro.dataset.pending!.replace("{child}", fee(data.childFeeMur)).replace("{family}", fee(data.familyFeeMur));
       document.querySelector<HTMLElement>("#cup-covers")!.hidden = !cup;
       document.querySelector<HTMLElement>("#membership-covers")!.hidden = cup;
       const rhythm = document.querySelector<HTMLElement>("#training-rhythm")!;

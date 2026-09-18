@@ -41,6 +41,6 @@ export function rosterCells(kid: OrganiserKid) {
     cell("Waiver", kid.waiverId ? "Signed" : "Not signed", kid.waiverId ? "ok" : "pending"),
     cell("Media", r?.media === "yes" ? "Yes" : r?.media === "no" ? "No consent" : "Pending", r?.media === "no" ? "alert" : r?.media === "yes" ? "ok" : "pending"),
     cell("Parent in water", r?.parentInWater ? "Confirmed" : "Pending", r?.parentInWater ? "ok" : "pending"),
-    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : "Unpaid", paid ? "ok" : "pending"),
+    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : kid.payment ? "Unpaid" : "Pending", paid ? "ok" : "pending"),
   ];
 }

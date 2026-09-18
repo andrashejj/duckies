@@ -39,7 +39,7 @@ function key() {
     throw new Error("An Ed25519 waiver key is required.");
   return result;
 }
-// The latest payment event decides: registration only opens once the semester is paid.
+// The latest payment event decides whether a semester (or the cup) is paid.
 export async function isPaid(kidId: string, term: string) {
   const { rows } = await getDatabase().query(
     "SELECT status FROM club_payment_event WHERE kid_id=$1 AND term=$2 ORDER BY recorded_at DESC, id DESC LIMIT 1",
@@ -47,21 +47,16 @@ export async function isPaid(kidId: string, term: string) {
   );
   return rows[0]?.status === "paid";
 }
-// Organisers issue links after payment; the public cup form issues its own
-// (no user, no payment yet — the entry fee is settled on the day).
+// Registration comes before payment: organisers issue links from the roster,
+// and the public join / cup forms issue their own (no user). The kid stays
+// pending until Andras records the fee.
 export async function issueLink(
   kidId: string,
   userId: string | null,
   termId?: string,
-  { requirePayment = true } = {},
 ) {
   const semester = await getSemester(termId);
   key(); // Never issue a link whose signature cannot be stored.
-  if (requirePayment && !(await isPaid(kidId, semester.id)))
-    throw new RegistrationError(
-      `Record the ${semester.label} payment first. Registration links go out once the membership is paid.`,
-      409,
-    );
   const db = await getDatabase().connect();
   try {
     await db.query("BEGIN");
@@ -276,6 +271,11 @@ export type OrganiserKid = {
   contactPhone: string | null;
   photoVersion: string | null;
   waiverTerm: string | null;
+  // A member is a kid with a signed registration whose current semester is
+  // paid; the roster carries the payment half regardless of the term shown.
+  memberPaid: boolean;
+  // Guardian emails (from the signed registration) that may sign in.
+  approvedGuardians: string[];
   cup: {
     edition: string;
     member: boolean;
@@ -284,15 +284,21 @@ export type OrganiserKid = {
     createdAt: string;
   } | null;
 };
-export async function organiserRoster(term: string): Promise<OrganiserKid[]> {
+// Membership, as one SQL predicate: a signed registration and the current
+// semester paid. Shared by the roster and the cup so they never disagree.
+export const memberPaidSql = (kid: string, currentTerm: string) =>
+  `EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=${kid}) AND COALESCE((SELECT status='paid' FROM club_payment_event WHERE kid_id=${kid} AND term=${currentTerm} ORDER BY recorded_at DESC, id DESC LIMIT 1), false)`;
+export async function organiserRoster(term: string, currentTerm: string): Promise<OrganiserKid[]> {
   const { rows } = await getDatabase().query(
     `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
-    (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup
+    (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
+    ${memberPaidSql("k.id", "$2")} AS member_paid,
+    COALESCE((SELECT json_agg(m.email) FROM jsonb_array_elements(w.snapshot->'registration'->'guardians') g JOIN club_member m ON m.email=lower(g->>'email')), '[]'::json) AS approved_guardians
     FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
     WHERE k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
-    [term],
+    [term, currentTerm],
   );
   return rows.map((row) => ({
     id: row.id,
@@ -307,6 +313,8 @@ export async function organiserRoster(term: string): Promise<OrganiserKid[]> {
     contactPhone: row.contact_phone,
     photoVersion: row.photo_version,
     waiverTerm: row.waiver_term,
+    memberPaid: row.member_paid,
+    approvedGuardians: row.approved_guardians,
     cup: row.cup,
   }));
 }

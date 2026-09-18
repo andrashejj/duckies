@@ -1,6 +1,7 @@
 import {
   bearer,
   completeRegistration,
+  isPaid,
   linkInfo,
   RegistrationError,
 } from "../../../lib/registration/records";
@@ -35,6 +36,10 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
     term: link.term,
     termLabel: link.term_label,
     cup: isCupTerm(link.term),
+    // Registration comes first; the page says so unless the fee is already in.
+    paid: await isPaid(link.kid_id, link.term),
+    childFeeMur: Number(link.child_fee_mur),
+    familyFeeMur: Number(link.family_fee_mur),
     expiresAt: link.expires_at,
     completedAt: link.completed_at,
     canDownload:

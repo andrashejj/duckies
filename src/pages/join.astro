@@ -1,0 +1,100 @@
+---
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Chip from "../components/ui/Chip.astro";
+import Cta from "../components/ui/Cta.astro";
+import Kicker from "../components/ui/Kicker.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import StickerCard from "../components/ui/StickerCard.astro";
+import Underline from "../components/ui/Underline.astro";
+import { MINIMUM_AGE } from "../lib/registration/policy";
+import { bodyCopy, field, label } from "../lib/ui";
+
+const title = `Register your duckie | ${site.name}`;
+const description = `Join Sunset Duckies: register your child and sign the club waiver online in about five minutes, no login needed. Membership is confirmed once the semester fee is paid — ${site.membership.feeLabelLong}.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="mx-auto max-w-7xl px-6 pb-24 pt-28 sm:pt-32 lg:px-10">
+    <StickerCard tone="teal" class="p-8 md:p-12" data-reveal>
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div>
+          <Kicker>Join the club</Kicker>
+          <SectionTitle as="h1" class="mt-4">
+            Register your <Underline>duckie</Underline>.
+          </SectionTitle>
+          <p class={`mt-4 max-w-xl ${bodyCopy}`}>
+            One kid at a time. Name and your number here, then the real form: guardians, emergency contact, the club waiver and your signature — about five minutes, no login. Your duckie is on the list as <strong class="text-fg">pending</strong> straight away; the place is confirmed once the semester fee is paid and Andras marks it.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <Chip>{site.membership.feeLabel}</Chip>
+            <Chip>Age {MINIMUM_AGE}+</Chip>
+            <Chip>Swims confidently in open water</Chip>
+            <Chip>A parent in the water, every session</Chip>
+          </div>
+          <p class="mt-6 max-w-xl text-sm leading-6 text-fg/70">
+            Registering for the Cup only? That's <a class="underline underline-offset-4" href="/sunset-duckies-cup-vol-2#register">on the Cup page</a>. Already registered and want to fix a detail? Reopen the private link you got, or ask Andras for a fresh one.
+          </p>
+        </div>
+
+        <form data-join class="grid gap-5 rounded-sticker border-2 border-edge bg-surface p-6 shadow-sticker-md sm:p-8">
+          <label class="grid gap-2">
+            <span class={label}>Kid's name</span>
+            <input class={field} name="kidName" required maxlength="80" autocomplete="off" placeholder="Full name" />
+          </label>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2">
+              <span class={label}>Parent / guardian</span>
+              <input class={field} name="contactName" required maxlength="120" autocomplete="name" placeholder="Your name" />
+            </label>
+            <label class="grid gap-2">
+              <span class={label}>WhatsApp number</span>
+              <input class={field} name="contactPhone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+230 5…" />
+            </label>
+          </div>
+          <p class="text-sm leading-6 text-fg/70">Next up: the registration form. Have the second guardian's details and your emergency contact handy.</p>
+          <div class="flex flex-wrap items-center gap-4">
+            <Cta type="submit">Start the registration</Cta>
+            <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">≈ 5 min · no login</span>
+          </div>
+          <p data-join-status role="status" aria-live="polite" class="text-[0.95rem] leading-relaxed not-empty:mt-1"></p>
+          <a data-join-link hidden href="#" class="justify-self-start font-display text-[0.95rem] font-bold uppercase tracking-[-0.01em] underline decoration-accent decoration-2 underline-offset-4">Open the registration form →</a>
+        </form>
+      </div>
+    </StickerCard>
+  </section>
+</BaseLayout>
+
+<script>
+  // The server creates the pending kid and a private link; the family goes straight on to the form.
+  const form = document.querySelector<HTMLFormElement>("[data-join]")!;
+  const status = form.querySelector<HTMLElement>("[data-join-status]")!;
+  const next = form.querySelector<HTMLAnchorElement>("[data-join-link]")!;
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = new FormData(form);
+    const body = { kidName: values.get("kidName"), contactName: values.get("contactName"), contactPhone: values.get("contactPhone") };
+    submit.disabled = true;
+    next.hidden = true;
+    status.textContent = "Setting up your form…";
+    try {
+      const response = await fetch("/api/club/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Couldn't start the registration. Try again in a sec.");
+      if (data.status === "signed") {
+        status.textContent = `${data.kidName} is already registered for this semester — form and waiver done. Anything to correct? Message Andras for a fresh link.`;
+      } else {
+        status.textContent = `${data.kidName} is on the list as pending. Taking you to the registration form now…`;
+        next.href = data.url;
+        next.hidden = false;
+        window.setTimeout(() => window.location.assign(data.url), 2000);
+      }
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : "Couldn't start the registration. Try again in a sec.";
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  form.dataset.ready = "";
+</script>

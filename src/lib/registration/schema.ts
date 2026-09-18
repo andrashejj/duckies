@@ -92,16 +92,20 @@ export function ageAt(dateOfBirth: string, today = new Date()) {
     age--;
   return age;
 }
-// The short form on the cup page: who is coming and how to reach the family.
-export const cupEntrySchema = z
+// The short public sign-up (join the club, or a cup-only entry): who is
+// coming and how to reach the family. The full details come with the form.
+export const signupSchema = z
   .object({
     kidName: text(80),
-    member: z.boolean(),
     contactName: text(120),
     contactPhone: phone,
   })
   .strict();
-export type CupEntryInput = z.infer<typeof cupEntrySchema>;
+export type SignupInput = z.infer<typeof signupSchema>;
+export const emailSchema = z
+  .email()
+  .max(200)
+  .transform((value) => value.trim().toLowerCase());
 export const paymentSchema = z
   .object({
     term: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,39}$/),

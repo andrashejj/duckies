@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getMemberSession } from "../server/auth";
+import { getAuth, getMemberSession } from "../server/auth";
 import { getDatabase } from "../server/db";
 import { json, sameOrigin } from "../server/http";
 import { RegistrationError, sha256 } from "./records";
@@ -30,6 +30,16 @@ export async function requireOrganiser(request: Request, mutation = false) {
     throw new RegistrationError("Invalid request origin.", 403);
   return member;
 }
+// Any verified sign-in (a guardian's email). Club approval is not required:
+// what a guardian may see is scoped to their own kids by email.
+export async function requireSignedIn(request: Request, mutation = false) {
+  const session = await getAuth().api.getSession({ headers: request.headers });
+  if (!session?.user.emailVerified)
+    throw new RegistrationError("Please sign in.", 401);
+  if (mutation && !sameOrigin(request))
+    throw new RegistrationError("Invalid request origin.", 403);
+  return { email: session.user.email.trim().toLowerCase(), userId: session.user.id };
+}
 export async function readBody(request: Request) {
   const reader = request.body?.getReader();
   let bytes = 0;
@@ -51,17 +61,18 @@ export async function readBody(request: Request) {
     throw new RegistrationError("Invalid form data.");
   }
 }
-export async function registrationRateLimit(ip: string) {
-  const key = sha256(`registration:${process.env.BETTER_AUTH_SECRET}:${ip}`);
+async function rateLimit(bucket: string, ip: string, max: number, window: string, message: string) {
+  const key = sha256(`${bucket}:${process.env.BETTER_AUTH_SECRET}:${ip}`);
   const { rows } = await getDatabase().query(
-    `INSERT INTO shop_request_limit (key,count,reset_at) VALUES ($1,1,now()+interval '1 minute')
+    `INSERT INTO shop_request_limit (key,count,reset_at) VALUES ($1,1,now()+$2::interval)
     ON CONFLICT (key) DO UPDATE SET count=CASE WHEN shop_request_limit.reset_at<=now() THEN 1 ELSE shop_request_limit.count+1 END,
-    reset_at=CASE WHEN shop_request_limit.reset_at<=now() THEN now()+interval '1 minute' ELSE shop_request_limit.reset_at END RETURNING count`,
-    [key],
+    reset_at=CASE WHEN shop_request_limit.reset_at<=now() THEN now()+$2::interval ELSE shop_request_limit.reset_at END RETURNING count`,
+    [key, window],
   );
-  if (rows[0].count > 40)
-    throw new RegistrationError(
-      "Too many requests. Please wait a minute.",
-      429,
-    );
+  if (rows[0].count > max) throw new RegistrationError(message, 429);
 }
+export const registrationRateLimit = (ip: string) =>
+  rateLimit("registration", ip, 40, "1 minute", "Too many requests. Please wait a minute.");
+// Anonymous sign-ups create kids and links, so they get a much smaller budget.
+export const signupRateLimit = (ip: string) =>
+  rateLimit("signup", ip, 8, "10 minutes", "That's a lot of sign-ups from here. Take a breather and try again in ten minutes.");
