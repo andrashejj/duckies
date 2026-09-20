@@ -70,6 +70,20 @@ const description = "Your Sunset Duckies account dashboard.";
         </p>
       </StickerCard>
 
+      {session?.member && <StickerCard href="/members/profile" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+        <Kicker>Your family</Kicker>
+        <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"
+        >
+          Your duckies
+        </p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">
+          Records, fees, photos and what’s next.
+        </p>
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500">
+          Open your family →
+        </p>
+      </StickerCard>}
+
       {session?.member && <StickerCard href="/#our-duckies" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
         <Kicker>Members</Kicker>
         <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"

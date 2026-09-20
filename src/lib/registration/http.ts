@@ -38,7 +38,7 @@ export async function requireSignedIn(request: Request, mutation = false) {
     throw new RegistrationError("Please sign in.", 401);
   if (mutation && !sameOrigin(request))
     throw new RegistrationError("Invalid request origin.", 403);
-  return { email: session.user.email.trim().toLowerCase(), userId: session.user.id };
+  return { email: session.user.email.trim().toLowerCase(), name: session.user.name, userId: session.user.id };
 }
 export async function readBody(request: Request) {
   const reader = request.body?.getReader();
@@ -73,6 +73,10 @@ async function rateLimit(bucket: string, ip: string, max: number, window: string
 }
 export const registrationRateLimit = (ip: string) =>
   rateLimit("registration", ip, 40, "1 minute", "Too many requests. Please wait a minute.");
+// Re-issuing a family's registration form revokes the invitation the club has
+// open for that duckie, so it gets a small budget of its own.
+export const formLinkRateLimit = (ip: string) =>
+  rateLimit("family-form", ip, 5, "10 minutes", "That's a few forms in a row. Try again in ten minutes, or message the club on WhatsApp.");
 // Anonymous sign-ups create kids and links, so they get a much smaller budget.
 export const signupRateLimit = (ip: string) =>
   rateLimit("signup", ip, 8, "10 minutes", "That's a lot of sign-ups from here. Take a breather and try again in ten minutes.");
