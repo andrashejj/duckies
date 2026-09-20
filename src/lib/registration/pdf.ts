@@ -19,6 +19,9 @@ export type SignedSnapshot = {
     issuedAt: string;
     userAgent: string;
     ip: string;
+    // Present when the same signature covered siblings on one form.
+    signingGroup?: string;
+    alsoSignedFor?: string[];
   };
 };
 let fontBytes: Promise<Buffer> | undefined;
@@ -181,6 +184,12 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
     `Signing link issued ${snapshot.evidence.issuedAt}. Identity assurance: possession of a private invitation link and self-declared guardian details.`,
     9,
   );
+  // One family, one signing: each child's record says who else it covered.
+  if (snapshot.evidence.alsoSignedFor?.length)
+    paragraph(
+      `Signed in one submission with the same guardians, waiver and signature, alongside: ${snapshot.evidence.alsoSignedFor.join(", ")}. Each child has their own record; this one is ${r.childName}'s.`,
+      9,
+    );
   doc
     .getPages()
     .forEach((p, index) =>

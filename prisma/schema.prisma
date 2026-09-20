@@ -297,7 +297,7 @@ model ClubRegistrationLink {
   user                    User?                    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  club_registration_photo ClubRegistrationPhoto?
+  club_registration_photo ClubRegistrationPhoto[]
   club_signed_waiver      ClubSignedWaiver[]
 
   @@index([kid_id, created_at(sort: Desc)], map: "club_registration_link_kid")
@@ -305,12 +305,16 @@ model ClubRegistrationLink {
   @@map("club_registration_link")
 }
 
+// A profile photo staged against one child's slot in the form, until the
+// guardian signs and it moves to that child's profile.
 model ClubRegistrationPhoto {
-  link_id                String                 @id @db.Uuid
+  link_id                String                 @db.Uuid
+  slot                   Int                    @default(0)
   image                  Bytes
   uploaded_at            DateTime               @default(now()) @db.Timestamptz(6)
   club_registration_link ClubRegistrationLink @relation(fields: [link_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@id([link_id, slot])
   @@map("club_registration_photo")
 }
 
@@ -335,6 +339,10 @@ model ClubSignedWaiver {
   kid_id                 String                 @db.Uuid
   link_id                String                 @db.Uuid
   term                   String
+  // The records a guardian signed in one go — a family's children share one,
+  // and child_index keeps the order the guardian listed them in.
+  signing_group          String                 @db.Uuid
+  child_index            Int                    @default(0) @db.SmallInt
   signed_at              DateTime               @db.Timestamptz(6)
   snapshot               Json
   canonical_payload      String
@@ -349,6 +357,7 @@ model ClubSignedWaiver {
 
   @@index([kid_id, signed_at(sort: Desc)], map: "club_signed_waiver_kid")
   @@index([link_id, signed_at(sort: Desc)], map: "club_signed_waiver_link")
+  @@index([signing_group, child_index], map: "club_signed_waiver_group")
 
   @@map("club_signed_waiver")
 }

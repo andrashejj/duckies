@@ -9,7 +9,7 @@ import {
 } from "node:crypto";
 import { getDatabase } from "../server/db";
 import { waiver, WAIVER_VERSION } from "./policy";
-import { ageAt, registrationSchema, type RegistrationInput } from "./schema";
+import { ageAt, submissionSchema, type RegistrationInput } from "./schema";
 import { getSemester } from "./semesters";
 import { isCupTerm } from "./cup";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
@@ -109,12 +109,25 @@ export async function linkInfo(hash: string) {
     );
   return rows[0];
 }
+// The records one signing produced, newest group first, in the order the
+// guardian filled the children in.
+export async function signedGroup(linkId: string) {
+  const { rows } = await getDatabase().query(
+    `SELECT w.id, w.kid_id, w.signing_group, w.snapshot->'registration' AS registration
+    FROM club_signed_waiver w
+    WHERE w.link_id=$1 AND w.signing_group=(
+      SELECT signing_group FROM club_signed_waiver WHERE link_id=$1 ORDER BY signed_at DESC, id DESC LIMIT 1)
+    ORDER BY w.child_index`,
+    [linkId],
+  );
+  return rows;
+}
 export async function completeRegistration(
   hash: string,
   raw: unknown,
   evidence: { ip: string; userAgent: string },
 ) {
-  const parsed = registrationSchema.safeParse(raw);
+  const parsed = submissionSchema.safeParse(raw);
   if (!parsed.success)
     throw new RegistrationError(
       parsed.error.issues[0]?.message ?? "Check your registration details.",
@@ -131,7 +144,7 @@ export async function completeRegistration(
     if (!found.rowCount)
       throw new RegistrationError("This link is invalid or has expired.", 404);
     const kid = await db.query(
-      "SELECT id FROM club_kid WHERE id=$1 AND archived_at IS NULL FOR UPDATE",
+      "SELECT id, contact_name, contact_phone FROM club_kid WHERE id=$1 AND archived_at IS NULL FOR UPDATE",
       [found.rows[0].kid_id],
     );
     if (!kid.rowCount)
@@ -144,84 +157,150 @@ export async function completeRegistration(
     if (!link)
       throw new RegistrationError("This link is invalid or has expired.", 404);
     // A completed link can only be re-signed as an explicit correction of the
-    // record it produced, so a replayed first submission still fails.
+    // signing it produced, so a replayed first submission still fails.
     const previous = await db.query(
-      "SELECT id FROM club_signed_waiver WHERE link_id=$1 ORDER BY signed_at DESC LIMIT 1",
+      `SELECT id, kid_id, signing_group FROM club_signed_waiver WHERE link_id=$1 AND signing_group=(
+        SELECT signing_group FROM club_signed_waiver WHERE link_id=$1 ORDER BY signed_at DESC, id DESC LIMIT 1)
+      ORDER BY child_index
+      FOR UPDATE`,
       [link.id],
     );
-    const { supersedes, ...registration } = parsed.data;
-    if (link.completed_at && supersedes !== previous.rows[0]?.id)
+    const { supersedes, children, ...shared } = parsed.data;
+    if (link.completed_at && supersedes !== previous.rows[0]?.signing_group)
       throw new RegistrationError(
         "This form has already been signed. Reload the page to edit the signed details.",
         409,
       );
     if (!link.completed_at && supersedes)
       throw new RegistrationError("There is no signed record to correct yet.");
-    // Membership is training, so a semester needs a rhythm; a cup entry has none.
-    if (isCupTerm(link.term)) delete registration.sessionsPerWeek;
-    else if (!registration.sessionsPerWeek)
-      throw new RegistrationError("Choose a training rhythm.");
-    const snapshot: SignedSnapshot = {
-      id: randomUUID(),
-      kidId: link.kid_id,
-      term: link.term,
-      signedAt: new Date().toISOString(),
-      version: WAIVER_VERSION,
-      registration,
-      policy: waiver,
-      evidence: {
-        method: "private-link-electronic-signature",
-        linkId: link.id,
-        ...(supersedes ? { supersedes } : {}),
-        issuedAt: link.created_at.toISOString(),
-        ip: evidence.ip.slice(0, 100),
-        userAgent: evidence.userAgent.slice(0, 500),
-      },
-    };
-    const canonical = JSON.stringify(snapshot);
-    const payloadHash = sha256(canonical);
-    const pdf = await waiverPdf(snapshot, payloadHash);
-    const pdfHash = sha256(pdf);
-    const seal = sign(
-      null,
-      Buffer.from(`${payloadHash}.${pdfHash}`),
-      privateKey,
-    ).toString("base64");
+    // A correction re-signs for the same children — adding one is fine,
+    // dropping a signed record is not. Only the club archives a duckie.
+    const signedKids = previous.rows.map((row) => row.kid_id as string);
+    const claimed = children.flatMap((child) => (child.kidId ? [child.kidId] : []));
+    if (
+      supersedes &&
+      (claimed.some((id) => !signedKids.includes(id)) ||
+        signedKids.some((id) => !claimed.includes(id)))
+    )
+      throw new RegistrationError(
+        "Reload the page before correcting: this form covers a different set of children now.",
+      );
+    if (!supersedes && claimed.length)
+      throw new RegistrationError("There is no signed record to correct yet.");
+    // The first block always belongs to the kid the club invited; further
+    // children join the same family, on the same link and the same signature.
+    const contactName = kid.rows[0].contact_name ?? shared.guardians[0].name;
+    const contactPhone = kid.rows[0].contact_phone ?? shared.guardians[0].phone;
+    const kidIds: string[] = [];
+    for (const [index, child] of children.entries()) {
+      if (child.kidId) {
+        kidIds.push(child.kidId);
+        continue;
+      }
+      if (index === 0 && !supersedes) {
+        kidIds.push(link.kid_id);
+        continue;
+      }
+      const added = await db.query(
+        "INSERT INTO club_kid (name, contact_name, contact_phone) VALUES ($1,$2,$3) RETURNING id",
+        [child.childName, contactName, contactPhone],
+      );
+      kidIds.push(added.rows[0].id as string);
+    }
+    const signedAt = new Date().toISOString();
+    const signingGroup = randomUUID();
     const publicKey = createPublicKey(privateKey)
       .export({ format: "pem", type: "spki" })
       .toString();
-    await db.query(
-      `INSERT INTO club_signed_waiver (id,kid_id,link_id,term,signed_at,snapshot,canonical_payload,payload_sha256,pdf,pdf_sha256,seal,public_key)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
-      [
-        snapshot.id,
-        link.kid_id,
-        link.id,
-        link.term,
-        snapshot.signedAt,
-        snapshot,
-        canonical,
-        payloadHash,
-        pdf,
-        pdfHash,
-        seal,
-        publicKey,
-      ],
-    );
+    const written: { id: string; kidId: string }[] = [];
+    for (const [index, child] of children.entries()) {
+      const { kidId: _claimed, slot, ...childFields } = child;
+      const registration = { ...shared, ...childFields };
+      // Membership is training, so a semester needs a rhythm; a cup entry has none.
+      if (isCupTerm(link.term)) delete registration.sessionsPerWeek;
+      else if (!registration.sessionsPerWeek)
+        throw new RegistrationError(
+          `Choose a training rhythm for ${child.childName}.`,
+        );
+      const snapshot: SignedSnapshot = {
+        id: randomUUID(),
+        kidId: kidIds[index],
+        term: link.term,
+        signedAt,
+        version: WAIVER_VERSION,
+        registration,
+        policy: waiver,
+        evidence: {
+          method: "private-link-electronic-signature",
+          linkId: link.id,
+          ...(supersedes ? { supersedes } : {}),
+          issuedAt: link.created_at.toISOString(),
+          ip: evidence.ip.slice(0, 100),
+          userAgent: evidence.userAgent.slice(0, 500),
+          // One signature, one family: the siblings it also covered.
+          ...(children.length > 1
+            ? {
+                signingGroup,
+                alsoSignedFor: children
+                  .filter((_, other) => other !== index)
+                  .map((other) => other.childName),
+              }
+            : {}),
+        },
+      };
+      const canonical = JSON.stringify(snapshot);
+      const payloadHash = sha256(canonical);
+      const pdf = await waiverPdf(snapshot, payloadHash);
+      const pdfHash = sha256(pdf);
+      const seal = sign(
+        null,
+        Buffer.from(`${payloadHash}.${pdfHash}`),
+        privateKey,
+      ).toString("base64");
+      await db.query(
+        `INSERT INTO club_signed_waiver (id,kid_id,link_id,term,signing_group,child_index,signed_at,snapshot,canonical_payload,payload_sha256,pdf,pdf_sha256,seal,public_key)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+        [
+          snapshot.id,
+          kidIds[index],
+          link.id,
+          link.term,
+          signingGroup,
+          index,
+          signedAt,
+          snapshot,
+          canonical,
+          payloadHash,
+          pdf,
+          pdfHash,
+          seal,
+          publicKey,
+        ],
+      );
+      // The photo the guardian staged against this child's block.
+      await db.query(
+        `INSERT INTO club_kid_photo(kid_id,image,source) SELECT $1,image,'guardian' FROM club_registration_photo WHERE link_id=$2 AND slot=$3
+        ON CONFLICT(kid_id) DO UPDATE SET image=EXCLUDED.image,source='guardian',uploaded_by=NULL,updated_at=now()`,
+        [kidIds[index], link.id, slot],
+      );
+      written.push({ id: snapshot.id, kidId: kidIds[index] });
+    }
+    // A sibling added to a cup form comes to the cup too.
+    if (isCupTerm(link.term))
+      await db.query(
+        `INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone)
+        SELECT unnest($1::uuid[]), $2, false, $3, $4 ON CONFLICT (kid_id, edition) DO NOTHING`,
+        [kidIds, link.term, contactName, contactPhone],
+      );
     await db.query(
       "UPDATE club_registration_link SET completed_at=$1 WHERE id=$2",
-      [snapshot.signedAt, link.id],
-    );
-    await db.query(
-      `INSERT INTO club_kid_photo(kid_id,image,source) SELECT $1,image,'guardian' FROM club_registration_photo WHERE link_id=$2
-      ON CONFLICT(kid_id) DO UPDATE SET image=EXCLUDED.image,source='guardian',uploaded_by=NULL,updated_at=now()`,
-      [link.kid_id, link.id],
+      [signedAt, link.id],
     );
     await db.query("DELETE FROM club_registration_photo WHERE link_id=$1", [
       link.id,
     ]);
     await db.query("COMMIT");
-    return { signedAt: snapshot.signedAt, id: snapshot.id };
+    return { signedAt, id: signingGroup, children: written };
   } catch (error) {
     await db.query("ROLLBACK");
     throw error;
