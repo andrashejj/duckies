@@ -1,0 +1,132 @@
+---
+export const prerender = false;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FamilyDeck from "../../components/react/FamilyDeck";
+import Cta from "../../components/ui/Cta.astro";
+import Kicker from "../../components/ui/Kicker.astro";
+import SectionTitle from "../../components/ui/SectionTitle.astro";
+import StickerCard from "../../components/ui/StickerCard.astro";
+import { site } from "../../data/site";
+import { upcomingEvents } from "../../lib/club-events";
+import { familyProfile, type FamilyProfile } from "../../lib/registration/family";
+import { membershipCovers } from "../../lib/registration/policy";
+import { bodyCopy, miniCard } from "../../lib/ui";
+import { noteCopy, profileSection, profileShell, ticket, ticketAccents, ticketDetail, ticketLink, ticketRail, ticketTitle, ticketWhen } from "../../lib/profile-ui";
+
+const session = Astro.locals.session!;
+const email = session.user.email.trim().toLowerCase();
+
+let profile: FamilyProfile | null = null;
+let loadError: string | null = null;
+try {
+  profile = await familyProfile({ email, name: session.user.name });
+} catch (error) {
+  loadError = "Your family's page is taking a breather. Please try again in a moment.";
+  Astro.response.status = 503;
+  console.error("[members/profile] load failed:", error);
+}
+
+const events = upcomingEvents({ term: profile?.term ?? null });
+const duckies = profile?.kids ?? [];
+const members = duckies.filter((kid) => kid.member).length;
+const title = `Your family | ${site.name}`;
+const description = "Manage your Sunset Duckies family: your duckies, their records, what you owe and what is coming up.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class={profileShell}>
+    <div class="max-w-3xl space-y-4" data-float>
+      <Kicker>Members · your family</Kicker>
+      <SectionTitle as="h1">Your crew, <span class="font-accent italic">on file.</span></SectionTitle>
+      <p class={bodyCopy}>
+        Every duckie registered under your email: where they stand this semester, what you have signed,
+        what the club has recorded — and the things you keep current yourself.
+      </p>
+    </div>
+
+    {loadError ? (
+      <StickerCard class="mt-10 p-8">
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">Couldn't load your family</p>
+        <p class={`mt-3 ${bodyCopy}`}>{loadError}</p>
+        <Cta class="mt-6" href="/members/profile">Try again</Cta>
+      </StickerCard>
+    ) : (
+      <div class="mt-10" data-float>
+        <FamilyDeck client:load profile={profile!} />
+      </div>
+    )}
+
+    <div class={profileSection} data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="space-y-3">
+          <Kicker>Next up</Kicker>
+          <SectionTitle size="md">In the <span class="font-accent italic">water</span> soon.</SectionTitle>
+        </div>
+        <p class="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-fg/60">
+          {site.location} · {site.schedule.map((slot) => slot.day).join(" + ")}
+        </p>
+      </div>
+      <ul class={ticketRail} aria-label="Upcoming club dates">
+        {events.map((event, index) => (
+          <li class:list={[ticket, ticketAccents[index % ticketAccents.length]]}>
+            <p class={ticketWhen}>{event.dayLabel} · {event.timeLabel}</p>
+            <p class={ticketTitle}>{event.title}</p>
+            <p class={ticketDetail}>{event.detail}</p>
+            {event.href && (
+              <a class={ticketLink} href={event.href}>
+                Read up →
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+      {events.length === 0 && (
+        <p class={`mt-4 ${noteCopy}`}>No dates on the board right now. The club posts the next semester on WhatsApp.</p>
+      )}
+    </div>
+
+    <div class={profileSection} data-reveal>
+      <div class="space-y-3">
+        <Kicker>Your semester</Kicker>
+        <SectionTitle size="md">
+          {profile?.term.label ?? "This term"}{members > 0 && <> · <span class="font-accent italic">{members} paid up</span></>}
+        </SectionTitle>
+      </div>
+      <div class="mt-6 grid gap-5 md:grid-cols-3">
+        <div class={miniCard}>
+          <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-fg/55">Fees this semester</p>
+          <p class="mt-2 font-display text-[1.6rem] font-bold leading-tight text-fg [font-variation-settings:'wdth'_110]">
+            Rs {(profile?.term.childFeeMur ?? site.membership.oneChildFeeMur).toLocaleString("en-US")}
+            <span class="text-[0.9rem] font-normal"> one kid</span>
+          </p>
+          <p class={`mt-1 ${noteCopy}`}>
+            Rs {(profile?.term.familyFeeMur ?? site.membership.familyFeeMur).toLocaleString("en-US")} covers the whole family for the term.
+          </p>
+        </div>
+        <div class={miniCard}>
+          <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-fg/55">What it covers</p>
+          <ul class={`mt-2 list-disc space-y-1.5 pl-4 ${noteCopy}`}>
+            {membershipCovers.included.map((line) => <li>{line}</li>)}
+          </ul>
+        </div>
+        <div class={miniCard}>
+          <p class="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-fg/55">Bring your own</p>
+          <p class={`mt-2 ${noteCopy}`}>
+            A surfboard and a wetsuit or rashie, every session. The club doesn't lend, rent or store gear.
+          </p>
+          <p class={`mt-2 ${noteCopy}`}>
+            Fees, dates or anything that needs a human: <a class="underline underline-offset-4" href={site.whatsappUrl} target="_blank" rel="noreferrer">message the club on WhatsApp</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class={profileSection} data-reveal>
+      <div class="flex flex-wrap gap-4">
+        <Cta href="/#our-duckies" variant="secondary">See the whole lineup</Cta>
+        <Cta href="/gallery" variant="secondary">The members' gallery</Cta>
+        <Cta href="/account">Your shop account</Cta>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

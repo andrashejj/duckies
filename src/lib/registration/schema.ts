@@ -143,6 +143,13 @@ export const signupSchema = z
 export type SignupInput = z.infer<typeof signupSchema>;
 // The cup sign-up adds one choice: the Cup alone, or club membership with it.
 export const cupSignupSchema = signupSchema.extend({ join: z.boolean().default(false) }).strict();
+// What a guardian keeps current themselves: the name the club greets them by,
+// and how it reaches them about one child. Signed details are never edited in
+// place — those are corrected by signing the form again.
+export const guardianNameSchema = z.object({ name: text(120) }).strict();
+export const contactSchema = z
+  .object({ contactName: text(120), contactPhone: phone })
+  .strict();
 export const emailSchema = z
   .email()
   .max(200)
