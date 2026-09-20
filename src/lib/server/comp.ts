@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import type pg from "pg";
 import { CUP_LABEL, CUP_TERM, publicName } from "../registration/cup";
 import { memberPaidSql, RegistrationError } from "../registration/records";
+import { correctedBirthDateSql } from "../registration/birth-date-corrections";
 import { ageAt } from "../registration/schema";
 import { getSemester } from "../registration/semesters";
 import {
@@ -75,7 +76,7 @@ export async function readConfig(db: Db = getDatabase(), edition = CUP_TERM, loc
 export async function readEntrants(db: Db = getDatabase(), edition = CUP_TERM): Promise<Entrant[]> {
   const { rows } = await db.query(
     `SELECT k.id, k.name, c.member, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version,
-      (SELECT snapshot->'registration'->>'dateOfBirth' FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
+      (SELECT ${correctedBirthDateSql("w")} FROM club_signed_waiver w WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
     FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id
     WHERE c.edition=$1 AND k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
     [edition],
@@ -169,7 +170,7 @@ export async function loadLineup(edition = CUP_TERM): Promise<{ name: string; su
   const [entries, event] = await Promise.all([
     db.query(
       `SELECT k.id, k.name, c.member OR ${memberPaidSql("k.id", "$2")} AS member,
-        (SELECT snapshot->'registration'->>'dateOfBirth' FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
+        (SELECT ${correctedBirthDateSql("w")} FROM club_signed_waiver w WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
       FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id
       WHERE c.edition=$1 AND k.archived_at IS NULL ORDER BY c.created_at, k.id`,
       [edition, semester.id],

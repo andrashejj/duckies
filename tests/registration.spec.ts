@@ -5,6 +5,9 @@ import pg from "pg";
 import { PDFDocument } from "pdf-lib";
 import { signIn } from "./auth-helpers";
 import { submission } from "./registration-helpers";
+import { correctBirthDate } from "../src/lib/registration/birth-date-corrections";
+import { getDatabase } from "../src/lib/server/db";
+import { readEntrants } from "../src/lib/server/comp";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
@@ -111,6 +114,7 @@ test.afterEach(async () => {
 });
 test.afterAll(async () => {
   await db.end();
+  await getDatabase().end();
 });
 
 test("individual links are hashed, replaceable, revocable, expiring, and do not expose existing family data", async ({
@@ -789,4 +793,45 @@ test("younger children can sign up with parent guidance and a private organiser 
   await expect(row.getByText(/Discuss readiness and support needs with the family/)).toBeVisible();
   await row.getByText(/Under 7: Test Surfer is 6/).scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath("organiser-age-warning.png") });
+});
+
+test("administrative birth-date corrections preserve the signature and update age everywhere", async ({ request, page }) => {
+  const invitation = await issue(request);
+  expect((await complete(request, invitation.headers, { ...payload(), dateOfBirth: "2018-11-07" })).status()).toBe(201);
+  const before = (await db.query("SELECT * FROM club_signed_waiver WHERE kid_id=$1", [kidId])).rows[0];
+  const correction = { kidId, expectedDate: "2018-11-07", dateOfBirth: "2019-11-07", actorEmail: owner, reason: "Correct the birth year supplied at registration." };
+  await expect(correctBirthDate({ ...correction, actorEmail: "member@example.com" }, true)).rejects.toThrow("organiser");
+  await expect(correctBirthDate({ ...correction, expectedDate: "2017-11-07" }, true)).rejects.toThrow("has changed");
+  expect((await correctBirthDate(correction)).changed).toBe(false);
+  expect((await db.query("SELECT * FROM club_birth_date_correction")).rowCount).toBe(0);
+  expect((await correctBirthDate(correction, true)).changed).toBe(true);
+  expect((await correctBirthDate(correction, true)).changed).toBe(false);
+  expect((await db.query("SELECT * FROM club_birth_date_correction")).rowCount).toBe(1);
+  await expect(db.query("UPDATE club_birth_date_correction SET reason='replacement'")).rejects.toThrow("append-only");
+  const after = (await db.query("SELECT * FROM club_signed_waiver WHERE id=$1", [before.id])).rows[0];
+  expect(after).toEqual(before);
+  const roster = await (await request.get("/api/kids")).json();
+  expect(roster.kids[0].registration.dateOfBirth).toBe("2019-11-07");
+  expect(roster.kids[0].age).toBe(6);
+  expect(roster.kids[0].birthDateCorrection).toMatchObject({ previousDate: "2018-11-07", dateOfBirth: "2019-11-07", actorEmail: owner });
+  const info = await (await request.get("/api/registration", { headers: invitation.headers })).json();
+  expect(info.signed.children[0].registration.dateOfBirth).toBe("2019-11-07");
+  const download = await request.get("/api/registration/document", { headers: invitation.headers });
+  expect((await download.body()).equals(before.pdf)).toBe(true);
+  await db.query("INSERT INTO club_cup_entry(kid_id,edition,member,contact_name,contact_phone) VALUES ($1,'cup-vol-2',true,'Test Parent','12345678')", [kidId]);
+  expect((await (await request.get("/api/cup/lineup")).json()).surfers[0].age).toBe(6);
+  expect((await readEntrants())[0].age).toBe(6);
+  await signIn(page.request, organiser);
+  await page.goto("/#our-duckies");
+  const row = page.locator(".duckie-row").filter({ hasText: "Test Surfer" });
+  await row.locator("summary").click();
+  await expect(row.getByText(/Club corrected 2018-11-07 to 2019-11-07/)).toBeVisible();
+  await expect(row.getByText(/The original signed waiver is unchanged/)).toBeVisible();
+  // A later guardian signature replaces the administrative override and
+  // leaves both the earlier signed record and the correction history intact.
+  expect((await complete(request, invitation.headers, { ...payload(), dateOfBirth: "2019-11-08", supersedes: info.signed.id, kidId })).status()).toBe(201);
+  const refreshed = await (await request.get("/api/kids")).json();
+  expect(refreshed.kids[0].registration.dateOfBirth).toBe("2019-11-08");
+  expect(refreshed.kids[0].birthDateCorrection).toBeNull();
+  expect((await db.query("SELECT * FROM club_birth_date_correction")).rowCount).toBe(1);
 });

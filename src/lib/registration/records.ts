@@ -8,6 +8,7 @@ import {
   verify,
 } from "node:crypto";
 import { getDatabase } from "../server/db";
+import { correctedBirthDateSql } from "./birth-date-corrections";
 import { waiver, WAIVER_VERSION } from "./policy";
 import { ageAt, submissionSchema, type RegistrationInput } from "./schema";
 import { getSemester } from "./semesters";
@@ -342,6 +343,7 @@ export type OrganiserKid = {
   name: string;
   registration: RegistrationInput | null;
   age: number | null;
+  birthDateCorrection: { dateOfBirth: string; previousDate: string; actorEmail: string; reason: string; recordedAt: string } | null;
   waiverId: string | null;
   signedAt: string | null;
   payment: any;
@@ -369,7 +371,8 @@ export const memberPaidSql = (kid: string, currentTerm: string) =>
   `EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=${kid}) AND COALESCE((SELECT status='paid' FROM club_payment_event WHERE kid_id=${kid} AND term=${currentTerm} ORDER BY recorded_at DESC, id DESC LIMIT 1), false)`;
 export async function organiserRoster(term: string, currentTerm: string): Promise<OrganiserKid[]> {
   const { rows } = await getDatabase().query(
-    `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration,
+    `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration, ${correctedBirthDateSql("w")} AS effective_dob,
+    (SELECT json_build_object('dateOfBirth',c.date_of_birth,'previousDate',c.previous_date,'actorEmail',c.actor_email,'reason',c.reason,'recordedAt',c.recorded_at) FROM club_birth_date_correction c WHERE c.waiver_id=w.id AND c.kid_id=k.id ORDER BY c.recorded_at DESC,c.id DESC LIMIT 1) AS birth_date_correction,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
     (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
@@ -382,8 +385,9 @@ export async function organiserRoster(term: string, currentTerm: string): Promis
   return rows.map((row) => ({
     id: row.id,
     name: row.name,
-    registration: row.registration,
-    age: row.registration ? ageAt(row.registration.dateOfBirth) : null,
+    registration: row.registration ? { ...row.registration, dateOfBirth: row.effective_dob } : null,
+    age: row.effective_dob ? ageAt(row.effective_dob) : null,
+    birthDateCorrection: row.birth_date_correction,
     waiverId: row.waiver_id,
     signedAt: row.signed_at,
     payment: row.payment,
