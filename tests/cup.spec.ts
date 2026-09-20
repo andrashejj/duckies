@@ -167,6 +167,7 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   await signIn(guest, guardian);
   let mine = await (await guest.get("/api/cup/kids")).json();
   expect(mine.email).toBe(guardian);
+  expect(mine.contact).toEqual({ contactName: "Test Guardian", contactPhone: guardianPhone });
   expect(mine.kids).toEqual([{ id: kidId, name: "Zoë T.", member: false, registered: false }]);
   // Registered while the semester is unpaid: on the list, fee pending.
   expect((await guest.post(`/api/cup/kids/${kidId}`)).status()).toBe(403);
@@ -181,7 +182,7 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   // Another signed-in member who is not a guardian sees nothing and cannot register the kid.
   const other = await playwright.request.newContext({ baseURL: origin });
   await signIn(other, "member@example.com");
-  expect((await (await other.get("/api/cup/kids")).json()).kids).toEqual([]);
+  expect(await (await other.get("/api/cup/kids")).json()).toMatchObject({ kids: [], contact: null });
   expect((await other.post(`/api/cup/kids/${kidId}`, { headers: { origin } })).status()).toBe(404);
   await other.dispose();
   const roster = await (await request.get("/api/kids")).json();
@@ -276,6 +277,57 @@ test("the cup page: members are sent to sign in and pick their kids; a new famil
   await expect(page.getByLabel("Training rhythm", { exact: true })).toBeVisible();
   await expect(page.locator("#invitation-label")).toContainText("September 2026 semester");
   expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows[0].n).toBe(3);
+});
+
+test("a signed-in family registers an existing kid and adds a sibling to the club and Cup without switching paths", async ({ request, page }) => {
+  await signIn(request, organiser);
+  const robynId = await registeredKid(request, "Robyn");
+  await registeredKid(request, "Unrelated Kid", "someone-else@example.com");
+  await request.post("/api/members", post({ email: guardian }));
+  await signIn(page.request, guardian);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
+  const form = page.locator("[data-cup-register][data-ready]");
+  await form.getByRole("button", { name: "Count Robyn in" }).click();
+  await expect(form.getByRole("button", { name: "Locked in" })).toBeDisabled();
+  const add = form.getByRole("button", { name: "Add sibling", exact: true });
+  await add.click();
+  await expect(form.getByRole("radio", { name: /Already a Sunset Duckie/ })).toBeChecked();
+  await expect(form.getByRole("button", { name: "Locked in" })).toBeVisible();
+  await expect(form.getByLabel("Kid's name")).toBeFocused();
+  await expect(form.getByLabel("Parent / guardian")).toHaveValue("Test Guardian");
+  await expect(form.getByLabel("WhatsApp number")).toHaveValue(guardianPhone);
+  await expect(form.getByRole("radio", { name: /Just the Cup/ })).toBeHidden();
+  await form.getByRole("button", { name: "Cancel adding sibling" }).click();
+  await expect(form.getByLabel("Kid's name")).toBeHidden();
+  await expect(add).toBeFocused();
+  await add.click();
+  await form.getByLabel("Kid's name").fill("Taylor");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("add-sibling-mobile.png") });
+  const responsePromise = page.waitForResponse(r => r.url().endsWith("/api/cup/register") && r.request().method() === "POST");
+  await form.getByRole("button", { name: "Add sibling to club + Cup" }).click();
+  const response = await responsePromise;
+  expect(response.status()).toBe(201);
+  const signup = await response.json();
+  await page.waitForURL(/\/register#token=/);
+  await expect(page.locator("#cup-included")).toBeVisible();
+  await expect(page.getByLabel("Child’s full name")).toHaveValue("Taylor");
+  await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("Test Guardian");
+  await expect(page.getByLabel("Email · guardian 1", { exact: true })).toHaveValue(guardian);
+  await expect(page.getByLabel("Phone · guardian 1", { exact: true })).toHaveValue(guardianPhone);
+  expect((await page.request.post("/api/registration", { headers: linkHeaders(signup.url), data: submission(payload("Taylor")) })).status()).toBe(201);
+  await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
+  await expect(form.locator("[data-kid-list]")).toContainText("Robyn");
+  await expect(form.locator("[data-kid-list]")).toContainText("Taylor");
+  await expect(form.getByRole("button", { name: "Locked in" })).toHaveCount(2);
+  await expect(form.locator("[data-kid-list]")).not.toContainText("Unrelated Kid");
+  const entries = (await db.query("SELECT k.name,c.kid_id FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id WHERE edition=$1 ORDER BY k.name", [CUP_TERM])).rows;
+  expect(entries.map(k => k.name)).toEqual(["Robyn", "Taylor"]);
+  expect(entries[0].kid_id).toBe(robynId);
+  const taylor = (await db.query("SELECT w.term, w.snapshot->'registration'->'guardians'->0->>'email' AS email FROM club_signed_waiver w WHERE kid_id=$1", [entries[1].kid_id])).rows;
+  expect(taylor).toEqual([{ term: "2026-S2", email: guardian }]);
+  expect((await db.query("SELECT count(*)::int AS n FROM club_payment_event WHERE kid_id=$1", [entries[1].kid_id])).rows[0].n).toBe(0);
 });
 
 test("the join page sends a family straight to a pending registration", async ({ page }) => {

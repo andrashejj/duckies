@@ -1,4 +1,4 @@
-import { guardianKids } from "../../../../lib/registration/cup-entries";
+import { guardianContact, guardianKids } from "../../../../lib/registration/cup-entries";
 import { requireSignedIn, safeRoute } from "../../../../lib/registration/http";
 import { json } from "../../../../lib/server/http";
 export const prerender = false;
@@ -6,5 +6,6 @@ export const prerender = false;
 // already on the cup list.
 export const GET = safeRoute(async ({ request }) => {
   const { email } = await requireSignedIn(request);
-  return json({ email, kids: await guardianKids(email) });
+  const [kids, contact] = await Promise.all([guardianKids(email), guardianContact(email)]);
+  return json({ email, kids, contact });
 });

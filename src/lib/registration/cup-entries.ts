@@ -29,6 +29,22 @@ export type GuardianKid = {
   registered: boolean;
 };
 
+// Reuse only the signed-in guardian's contact details, from a current
+// guardian relationship. Other adults on the same waiver stay private.
+export async function guardianContact(email: string) {
+  const { rows } = await getDatabase().query(
+    `SELECT g->>'name' AS "contactName", g->>'phone' AS "contactPhone"
+    FROM club_kid k JOIN LATERAL (
+      SELECT snapshot->'registration' AS r, signed_at FROM club_signed_waiver
+      WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1
+    ) w ON true, jsonb_array_elements(w.r->'guardians') g
+    WHERE k.archived_at IS NULL AND lower(g->>'email')=$1
+    ORDER BY w.signed_at DESC, k.id LIMIT 1`,
+    [email],
+  );
+  return (rows[0] as { contactName: string; contactPhone: string } | undefined) ?? null;
+}
+
 // The kids a signed-in guardian may register: those whose latest signed
 // registration lists their email. Nothing else about the roster is exposed.
 export async function guardianKids(email: string): Promise<GuardianKid[]> {

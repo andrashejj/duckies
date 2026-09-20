@@ -135,7 +135,7 @@ const panel = `${registrationPanel} ${memberForm}`;
 </body>
 </html>
 <script>
-  import { rememberFamily } from "../lib/family-contact";
+  import { recallFamily, rememberFamily } from "../lib/family-contact";
   import { guardianFields, textButton } from "../lib/members-ui";
   type Guardian = { name: string; relationship: string; phone: string; email: string };
   type Registration = Record<string, any> & { guardians: Guardian[] };
@@ -178,7 +178,9 @@ const panel = `${registrationPanel} ${memberForm}`;
     if (index > 0) { const remove = document.createElement("button"); remove.type = "button"; remove.className = textButton; remove.textContent = "Remove this guardian"; remove.onclick = () => { block.remove(); addButton.disabled = false; }; block.append(remove); }
     guardians.append(block); addButton.disabled = guardians.children.length >= 4;
   }
-  addGuardian(); addButton.addEventListener("click", () => addGuardian());
+  const familyContact = recallFamily();
+  addGuardian(familyContact ? { name: familyContact.contactName, phone: familyContact.contactPhone, email: familyContact.contactEmail ?? "", relationship: "" } : undefined);
+  addButton.addEventListener("click", () => addGuardian());
   // Emergency contact mirrors guardian 1 until the family unticks "same as".
   const emergencySame = document.querySelector<HTMLInputElement>("#emergency-same")!;
   const emergency = { emergencyName: "name", emergencyRelationship: "relationship", emergencyPhone: "phone" } as const;
@@ -344,7 +346,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       maxChildren = Number(data.maxChildren) || maxChildren;
       // The signing guardian, kept for the next child's sign-up form.
       const signer = signed?.registration?.guardians?.[0];
-      if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone });
+      if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone, contactEmail: signer.email });
       // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
       cup = Boolean(data.cup);
       const intro = document.querySelector<HTMLElement>("#registration-intro")!;
