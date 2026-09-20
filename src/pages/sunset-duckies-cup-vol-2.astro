@@ -233,8 +233,8 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
           <p class={`mt-4 max-w-xl ${bodyCopy}`}>{cup.form.intro}</p>
           <div class="mt-6 flex flex-wrap gap-3">
             <Chip>{cup.memberFeeLabel} for members</Chip>
-            <Chip>{cup.entryFeeLabel} non-members</Chip>
-            <Chip>Rs 3,000 join the club</Chip>
+            <Chip>{cup.entryFeeLabel} per child · Cup only</Chip>
+            <Chip>{site.membership.feeLabelLong}</Chip>
             <Chip>Age 7+</Chip>
           </div>
           <p class="mt-6 max-w-xl text-sm leading-6 text-fg/70">{cup.form.footnote}</p>
