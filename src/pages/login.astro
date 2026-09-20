@@ -55,7 +55,7 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
     document.querySelector("#login-intro")!.textContent="Sign in with the email on your club registration and we’ll take you back to the Cup page to pick who’s coming. No code arriving? Your email isn’t approved for sign-in yet — ping Andras on WhatsApp.";
   } else if (destination?.startsWith("/cup/judge")) {
     document.querySelector("#login-kicker")!.textContent="Cup Vol. 02 · Judges";
-    document.querySelector("#login-intro")!.textContent="Sign in with the email the club invited you on. We’ll send a six-digit code — no password, no club membership needed.";
+    document.querySelector("#login-intro")!.textContent="Sign in with the email on your child’s registration or your club invitation. We’ll send a six-digit code so you can volunteer to judge a heat.";
   }
   authClient.getSession().then(({ data }) => {
     if (data) void finishSignIn();

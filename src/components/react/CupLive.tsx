@@ -1,41 +1,40 @@
 import { useEffect, useState } from "react";
 import { formatScore, rashieLabel, type HeatStatus, type Rashie, type Standing, type TickerItem } from "../../lib/comp";
 import { liveTicker, mono, panel, panelTitle, pill, podium, rankBubble, rashieBlock, statusPill } from "../../lib/comp-ui";
+import { HeatCountdown, HeatWarnings, useCompetitionClock } from "./CupClock";
 import { Leaderboard } from "./CupLeaderboard";
 
 // The public live board: the ticker, who is in the water, the leaderboard and
 // every heat's result. Polls the live feed; shows a teaser until the
 // organisers switch the board on.
-type PublicHeat = { id: string; stage: "round" | "final"; round: number; number: number; label: string; status: HeatStatus; startedAt: string | null; surfers: { name: string; colour: Rashie; score: number | null }[] };
+type PublicHeat = { id: string; stage: "round" | "final"; round: number; number: number; label: string; status: HeatStatus; startedAt: string | null; endsAt: string | null; durationMinutes: number; surfers: { name: string; colour: Rashie; score: number | null }[] };
 type Live =
   | { live: false; name: string }
   | { live: true; name: string; updatedAt: string; rounds: number; running: PublicHeat[]; upNext: PublicHeat[]; ticker: TickerItem[]; leaderboard: Omit<Standing, "kidId">[]; final: PublicHeat | null; heats: PublicHeat[] };
 
-const elapsed = (since: string | null, now: number) => {
-  if (!since) return "";
-  const seconds = Math.max(0, Math.floor((now - new Date(since).getTime()) / 1000));
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-};
-
-export default function CupLive({ dateLabel }: { dateLabel: string }) {
+export default function CupLive({ dateLabel, warnings = true }: { dateLabel: string; warnings?: boolean }) {
   const [data, setData] = useState<Live | null>(null);
   const [failed, setFailed] = useState(false);
-  const [now, setNow] = useState(() => Date.now());
+  const now = useCompetitionClock(data?.live ? data.updatedAt : undefined);
 
   useEffect(() => {
     let alive = true;
+    let loading = false;
     async function load() {
+      if (loading) return;
+      loading = true;
       try {
         const response = await fetch("/api/cup/live", { cache: "no-store" });
         if (!response.ok) throw new Error();
         const next: Live = await response.json();
         if (alive) { setData(next); setFailed(false); }
-      } catch { if (alive) setFailed(true); }
+      } catch { if (alive) setFailed(true); } finally { loading = false; }
     }
     void load();
-    const poll = window.setInterval(() => { if (document.visibilityState === "visible") void load(); }, 15000);
-    const tick = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => { alive = false; window.clearInterval(poll); window.clearInterval(tick); };
+    const poll = window.setInterval(() => { if (document.visibilityState === "visible") void load(); }, 3000);
+    const resume = () => { if (document.visibilityState === "visible") void load(); };
+    document.addEventListener("visibilitychange", resume);
+    return () => { document.removeEventListener("visibilitychange", resume); alive = false; window.clearInterval(poll); };
   }, []);
 
   if (!data) return <p className={`${mono} px-6 py-10 text-center`}>{failed ? "The live board is taking a breather. Hang on…" : "Tuning in…"}</p>;
@@ -49,12 +48,14 @@ export default function CupLive({ dateLabel }: { dateLabel: string }) {
     );
   }
 
-  const messages = data.ticker.length ? data.ticker.map((item) => item.message) : [`${data.name} · live from Tamarin Bay`, "Heats of four · best two waves count · rounds add up"];
+  const messages = data.ticker.length ? data.ticker.map((item) => item.message) : [`${data.name} · live from Tamarin Bay`, "Heats of four · best two runs averaged · five stars maximum"];
   const inWater = data.running.length > 0;
   const showcase = inWater ? data.running : data.upNext;
-  const results = [...data.heats].reverse().filter((heat) => heat.status === "done");
+  const results = data.heats;
   return (
     <div className="grid gap-8">
+      {warnings && <HeatWarnings heats={data.heats} now={now} />}
+      {failed && <p role="status" className="px-6 text-center text-fg-muted">Connection lost. Showing the last scores; reconnecting…</p>}
       <div className="overflow-hidden border-y-2 border-edge bg-ink-950 py-3 text-cream" aria-label="Latest from the beach">
         <div className={liveTicker}>
           <span>{messages.map((message, index) => <span key={index}>{message}<i>✦</i></span>)}</span>
@@ -72,7 +73,7 @@ export default function CupLive({ dateLabel }: { dateLabel: string }) {
             <article key={heat.id} className={`${panel} grid gap-4`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className={`${panelTitle} text-2xl sm:text-3xl`}>{heat.label}</h2>
-                {heat.status === "running" && <p className="font-mono text-2xl font-semibold tabular-nums text-accent-text">{elapsed(heat.startedAt, now)}</p>}
+                {heat.status === "running" && <HeatCountdown heat={heat} now={now} />}
               </div>
               <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {heat.surfers.map((surfer) => (
@@ -111,18 +112,18 @@ export default function CupLive({ dateLabel }: { dateLabel: string }) {
         <section className={`${panel} overflow-x-auto`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className={`${panelTitle} text-2xl sm:text-3xl`}>Leaderboard</h2>
-            <p className={mono}>best 2 waves per heat · judges averaged · rounds added up</p>
+            <p className={mono}>best 2 runs averaged · 5 stars maximum · final separate</p>
           </div>
           <Leaderboard rows={data.leaderboard} rounds={data.rounds} publicView />
         </section>
 
         {results.length > 0 && (
           <section className="grid gap-3">
-            <h2 className={`${panelTitle} text-2xl`}>Heat by heat</h2>
+            <h2 className={`${panelTitle} text-2xl`}>Heat tableau</h2>
             <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {results.map((heat) => (
                 <li key={heat.id} className="rounded-card border-2 border-edge bg-surface p-4">
-                  <p className="font-display font-bold [font-variation-settings:'wdth'_108]">{heat.label}</p>
+                  <p className="font-display font-bold [font-variation-settings:'wdth'_108]">{heat.label} · {heat.status}</p>
                   <ol className="mt-2 grid gap-1 text-sm">
                     {[...heat.surfers].sort((a, b) => (b.score ?? -1) - (a.score ?? -1)).map((surfer) => (
                       <li key={surfer.colour} className="flex items-center gap-2">

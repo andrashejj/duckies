@@ -299,6 +299,7 @@ model ClubRegistrationLink {
   club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_registration_photo ClubRegistrationPhoto[]
+  parent_photos ClubRegistrationParentPhoto[]
   club_signed_waiver      ClubSignedWaiver[]
 
   @@index([kid_id, created_at(sort: Desc)], map: "club_registration_link_kid")
@@ -317,6 +318,16 @@ model ClubRegistrationPhoto {
 
   @@id([link_id, slot])
   @@map("club_registration_photo")
+}
+
+model ClubRegistrationParentPhoto {
+  link_id String @db.Uuid
+  email String
+  image Bytes
+  uploaded_at DateTime @default(now()) @db.Timestamptz(6)
+  link ClubRegistrationLink @relation(fields: [link_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@id([link_id, email])
+  @@map("club_registration_parent_photo")
 }
 
 model ClubSemester {
@@ -386,6 +397,10 @@ model CupEvent {
 // A heat: up to heat_size kids, one rashie colour each. Qualifying rounds are
 // stage "round" 1..rounds; the final is stage "final" (round 0).
 model CupHeat {
+  duration_minutes Int @default(10)
+  ends_at DateTime? @db.Timestamptz(6)
+  volunteers CupHeatVolunteer[]
+  judges        String[]      @default([])
   id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   edition       String
   stage         String        @default("round")
@@ -428,8 +443,8 @@ model CupJudge {
   @@map("cup_judge")
 }
 
-// One judge's score for one wave a kid rode in a heat. A judge's best two
-// waves per kid count; the kid's heat score averages the judges.
+// One judge’s star rating for a numbered run. Average judges per run,
+// then take the average of the kid’s best two runs.
 model CupWave {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   heat_id     String   @db.Uuid
@@ -680,4 +695,27 @@ model ClubBirthDateCorrection {
 
   @@index([waiver_id, recorded_at(sort: Desc)], map: "club_birth_date_correction_waiver")
   @@map("club_birth_date_correction")
+}
+
+// Adults keep their own editable profile separate from signed child registrations.
+model ClubParentProfile {
+  email String @id
+  name String
+  phone String @default("")
+  image Bytes?
+  photo_updated_at DateTime? @db.Timestamptz(6)
+  registration_link_id String? @db.Uuid
+  photo_registration_link_id String? @db.Uuid
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  @@map("club_parent_profile")
+}
+model CupHeatVolunteer {
+  heat_id String @db.Uuid
+  email String
+  status String @default("pending")
+  requested_at DateTime @default(now()) @db.Timestamptz(6)
+  reviewed_by String?
+  heat CupHeat @relation(fields: [heat_id], references: [id], onDelete: Cascade)
+  @@id([heat_id, email])
+  @@map("cup_heat_volunteer")
 }

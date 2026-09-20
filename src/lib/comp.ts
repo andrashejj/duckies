@@ -16,13 +16,13 @@ export const heatStatuses: HeatStatus[] = ["scheduled", "running", "done"];
 export type CupConfig = { edition: string; rounds: number; heatSize: number; finalSize: number; live: boolean; version: number };
 export type Entrant = { id: string; name: string; age: number | null; member: boolean; photoVersion: string | null };
 export type Slot = { kidId: string; colour: Rashie };
-export type Heat = { id: string; stage: HeatStage; round: number; number: number; status: HeatStatus; startedAt: string | null; finishedAt: string | null; slots: Slot[] };
+export type Heat = { id: string; stage: HeatStage; round: number; number: number; status: HeatStatus; startedAt: string | null; finishedAt: string | null; slots: Slot[]; judges: string[]; durationMinutes: number; endsAt: string | null };
 export type Wave = { id: string; heatId: string; kidId: string; judge: string; wave: number; score: number };
 export type Judge = { email: string; name: string };
 export type TickerItem = { id: string; kind: "note" | "heat" | "result"; message: string; at: string };
 
-// Judges score a wave from 0.5 to 10 in halves; a wipeout is simply not scored.
-export const WAVE_SCORES = Array.from({ length: 20 }, (_, i) => (i + 1) / 2);
+// Each judge rates the same numbered run from one to five stars.
+export const WAVE_SCORES = [1, 2, 3, 4, 5];
 export const MAX_WAVES = 15;
 
 export const heatLabel = (heat: Pick<Heat, "stage" | "round" | "number">) =>
@@ -116,39 +116,38 @@ export function drawFinal(standings: Standing[], finalSize: number): Slot[] {
 
 export const best2 = (scores: number[]) => {
   const sorted = [...scores].sort((a, b) => b - a);
-  return (sorted[0] ?? 0) + (sorted[1] ?? 0);
+  return sorted.length ? (sorted[0] + (sorted[1] ?? 0)) / Math.min(sorted.length, 2) : 0;
 };
 const round2 = (value: number) => Math.round(value * 100) / 100;
 
 export type HeatResult = { kidId: string; score: number | null; byJudge: Record<string, number>; waves: number };
 
-/**
- * A kid's heat score: for every judge who scored the heat, the sum of that
- * judge's best two waves for the kid (nothing ridden counts 0), averaged over
- * those judges. Null until somebody has scored the heat.
+/** Average ratings of the same run before choosing the best two runs.
+ * Only scored runs count: one run stands alone until a second run is scored.
+ * Saved ratings remain part of results if a judge is later unassigned.
  */
+export function runScores(waves: Wave[]): number[] {
+  const runs = new Map<string, number[]>();
+  for (const wave of waves) {
+    const key = `${wave.heatId}:${wave.wave}`;
+    runs.set(key, [...(runs.get(key) ?? []), wave.score]);
+  }
+  return [...runs.values()].map((ratings) => ratings.reduce((sum, score) => sum + score, 0) / ratings.length);
+}
 export function heatResults(heat: Heat, waves: Wave[]): Map<string, HeatResult> {
-  const inHeat = waves.filter((wave) => wave.heatId === heat.id);
-  const judges = [...new Set(inHeat.map((wave) => wave.judge))];
   const results = new Map<string, HeatResult>();
   for (const slot of heat.slots) {
-    const own = inHeat.filter((wave) => wave.kidId === slot.kidId);
-    const byJudge: Record<string, number> = {};
-    for (const judge of judges) byJudge[judge] = best2(own.filter((wave) => wave.judge === judge).map((wave) => wave.score));
-    const totals = Object.values(byJudge);
-    results.set(slot.kidId, {
-      kidId: slot.kidId,
-      score: totals.length ? round2(totals.reduce((sum, total) => sum + total, 0) / totals.length) : null,
-      byJudge,
-      waves: own.length,
-    });
+    const own = waves.filter((wave) => wave.heatId === heat.id && wave.kidId === slot.kidId);
+    const scores = runScores(own);
+    const byJudge = Object.fromEntries([...new Set(own.map((wave) => wave.judge))].map((judge) => [judge, best2(own.filter((wave) => wave.judge === judge).map((wave) => wave.score))]));
+    results.set(slot.kidId, { kidId: slot.kidId, score: scores.length ? round2(best2(scores)) : null, byJudge, waves: scores.length });
   }
   return results;
 }
 
 export type Standing = { kidId: string; name: string; age: number | null; rounds: (number | null)[]; total: number; best: number; heats: number; final: number | null; rank: number };
 
-/** The leaderboard: heat scores per round added up, ranked; the final kept apart. */
+/** Best two runs across qualifying heats; the final is scored separately. */
 export function standings(config: Pick<CupConfig, "rounds">, entrants: Entrant[], heats: Heat[], waves: Wave[]): Standing[] {
   const rows = new Map<string, Standing>(
     entrants.map((kid) => [kid.id, { kidId: kid.id, name: kid.name, age: kid.age, rounds: Array.from({ length: config.rounds }, () => null), total: 0, best: 0, heats: 0, final: null, rank: 0 }]),
@@ -165,8 +164,9 @@ export function standings(config: Pick<CupConfig, "rounds">, entrants: Entrant[]
     }
   }
   const ranked = [...rows.values()].map((row) => {
-    const scores = row.rounds.filter((score): score is number => score !== null);
-    return { ...row, total: round2(scores.reduce((sum, score) => sum + score, 0)), best: Math.max(0, ...scores) };
+    const qualifying = new Set(heats.filter((heat) => heat.stage === "round" && heat.slots.some((slot) => slot.kidId === row.kidId)).map((heat) => heat.id));
+    const scores = runScores(waves.filter((wave) => wave.kidId === row.kidId && qualifying.has(wave.heatId)));
+    return { ...row, total: round2(best2(scores)), best: Math.max(0, ...scores) };
   });
   ranked.sort((a, b) => b.total - a.total || b.best - a.best || a.name.localeCompare(b.name));
   ranked.forEach((row, index) => { row.rank = index > 0 && ranked[index - 1].total === row.total && ranked[index - 1].best === row.best ? ranked[index - 1].rank : index + 1; });
@@ -194,11 +194,20 @@ export const slotMoveSchema = z.object({
   heatId: uuid.nullable(),
   colour: z.enum(RASHIES).optional(),
 }).strict();
-export const heatPatchSchema = z.object({ status: z.enum(heatStatuses) }).strict();
+export const heatPatchSchema = z.union([z.object({ status: z.enum(heatStatuses) }).strict(), z.object({ durationMinutes: z.int().min(1).max(60) }).strict()]);
+export type HeatVolunteer = { heatId: string; email: string; status: "pending" | "approved" | "declined" };
+export const volunteerReviewSchema = z.object({ email: z.string().trim().pipe(z.email()).transform((email) => email.toLowerCase()), decision: z.enum(["approved", "declined"]) }).strict();
+export const heatJudgesSchema = z.object({ judges: z.array(z.string().trim().pipe(z.email().max(254)).transform((email) => email.toLowerCase())).max(30) }).strict();
 export const judgeSchema = z.object({
   email: z.string().trim().pipe(z.email().max(254)).transform((value) => value.toLowerCase()),
   name: z.string().trim().min(1).max(80),
 }).strict();
 export const tickerSchema = z.object({ message: z.string().trim().min(1).max(200) }).strict();
-export const waveCreateSchema = z.object({ heatId: uuid, kidId: uuid, score: z.number().min(0.5).max(10).multipleOf(0.5) }).strict();
-export const wavePatchSchema = z.object({ score: z.number().min(0.5).max(10).multipleOf(0.5) }).strict();
+export const waveCreateSchema = z.object({ heatId: uuid, kidId: uuid, wave: z.int().min(1).max(MAX_WAVES).optional(), score: z.int().min(1).max(5) }).strict();
+export const wavePatchSchema = z.object({ score: z.int().min(1).max(5) }).strict();
+
+/** All clients use the server's deadline. No score is accepted at or after zero. */
+export function heatSecondsLeft(heat: Pick<Heat, "status" | "endsAt">, now: number): number {
+  return heat.status === "running" && heat.endsAt ? Math.max(0, Math.ceil((Date.parse(heat.endsAt) - now) / 1000)) : 0;
+}
+export function heatClockLabel(seconds: number): string { return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }

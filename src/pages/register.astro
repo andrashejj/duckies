@@ -179,7 +179,16 @@ const panel = `${registrationPanel} ${memberForm}`;
       const input = document.createElement("input"); input.name = `guardian-${index}-${key}`; input.dataset.field = key; input.type = type; input.required = true; input.maxLength = max; input.value = values?.[key] ?? "";
       label.append(input); block.append(label);
     }
-    if (index > 0) { const remove = document.createElement("button"); remove.type = "button"; remove.className = textButton; remove.textContent = "Remove this guardian"; remove.onclick = () => { block.remove(); addButton.disabled = false; }; block.append(remove); }
+    const photoLabel = document.createElement("label"); photoLabel.textContent = `Profile photo · guardian ${index + 1} (optional)`;
+    const photo = document.createElement("input"); photo.type = "file"; photo.accept = "image/jpeg,image/png,image/webp"; photo.dataset.field = "photo";
+    photoLabel.append(photo); block.append(photoLabel);
+    const preview = document.createElement("img"); preview.dataset.photoPreview = ""; preview.hidden = true; preview.alt = `Guardian ${index + 1} photo preview`; preview.className = "h-20 w-20 rounded-full object-cover"; block.append(preview);
+    const removePhoto = document.createElement("button"); removePhoto.type = "button"; removePhoto.dataset.removePhoto = ""; removePhoto.className = textButton; removePhoto.textContent = "Remove photo"; removePhoto.hidden = true; block.append(removePhoto);
+    const photoStatus = document.createElement("p"); photoStatus.dataset.photoStatus = ""; photoStatus.setAttribute("role", "status"); photoStatus.className = "text-sm";
+    photoStatus.textContent = "Private to you and organisers. JPEG, PNG or WebP, up to 4 MB. Enter your email first. Existing profiles can be updated after signing in."; block.append(photoStatus);
+    photo.addEventListener("change", () => void uploadPhoto(block));
+    removePhoto.addEventListener("click", () => void uploadPhoto(block, true));
+    if (index > 0) { const remove = document.createElement("button"); remove.type = "button"; remove.className = textButton; remove.textContent = "Remove this guardian"; remove.onclick = async () => { if (photoBusy) return; await uploadPhoto(block, true); if (!preview.hidden) return; block.remove(); addButton.disabled = false; }; block.append(remove); }
     guardians.append(block); addButton.disabled = guardians.children.length >= 4;
   }
   const familyContact = recallFamily();
@@ -403,7 +412,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       medicalNotes: childField(block, "medicalNotes").value,
       ...(cup ? {} : { sessionsPerWeek: childField(block, "sessionsPerWeek").value }),
     }));
-    body.guardians = Array.from(document.querySelectorAll("[data-guardian]")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input")).map(input => [input.dataset.field, input.value])));
+    body.guardians = Array.from(document.querySelectorAll("[data-guardian]")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input[data-field]:not([type=file])")).map(input => [input.dataset.field, input.value])));
     if (supersedes) body.supersedes = supersedes;
     const count = childBlocks().length;
     submitStatus.textContent = count > 1
@@ -434,13 +443,16 @@ const panel = `${registrationPanel} ${memberForm}`;
     const file = photoInput.files?.[0]; if (!remove && !file) return;
     if (remove && !file && photoPreview.hidden) return;
     if (file && file.size > 4*1024*1024) { photoStatus.textContent = "Choose a photo smaller than 4 MB."; photoInput.value=""; return; }
+    const parentEmail = block.hasAttribute("data-guardian") ? block.querySelector<HTMLInputElement>('[data-field="email"]')! : null;
+    if (parentEmail && !parentEmail.checkValidity()) { photoStatus.textContent = "Enter this guardian's email before adding their photo."; photoInput.value=""; parentEmail.reportValidity(); return; }
+    if (parentEmail) parentEmail.readOnly = true;
     photoBusy++; photoInput.disabled=true; removePhoto.disabled=true; submit.disabled=true;
     photoStatus.textContent=remove ? "Removing photo…" : "Uploading photo…";
-    const slot = `?slot=${block.dataset.slot}`;
-    try { const response=await fetch(`/api/registration/photo${slot}`, {method:remove?"DELETE":"PUT",headers:{...headers,...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
-      if(photoPreview.dataset.blob)URL.revokeObjectURL(photoPreview.dataset.blob); photoPreview.dataset.blob=remove?"":URL.createObjectURL(file!); photoPreview.src=photoPreview.dataset.blob; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":"Photo uploaded. Sign below to save it with the profile."; if(remove)photoInput.value="";
+    const photoUrl = parentEmail ? `/api/registration/parent-photo?email=${encodeURIComponent(parentEmail.value.trim().toLowerCase())}` : `/api/registration/photo?slot=${block.dataset.slot}`;
+    try { const response=await fetch(photoUrl, {method:remove?"DELETE":"PUT",headers:{...headers,...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
+      if(photoPreview.dataset.blob)URL.revokeObjectURL(photoPreview.dataset.blob); photoPreview.dataset.blob=remove?"":URL.createObjectURL(file!); photoPreview.src=photoPreview.dataset.blob; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":(parentEmail ? "Photo uploaded. Sign below to save it. Remove the photo first to change this email." : "Photo uploaded. Sign below to save it with the profile."); if(remove)photoInput.value="";
     }catch(e){photoStatus.textContent=e instanceof Error?e.message:"Photo upload failed. Please try again.";photoInput.value="";}
-    finally{photoBusy--;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=photoBusy>0;}
+    finally{if(parentEmail)parentEmail.readOnly=!photoPreview.hidden;photoBusy--;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=photoBusy>0;}
   }
   void load();
 </script>
