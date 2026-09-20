@@ -26,6 +26,7 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
         <option value="unpaid">Pending · unpaid this semester</option>
         <option value="unsigned">Waiver not signed</option>
         <option value="no-media">No media consent</option>
+        <option value="younger">Under 7 · discuss readiness</option>
         <option value="water">Parent in water not acknowledged</option>
         <option value="cup">Coming to the Cup Vol. 02</option>
       </select></label>
@@ -57,6 +58,7 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
   import { rosterCells, rosterSearch, matchesRosterFilter } from "../lib/registration/roster";
   import { kidOverview } from "../lib/registration/overview";
   import type { OrganiserKid } from "../lib/registration/records";
+  import { RECOMMENDED_AGE } from "../lib/registration/policy";
 
   type Kid = { id: string; name: string };
   type Roster = { member: { email: string; role: "member" | "organiser"; canManagePayments?: boolean }; term: Semester; semesters: Semester[]; termLabel: string; kids: Kid[] };
@@ -157,6 +159,14 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
       name.className = duckieName;
       name.textContent = kid.name;
       if (organiser) {
+        const age = (kid as OrganiserKid).age;
+        if (age !== null && age < RECOMMENDED_AGE) {
+          const warning = document.createElement("span");
+          warning.className = "mt-1 block text-xs font-bold text-alert";
+          warning.textContent = `Under ${RECOMMENDED_AGE} · discuss readiness`;
+          name.append(warning);
+          summary.setAttribute("aria-label", `${kid.name}, under ${RECOMMENDED_AGE}, details`);
+        }
         const photo = (kid as OrganiserKid).photoVersion;
         if (photo) { const img = document.createElement("img"); img.className = duckieAvatar; img.alt = `${kid.name}'s profile photo`; img.width = 36; img.height = 36; img.loading = "lazy"; img.src = `/api/kids/${kid.id}/photo?v=${encodeURIComponent(photo)}`; identity.append(img); }
         else { const placeholder = document.createElement("span"); placeholder.className = duckieAvatarEmpty; placeholder.setAttribute("aria-hidden", "true"); placeholder.textContent = kid.name.slice(0,1).toUpperCase(); identity.append(placeholder); }

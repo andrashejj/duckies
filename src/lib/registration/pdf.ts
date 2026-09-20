@@ -134,7 +134,7 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
   );
   heading("Registration acknowledgements");
   paragraph(
-    "Parent / guardian in the water for the entire session: acknowledged. Minimum age and open-water swimming: acknowledged. Waiver: accepted.",
+    "Parent / guardian in the water for the entire session: acknowledged. Open-water swimming: acknowledged. Waiver: accepted.",
   );
   paragraph(snapshot.policy.reef);
   paragraph(snapshot.policy.gear);

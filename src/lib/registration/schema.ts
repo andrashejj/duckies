@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { MINIMUM_AGE, WAIVER_VERSION } from "./policy";
+import { WAIVER_VERSION } from "./policy";
+export { ageAt } from "./age";
 const text = (max: number) =>
   z
     .string()
@@ -38,11 +39,7 @@ const childFields = {
       const earliest = new Date();
       earliest.setUTCFullYear(earliest.getUTCFullYear() - 25);
       return date <= new Date() && date >= earliest;
-    }, "Enter a valid child's date of birth.")
-    .refine(
-      (value) => ageAt(value) >= MINIMUM_AGE,
-      `Sunset Duckies is for kids aged ${MINIMUM_AGE} and up. Message the club if your child is younger.`,
-    ),
+    }, "Enter a valid child's date of birth."),
   medicalNotes: z.string().trim().max(2000),
   // Training is all that membership covers; families pick the rhythm. A cup
   // entry has no training, so the server only insists on it for semesters.
@@ -134,17 +131,6 @@ export const submissionSchema = z
   .refine(...signerIsFirstGuardian);
 export type SubmissionInput = z.infer<typeof submissionSchema>;
 export type ChildInput = SubmissionInput["children"][number];
-export function ageAt(dateOfBirth: string, today = new Date()) {
-  const birth = new Date(dateOfBirth + "T00:00:00Z");
-  let age = today.getUTCFullYear() - birth.getUTCFullYear();
-  if (
-    today.getUTCMonth() < birth.getUTCMonth() ||
-    (today.getUTCMonth() === birth.getUTCMonth() &&
-      today.getUTCDate() < birth.getUTCDate())
-  )
-    age--;
-  return age;
-}
 // The short public sign-up (join the club, or a cup-only entry): who is
 // coming and how to reach the family. The full details come with the form.
 export const signupSchema = z
