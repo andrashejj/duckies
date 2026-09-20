@@ -286,6 +286,20 @@ export async function completeRegistration(
       );
       written.push({ id: snapshot.id, kidId: kidIds[index] });
     }
+    // Profiles and staged photos are committed with the signed registration.
+    // A bearer link cannot overwrite another family's or an authenticated adult's profile.
+    for (const guardian of shared.guardians) {
+      await db.query(`INSERT INTO club_parent_profile(email,name,phone,registration_link_id)
+        VALUES($1,$2,$3,$4) ON CONFLICT(email) DO UPDATE
+        SET name=EXCLUDED.name,phone=EXCLUDED.phone,updated_at=now()
+        WHERE club_parent_profile.registration_link_id=EXCLUDED.registration_link_id`,
+        [guardian.email, guardian.name, guardian.phone, link.id]);
+      await db.query(`UPDATE club_parent_profile p SET image=s.image,photo_updated_at=clock_timestamp(),photo_registration_link_id=$2
+        FROM club_registration_parent_photo s WHERE p.email=$1 AND s.email=p.email AND s.link_id=$2
+        AND (p.photo_registration_link_id=$2 OR (p.image IS NULL AND p.registration_link_id=$2))`,
+        [guardian.email, link.id]);
+    }
+    await db.query("DELETE FROM club_registration_parent_photo WHERE link_id=$1", [link.id]);
     // A sibling added to a cup form comes to the cup too.
     if (isCupTerm(link.term))
       await db.query(

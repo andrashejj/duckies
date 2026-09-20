@@ -7,11 +7,13 @@ import { ageAt } from "../registration/schema";
 import { getSemester } from "../registration/semesters";
 import {
   byRunningOrder, drawFinal, drawRound, formatScore, heatLabel, heatResults, MAX_WAVES, rashieDot, rashieLabel, RASHIES, standings,
-  type CupConfig, type Entrant, type Heat, type HeatStatus, type Judge, type Rashie, type Slot, type Standing, type TickerItem, type Wave,
+  type HeatVolunteer, type CupConfig, type Entrant, type Heat, type HeatStatus, type Judge, type Rashie, type Slot, type Standing, type TickerItem, type Wave,
 } from "../comp";
 import { getAuth } from "./auth";
 import { findMember, getDatabase } from "./db";
 import { json, sameOrigin } from "./http";
+import { readOwnProfile, readParentProfiles } from "./parent-profiles";
+import type { ParentProfile } from "../parent-profile";
 
 // Database side of cup day. Every read builds the same picture — config,
 // entrants, heats, waves — and the pure functions in src/lib/comp.ts turn it
@@ -40,6 +42,14 @@ export async function readCompBody(request: Request) {
 }
 
 export type JudgeAccess = { email: string; name: string; organiser: boolean };
+/** Any verified account can volunteer; approval is scoped to an individual heat. */
+export async function cupAccess(request: Request): Promise<JudgeAccess> {
+  const session = await getAuth().api.getSession({ headers: request.headers });
+  if (!session?.user.emailVerified) throw new CompError("Please sign in.", 401);
+  const email = session.user.email.trim().toLowerCase();
+  const member = await findMember(email);
+  return { email, name: session.user.name, organiser: member?.role === "organiser" };
+}
 /** Who is judging: an invited judge for this edition, or an organiser. */
 export async function judgeAccess(request: Request, edition = CUP_TERM): Promise<JudgeAccess> {
   const session = await getAuth().api.getSession({ headers: request.headers });
@@ -58,8 +68,11 @@ export function requireCompOrigin(request: Request) { if (!sameOrigin(request)) 
 // ---------- Reads ----------
 
 type Db = pg.Pool | pg.PoolClient;
+async function serverTime(db: Db): Promise<string> {
+  return (await db.query<{ now: Date }>("SELECT clock_timestamp() AS now")).rows[0].now.toISOString();
+}
 type ConfigRow = { edition: string; rounds: number; heat_size: number; final_size: number; live: boolean; version: number };
-type HeatRow = { id: string; stage: "round" | "final"; round: number; number: number; status: HeatStatus; started_at: Date | null; finished_at: Date | null };
+type HeatRow = { id: string; stage: "round" | "final"; round: number; number: number; status: HeatStatus; started_at: Date | null; finished_at: Date | null; judges: string[]; duration_minutes: number; ends_at: Date | null };
 type SlotRow = { heat_id: string; kid_id: string; colour: Rashie };
 type WaveRow = { id: string; heat_id: string; kid_id: string; judge_email: string; wave: number; score: string };
 
@@ -85,13 +98,13 @@ export async function readEntrants(db: Db = getDatabase(), edition = CUP_TERM): 
 }
 
 export async function readHeats(db: Db = getDatabase(), edition = CUP_TERM): Promise<Heat[]> {
-  const heats = await db.query<HeatRow>("SELECT id, stage, round, number, status, started_at, finished_at FROM cup_heat WHERE edition=$1", [edition]);
+  const heats = await db.query<HeatRow>("SELECT id, stage, round, number, status, started_at, finished_at, judges, duration_minutes, ends_at FROM cup_heat WHERE edition=$1", [edition]);
   const slots = await db.query<SlotRow>(
     "SELECT s.heat_id, s.kid_id, s.colour FROM cup_heat_slot s JOIN cup_heat h ON h.id=s.heat_id WHERE h.edition=$1 ORDER BY array_position($2::text[], s.colour)",
     [edition, [...RASHIES]],
   );
   return heats.rows.map((row) => ({
-    id: row.id, stage: row.stage, round: row.round, number: row.number, status: row.status,
+    id: row.id, stage: row.stage, round: row.round, number: row.number, status: row.status, judges: row.judges, durationMinutes: row.duration_minutes, endsAt: row.ends_at?.toISOString() ?? null,
     startedAt: row.started_at?.toISOString() ?? null, finishedAt: row.finished_at?.toISOString() ?? null,
     slots: slots.rows.filter((slot) => slot.heat_id === row.id).map((slot) => ({ kidId: slot.kid_id, colour: slot.colour })),
   })).sort(byRunningOrder);
@@ -115,26 +128,38 @@ export async function readTicker(db: Db = getDatabase(), edition = CUP_TERM, lim
   return rows.map((row) => ({ id: row.id, kind: row.kind, message: row.message, at: row.created_at.toISOString() }));
 }
 
-export type CompState = { config: CupConfig; entrants: Entrant[]; heats: Heat[]; judges: Judge[]; waves: Wave[]; ticker: TickerItem[]; standings: Standing[] };
+export type CompState = { serverNow: string; parents: ParentProfile[]; volunteers: HeatVolunteer[]; config: CupConfig; entrants: Entrant[]; heats: Heat[]; judges: Judge[]; waves: Wave[]; ticker: TickerItem[]; standings: Standing[] };
 /** Everything the organiser board shows. */
 export async function loadState(edition = CUP_TERM): Promise<CompState> {
+  await expireHeats(edition);
   const db = getDatabase();
-  const [config, entrants, heats, judges, waves, ticker] = await Promise.all([
-    readConfig(db, edition), readEntrants(db, edition), readHeats(db, edition), readJudges(db, edition), readWaves(db, edition), readTicker(db, edition),
+  const [config, entrants, heats, judges, waves, ticker, parents, volunteers] = await Promise.all([
+    readConfig(db, edition), readEntrants(db, edition), readHeats(db, edition), readJudges(db, edition), readWaves(db, edition), readTicker(db, edition), readParentProfiles(), readVolunteers(db, edition),
   ]);
-  return { config, entrants, heats, judges, waves, ticker, standings: standings(config, entrants, heats, waves) };
+  return { serverNow: await serverTime(db), parents, volunteers, config, entrants, heats, judges, waves, ticker, standings: standings(config, entrants, heats, waves) };
 }
 
-/** A judge's sheet: the heats with who wears what, and only their own scores. */
+export async function readVolunteers(db: Db = getDatabase(), edition = CUP_TERM, email?: string): Promise<HeatVolunteer[]> {
+  return (await db.query<HeatVolunteer>(`SELECT v.heat_id AS "heatId", v.email, v.status FROM cup_heat_volunteer v JOIN cup_heat h ON h.id=v.heat_id
+    WHERE h.edition=$1 AND ($2::text IS NULL OR v.email=$2) ORDER BY v.requested_at`, [edition, email ?? null])).rows;
+}
+
+/** A live workspace for every signed-in parent, before and after approval. */
 export async function loadJudgeState(judge: JudgeAccess, edition = CUP_TERM) {
+  await expireHeats(edition);
   const db = getDatabase();
-  const [config, entrants, heats, waves] = await Promise.all([readConfig(db, edition), readEntrants(db, edition), readHeats(db, edition), readWaves(db, edition, judge.email)]);
-  const kids = Object.fromEntries(entrants.map((kid) => [kid.id, { id: kid.id, name: kid.name, age: kid.age, photoVersion: kid.photoVersion }]));
-  return { judge: { email: judge.email, name: judge.name, organiser: judge.organiser }, config: { rounds: config.rounds, heatSize: config.heatSize }, kids, heats, waves };
+  const [config, entrants, heats, waves, volunteers, profile] = await Promise.all([
+    readConfig(db, edition), readEntrants(db, edition), readHeats(db, edition), readWaves(db, edition, judge.email), readVolunteers(db, edition, judge.email), readOwnProfile(judge.email, judge.name),
+  ]);
+  const assignedKids = new Set(heats.filter((heat) => heat.judges.includes(judge.email)).flatMap((heat) => heat.slots.map((slot) => slot.kidId)));
+  const kids = Object.fromEntries(entrants.map((kid) => [kid.id, { id: kid.id, name: kid.name, age: kid.age, photoVersion: assignedKids.has(kid.id) ? kid.photoVersion : null }]));
+  return { serverNow: await serverTime(db), profile, volunteers, judge: { ...judge, name: profile.name || judge.name }, config: { rounds: config.rounds, heatSize: config.heatSize }, kids,
+    heats: heats.map((heat) => ({ ...heat, judges: heat.judges.filter((email) => email === judge.email) })), waves };
 }
 
 /** The public page: names and scores only, nothing else about the kids, and nothing at all until the board is live. */
 export async function loadLive(edition = CUP_TERM) {
+  await expireHeats(edition);
   const db = getDatabase();
   const config = await readConfig(db, edition);
   if (!config.live) return { live: false as const, name: CUP_LABEL };
@@ -144,7 +169,7 @@ export async function loadLive(edition = CUP_TERM) {
   const publicHeat = (heat: Heat) => {
     const results = heatResults(heat, waves);
     return {
-      id: heat.id, stage: heat.stage, round: heat.round, number: heat.number, label: heatLabel(heat), status: heat.status, startedAt: heat.startedAt,
+      id: heat.id, stage: heat.stage, round: heat.round, number: heat.number, label: heatLabel(heat), status: heat.status, startedAt: heat.startedAt, endsAt: heat.endsAt, durationMinutes: heat.durationMinutes,
       surfers: heat.slots.map((slot) => ({ name: names.get(slot.kidId) ?? "?", colour: slot.colour, score: results.get(slot.kidId)?.score ?? null })),
     };
   };
@@ -153,7 +178,7 @@ export async function loadLive(edition = CUP_TERM) {
   const finalHeat = heats.find((heat) => heat.stage === "final");
   const final = finalHeat ? publicHeat(finalHeat) : null;
   return {
-    live: true as const, name: CUP_LABEL, updatedAt: new Date().toISOString(), rounds: config.rounds,
+    live: true as const, name: CUP_LABEL, updatedAt: await serverTime(db), rounds: config.rounds,
     running, upNext, ticker,
     leaderboard: board.map(({ kidId: _kidId, ...row }) => row),
     final: final && { ...final, surfers: [...final.surfers].sort((a, b) => (b.score ?? -1) - (a.score ?? -1)) },
@@ -297,29 +322,85 @@ async function postTicker(client: Db, edition: string, kind: TickerItem["kind"],
   await client.query("INSERT INTO cup_ticker (edition, kind, message) VALUES ($1,$2,$3)", [edition, kind, message]);
 }
 
-/** Starts or finishes a heat and tells the ticker: who is in the water, then how it went. */
+async function postHeatResult(client: Db, heat: Heat, edition: string) {
+  const names = new Map((await readEntrants(client, edition)).map((kid) => [kid.id, kid.name]));
+  const results = heatResults(heat, await readWaves(client, edition));
+  const order = [...heat.slots].sort((a,b) => (results.get(b.kidId)?.score ?? -1) - (results.get(a.kidId)?.score ?? -1));
+  await postTicker(client, edition, "result", `🏁 ${heatLabel(heat)} done — ${order.map((slot) => `${names.get(slot.kidId) ?? "?"} ${formatScore(results.get(slot.kidId)?.score ?? null)}`).join(" · ")}`);
+}
+
+/** Persist elapsed heats on the next feed read, even if the organiser closed the app.
+ * The score permission check independently enforces the deadline on every write.
+ */
+export async function expireHeats(edition = CUP_TERM) {
+  if (!(await getDatabase().query("SELECT 1 FROM cup_heat WHERE edition=$1 AND status='running' AND ends_at<=clock_timestamp() LIMIT 1", [edition])).rowCount) return;
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const { rows } = await client.query<{ id: string }>("UPDATE cup_heat SET status='done',finished_at=ends_at WHERE edition=$1 AND status='running' AND ends_at<=clock_timestamp() RETURNING id", [edition]);
+    if (!rows.length) return;
+    const heats = await readHeats(client, edition);
+    for (const row of rows) await postHeatResult(client, heats.find((heat) => heat.id === row.id)!, edition);
+  });
+}
+
+export async function setHeatDuration(heatId: string, minutes: number, edition = CUP_TERM) {
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const result = await client.query("UPDATE cup_heat SET duration_minutes=$3 WHERE id=$1 AND edition=$2 AND status='scheduled'", [heatId, edition, minutes]);
+    if (!result.rowCount) throw new CompError("Set the duration before starting this heat.", 409);
+  });
+}
+
+/** Starting establishes one immutable deadline; duplicate starts never extend it. */
 export async function setHeatStatus(heatId: string, status: HeatStatus, edition = CUP_TERM) {
+  await expireHeats(edition);
   return transaction(async (client) => {
-    const { rows } = await client.query<HeatRow>(
-      `UPDATE cup_heat SET status=$3,
-        started_at=CASE WHEN $3='running' THEN now() WHEN $3='scheduled' THEN NULL ELSE started_at END,
-        finished_at=CASE WHEN $3='done' THEN now() ELSE NULL END
-      WHERE id=$1 AND edition=$2 RETURNING id, stage, round, number, status, started_at, finished_at`,
-      [heatId, edition, status],
-    );
-    const row = rows[0];
-    if (!row) throw new CompError("Heat not found.", 404);
-    if (status === "scheduled") return;
-    const [heat] = (await readHeats(client, edition)).filter((entry) => entry.id === heatId);
-    const names = new Map((await readEntrants(client, edition)).map((kid) => [kid.id, kid.name]));
-    const label = heatLabel(heat);
+    await readConfig(client, edition, true);
+    const before = (await readHeats(client, edition)).find((heat) => heat.id === heatId);
+    if (!before) throw new CompError("Heat not found.", 404);
+    if (before.status === status) return;
+    if (status === "running" && before.status !== "scheduled") throw new CompError("This heat has finished.", 409);
+    if (status === "scheduled" && await wavesIn(client, "h.id=$1", [heatId])) throw new CompError("A scored heat cannot be reset.", 409);
+    await client.query(`UPDATE cup_heat SET status=$3,
+      started_at=CASE WHEN $3='running' THEN clock_timestamp() WHEN $3='scheduled' THEN NULL ELSE started_at END,
+      ends_at=CASE WHEN $3='running' THEN clock_timestamp()+duration_minutes*interval '1 minute' WHEN $3='scheduled' THEN NULL ELSE ends_at END,
+      finished_at=CASE WHEN $3='done' THEN clock_timestamp() ELSE NULL END,
+      judges=CASE WHEN $3='scheduled' THEN '{}'::text[] ELSE judges END
+      WHERE id=$1 AND edition=$2`, [heatId, edition, status]);
+    if (status === "scheduled") { await client.query("DELETE FROM cup_heat_volunteer WHERE heat_id=$1", [heatId]); return; }
+    const heat = (await readHeats(client, edition)).find((entry) => entry.id === heatId)!;
     if (status === "running") {
-      await postTicker(client, edition, "heat", `🌊 ${label} is in the water — ${heat.slots.map((slot) => `${rashieDot[slot.colour]} ${names.get(slot.kidId) ?? "?"}`).join(" · ")}`);
-    } else {
-      const results = heatResults(heat, await readWaves(client, edition));
-      const order = [...heat.slots].sort((a, b) => (results.get(b.kidId)?.score ?? -1) - (results.get(a.kidId)?.score ?? -1));
-      await postTicker(client, edition, "result", `🏁 ${label} done — ${order.map((slot) => `${names.get(slot.kidId) ?? "?"} ${formatScore(results.get(slot.kidId)?.score ?? null)}`).join(" · ")}`);
-    }
+      const names = new Map((await readEntrants(client, edition)).map((kid) => [kid.id, kid.name]));
+      await postTicker(client, edition, "heat", `🌊 ${heatLabel(heat)} is in the water — ${heat.slots.map((slot) => `${rashieDot[slot.colour]} ${names.get(slot.kidId) ?? "?"}`).join(" · ")}`);
+    } else await postHeatResult(client, heat, edition);
+  });
+}
+
+export async function volunteerForHeat(heatId: string, email: string, edition = CUP_TERM) {
+  const profile = await readOwnProfile(email);
+  if (!profile.name) throw new CompError("Save your name in your parent profile first.", 400);
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const { rows } = await client.query<{ judges: string[]; open: boolean }>(`SELECT judges, status<>'done' AND (status='scheduled' OR ends_at>clock_timestamp()) AS open FROM cup_heat WHERE id=$1 AND edition=$2`, [heatId, edition]);
+    if (!rows[0]) throw new CompError("Heat not found.", 404);
+    if (!rows[0].open) throw new CompError("This heat has finished.", 409);
+    if (rows[0].judges.includes(email)) return;
+    // A declined request stays declined; repeat taps cannot re-open an organiser's decision.
+    await client.query("INSERT INTO cup_heat_volunteer(heat_id,email) VALUES($1,$2) ON CONFLICT DO NOTHING", [heatId, email]);
+  });
+}
+export async function reviewVolunteer(heatId: string, email: string, decision: "approved" | "declined", actor: string, edition = CUP_TERM) {
+  const profile = await readOwnProfile(email);
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const heat = await client.query("SELECT 1 FROM cup_heat WHERE id=$1 AND edition=$2 AND status<>'done' AND (status='scheduled' OR ends_at>clock_timestamp())", [heatId, edition]);
+    if (!heat.rowCount) throw new CompError("This heat is no longer open for judge selection.", 409);
+    const request = await client.query("UPDATE cup_heat_volunteer SET status=$3,reviewed_by=$4 WHERE heat_id=$1 AND email=$2 RETURNING email", [heatId, email, decision, actor]);
+    if (!request.rowCount) throw new CompError("Volunteer request not found.", 404);
+    if (decision === "approved") {
+      await client.query("INSERT INTO cup_judge(edition,email,name,created_by) VALUES($1,$2,$3,$4) ON CONFLICT(edition,email) DO UPDATE SET name=EXCLUDED.name", [edition,email,profile.name,actor]);
+      await client.query("UPDATE cup_heat SET judges=array_append(array_remove(judges,$2),$2) WHERE id=$1", [heatId,email]);
+    } else await client.query("UPDATE cup_heat SET judges=array_remove(judges,$2) WHERE id=$1", [heatId,email]);
   });
 }
 
@@ -329,9 +410,25 @@ export async function addJudge(judge: Judge, actor: string, edition = CUP_TERM) 
     [edition, judge.email, judge.name, actor],
   );
 }
+export async function setHeatJudges(heatId: string, judges: string[], edition = CUP_TERM) {
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const invited = new Set((await readJudges(client, edition)).map((judge) => judge.email));
+    if (judges.some((email) => !invited.has(email))) throw new CompError("Invite each judge before selecting them for a heat.", 400);
+    const { rowCount } = await client.query("UPDATE cup_heat SET judges=$3 WHERE id=$1 AND edition=$2 AND status<>'done' AND (status='scheduled' OR ends_at>clock_timestamp())", [heatId, edition, [...new Set(judges)]]);
+    if (!rowCount) throw new CompError("This heat is no longer open for judge selection.", 409);
+    await client.query("UPDATE cup_heat_volunteer SET status=CASE WHEN email=ANY($2::text[]) THEN 'approved' WHEN status='approved' THEN 'declined' ELSE status END WHERE heat_id=$1", [heatId, judges]);
+  });
+}
 export async function removeJudge(email: string, edition = CUP_TERM) {
-  const { rowCount } = await getDatabase().query("DELETE FROM cup_judge WHERE edition=$1 AND email=$2", [edition, email.trim().toLowerCase()]);
-  if (!rowCount) throw new CompError("Judge not found.", 404);
+  await transaction(async (client) => {
+    await readConfig(client, edition, true);
+    email = email.trim().toLowerCase();
+    const { rowCount } = await client.query("DELETE FROM cup_judge WHERE edition=$1 AND email=$2", [edition, email]);
+    if (!rowCount) throw new CompError("Judge not found.", 404);
+    await client.query("UPDATE cup_heat SET judges=array_remove(judges,$2) WHERE edition=$1", [edition, email]);
+    await client.query("UPDATE cup_heat_volunteer v SET status='declined' FROM cup_heat h WHERE h.id=v.heat_id AND h.edition=$1 AND v.email=$2", [edition,email]);
+  });
 }
 
 export async function addNote(message: string, edition = CUP_TERM) { await postTicker(getDatabase(), edition, "note", message); }
@@ -343,29 +440,50 @@ export async function removeTicker(id: string, edition = CUP_TERM) {
 
 // ---------- Judging ----------
 
-/** Appends a judge's next wave for a kid in a heat. */
-export async function addWave(judge: string, input: { heatId: string; kidId: string; score: number }, edition = CUP_TERM): Promise<Wave> {
+/** Serializes score writes with assignment changes: no organiser bypass. */
+async function requireHeatJudge(client: pg.PoolClient, heatId: string, judge: string, edition: string) {
+  await readConfig(client, edition, true);
+  const { rows } = await client.query<{ judges: string[]; open: boolean }>("SELECT judges, status='running' AND ends_at>clock_timestamp() AS open FROM cup_heat WHERE id=$1 AND edition=$2", [heatId, edition]);
+  if (!rows[0]) throw new CompError("Heat not found.", 404);
+  if (!rows[0].judges.includes(judge)) throw new CompError("You are not selected to judge this heat.", 403);
+  if (!rows[0].open) throw new CompError("Scoring is closed. You can score only while this heat is running.", 409);
+}
+
+/** Records a rating against the run number shared by all judges. */
+export async function addWave(judge: string, input: { heatId: string; kidId: string; score: number; wave?: number }, edition = CUP_TERM): Promise<Wave> {
   return transaction(async (client) => {
+    await requireHeatJudge(client, input.heatId, judge, edition);
     const slot = await client.query("SELECT 1 FROM cup_heat_slot s JOIN cup_heat h ON h.id=s.heat_id WHERE s.heat_id=$1 AND s.kid_id=$2 AND h.edition=$3 FOR UPDATE OF s", [input.heatId, input.kidId, edition]);
     if (!slot.rowCount) throw new CompError("That kid is not in this heat.", 404);
     const count = await client.query<{ n: number; next: number }>("SELECT count(*)::int AS n, COALESCE(max(wave),0)+1 AS next FROM cup_wave WHERE heat_id=$1 AND kid_id=$2 AND judge_email=$3", [input.heatId, input.kidId, judge]);
     if (count.rows[0].n >= MAX_WAVES) throw new CompError(`That is ${MAX_WAVES} waves already — only the best two count.`, 409);
+    const run = input.wave ?? count.rows[0].next;
+    if (run > MAX_WAVES) throw new CompError(`Choose a run from 1 to ${MAX_WAVES}.`, 400);
+    if ((await client.query("SELECT 1 FROM cup_wave WHERE heat_id=$1 AND kid_id=$2 AND judge_email=$3 AND wave=$4", [input.heatId, input.kidId, judge, run])).rowCount) throw new CompError("You already rated this run. Select its score to edit it.", 409);
     const { rows } = await client.query<WaveRow>(
-      "INSERT INTO cup_wave (heat_id, kid_id, judge_email, wave, score) VALUES ($1,$2,$3,$4,$5) RETURNING id, heat_id, kid_id, judge_email, wave, score",
-      [input.heatId, input.kidId, judge, count.rows[0].next, input.score],
+      "INSERT INTO cup_wave (heat_id, kid_id, judge_email, wave, score) SELECT $1,$2,$3,$4,$5 FROM cup_heat WHERE id=$1 AND status='running' AND ends_at>clock_timestamp() RETURNING id, heat_id, kid_id, judge_email, wave, score",
+      [input.heatId, input.kidId, judge, run, input.score],
     );
+    if (!rows[0]) throw new CompError("Scoring is closed for this heat.", 409);
     return waveFromRow(rows[0]);
   });
 }
-export async function updateWave(judge: string, id: string, score: number): Promise<Wave> {
-  const { rows } = await getDatabase().query<WaveRow>("UPDATE cup_wave SET score=$3, updated_at=now() WHERE id=$1 AND judge_email=$2 RETURNING id, heat_id, kid_id, judge_email, wave, score", [id, judge, score]);
-  if (!rows[0]) throw new CompError("Wave not found.", 404);
-  return waveFromRow(rows[0]);
+async function mutateWave(judge: string, id: string, score?: number, edition = CUP_TERM): Promise<Wave> {
+  return transaction(async (client) => {
+    await readConfig(client, edition, true);
+    const { rows } = await client.query<WaveRow>("SELECT w.* FROM cup_wave w JOIN cup_heat h ON h.id=w.heat_id WHERE w.id=$1 AND w.judge_email=$2 AND h.edition=$3", [id, judge, edition]);
+    if (!rows[0]) throw new CompError("Wave not found.", 404);
+    await requireHeatJudge(client, rows[0].heat_id, judge, edition);
+    const open = "EXISTS(SELECT 1 FROM cup_heat h WHERE h.id=cup_wave.heat_id AND h.status='running' AND h.ends_at>clock_timestamp())";
+    const changed = score === undefined
+      ? await client.query(`DELETE FROM cup_wave WHERE id=$1 AND ${open}`, [id])
+      : await client.query(`UPDATE cup_wave SET score=$2, updated_at=now() WHERE id=$1 AND ${open}`, [id,score]);
+    if (!changed.rowCount) throw new CompError("Scoring is closed for this heat.", 409);
+    return waveFromRow({ ...rows[0], ...(score === undefined ? {} : { score: String(score) }) });
+  });
 }
-export async function deleteWave(judge: string, id: string) {
-  const { rowCount } = await getDatabase().query("DELETE FROM cup_wave WHERE id=$1 AND judge_email=$2", [id, judge]);
-  if (!rowCount) throw new CompError("Wave not found.", 404);
-}
+export async function updateWave(judge: string, id: string, score: number): Promise<Wave> { return mutateWave(judge, id, score); }
+export async function deleteWave(judge: string, id: string) { await mutateWave(judge, id); }
 
 /** A kid's private profile photo for the judge sheet: only kids in the draw, only for judges and organisers. */
 export async function readEntrantPhoto(kidId: string, edition = CUP_TERM): Promise<Buffer | null> {

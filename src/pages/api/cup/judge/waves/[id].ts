@@ -10,7 +10,7 @@ export const PATCH: APIRoute = compRoute(async ({ request, params }) => {
   if (!uuid.safeParse(params.id).success) throw new CompError("Wave not found.", 404);
   const judge = await judgeAccess(request);
   const parsed = wavePatchSchema.safeParse(await readCompBody(request));
-  if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "Score a wave from 0.5 to 10, in halves." }, 400);
+  if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "Rate a run from 1 to 5 stars." }, 400);
   return json({ wave: await updateWave(judge.email, params.id!, parsed.data.score) });
 });
 

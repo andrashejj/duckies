@@ -11,7 +11,7 @@ export function Leaderboard({ rows, rounds, publicView = false }: { rows: (Omit<
         <tr>
           <th scope="col">#</th><th scope="col">Surfer</th><th scope="col" className="max-sm:hidden">Age</th>
           {Array.from({ length: rounds }, (_, i) => <th key={i} scope="col" className="text-right">R{i + 1}</th>)}
-          <th scope="col" className="text-right">Total</th><th scope="col" className="text-right">Final</th>
+          <th scope="col" className="text-right">Best 2 avg ★</th><th scope="col" className="text-right">Final</th>
         </tr>
       </thead>
       <tbody>

@@ -32,6 +32,11 @@ export async function canSignIn(email: string) {
   const result = await getDatabase().query('SELECT 1 FROM "Order" WHERE email = $1 LIMIT 1', [email.trim().toLowerCase()]);
   if(result.rowCount!==0)return true;
   if((await getDatabase().query("SELECT 1 FROM branding_access WHERE email=$1",[email])).rowCount!==0)return true;
+  // Guardians on a current signed registration can sign in to volunteer.
+  if ((await getDatabase().query(`SELECT 1 FROM club_kid k JOIN LATERAL (
+    SELECT snapshot->'registration' AS r FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1
+  ) w ON true, jsonb_array_elements(COALESCE(w.r->'guardians','[]'::jsonb)) g
+  WHERE k.archived_at IS NULL AND lower(trim(g->>'email'))=$1 LIMIT 1`, [email])).rowCount) return true;
   // Cup judges are invited by email; they need no club membership to score.
   return (await getDatabase().query("SELECT 1 FROM cup_judge WHERE email=$1 LIMIT 1",[email])).rowCount!==0;
 }
