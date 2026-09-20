@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
 import "../styles/global.css";
-import { membershipCovers, MINIMUM_AGE, waiver, WAIVER_VERSION } from "../lib/registration/policy";
+import { membershipCovers, RECOMMENDED_AGE, youngerChildWarning, waiver, WAIVER_VERSION } from "../lib/registration/policy";
 import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
@@ -32,7 +32,7 @@ const panel = `${registrationPanel} ${memberForm}`;
         <Cta id="register-another" href="/join" variant="secondary" class="mt-4">Register another child</Cta>
       </div>
     </section>
-    <form id="registration-form" data-waiver-version={WAIVER_VERSION} data-minimum-age={MINIMUM_AGE} class={memberForm} hidden>
+    <form id="registration-form" data-waiver-version={WAIVER_VERSION} class={`${memberForm} [&_[aria-invalid=true]]:border-alert! [&_[aria-invalid=true]]:outline-alert!`} hidden>
       <p id="invitation-label" class={registrationPanel}></p>
       <section id="cup-covers" hidden class={registrationPanel}>
         <h2 class="font-display text-2xl">What you're signing up for</h2>
@@ -46,14 +46,14 @@ const panel = `${registrationPanel} ${memberForm}`;
           <li>Club membership and regular training. The Cup is a one-day event; joining the club is a separate step.</li>
           <li>Gear: the club does not lend, rent or store boards, wetsuits or rashies.</li>
         </ul>
-        <p class="mt-4 text-sm">The Cup is for kids aged {MINIMUM_AGE} and up who swim confidently in open water, and at least one parent or guardian from every family stays on the beach for the whole afternoon.</p>
+        <p class="mt-4 text-sm">The Cup welcomes younger children too. Every child must swim confidently in open water, and at least one parent or guardian from every family stays on the beach for the whole afternoon.</p>
       </section>
       <section id="membership-covers" class={registrationPanel}>
         <h2 class="font-display text-2xl">What your membership covers</h2>
         <ul class="mt-3 list-disc space-y-2 pl-5">{membershipCovers.included.map(text => <li>{text}</li>)}<li id="cup-included" hidden>Entry to the {CUP_LABEL} on Friday 16 October at Tamarin Bay — free for members, no separate form.</li></ul>
         <h3 class="mt-5 font-bold">Nothing else is included</h3>
         <ul class="mt-2 list-disc space-y-2 pl-5">{membershipCovers.excluded.map(text => <li>{text}</li>)}</ul>
-        <p class="mt-4 text-sm">Sunset Duckies is for kids aged {MINIMUM_AGE} and up who swim confidently in open water, and at least one parent or guardian from every family joins them in the water for the full session.</p>
+        <p class="mt-4 text-sm">Sunset Duckies welcomes younger children too. Every child must swim confidently in open water, and at least one parent or guardian from every family joins them in the water for the full session.</p>
       </section>
       <div id="children" class={memberForm}></div>
       <div class={registrationPanel}>
@@ -83,7 +83,7 @@ const panel = `${registrationPanel} ${memberForm}`;
         <p id="waiver-scope" class="text-sm">You accept this once; it applies to every duckie you listed above, and each of them gets their own signed record.</p>
         <label class={registrationCheck}><input name="waiverAccepted" type="checkbox" required />I have read and accept the waiver above, for every child listed on this form.</label>
         <label class={registrationCheck}><input name="parentInWater" type="checkbox" required />At least one parent or guardian from our family will be in the water for the full session, every session.</label>
-        <label class={registrationCheck}><input name="swimming" type="checkbox" required />Every child listed above is {MINIMUM_AGE} or older and swims confidently in open water, including waves up to around 2 m and currents, as agreed with the head coach.</label>
+        <label class={registrationCheck}><input name="swimming" type="checkbox" required />Every child listed above swims confidently in open water, including waves up to around 2 m and currents, as agreed with the head coach.</label>
         <p class="text-sm">If you cannot confirm this, speak with the head coach before signing.</p>
         <label class={registrationCheck}><input name="reef" type="checkbox" required />{waiver.reef}</label>
         <label class={registrationCheck}><input name="gear" type="checkbox" required />{waiver.gear}</label>
@@ -105,6 +105,7 @@ const panel = `${registrationPanel} ${memberForm}`;
         <label class={registrationCheck}><input name="electronicConsent" type="checkbox" required />{waiver.electronic}</label>
         <p class="text-sm">Your signing time, browser details and IP address are kept in the private audit record. This link does not independently verify your identity.</p>
         <Cta id="submit-registration" type="submit" class="justify-self-start">Sign and submit</Cta>
+        <p id="validation-summary" class="text-sm font-bold text-alert" role="alert"></p>
         <p id="submit-status" class={memberStatus} role="status" aria-live="polite"></p>
       </fieldset>
     </form>
@@ -120,7 +121,8 @@ const panel = `${registrationPanel} ${memberForm}`;
         <button data-remove-photo type="button" class={textButton} hidden>Remove selected photo</button>
         <p data-photo-status role="status"></p>
         <label data-label="dateOfBirth">Date of birth<input data-field="dateOfBirth" type="date" required /></label>
-        <p class="text-sm">Duckies are {MINIMUM_AGE} or older. Younger sibling keen to join? Message the club first.</p>
+        <p class="text-sm">Most Duckies are {RECOMMENDED_AGE} or older. Younger children can join too.</p>
+        <p data-age-warning hidden class="rounded-xl border-2 border-alert p-3 text-sm font-bold text-alert" role="status" aria-live="polite">{youngerChildWarning}</p>
         <div data-rhythm class="contents">
           <label data-label="sessionsPerWeek">Training rhythm<select aria-label="Training rhythm" data-field="sessionsPerWeek" required><option value="">Choose…</option><option value="2">Twice a week — Monday + Friday</option><option value="1">Once a week — Monday or Friday</option></select></label>
           <p class="text-sm">Membership covers training and nothing else. You can change the rhythm with the coach during the semester.</p>
@@ -137,6 +139,9 @@ const panel = `${registrationPanel} ${memberForm}`;
 <script>
   import { recallFamily, rememberFamily } from "../lib/family-contact";
   import { guardianFields, textButton } from "../lib/members-ui";
+  import { ageAt } from "../lib/registration/age";
+  import { RECOMMENDED_AGE } from "../lib/registration/policy";
+  import { registrationValidation } from "../lib/registration/form-validation";
   type Guardian = { name: string; relationship: string; phone: string; email: string };
   type Registration = Record<string, any> & { guardians: Guardian[] };
   type SignedChild = { kidId: string; registration: Registration; hasPhoto: boolean };
@@ -149,6 +154,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   const result = document.querySelector<HTMLElement>("#signed-result")!;
   const editButton = document.querySelector<HTMLButtonElement>("#edit-registration")!;
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+  const validation = registrationValidation(form, document.querySelector<HTMLElement>("#validation-summary")!);
   let version = "";
   let cup = false;
   let signed: Signed = null;
@@ -159,10 +165,8 @@ const panel = `${registrationPanel} ${memberForm}`;
   let photoBusy = 0;
   let maxChildren = 6;
   const headers = { Authorization: `Bearer ${token}` };
-  // Kids must already be MINIMUM_AGE; the browser refuses later dates before the server does.
-  const minimumAge = Number(form.dataset.minimumAge);
-  const latestBirthday = new Date(); latestBirthday.setFullYear(latestBirthday.getFullYear() - minimumAge);
-  const latestBirthdayValue = latestBirthday.toISOString().slice(0, 10);
+  // Age is guidance, not a registration gate. Only future birthdays are invalid.
+  const latestBirthdayValue = new Date().toISOString().slice(0, 10);
   const guardians = document.querySelector<HTMLElement>("#guardians")!;
   const addButton = document.querySelector<HTMLButtonElement>("#add-guardian")!;
   function addGuardian(values?: Guardian) {
@@ -252,12 +256,26 @@ const panel = `${registrationPanel} ${memberForm}`;
     if (kidId) block.dataset.kidId = kidId;
     for (const label of block.querySelectorAll<HTMLElement>("[data-label]"))
       label.dataset.text = label.firstChild!.textContent ?? "";
-    childField(block, "dateOfBirth").max = latestBirthdayValue;
+    const birthday = childField(block, "dateOfBirth");
+    birthday.max = latestBirthdayValue;
+    const ageWarning = block.querySelector<HTMLElement>("[data-age-warning]")!;
+    ageWarning.id = `child-${block.dataset.slot}-age-warning`;
+    function updateAgeWarning() {
+      const age = ageAt(birthday.value);
+      ageWarning.hidden = !birthday.value || !birthday.validity.valid || age < 0 || age >= RECOMMENDED_AGE || !Number.isFinite(age);
+      const descriptions = (birthday.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(id => id && id !== ageWarning.id);
+      if (!ageWarning.hidden) descriptions.push(ageWarning.id);
+      if (descriptions.length) birthday.setAttribute("aria-describedby", descriptions.join(" "));
+      else birthday.removeAttribute("aria-describedby");
+    }
+    birthday.addEventListener("input", updateAgeWarning);
+    birthday.addEventListener("change", updateAgeWarning);
     if (values) {
       for (const name of ["childName", "dateOfBirth", "medicalNotes"])
         childField(block, name).value = values[name] ?? "";
       (block.querySelector('[data-field="sessionsPerWeek"]') as HTMLSelectElement).value = values.sessionsPerWeek ?? "";
     }
+    updateAgeWarning();
     block.querySelector<HTMLButtonElement>("[data-remove-child]")!.addEventListener("click", () => {
       // Drop the staged photo with the block, or it would follow the slot.
       void uploadPhoto(block, true).catch(() => {});
@@ -329,6 +347,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   }
   function edit() {
     if (!signed) return;
+    validation.reset();
     supersedes = signed.id; prefill(signed);
     result.hidden = true; form.hidden = false; submitStatus.textContent = "";
     status.textContent = "Editing the signed details. Signing again creates a corrected record, and you can add a duckie you missed.";
@@ -367,7 +386,10 @@ const panel = `${registrationPanel} ${memberForm}`;
     } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again."; }
   }
   form.addEventListener("submit", async event => {
-    event.preventDefault(); if (submitting || photoBusy) return; submitting=true;
+    event.preventDefault(); if (submitting || photoBusy) return;
+    submitStatus.textContent = "";
+    if (!validation.validate()) return;
+    submitting=true;
     submit.disabled=true; submit.textContent = "Saving…";
     const values = new FormData(form);
     const body: Record<string, unknown> = { version, signature };
