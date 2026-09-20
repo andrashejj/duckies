@@ -223,6 +223,7 @@ model ClubKid {
   club_cup_entry         ClubCupEntry[]
   cup_heat_slot          CupHeatSlot[]
   cup_wave               CupWave[]
+  club_birth_date_correction ClubBirthDateCorrection[]
   club_payment_event     ClubPaymentEvent[]
   registrationLinks      ClubRegistrationLink[]
   club_signed_waiver     ClubSignedWaiver[]
@@ -351,6 +352,7 @@ model ClubSignedWaiver {
   pdf_sha256             String
   seal                   String
   public_key             String
+  club_birth_date_correction ClubBirthDateCorrection[]
   club_kid               ClubKid               @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_registration_link ClubRegistrationLink @relation(fields: [link_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_semester          ClubSemester          @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -662,3 +664,20 @@ enum OrderEventType {
 }
 
 
+
+// Append-only club corrections; the original signed waiver stays unchanged.
+model ClubBirthDateCorrection {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kid_id String @db.Uuid
+  waiver_id String @db.Uuid
+  previous_date DateTime @db.Date
+  date_of_birth DateTime @db.Date
+  reason String
+  actor_email String
+  recorded_at DateTime @default(dbgenerated("clock_timestamp()")) @db.Timestamptz(6)
+  club_kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_signed_waiver ClubSignedWaiver @relation(fields: [waiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([waiver_id, recorded_at(sort: Desc)], map: "club_birth_date_correction_waiver")
+  @@map("club_birth_date_correction")
+}

@@ -61,6 +61,10 @@ export function kidOverview(
     "Age",
     r ? `${kid.age} years · born ${r.dateOfBirth}` : "Awaiting registration",
   );
+  if (kid.birthDateCorrection) {
+    const correction = kid.birthDateCorrection;
+    fact("Birth date correction", `Club corrected ${correction.previousDate} to ${correction.dateOfBirth} on ${new Date(correction.recordedAt).toLocaleDateString()} (${correction.actorEmail}). ${correction.reason} The original signed waiver is unchanged.`);
+  }
   fact(
     "Legal guardians",
     r

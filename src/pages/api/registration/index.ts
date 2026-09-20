@@ -11,6 +11,7 @@ import {
   safeRoute,
 } from "../../../lib/registration/http";
 import { CUP_TERM, isCupTerm } from "../../../lib/registration/cup";
+import { correctedBirthDateSql } from "../../../lib/registration/birth-date-corrections";
 import { MAX_CHILDREN } from "../../../lib/registration/schema";
 import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
@@ -28,7 +29,7 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
   // prefills from earlier records, so it cannot leak another guardian's details.
   // One signing covers the whole family, so all of its children come back.
   const { rows } = await getDatabase().query(
-    `SELECT w.id, w.kid_id, w.signing_group, w.snapshot->'registration' AS registration,
+    `SELECT w.id, w.kid_id, w.signing_group, jsonb_set(w.snapshot->'registration', '{dateOfBirth}', to_jsonb(${correctedBirthDateSql("w")})) AS registration,
       EXISTS(SELECT 1 FROM club_kid_photo WHERE kid_id=w.kid_id) AS has_photo
     FROM club_signed_waiver w
     WHERE w.link_id=$1 AND w.signing_group=(
