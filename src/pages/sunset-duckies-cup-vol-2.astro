@@ -356,6 +356,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
 <script>
   import { authClient } from "../lib/auth-client";
   import { kidButton, kidRow, kidTag } from "../lib/cup-ui";
+  import { prefillFamily, rememberFamily } from "../lib/family-contact";
   // Members sign in and tick their kids (the waiver is on file); new families
   // continue to the private registration link the server issues for them.
   const form = document.querySelector<HTMLFormElement>("[data-cup-register]")!;
@@ -398,6 +399,10 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
   });
   syncPanels();
   syncPlan();
+  // Back for a sibling: the parent's details carry over from the last entry.
+  // Only a visit aimed at the form takes the cursor — this is a long page.
+  if (prefillFamily(form) && location.hash === "#register")
+    form.querySelector<HTMLInputElement>('input[name="kidName"]')!.focus({ preventScroll: true });
   // Wrong email? The login page bounces a live session straight back here, so sign out first.
   for (const button of form.querySelectorAll<HTMLButtonElement>("[data-switch-account]")) {
     button.addEventListener("click", async () => {
@@ -482,6 +487,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
       const response = await fetch("/api/cup/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
+      rememberFamily({ contactName: String(body.contactName ?? ""), contactPhone: String(body.contactPhone ?? "") });
       if (data.status === "member") {
         status.textContent = `Looks like ${data.kidName} already has a club registration — no form needed. Pick "Already a Sunset Duckie" above and sign in to register.`;
       } else if (data.status === "signed") {

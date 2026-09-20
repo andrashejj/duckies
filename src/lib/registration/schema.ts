@@ -25,62 +25,115 @@ const guardian = z
       .transform((value) => value.toLowerCase()),
   })
   .strict();
+// A family signs one waiver for all their children, so the form's fields come
+// in two halves: what differs per child, and what the guardian fills in and
+// signs once. A stored record is one of each — a child, with the signature
+// that covers them — so a kid's file reads exactly as it always has.
+const childFields = {
+  childName: text(80),
+  dateOfBirth: z.iso
+    .date()
+    .refine((value) => {
+      const date = new Date(value + "T00:00:00Z");
+      const earliest = new Date();
+      earliest.setUTCFullYear(earliest.getUTCFullYear() - 25);
+      return date <= new Date() && date >= earliest;
+    }, "Enter a valid child's date of birth.")
+    .refine(
+      (value) => ageAt(value) >= MINIMUM_AGE,
+      `Sunset Duckies is for kids aged ${MINIMUM_AGE} and up. Message the club if your child is younger.`,
+    ),
+  medicalNotes: z.string().trim().max(2000),
+  // Training is all that membership covers; families pick the rhythm. A cup
+  // entry has no training, so the server only insists on it for semesters.
+  sessionsPerWeek: z.enum(["1", "2"]).optional(),
+};
+const signedOnceFields = {
+  version: z.literal(WAIVER_VERSION),
+  guardians: z.array(guardian).min(1).max(4),
+  emergencyName: text(120),
+  emergencyRelationship: text(60),
+  emergencyPhone: phone,
+  media: z.enum(["yes", "no"]),
+  parentInWater: z.literal(true),
+  swimming: z.literal(true),
+  reef: z.literal(true),
+  gear: z.literal(true),
+  waiverAccepted: z.literal(true),
+  electronicConsent: z.literal(true),
+  signerName: text(120),
+  // Optional drawn signature in normalised coordinates. Typed signatures remain accessible.
+  signature: z
+    .array(
+      z
+        .array(z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]))
+        .min(2)
+        .max(600),
+    )
+    .max(30)
+    .default([]),
+};
+const signerIsFirstGuardian: [
+  (value: { signerName: string; guardians: { name: string }[] }) => boolean,
+  { message: string; path: PropertyKey[] },
+] = [
+  (value) => value.signerName.toLowerCase() === value.guardians[0].name.toLowerCase(),
+  {
+    message: "The signer must be the first legal guardian listed.",
+    path: ["signerName"],
+  },
+];
+// One stored record: the shape a signed waiver, its PDF and the roster read.
 export const registrationSchema = z
   .object({
-    version: z.literal(WAIVER_VERSION),
-    childName: text(80),
-    dateOfBirth: z.iso
-      .date()
-      .refine((value) => {
-        const date = new Date(value + "T00:00:00Z");
-        const earliest = new Date();
-        earliest.setUTCFullYear(earliest.getUTCFullYear() - 25);
-        return date <= new Date() && date >= earliest;
-      }, "Enter a valid child's date of birth.")
-      .refine(
-        (value) => ageAt(value) >= MINIMUM_AGE,
-        `Sunset Duckies is for kids aged ${MINIMUM_AGE} and up. Message the club if your child is younger.`,
-      ),
-    guardians: z.array(guardian).min(1).max(4),
-    emergencyName: text(120),
-    emergencyRelationship: text(60),
-    emergencyPhone: phone,
-    medicalNotes: z.string().trim().max(2000),
-    // Training is all that membership covers; families pick the rhythm. A cup
-    // entry has no training, so the server only insists on it for semesters.
-    sessionsPerWeek: z.enum(["1", "2"]).optional(),
-    media: z.enum(["yes", "no"]),
-    parentInWater: z.literal(true),
-    swimming: z.literal(true),
-    reef: z.literal(true),
-    gear: z.literal(true),
-    waiverAccepted: z.literal(true),
-    electronicConsent: z.literal(true),
-    signerName: text(120),
-    // Optional drawn signature in normalised coordinates. Typed signatures remain accessible.
-    signature: z
-      .array(
-        z
-          .array(z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]))
-          .min(2)
-          .max(600),
-      )
-      .max(30)
-      .default([]),
+    ...signedOnceFields,
+    ...childFields,
     // Set when a guardian re-signs through the same link to correct details:
     // the id of the record they are replacing. Absent on a first signature.
     supersedes: z.uuid().optional(),
   })
   .strict()
-  .refine(
-    (value) =>
-      value.signerName.toLowerCase() === value.guardians[0].name.toLowerCase(),
-    {
-      message: "The signer must be the first legal guardian listed.",
-      path: ["signerName"],
-    },
-  );
+  .refine(...signerIsFirstGuardian);
 export type RegistrationInput = z.infer<typeof registrationSchema>;
+// How many duckies one family can put on a single form.
+export const MAX_CHILDREN = 6;
+// What the form posts: every child, and the one signature that covers them.
+export const submissionSchema = z
+  .object({
+    ...signedOnceFields,
+    children: z
+      .array(
+        z
+          .object({
+            ...childFields,
+            // The kid this block already signed for, on a correction. A child
+            // being added for the first time has none.
+            kidId: z.uuid().optional(),
+            // Stable while the form is open, so a staged photo keeps finding
+            // its child even as blocks are added and removed around it.
+            slot: z.int().min(0).max(999),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(MAX_CHILDREN)
+      .refine(
+        (children) => new Set(children.map((child) => child.slot)).size === children.length,
+        "Reload the form and fill in the children again.",
+      )
+      .refine(
+        (children) =>
+          new Set(children.map((child) => child.childName.trim().toLowerCase())).size ===
+          children.length,
+        "Two children on this form have the same name. Give each their full name.",
+      ),
+    // The signing this one corrects, identified by the group it produced.
+    supersedes: z.uuid().optional(),
+  })
+  .strict()
+  .refine(...signerIsFirstGuardian);
+export type SubmissionInput = z.infer<typeof submissionSchema>;
+export type ChildInput = SubmissionInput["children"][number];
 export function ageAt(dateOfBirth: string, today = new Date()) {
   const birth = new Date(dateOfBirth + "T00:00:00Z");
   let age = today.getUTCFullYear() - birth.getUTCFullYear();

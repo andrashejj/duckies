@@ -24,7 +24,10 @@ const description = `Join Sunset Duckies: register your child and sign the club 
             Register your <Underline>duckie</Underline>.
           </SectionTitle>
           <p class={`mt-4 max-w-xl ${bodyCopy}`}>
-            One kid at a time. Name and your number here, then the real form: guardians, emergency contact, the club waiver and your signature — about five minutes, no login. Your duckie is on the list as <strong class="text-fg">pending</strong> straight away; the place is confirmed once the semester fee is paid and Andras marks it.
+            One kid's name and your number here, then the real form: guardians, emergency contact, the club waiver and your signature — about five minutes, no login. Your duckie is on the list as <strong class="text-fg">pending</strong> straight away; the place is confirmed once the semester fee is paid and Andras marks it.
+          </p>
+          <p class={`mt-4 max-w-xl ${bodyCopy}`}>
+            Two duckies, or three? Add the brothers and sisters on that form — guardians, waiver and signature are filled in once and cover all of them, and one family fee of Rs {site.membership.familyFeeMur.toLocaleString("en-US")} covers the lot for the semester.
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
             <Chip>{site.membership.feeLabel}</Chip>
@@ -38,6 +41,7 @@ const description = `Join Sunset Duckies: register your child and sign the club 
         </div>
 
         <form data-join class="grid gap-5 rounded-sticker border-2 border-edge bg-surface p-6 shadow-sticker-md sm:p-8">
+          <p data-join-again hidden class="rounded-xl border-2 border-dashed border-edge bg-highlight/20 px-4 py-3 text-sm leading-6 text-fg/80">Another duckie for the same family — your name and number are already filled in. Add the new kid's name, then sign their own waiver.</p>
           <label class="grid gap-2">
             <span class={label}>Kid's name</span>
             <input class={field} name="kidName" required maxlength="80" autocomplete="off" placeholder="Full name" />
@@ -52,7 +56,7 @@ const description = `Join Sunset Duckies: register your child and sign the club 
               <input class={field} name="contactPhone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+230 5…" />
             </label>
           </div>
-          <p class="text-sm leading-6 text-fg/70">Next up: the registration form. Have the second guardian's details and your emergency contact handy.</p>
+          <p class="text-sm leading-6 text-fg/70">Next up: the registration form, where you add any brothers and sisters. Have the second guardian's details and your emergency contact handy.</p>
           <div class="flex flex-wrap items-center gap-4">
             <Cta type="submit">Start the registration</Cta>
             <span class="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/60">≈ 5 min · no login</span>
@@ -66,11 +70,19 @@ const description = `Join Sunset Duckies: register your child and sign the club 
 </BaseLayout>
 
 <script>
+  import { prefillFamily, rememberFamily } from "../lib/family-contact";
   // The server creates the pending kid and a private link; the family goes straight on to the form.
   const form = document.querySelector<HTMLFormElement>("[data-join]")!;
   const status = form.querySelector<HTMLElement>("[data-join-status]")!;
   const next = form.querySelector<HTMLAnchorElement>("[data-join-link]")!;
   const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  const again = form.querySelector<HTMLElement>("[data-join-again]")!;
+  // Back for a sibling: the parent's details are already known, so the form
+  // opens on the one thing that changes — the new kid's name.
+  if (prefillFamily(form)) {
+    again.hidden = false;
+    form.querySelector<HTMLInputElement>('input[name="kidName"]')!.focus({ preventScroll: true });
+  }
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = new FormData(form);
@@ -82,6 +94,7 @@ const description = `Join Sunset Duckies: register your child and sign the club 
       const response = await fetch("/api/club/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Couldn't start the registration. Try again in a sec.");
+      rememberFamily({ contactName: String(body.contactName ?? ""), contactPhone: String(body.contactPhone ?? "") });
       if (data.status === "signed") {
         status.textContent = `${data.kidName} is already registered for this semester — form and waiver done. Anything to correct? Message Andras for a fresh link.`;
       } else {

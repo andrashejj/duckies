@@ -11,12 +11,16 @@ import {
 import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
 export const prerender = false;
-const update = safeRoute(async ({ request, clientAddress }) => {
+const update = safeRoute(async ({ request, url, clientAddress }) => {
   if (!sameOrigin(request))
     throw new RegistrationError("Invalid request origin.", 403);
   await registrationRateLimit(clientAddress);
   const hash = bearer(request);
   await linkInfo(hash); // A signed link stays open for corrections until it expires.
+  // Which child on the form this photo belongs to.
+  const slot = Number(url.searchParams.get("slot") ?? "0");
+  if (!Number.isInteger(slot) || slot < 0 || slot > 999)
+    throw new RegistrationError("Reload the form and choose the photo again.");
   const image = request.method === "PUT" ? await readPhoto(request) : null;
   const db = await getDatabase().connect();
   try {
@@ -32,13 +36,14 @@ const update = safeRoute(async ({ request, clientAddress }) => {
       );
     if (image)
       await db.query(
-        "INSERT INTO club_registration_photo(link_id,image) VALUES($1,$2) ON CONFLICT(link_id) DO UPDATE SET image=$2,uploaded_at=now()",
-        [rows[0].id, image],
+        "INSERT INTO club_registration_photo(link_id,slot,image) VALUES($1,$2,$3) ON CONFLICT(link_id,slot) DO UPDATE SET image=$3,uploaded_at=now()",
+        [rows[0].id, slot, image],
       );
     else
-      await db.query("DELETE FROM club_registration_photo WHERE link_id=$1", [
-        rows[0].id,
-      ]);
+      await db.query(
+        "DELETE FROM club_registration_photo WHERE link_id=$1 AND slot=$2",
+        [rows[0].id, slot],
+      );
     await db.query(
       "DELETE FROM club_registration_photo p USING club_registration_link l WHERE p.link_id=l.id AND (l.expires_at<now() OR l.revoked_at IS NOT NULL)",
     );

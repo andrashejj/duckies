@@ -23,8 +23,8 @@ async function seedKids() {
     await db.query("INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone) VALUES ($1,$2,true,'Parent','+230 5000 0000')", [rows[0].id, CUP_TERM]);
     const link = await db.query("INSERT INTO club_registration_link (kid_id, token_hash, term, expires_at, completed_at) VALUES ($1,$2,'2026-S2',now()+interval '1 day',now()) RETURNING id", [rows[0].id, `hash-${kid.name}`]);
     await db.query(
-      `INSERT INTO club_signed_waiver (id,kid_id,link_id,term,signed_at,snapshot,canonical_payload,payload_sha256,pdf,pdf_sha256,seal,public_key)
-      VALUES (gen_random_uuid(),$1,$2,'2026-S2',now(),$3,'{}','x','\\x00','x','x','x')`,
+      `INSERT INTO club_signed_waiver (id,kid_id,link_id,term,signing_group,signed_at,snapshot,canonical_payload,payload_sha256,pdf,pdf_sha256,seal,public_key)
+      VALUES (gen_random_uuid(),$1,$2,'2026-S2',gen_random_uuid(),now(),$3,'{}','x','\\x00','x','x','x')`,
       [rows[0].id, link.rows[0].id, JSON.stringify({ registration: { childName: kid.name, dateOfBirth: kid.dob } })],
     );
   }

@@ -15,6 +15,7 @@ const galleryFiles = readdirSync('src/assets/gallery', { recursive: true, withFi
 // https://astro.build/config
 export default defineConfig({
   site: site.url,
+  devToolbar: { enabled: !process.env.DUCKIES_TEST_SERVER },
   adapter: vercel({ includeFiles: ["src/assets/NotoSans-Regular.ttf", "src/assets/NotoSans-LICENSE.txt", ...galleryFiles] }),
   integrations: [react()],
   vite: {
