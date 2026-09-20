@@ -1545,11 +1545,11 @@ export const site = {
       memberLabel: "Already a Sunset Duckie",
       memberSub: "club member · surfs free",
       guestLabel: "Not a member (yet)",
-      guestSub: "new family · Rs 1,000",
+      guestSub: "Cup entry or semester membership",
       // Signed in, but no kid is registered under that email.
       noKidsTitle: "No duckies under this email.",
       noKidsText:
-        "We match kids to the guardian email on their club registration. Registered under another address — yours or the other parent's? Sign in with that one. New to the club? Register your kid as a non-member — Rs 1,000 entry, no login.",
+        "We match kids to the guardian email on their club registration. Registered under another address — yours or the other parent's? Sign in with that one. New to the club? Choose Cup-only entry or semester membership below, no login needed.",
       memberHint:
         "Sign in with the email on your club registration and we bring you back here to tick who's coming. Your waiver already covers the Cup — no form.",
       guestHint:
@@ -1557,8 +1557,8 @@ export const site = {
       // The Cup alone, or the club with it — the one choice a new family makes.
       planLabel: "Just the Cup, or the whole semester?",
       plans: [
-        { value: "cup", title: "Just the Cup", price: "Rs 1,000", text: "One afternoon of heats on 16 October. No training, no membership.", submitLabel: "Count us in" },
-        { value: "club", title: "Join the club too", price: "Rs 3,000 · semester", text: "Training twice a week all semester — and the Cup is free for members.", submitLabel: "Join the club + Cup" },
+        { value: "cup", title: "Just the Cup", price: "Rs 1,000 per child", text: "One afternoon of heats on 16 October. No training, no membership.", submitLabel: "Count us in" },
+        { value: "club", title: "Join the club too", price: "Rs 3,000 per child · Rs 5,000 per family", text: "Per semester, including regular training and free Cup entry. Add siblings on the registration form.", submitLabel: "Join the club + Cup" },
       ],
       submitLabel: "Count us in",
     },
