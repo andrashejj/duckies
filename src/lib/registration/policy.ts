@@ -1,6 +1,7 @@
 // Version changes must be explicit: signed records retain their exact text.
-export const WAIVER_VERSION = "2026-09-17.1";
-export const MINIMUM_AGE = 7;
+export const WAIVER_VERSION = "2026-09-20.1";
+export const RECOMMENDED_AGE = 7;
+export const youngerChildWarning = `Most Duckies are ${RECOMMENDED_AGE} or older. Younger children can join; please discuss their readiness and support needs with the head coach before their first session. The swimming and parent-in-the-water requirements still apply.`;
 export const membershipCovers = {
   included: [
     "Regular club training on Monday and Friday, 4–6pm, at Tamarin Bay — you choose one or two sessions a week.",
@@ -17,7 +18,8 @@ export const waiver = {
   acknowledgements: [
     "Surfing is a physical activity that carries an inherent risk of injury, including from waves, rocks, reef, board contact, marine life, sun exposure, and other ocean conditions.",
     "Sunset Duckies is volunteer-run by coaches and parents. Reasonable safety measures are taken, but participation remains at our own risk.",
-    `My child is at least ${MINIMUM_AGE} years old and can swim confidently in open water, including in waves up to around 2 m and in currents — as agreed with the head coach.`,
+    "My child can swim confidently in open water, including in waves up to around 2 m and in currents — as agreed with the head coach.",
+    youngerChildWarning,
     "At least one parent or guardian from our family will be in the water for the full duration of every session.",
     "From time to time the crew surfs the reef at Dal instead of the bay. My child may join those sessions when the coach calls them, under the same rules.",
     "The organisers may take reasonable medical decisions in an emergency if I cannot be reached immediately.",

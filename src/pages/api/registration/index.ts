@@ -16,7 +16,7 @@ import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
 import {
   membershipCovers,
-  MINIMUM_AGE,
+  RECOMMENDED_AGE,
   waiver,
   WAIVER_VERSION,
 } from "../../../lib/registration/policy";
@@ -68,7 +68,7 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
       : null,
     maxChildren: MAX_CHILDREN,
     version: WAIVER_VERSION,
-    minimumAge: MINIMUM_AGE,
+    recommendedAge: RECOMMENDED_AGE,
     covers: membershipCovers,
     waiver,
   });

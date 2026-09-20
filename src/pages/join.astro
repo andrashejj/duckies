@@ -7,7 +7,7 @@ import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import StickerCard from "../components/ui/StickerCard.astro";
 import Underline from "../components/ui/Underline.astro";
-import { MINIMUM_AGE } from "../lib/registration/policy";
+import { RECOMMENDED_AGE } from "../lib/registration/policy";
 import { bodyCopy, field, label } from "../lib/ui";
 
 const title = `Register your duckie | ${site.name}`;
@@ -31,7 +31,7 @@ const description = `Join Sunset Duckies: register your child and sign the club 
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
             <Chip>{site.membership.feeLabel}</Chip>
-            <Chip>Age {MINIMUM_AGE}+</Chip>
+            <Chip>Usually {RECOMMENDED_AGE}+ · younger kids welcome</Chip>
             <Chip>Swims confidently in open water</Chip>
             <Chip>A parent in the water, every session</Chip>
           </div>

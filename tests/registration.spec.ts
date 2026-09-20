@@ -232,7 +232,6 @@ test("mandatory acknowledgements, explicit media choice, legal guardian and cons
     { media: undefined },
     { signerName: "Someone else" },
     { dateOfBirth: "2100-01-01" },
-    { dateOfBirth: "2021-01-01" }, // under the minimum age
     { version: "outdated" },
     { paymentStatus: "paid" },
     { childId: "forged" },
@@ -443,7 +442,6 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   await expect(page.getByText("Nothing else is included", { exact: true })).toBeVisible();
   expect(await page.locator('[name="division"], [name="rashieSize"], [name="membership"]').count()).toBe(0);
   await page.getByLabel("Date of birth", { exact: true }).fill("2017-10-01");
-  await page.getByLabel("Training rhythm", { exact: true }).selectOption("2");
   for (const [label, value] of [
     ["Full name · guardian 1", "Test Guardian"],
     ["Relationship · guardian 1", "Father"],
@@ -477,6 +475,46 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   for (const box of await page.locator('#registration-form input[type="checkbox"][required]').all())
     await box.check();
   await page.locator('input[name="media"][value="no"]').check();
+  let submissions = 0;
+  page.on("request", request => {
+    if (new URL(request.url()).pathname === "/api/registration" && request.method() === "POST") submissions++;
+  });
+  const submit = page.locator("#submit-registration");
+  const rhythm = page.getByLabel("Training rhythm", { exact: true });
+  await submit.click();
+  await expect(rhythm).toBeFocused();
+  await expect(rhythm).toBeInViewport();
+  await expect(rhythm).toHaveAttribute("aria-invalid", "true");
+  await expect(rhythm).toHaveAccessibleDescription("Choose a training rhythm.");
+  await expect(page.getByText("Choose a training rhythm.", { exact: true })).toBeInViewport();
+  await expect(page.locator("#validation-summary")).toContainText("highlighted fields");
+  expect(submissions).toBe(0);
+  await rhythm.selectOption("2");
+  await expect(rhythm).not.toHaveAttribute("aria-invalid");
+  await expect(page.locator("#validation-summary")).toBeEmpty();
+
+  // Invalid values and unchecked acknowledgements receive the same visible
+  // feedback, and fixing one field moves the next attempt to the next error.
+  const email = page.getByLabel("Email · guardian 1", { exact: true });
+  const birthday = page.getByLabel("Date of birth", { exact: true });
+  const consent = page.locator('[name="electronicConsent"]');
+  await email.fill("not-an-email");
+  await birthday.fill("2100-01-01");
+  await consent.uncheck();
+  await submit.click();
+  await expect(birthday).toBeFocused();
+  await expect(birthday).toBeInViewport();
+  await expect(birthday).toHaveAccessibleDescription("Date of birth cannot be in the future.");
+  await expect(email).toHaveAccessibleDescription(/Enter a valid email address/);
+  await expect(consent).toHaveAccessibleDescription("Tick this box to continue.");
+  expect(submissions).toBe(0);
+  await birthday.fill("2017-10-01");
+  await email.fill("guardian@example.com");
+  await submit.click();
+  await expect(consent).toBeFocused();
+  await expect(consent).toBeInViewport();
+  await consent.check();
+  await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
   await page
     .getByRole("button", { name: /^Sign and submit/ })
     .click();
@@ -695,4 +733,60 @@ test("the signed page leads back to a fresh sign-up that remembers the family", 
   await expect(join.getByLabel("Parent / guardian")).toHaveValue("Later Parent");
   await expect(join.getByLabel("WhatsApp number")).toHaveValue("+230 5733 4455");
   await expect(join.getByLabel("Kid's name")).toHaveValue("");
+});
+
+test("younger children can sign up with parent guidance and a private organiser age warning", async ({ request, page }, testInfo) => {
+  const invitation = await issue(request);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(invitation.url);
+  await expect(page.locator("#registration-form")).toBeVisible();
+  const birthday = page.getByLabel("Date of birth", { exact: true });
+  const warning = page.locator("[data-age-warning]");
+  const youngerBirthday = new Date();
+  youngerBirthday.setUTCFullYear(youngerBirthday.getUTCFullYear() - 6);
+  const dob = youngerBirthday.toISOString().slice(0, 10);
+  await birthday.fill(dob);
+  await expect(warning).toBeVisible();
+  await expect(warning).toContainText("Younger children can join");
+  await expect(birthday).toHaveAccessibleDescription(/discuss their readiness and support needs/);
+  await expect(birthday).not.toHaveAttribute("aria-invalid");
+  await warning.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("parent-age-warning.png") });
+  await birthday.fill("2017-10-01");
+  await expect(warning).toBeHidden();
+  await expect(birthday).not.toHaveAttribute("aria-describedby");
+  await birthday.fill(dob);
+  await page.getByLabel("Training rhythm", { exact: true }).selectOption("2");
+  for (const [label, value] of [
+    ["Full name · guardian 1", "Test Guardian"],
+    ["Relationship · guardian 1", "Parent"],
+    ["Phone · guardian 1", "+230 5555 1234"],
+    ["Email · guardian 1", "guardian@example.com"],
+    ["Type your full name to sign", "Test Guardian"],
+  ]) await page.getByLabel(label, { exact: true }).fill(value);
+  for (const box of await page.locator('#registration-form input[type="checkbox"][required]').all()) await box.check();
+  await page.locator('input[name="media"][value="no"]').check();
+  await page.locator("#submit-registration").click();
+  await expect(page.locator("#signed-result")).toBeVisible({ timeout: 20000 });
+  const signed = (await db.query("SELECT snapshot FROM club_signed_waiver WHERE kid_id=$1", [kidId])).rows[0].snapshot;
+  expect(signed.registration.dateOfBirth).toBe(dob);
+  expect(signed.version).toBe(WAIVER_VERSION);
+  expect(signed.policy.acknowledgements.join(" ")).toContain("Younger children can join");
+  expect(signed.policy.acknowledgements.join(" ")).not.toContain("at least 7 years old");
+  await page.getByRole("button", { name: "Edit details, add a duckie, sign again", exact: true }).click();
+  await expect(warning).toBeVisible();
+
+  // Organisers see the age flag without opening the row, can filter for it,
+  // and get the readiness warning when they open the child's details.
+  await signIn(page.request, organiser);
+  await page.goto("/#our-duckies");
+  const row = page.locator(".duckie-row").filter({ hasText: "Test Surfer" });
+  await expect(row.locator("summary")).toContainText("Under 7 · discuss readiness");
+  await page.getByLabel("Show", { exact: true }).selectOption("younger");
+  await expect(row).toBeVisible();
+  await row.locator("summary").click();
+  await expect(row.getByText(/Under 7: Test Surfer is 6/)).toBeVisible();
+  await expect(row.getByText(/Discuss readiness and support needs with the family/)).toBeVisible();
+  await row.getByText(/Under 7: Test Surfer is 6/).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("organiser-age-warning.png") });
 });

@@ -2,6 +2,7 @@ import type { Semester } from "./semesters";
 import type { OrganiserKid } from "./records";
 import { CUP_ENTRY_FEE_MUR, CUP_LABEL, isCupTerm } from "./cup";
 import { ctaClass } from "../ui";
+import { RECOMMENDED_AGE } from "./policy";
 import { duckieActions, duckieBox, duckieDetails, duckieFacts, duckiePhotoForm, duckieShare, textButton } from "../members-ui";
 const text = (tag: string, value: string) => {
   const element = document.createElement(tag);
@@ -51,6 +52,11 @@ export function kidOverview(
     facts.append(group);
   }
   const r = kid.registration;
+  if (kid.age !== null && kid.age < RECOMMENDED_AGE) {
+    const warning = text("p", `Under ${RECOMMENDED_AGE}: ${kid.name} is ${kid.age}. Discuss readiness and support needs with the family and head coach before their first session. The swimming and parent-in-the-water requirements still apply.`);
+    warning.className = "mb-4 rounded-xl border-2 border-alert p-4 font-bold text-alert";
+    section.append(warning);
+  }
   fact(
     "Age",
     r ? `${kid.age} years · born ${r.dateOfBirth}` : "Awaiting registration",

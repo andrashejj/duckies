@@ -1585,10 +1585,10 @@ export const site = {
   },
   ageGuide: {
     kicker: "★ Is your duckie ready?",
-    rangeLabel: "7 yrs +",
+    rangeLabel: "Usually 7 yrs +",
     headline: "Built for kids 7 and up.",
     intro:
-      "We surf the shorebreak, so every duckie has to be water-confident from day one. The minimum age is 7, and the one thing that really matters:",
+      "We surf the shorebreak, so every duckie has to be water-confident from day one. Most Duckies are 7 or older, but younger children can join too. Discuss their readiness and support needs with the head coach. The one thing that really matters:",
     requirements: [
       {
         photo: "wading-in",
