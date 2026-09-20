@@ -1,6 +1,7 @@
 import { test, expect, type APIRequestContext, type PlaywrightWorkerArgs } from "@playwright/test";
 import pg from "pg";
 import { signIn } from "./auth-helpers";
+import { submission } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 import { CUP_TERM } from "../src/lib/registration/cup";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
@@ -26,7 +27,7 @@ let guest: APIRequestContext;
 async function registeredKid(request: APIRequestContext, name = "Zoë T.", email = guardian) {
   const kidId = (await (await request.post("/api/kids", post({ name }))).json()).kid.id as string;
   const link = await (await request.post(`/api/kids/${kidId}/link`, { headers: { origin } })).json();
-  expect((await guest.post("/api/registration", { headers: linkHeaders(link.url), data: payload(undefined, email) })).status()).toBe(201);
+  expect((await guest.post("/api/registration", { headers: linkHeaders(link.url), data: submission(payload(undefined, email)) })).status()).toBe(201);
   return kidId;
 }
 async function pay(playwright: PlaywrightWorkerArgs["playwright"], kidId: string, term = "2026-S2") {
@@ -66,7 +67,7 @@ test("anyone joins the club as pending: a self-issued link, the signed form, and
   expect(data.status).toBe("form");
   const info = await (await guest.get("/api/registration", { headers: linkHeaders(data.url) })).json();
   expect(info).toMatchObject({ cup: false, paid: false, term: "2026-S2", childName: "Noa New", childFeeMur: 3000, familyFeeMur: 5000 });
-  expect((await guest.post("/api/registration", { headers: linkHeaders(data.url), data: payload("Noa New") })).status()).toBe(201);
+  expect((await guest.post("/api/registration", { headers: linkHeaders(data.url), data: submission(payload("Noa New")) })).status()).toBe(201);
   expect((await (await guest.post("/api/club/join", post(entry))).json()).status).toBe("signed");
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
   await signIn(request, organiser);
@@ -103,7 +104,7 @@ test("a cup-only kid gets a private link, signs the club form without a training
   expect(again.status).toBe("form");
   expect((await guest.get("/api/registration", { headers })).status()).toBe(404);
   const { sessionsPerWeek, ...noRhythm } = payload("Mila Test");
-  expect((await guest.post("/api/registration", { headers: linkHeaders(again.url), data: noRhythm })).status()).toBe(201);
+  expect((await guest.post("/api/registration", { headers: linkHeaders(again.url), data: submission(noRhythm) })).status()).toBe(201);
   expect((await (await guest.post("/api/cup/register", post(entry))).json()).status).toBe("signed");
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
   const record = (await db.query("SELECT snapshot FROM club_signed_waiver")).rows[0].snapshot;

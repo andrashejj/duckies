@@ -18,17 +18,17 @@ const panel = `${registrationPanel} ${memberForm}`;
   <main class={registrationSheet}>
     <Kicker as="a" href="/">Sunset Duckies · Tamarin Bay</Kicker>
     <SectionTitle as="h1" class="mt-6">Ready for the <span class="font-accent italic">water.</span></SectionTitle>
-    <p id="registration-intro" data-paid="One child, one form — there's a link to register the next one at the end. Your membership is paid, so this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One child, one form — there's a link to register the next one at the end. Fill it in and sign now; the place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form — there's a link to enter the next one at the end. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. A parent or legal guardian can fill it in and sign without an account.</p>
+    <p id="registration-intro" data-paid="One form for the whole family: add every duckie, then sign once for all of them. Your membership is paid, so this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One form for the whole family: add every duckie, then sign once for all of them. Fill it in and sign now; each place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One form for the whole family: add every child coming, then sign once for all of them. This completes their entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One form for the whole family: add every duckie, then sign once for all of them. A parent or legal guardian can fill it in and sign without an account.</p>
     <p id="registration-status" class={memberStatus} role="status" aria-live="polite">Opening your private invitation…</p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
-      <p>Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour.</p>
-      <div class="mt-4 flex flex-wrap gap-4"><Cta id="download-waiver" type="button">Download signed waiver</Cta><button id="download-audit" class={textButton} type="button">Download signature record</button></div>
-      <p class="mt-6">Spotted a mistake — a date of birth, a phone number, the photo? You can correct the details and sign again while this link is valid. The corrected version replaces the earlier one; the club keeps both.</p>
-      <button id="edit-registration" class={`mt-3 ${textButton}`} type="button">Edit details and sign again</button>
+      <p id="signed-summary" data-one="Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour." data-many="Each duckie's registration and signed waiver are saved with the club — one record per child, all from your single signature. Download your copy now; this private download is available for one hour.">Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour.</p>
+      <div class="mt-4 flex flex-wrap gap-4"><Cta id="download-waiver" type="button" data-one="Download signed waiver" data-many="Download signed waivers">Download signed waiver</Cta><button id="download-audit" class={textButton} type="button">Download signature record</button></div>
+      <p class="mt-6">Spotted a mistake — a date of birth, a phone number, the photo? Forgot a brother or sister? You can correct the details, add another duckie and sign again while this link is valid. The corrected version replaces the earlier one; the club keeps both.</p>
+      <button id="edit-registration" class={`mt-3 ${textButton}`} type="button">Edit details, add a duckie, sign again</button>
       <div class="mt-7 border-t-2 border-dashed border-edge pt-6">
-        <SectionTitle size="none" class="text-2xl">Got another duckie?</SectionTitle>
-        <p id="another-child-copy" class="mt-2" data-club={`Brothers and sisters each sign their own form — the waiver is per surfer, and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} covers a whole family for the semester. Your name and number carry over, so the next one takes about two minutes.`} data-cup="Every surfer enters on their own form. Your name and number carry over, so the next entry takes about two minutes.">Brothers and sisters each sign their own form.</p>
+        <SectionTitle size="none" class="text-2xl">Once this link expires</SectionTitle>
+        <p id="another-child-copy" class="mt-2" data-club={`A duckie who comes along later starts a fresh form of their own — and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} still covers a whole family for the semester. Your name and number carry over, so it takes about two minutes.`} data-cup="A child who comes along later starts a fresh entry of their own. Your name and number carry over, so it takes about two minutes.">A duckie who comes along later starts a fresh form of their own.</p>
         <Cta id="register-another" href="/join" variant="secondary" class="mt-4">Register another child</Cta>
       </div>
     </section>
@@ -55,26 +55,16 @@ const panel = `${registrationPanel} ${memberForm}`;
         <ul class="mt-2 list-disc space-y-2 pl-5">{membershipCovers.excluded.map(text => <li>{text}</li>)}</ul>
         <p class="mt-4 text-sm">Sunset Duckies is for kids aged {MINIMUM_AGE} and up who swim confidently in open water, and at least one parent or guardian from every family joins them in the water for the full session.</p>
       </section>
-      <fieldset class={panel}>
-        <legend>01 · The surfer</legend>
-        <label>Child’s full name<input name="childName" required maxlength="80" autocomplete="name" /></label>
-        <label>Profile photo (optional)<input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" /></label>
-        <p class="text-sm">A recognisable photo for club organisers. It stays private and does not grant permission for social media. JPEG, PNG or WebP up to 4 MB / 20 megapixels. The photo is saved to the profile when you sign.</p>
-        <img id="photo-preview" hidden width="128" height="128" alt="Selected profile photo" class={largeAvatar} />
-        <button id="remove-profile-photo" type="button" class={textButton} hidden>Remove selected photo</button>
-        <p id="photo-status" role="status"></p>
-        <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
-        <p class="text-sm">Duckies are {MINIMUM_AGE} or older. Younger sibling keen to join? Message the club first.</p>
-        <div id="training-rhythm" class="contents">
-          <label>Training rhythm<select aria-label="Training rhythm" name="sessionsPerWeek" required><option value="">Choose…</option><option value="2">Twice a week — Monday + Friday</option><option value="1">Once a week — Monday or Friday</option></select></label>
-          <p class="text-sm">Membership covers training and nothing else. You can change the rhythm with the coach during the semester.</p>
-        </div>
-        <label>Medical conditions, allergies or medication<textarea name="medicalNotes" maxlength="2000" rows="3" placeholder="Write none if there is nothing to flag."></textarea></label>
-        <p class="text-sm">These details are available to club organisers. Please tell the head coach if anything changes.</p>
-      </fieldset>
+      <div id="children" class={memberForm}></div>
+      <div class={registrationPanel}>
+        <h2 class="font-display text-2xl">Brothers and sisters</h2>
+        <p id="siblings-copy" class="mt-2" data-club={`Add every duckie from your family here. Everything below — guardians, emergency contact, the waiver and your signature — is filled in once and covers all of them, and one family fee of Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} covers the semester for the whole family.`} data-cup="Add every child from your family here. Everything below — guardians, emergency contact, the waiver and your signature — is filled in once and covers all of them.">Add every duckie from your family here; you sign once for all of them.</p>
+        <Cta id="add-child" type="button" variant="secondary" size="sm" class="mt-4">Add another child</Cta>
+        <p id="children-status" class={memberStatus} role="status" aria-live="polite"></p>
+      </div>
       <fieldset class={panel}>
         <legend>02 · Legal guardians</legend>
-        <p>The first guardian listed signs this form. You can add other legal guardians below.</p>
+        <p>The first guardian listed signs this form, for every child listed above. You can add other legal guardians below.</p>
         <div id="guardians" class={memberForm}></div>
         <button id="add-guardian" type="button" class={`justify-self-start ${textButton}`}>Add another legal guardian</button>
       </fieldset>
@@ -90,16 +80,17 @@ const panel = `${registrationPanel} ${memberForm}`;
         <h2 class="font-display text-2xl">{waiver.title}</h2><p>{waiver.introduction}</p>
         <h3 class="font-bold">I acknowledge that:</h3><ul class="list-disc pl-5 space-y-3">{waiver.acknowledgements.map(text => <li>{text}</li>)}</ul>
         <h3 class="font-bold">I agree to:</h3><ul class="list-disc pl-5 space-y-3">{waiver.agreements.map(text => <li>{text}</li>)}</ul>
-        <label class={registrationCheck}><input name="waiverAccepted" type="checkbox" required />I have read and accept the waiver above.</label>
+        <p id="waiver-scope" class="text-sm">You accept this once; it applies to every duckie you listed above, and each of them gets their own signed record.</p>
+        <label class={registrationCheck}><input name="waiverAccepted" type="checkbox" required />I have read and accept the waiver above, for every child listed on this form.</label>
         <label class={registrationCheck}><input name="parentInWater" type="checkbox" required />At least one parent or guardian from our family will be in the water for the full session, every session.</label>
-        <label class={registrationCheck}><input name="swimming" type="checkbox" required />My child is {MINIMUM_AGE} or older and swims confidently in open water, including waves up to around 2 m and currents, as agreed with the head coach.</label>
+        <label class={registrationCheck}><input name="swimming" type="checkbox" required />Every child listed above is {MINIMUM_AGE} or older and swims confidently in open water, including waves up to around 2 m and currents, as agreed with the head coach.</label>
         <p class="text-sm">If you cannot confirm this, speak with the head coach before signing.</p>
         <label class={registrationCheck}><input name="reef" type="checkbox" required />{waiver.reef}</label>
         <label class={registrationCheck}><input name="gear" type="checkbox" required />{waiver.gear}</label>
       </fieldset>
       <fieldset class={panel}>
         <legend>05 · Photos and video</legend>
-        <p>Both answers are fine. This choice does not affect your child’s membership.</p>
+        <p>Both answers are fine, and your answer applies to every child listed above. This choice does not affect their membership.</p>
         <label class={registrationCheck}><input name="media" type="radio" value="yes" required />{waiver.mediaYes}</label>
         <label class={registrationCheck}><input name="media" type="radio" value="no" required />{waiver.mediaNo}</label>
       </fieldset>
@@ -117,6 +108,28 @@ const panel = `${registrationPanel} ${memberForm}`;
         <p id="submit-status" class={memberStatus} role="status" aria-live="polite"></p>
       </fieldset>
     </form>
+    <!-- One of these per child. Cloned rather than built in script so the
+         panel's markup and classes stay next to the rest of the form. -->
+    <template id="child-template">
+      <fieldset class={panel} data-child>
+        <legend data-child-legend>01 · The surfer</legend>
+        <label data-label="childName">Child’s full name<input data-field="childName" required maxlength="80" autocomplete="off" /></label>
+        <label data-label="photo">Profile photo (optional)<input data-field="photo" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+        <p class="text-sm">A recognisable photo for club organisers. It stays private and does not grant permission for social media. JPEG, PNG or WebP up to 4 MB / 20 megapixels. The photo is saved to the profile when you sign.</p>
+        <img data-photo-preview hidden width="128" height="128" alt="Selected profile photo" class={largeAvatar} />
+        <button data-remove-photo type="button" class={textButton} hidden>Remove selected photo</button>
+        <p data-photo-status role="status"></p>
+        <label data-label="dateOfBirth">Date of birth<input data-field="dateOfBirth" type="date" required /></label>
+        <p class="text-sm">Duckies are {MINIMUM_AGE} or older. Younger sibling keen to join? Message the club first.</p>
+        <div data-rhythm class="contents">
+          <label data-label="sessionsPerWeek">Training rhythm<select aria-label="Training rhythm" data-field="sessionsPerWeek" required><option value="">Choose…</option><option value="2">Twice a week — Monday + Friday</option><option value="1">Once a week — Monday or Friday</option></select></label>
+          <p class="text-sm">Membership covers training and nothing else. You can change the rhythm with the coach during the semester.</p>
+        </div>
+        <label data-label="medicalNotes">Medical conditions, allergies or medication<textarea data-field="medicalNotes" maxlength="2000" rows="3" placeholder="Write none if there is nothing to flag."></textarea></label>
+        <p class="text-sm">These details are available to club organisers. Please tell the head coach if anything changes.</p>
+        <button data-remove-child type="button" class={`justify-self-start ${textButton}`} hidden>Remove this child</button>
+      </fieldset>
+    </template>
     <p class="mt-8 text-sm">Sunset Duckies · Monday + Friday, 4–6pm · Tamarin Bay</p>
   </main>
 </body>
@@ -125,7 +138,9 @@ const panel = `${registrationPanel} ${memberForm}`;
   import { rememberFamily } from "../lib/family-contact";
   import { guardianFields, textButton } from "../lib/members-ui";
   type Guardian = { name: string; relationship: string; phone: string; email: string };
-  type Signed = { id: string; registration: Record<string, any> & { guardians: Guardian[] }; hasPhoto: boolean } | null;
+  type Registration = Record<string, any> & { guardians: Guardian[] };
+  type SignedChild = { kidId: string; registration: Registration; hasPhoto: boolean };
+  type Signed = { id: string; registration: Registration; children: SignedChild[] } | null;
   const token = new URLSearchParams(location.hash.slice(1)).get("token") ?? "";
   const form = document.querySelector<HTMLFormElement>("#registration-form")!;
   const status = document.querySelector<HTMLElement>("#registration-status")!;
@@ -141,13 +156,13 @@ const panel = `${registrationPanel} ${memberForm}`;
   let signature: [number, number][][] = [];
   let current: [number, number][] | null = null;
   let submitting = false;
-  let photoBusy = false;
-  let previewUrl = "";
+  let photoBusy = 0;
+  let maxChildren = 6;
   const headers = { Authorization: `Bearer ${token}` };
   // Kids must already be MINIMUM_AGE; the browser refuses later dates before the server does.
   const minimumAge = Number(form.dataset.minimumAge);
   const latestBirthday = new Date(); latestBirthday.setFullYear(latestBirthday.getFullYear() - minimumAge);
-  field("dateOfBirth").max = latestBirthday.toISOString().slice(0, 10);
+  const latestBirthdayValue = latestBirthday.toISOString().slice(0, 10);
   const guardians = document.querySelector<HTMLElement>("#guardians")!;
   const addButton = document.querySelector<HTMLButtonElement>("#add-guardian")!;
   function addGuardian(values?: Guardian) {
@@ -189,10 +204,85 @@ const panel = `${registrationPanel} ${memberForm}`;
   window.addEventListener("pointerup", endStroke); window.addEventListener("pointercancel", endStroke);
   function clearSignature() { signature=[]; current=null; ctx.clearRect(0,0,660,220); }
   document.querySelector("#clear-signature")!.addEventListener("click", clearSignature);
-  const photoInput = document.querySelector<HTMLInputElement>("#profile-photo")!;
-  const photoStatus = document.querySelector<HTMLElement>("#photo-status")!;
-  const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview")!;
-  const removePhoto = document.querySelector<HTMLButtonElement>("#remove-profile-photo")!;
+  // One block per child. Guardians, the waiver and the signature below are
+  // filled in once and cover every duckie listed here.
+  const children = document.querySelector<HTMLElement>("#children")!;
+  const childTemplate = document.querySelector<HTMLTemplateElement>("#child-template")!;
+  const addChild = document.querySelector<HTMLButtonElement>("#add-child")!;
+  const childrenStatus = document.querySelector<HTMLElement>("#children-status")!;
+  const childBlocks = () => Array.from(children.querySelectorAll<HTMLFieldSetElement>("[data-child]"));
+  const childField = (block: HTMLElement, name: string) =>
+    block.querySelector<HTMLInputElement>(`[data-field="${name}"]`)!;
+  // Stable for as long as the form is open, so a staged photo keeps finding
+  // its child even as blocks are added and removed around it.
+  let nextSlot = 0;
+  function renumberChildren() {
+    const blocks = childBlocks();
+    blocks.forEach((block, index) => {
+      const only = blocks.length === 1;
+      block.querySelector("[data-child-legend]")!.textContent = only ? "01 · The surfer" : `01 · Duckie ${index + 1}`;
+      const suffix = only ? "" : ` · duckie ${index + 1}`;
+      for (const label of block.querySelectorAll<HTMLElement>("[data-label]")) {
+        const input = label.querySelector<HTMLInputElement>("input,select,textarea");
+        label.firstChild!.textContent = `${label.dataset.text}${suffix}`;
+        if (!input) continue;
+        input.name = `child-${block.dataset.slot}-${label.dataset.label}`;
+        // A <select> inside a <label> folds its options into the accessible
+        // name, so the rhythm keeps naming itself.
+        if (input.hasAttribute("aria-label")) input.setAttribute("aria-label", `${label.dataset.text}${suffix}`);
+      }
+      // A child whose waiver is already signed stays on the form: only the
+      // club archives a duckie.
+      const remove = block.querySelector<HTMLButtonElement>("[data-remove-child]")!;
+      remove.hidden = blocks.length < 2 || Boolean(block.dataset.kidId);
+    });
+    addChild.disabled = blocks.length >= maxChildren;
+    childrenStatus.textContent = blocks.length >= maxChildren
+      ? `That's ${maxChildren} duckies on one form — message the club if there are more.`
+      : blocks.length > 1
+        ? `${blocks.length} duckies on this form. One waiver, one signature, all of them.`
+        : "";
+  }
+  function addChildBlock(values?: Record<string, any>, kidId?: string) {
+    if (childBlocks().length >= maxChildren) return null;
+    const block = childTemplate.content.firstElementChild!.cloneNode(true) as HTMLFieldSetElement;
+    block.dataset.slot = String(nextSlot++);
+    if (kidId) block.dataset.kidId = kidId;
+    for (const label of block.querySelectorAll<HTMLElement>("[data-label]"))
+      label.dataset.text = label.firstChild!.textContent ?? "";
+    childField(block, "dateOfBirth").max = latestBirthdayValue;
+    if (values) {
+      for (const name of ["childName", "dateOfBirth", "medicalNotes"])
+        childField(block, name).value = values[name] ?? "";
+      (block.querySelector('[data-field="sessionsPerWeek"]') as HTMLSelectElement).value = values.sessionsPerWeek ?? "";
+    }
+    block.querySelector<HTMLButtonElement>("[data-remove-child]")!.addEventListener("click", () => {
+      // Drop the staged photo with the block, or it would follow the slot.
+      void uploadPhoto(block, true).catch(() => {});
+      block.remove();
+      renumberChildren();
+      (childBlocks().at(-1) ?? children).scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    block.querySelector<HTMLInputElement>('[data-field="photo"]')!.addEventListener("change", () => void uploadPhoto(block));
+    block.querySelector<HTMLButtonElement>("[data-remove-photo]")!.addEventListener("click", () => void uploadPhoto(block, true));
+    children.append(block);
+    applyTerm(block);
+    renumberChildren();
+    return block;
+  }
+  addChild.addEventListener("click", () => {
+    const block = addChildBlock();
+    if (!block) return;
+    block.scrollIntoView({ behavior: "smooth", block: "center" });
+    childField(block, "childName").focus({ preventScroll: true });
+  });
+  // A cup entry buys one afternoon, not training, so it has no rhythm to pick.
+  function applyTerm(block: HTMLElement) {
+    const rhythm = block.querySelector<HTMLElement>("[data-rhythm]")!;
+    rhythm.hidden = cup;
+    rhythm.classList.toggle("contents", !cup);
+    (block.querySelector('[data-field="sessionsPerWeek"]') as HTMLSelectElement).required = !cup;
+  }
   // A cup entry sends the next sibling back to the cup form; a semester
   // registration starts the next one at the club's join form.
   function offerAnotherChild() {
@@ -203,14 +293,27 @@ const panel = `${registrationPanel} ${memberForm}`;
   function completed(canDownload: boolean) {
     form.hidden=true; result.hidden=false; supersedes="";
     offerAnotherChild();
-    document.querySelector<HTMLButtonElement>("#download-waiver")!.hidden = !canDownload; document.querySelector<HTMLButtonElement>("#download-audit")!.hidden = !canDownload;
-    status.textContent = canDownload ? "Registration complete. Thank you." : "Already signed. Ask the club for a saved copy.";
+    // One record per child, from the one signature; the copy follows suit.
+    const count = signed?.children?.length ?? 1;
+    for (const element of result.querySelectorAll<HTMLElement>("[data-one]"))
+      element.textContent = count > 1 ? element.dataset.many! : element.dataset.one!;
+    document.querySelector<HTMLButtonElement>("#download-waiver")!.hidden = !canDownload;
+    document.querySelector<HTMLButtonElement>("#download-audit")!.hidden = !canDownload;
+    status.textContent = canDownload
+      ? count > 1 ? `All ${count} registrations are complete. Thank you.` : "Registration complete. Thank you."
+      : "Already signed. Ask the club for a saved copy.";
     result.scrollIntoView({ behavior: "smooth" });
   }
-  function prefill(r: NonNullable<Signed>["registration"]) {
-    field("dateOfBirth").value = r.dateOfBirth ?? "";
-    (form.elements.namedItem("sessionsPerWeek") as HTMLSelectElement).value = r.sessionsPerWeek ?? "";
-    field("medicalNotes").value = r.medicalNotes ?? "";
+  function prefill(signedGroup: NonNullable<Signed>) {
+    const r = signedGroup.registration;
+    children.replaceChildren();
+    for (const child of signedGroup.children) {
+      const block = addChildBlock(child.registration, child.kidId);
+      if (block && child.hasPhoto)
+        block.querySelector<HTMLElement>("[data-photo-status]")!.textContent =
+          "A profile photo is already on file. Choose a new one to replace it, or leave this empty to keep it.";
+    }
+    if (!childBlocks().length) addChildBlock();
     guardians.replaceChildren(); (r.guardians ?? []).forEach(g => addGuardian(g)); if (!guardians.children.length) addGuardian();
     const first = r.guardians?.[0];
     emergencySame.checked = Boolean(first) && r.emergencyName === first.name && r.emergencyRelationship === first.relationship && r.emergencyPhone === first.phone;
@@ -224,10 +327,9 @@ const panel = `${registrationPanel} ${memberForm}`;
   }
   function edit() {
     if (!signed) return;
-    supersedes = signed.id; prefill(signed.registration);
-    photoStatus.textContent = signed.hasPhoto ? "A profile photo is already on file. Choose a new one to replace it, or leave this empty to keep it." : "";
+    supersedes = signed.id; prefill(signed);
     result.hidden = true; form.hidden = false; submitStatus.textContent = "";
-    status.textContent = "Editing the signed details. Signing again creates a corrected record.";
+    status.textContent = "Editing the signed details. Signing again creates a corrected record, and you can add a duckie you missed.";
     form.scrollIntoView({ behavior: "smooth" });
   }
   editButton.addEventListener("click", edit);
@@ -239,6 +341,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       version = form.dataset.waiverVersion ?? "";
       if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
       signed = data.signed;
+      maxChildren = Number(data.maxChildren) || maxChildren;
       // The signing guardian, kept for the next child's sign-up form.
       const signer = signed?.registration?.guardians?.[0];
       if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone });
@@ -250,11 +353,13 @@ const panel = `${registrationPanel} ${memberForm}`;
       document.querySelector<HTMLElement>("#cup-covers")!.hidden = !cup;
       document.querySelector<HTMLElement>("#membership-covers")!.hidden = cup;
       document.querySelector<HTMLElement>("#cup-included")!.hidden = !data.cupIncluded;
-      const rhythm = document.querySelector<HTMLElement>("#training-rhythm")!;
-      rhythm.hidden = cup; rhythm.classList.toggle("contents", !cup);
-      (form.elements.namedItem("sessionsPerWeek") as HTMLSelectElement).required = !cup;
-      field("childName").value = data.childName;
-      document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
+      const siblings = document.querySelector<HTMLElement>("#siblings-copy")!;
+      siblings.textContent = cup ? siblings.dataset.cup! : siblings.dataset.club!;
+      // The invited child opens the form; the family adds their siblings to it.
+      children.replaceChildren();
+      const firstChild = addChildBlock()!;
+      childField(firstChild, "childName").value = data.childName;
+      document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} and any brothers or sisters · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
       if (data.completedAt) { completed(Boolean(data.canDownload)); editButton.hidden = !signed; return; }
       status.textContent=""; form.hidden=false;
     } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again."; }
@@ -264,12 +369,22 @@ const panel = `${registrationPanel} ${memberForm}`;
     submit.disabled=true; submit.textContent = "Saving…";
     const values = new FormData(form);
     const body: Record<string, unknown> = { version, signature };
-    for (const key of ["childName","dateOfBirth","medicalNotes","emergencyName","emergencyRelationship","emergencyPhone","media","signerName"]) body[key] = values.get(key);
-    if (!cup) body.sessionsPerWeek = values.get("sessionsPerWeek");
+    for (const key of ["emergencyName","emergencyRelationship","emergencyPhone","media","signerName"]) body[key] = values.get(key);
     for (const key of ["waiverAccepted","parentInWater","swimming","reef","gear","electronicConsent"]) body[key] = values.get(key) === "on";
+    body.children = childBlocks().map(block => ({
+      slot: Number(block.dataset.slot),
+      ...(block.dataset.kidId ? { kidId: block.dataset.kidId } : {}),
+      childName: childField(block, "childName").value,
+      dateOfBirth: childField(block, "dateOfBirth").value,
+      medicalNotes: childField(block, "medicalNotes").value,
+      ...(cup ? {} : { sessionsPerWeek: childField(block, "sessionsPerWeek").value }),
+    }));
     body.guardians = Array.from(document.querySelectorAll("[data-guardian]")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input")).map(input => [input.dataset.field, input.value])));
     if (supersedes) body.supersedes = supersedes;
-    submitStatus.textContent="Saving your signed registration… this can take a few seconds.";
+    const count = childBlocks().length;
+    submitStatus.textContent = count > 1
+      ? `Saving signed registrations for all ${count} duckies… this can take a few seconds.`
+      : "Saving your signed registration… this can take a few seconds.";
     try {
       const response = await fetch("/api/registration", { method:"POST", headers:{ ...headers, "Content-Type":"application/json" }, body:JSON.stringify(body) }); const data=await response.json();
       if (response.status===409) { await load(); return; }
@@ -285,16 +400,23 @@ const panel = `${registrationPanel} ${memberForm}`;
     } catch(error) { status.textContent=error instanceof Error ? error.message : "Download failed."; }
   }
   document.querySelector("#download-waiver")!.addEventListener("click",()=>void download()); document.querySelector("#download-audit")!.addEventListener("click",()=>void download(true));
-  async function uploadPhoto(remove=false) {
+  // Staged against this child's slot, so each duckie's photo lands on their
+  // own profile when the guardian signs.
+  async function uploadPhoto(block: HTMLElement, remove=false) {
+    const photoInput = block.querySelector<HTMLInputElement>('[data-field="photo"]')!;
+    const photoStatus = block.querySelector<HTMLElement>("[data-photo-status]")!;
+    const photoPreview = block.querySelector<HTMLImageElement>("[data-photo-preview]")!;
+    const removePhoto = block.querySelector<HTMLButtonElement>("[data-remove-photo]")!;
     const file = photoInput.files?.[0]; if (!remove && !file) return;
+    if (remove && !file && photoPreview.hidden) return;
     if (file && file.size > 4*1024*1024) { photoStatus.textContent = "Choose a photo smaller than 4 MB."; photoInput.value=""; return; }
-    photoBusy=true; photoInput.disabled=true; removePhoto.disabled=true; submit.disabled=true;
+    photoBusy++; photoInput.disabled=true; removePhoto.disabled=true; submit.disabled=true;
     photoStatus.textContent=remove ? "Removing photo…" : "Uploading photo…";
-    try { const response=await fetch("/api/registration/photo", {method:remove?"DELETE":"PUT",headers:{...headers,...(file?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
-      if(previewUrl)URL.revokeObjectURL(previewUrl); previewUrl=remove?"":URL.createObjectURL(file!); photoPreview.src=previewUrl; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":"Photo uploaded. Sign below to save it with the profile."; if(remove)photoInput.value="";
+    const slot = `?slot=${block.dataset.slot}`;
+    try { const response=await fetch(`/api/registration/photo${slot}`, {method:remove?"DELETE":"PUT",headers:{...headers,...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
+      if(photoPreview.dataset.blob)URL.revokeObjectURL(photoPreview.dataset.blob); photoPreview.dataset.blob=remove?"":URL.createObjectURL(file!); photoPreview.src=photoPreview.dataset.blob; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":"Photo uploaded. Sign below to save it with the profile."; if(remove)photoInput.value="";
     }catch(e){photoStatus.textContent=e instanceof Error?e.message:"Photo upload failed. Please try again.";photoInput.value="";}
-    finally{photoBusy=false;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=false;}
+    finally{photoBusy--;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=photoBusy>0;}
   }
-  photoInput.addEventListener("change",()=>void uploadPhoto()); removePhoto.addEventListener("click",()=>void uploadPhoto(true));
   void load();
 </script>

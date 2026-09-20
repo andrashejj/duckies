@@ -11,6 +11,7 @@ import {
   safeRoute,
 } from "../../../lib/registration/http";
 import { CUP_TERM, isCupTerm } from "../../../lib/registration/cup";
+import { MAX_CHILDREN } from "../../../lib/registration/schema";
 import { getDatabase } from "../../../lib/server/db";
 import { json, sameOrigin } from "../../../lib/server/http";
 import {
@@ -25,9 +26,14 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
   const link = await linkInfo(bearer(request));
   // Only what this very link signed comes back for editing: a fresh link never
   // prefills from earlier records, so it cannot leak another guardian's details.
+  // One signing covers the whole family, so all of its children come back.
   const { rows } = await getDatabase().query(
-    `SELECT w.id, w.snapshot->'registration' AS registration, EXISTS(SELECT 1 FROM club_kid_photo WHERE kid_id=w.kid_id) OR EXISTS(SELECT 1 FROM club_registration_photo WHERE link_id=w.link_id) AS has_photo
-    FROM club_signed_waiver w WHERE w.link_id=$1 ORDER BY w.signed_at DESC LIMIT 1`,
+    `SELECT w.id, w.kid_id, w.signing_group, w.snapshot->'registration' AS registration,
+      EXISTS(SELECT 1 FROM club_kid_photo WHERE kid_id=w.kid_id) AS has_photo
+    FROM club_signed_waiver w
+    WHERE w.link_id=$1 AND w.signing_group=(
+      SELECT signing_group FROM club_signed_waiver WHERE link_id=$1 ORDER BY signed_at DESC, id DESC LIMIT 1)
+    ORDER BY w.child_index`,
     [link.id],
   );
   const signed = rows[0];
@@ -49,8 +55,18 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
       link.completed_at &&
       Date.now() - new Date(link.completed_at).getTime() < 60 * 60 * 1000,
     signed: signed
-      ? { id: signed.id, registration: signed.registration, hasPhoto: signed.has_photo }
+      ? {
+          // The signing to correct, and every child it covered.
+          id: signed.signing_group,
+          registration: signed.registration,
+          children: rows.map((row) => ({
+            kidId: row.kid_id,
+            registration: row.registration,
+            hasPhoto: row.has_photo,
+          })),
+        }
       : null,
+    maxChildren: MAX_CHILDREN,
     version: WAIVER_VERSION,
     minimumAge: MINIMUM_AGE,
     covers: membershipCovers,

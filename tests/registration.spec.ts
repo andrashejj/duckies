@@ -4,6 +4,7 @@ import { verify, createHash } from "node:crypto";
 import pg from "pg";
 import { PDFDocument } from "pdf-lib";
 import { signIn } from "./auth-helpers";
+import { submission } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
@@ -72,7 +73,7 @@ async function complete(
   headers: Record<string, string>,
   data: Record<string, unknown> = payload(),
 ) {
-  return request.post("/api/registration", { headers, data });
+  return request.post("/api/registration", { headers, data: submission(data) });
 }
 // Only the owner records payments, and links only open once the semester is
 // paid. One owner sign-in per test keeps the OTP sender under its rate limit.
@@ -242,7 +243,7 @@ test("mandatory acknowledgements, explicit media choice, legal guardian and cons
       (
         await request.post("/api/registration", {
           headers: invitation.headers,
-          data: { ...payload(), ...patch },
+          data: submission({ ...payload(), ...patch }),
         })
       ).status(),
     ).toBe(400);
@@ -359,15 +360,18 @@ test("corrections append new signed versions; archiving preserves signed records
   expect(
     (await complete(request, invitation.headers, { ...payload(), dateOfBirth: "2018-02-03" })).status(),
   ).toBe(409);
+  // A correction re-signs for the same child, named by the id the form holds.
+  expect(first.children[0].kidId).toBe(kidId);
   const corrected = await complete(request, invitation.headers, {
     ...payload(),
     dateOfBirth: "2018-02-03",
+    kidId,
     supersedes: first.id,
   });
   expect(corrected.status()).toBe(201);
   expect(
     (
-      await complete(request, invitation.headers, { ...payload(), supersedes: first.id })
+      await complete(request, invitation.headers, { ...payload(), kidId, supersedes: first.id })
     ).status(),
   ).toBe(409); // stale: only the latest record can be corrected
   const latest = (
@@ -478,7 +482,7 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
     .click();
   await expect(page.locator("#signed-result")).toBeVisible({ timeout: 20000 });
   // Corrections reopen the signed details through the same link.
-  await page.getByRole("button", { name: "Edit details and sign again", exact: true }).click();
+  await page.getByRole("button", { name: "Edit details, add a duckie, sign again", exact: true }).click();
   await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("Test Guardian");
   await expect(page.getByLabel("Emergency contact name", { exact: true })).toHaveValue("Emergency Person");
   await page.getByLabel("Date of birth", { exact: true }).fill("2017-03-13");
@@ -551,18 +555,46 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   expect(errors).toEqual([]);
 });
 
-// A family with two duckies signs two waivers. The signed page has to lead
-// back to a new sign-up, and that sign-up has to remember who the parent is.
-test("a family registers a second child straight from the signed page, without retyping their details", async ({
+// A family with three duckies fills in three children and signs once. Each
+// child still gets their own sealed record, and the link reopens with all of
+// them so a fourth can be added.
+test("a family fills in every child on one form and signs the waiver once for all of them", async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  async function signFor(child: string) {
-    await expect(page.locator("#registration-form")).toBeVisible();
-    await expect(page.getByLabel("Child’s full name", { exact: true })).toHaveValue(child);
-    await page.getByLabel("Date of birth", { exact: true }).fill("2016-05-04");
-    await page.getByLabel("Training rhythm", { exact: true }).selectOption("1");
+  const join = page.locator("[data-join][data-ready]");
+  await page.goto("/join", { waitUntil: "domcontentloaded" });
+  await join.getByLabel("Kid's name").fill("Ana Sibling");
+  await join.getByLabel("Parent / guardian").fill("Sibling Parent");
+  await join.getByLabel("WhatsApp number").fill("+230 5722 3344");
+  await join.getByRole("button", { name: "Start the registration" }).click();
+  await page.waitForURL(/\/register#token=/);
+  await expect(page.locator("#registration-form")).toBeVisible();
+
+  // The invited child opens the form; the rest of the family joins them on it.
+  await expect(page.locator("[data-child]")).toHaveCount(1);
+  await expect(page.getByLabel("Child’s full name", { exact: true })).toHaveValue("Ana Sibling");
+  await page.getByRole("button", { name: "Add another child", exact: true }).click();
+  await page.getByRole("button", { name: "Add another child", exact: true }).click();
+  await expect(page.locator("[data-child]")).toHaveCount(3);
+  const names = ["Ana Sibling", "Bo Sibling", "Cy Sibling"];
+  async function fillChildren(children: string[], from = 0) {
+    for (const [index, name] of children.entries()) {
+      const at = from + index + 1;
+      await page.getByLabel(`Child’s full name · duckie ${at}`, { exact: true }).fill(name);
+      await page.getByLabel(`Date of birth · duckie ${at}`, { exact: true }).fill(`201${5 + index}-05-04`);
+      await page.getByLabel(`Training rhythm · duckie ${at}`, { exact: true }).selectOption(index === 1 ? "1" : "2");
+      await page
+        .getByLabel(`Medical conditions, allergies or medication · duckie ${at}`, { exact: true })
+        .fill(index === 2 ? "Peanut allergy" : "");
+    }
+  }
+  await fillChildren(names);
+  // Guardians, emergency contact, waiver and signature: filled in once.
+  await expect(page.locator('[data-field="childName"]')).toHaveCount(3);
+  expect(await page.locator('[name="signerName"]').count()).toBe(1);
+  async function signOnce() {
     for (const [label, value] of [
       ["Full name · guardian 1", "Sibling Parent"],
       ["Relationship · guardian 1", "Mother"],
@@ -575,35 +607,92 @@ test("a family registers a second child straight from the signed page, without r
       await box.check();
     await page.locator('input[name="media"][value="yes"]').check();
     await page.getByRole("button", { name: /^Sign and submit/ }).click();
-    await expect(page.locator("#signed-result")).toBeVisible({ timeout: 20000 });
+    await expect(page.locator("#signed-result")).toBeVisible({ timeout: 30000 });
   }
+  await signOnce();
+
+  const signed = await db.query(
+    `SELECT k.name, w.signing_group, w.snapshot->'registration' AS r, w.snapshot->'evidence'->'alsoSignedFor' AS also,
+      octet_length(w.pdf) AS pdf_bytes
+    FROM club_kid k JOIN club_signed_waiver w ON w.kid_id=k.id WHERE k.contact_phone=$1 ORDER BY k.created_at`,
+    ["+230 5722 3344"],
+  );
+  expect(signed.rows.map((row) => row.name)).toEqual(names);
+  // One signing, one signature, one set of guardians — three sealed records.
+  expect(new Set(signed.rows.map((row) => row.signing_group)).size).toBe(1);
+  expect(signed.rows.every((row) => row.pdf_bytes > 1000)).toBe(true);
+  expect(signed.rows.map((row) => row.r.sessionsPerWeek)).toEqual(["2", "1", "2"]);
+  expect(signed.rows.map((row) => row.r.medicalNotes)).toEqual(["", "", "Peanut allergy"]);
+  expect(signed.rows.map((row) => row.r.signerName)).toEqual(Array(3).fill("Sibling Parent"));
+  expect(signed.rows[0].also).toEqual(["Bo Sibling", "Cy Sibling"]);
+  // The download is one file holding every child's waiver.
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: /^Download signed waiver/ }).click();
+  const pdf = await PDFDocument.load(await readFile(await (await download).path()));
+  expect(pdf.getPageCount()).toBeGreaterThanOrEqual(3);
+  const audit = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download signature record", exact: true }).click();
+  const records = JSON.parse(await readFile(await (await audit).path(), "utf8"));
+  expect(records.records.map((record: any) => record.child)).toEqual(names);
+
+  // Reopening the link brings the whole family back, ready for a fourth.
+  await page.getByRole("button", { name: "Edit details, add a duckie, sign again", exact: true }).click();
+  await expect(page.locator("[data-child]")).toHaveCount(3);
+  await expect(page.getByLabel("Child’s full name · duckie 2", { exact: true })).toHaveValue("Bo Sibling");
+  await expect(page.getByLabel("Training rhythm · duckie 2", { exact: true })).toHaveValue("1");
+  // A child whose waiver is signed stays on the form; only the club archives one.
+  await expect(page.locator("[data-remove-child]:not([hidden])")).toHaveCount(0);
+  await page.getByRole("button", { name: "Add another child", exact: true }).click();
+  await fillChildren(["Dee Sibling"], 3);
+  await signOnce();
+  const after = await db.query(
+    `SELECT k.name, w.signing_group FROM club_kid k JOIN club_signed_waiver w ON w.kid_id=k.id
+    WHERE k.contact_phone=$1 AND w.signed_at=(SELECT max(signed_at) FROM club_signed_waiver)
+    ORDER BY k.created_at`,
+    ["+230 5722 3344"],
+  );
+  expect(after.rows.map((row) => row.name)).toEqual([...names, "Dee Sibling"]);
+  expect(new Set(after.rows.map((row) => row.signing_group)).size).toBe(1);
+  // The corrected signing replaces the first; the club keeps both.
+  expect((await db.query("SELECT * FROM club_signed_waiver")).rowCount).toBe(7);
+  expect(errors).toEqual([]);
+});
+
+// Coming back later for a duckie the family missed: the signed page leads to a
+// fresh sign-up that already knows who the parent is.
+test("the signed page leads back to a fresh sign-up that remembers the family", async ({
+  page,
+}) => {
   const join = page.locator("[data-join][data-ready]");
   await page.goto("/join", { waitUntil: "domcontentloaded" });
   await expect(join.locator("[data-join-again]")).toBeHidden();
   await join.getByLabel("Kid's name").fill("Elder Sibling");
-  await join.getByLabel("Parent / guardian").fill("Sibling Parent");
-  await join.getByLabel("WhatsApp number").fill("+230 5722 3344");
+  await join.getByLabel("Parent / guardian").fill("Later Parent");
+  await join.getByLabel("WhatsApp number").fill("+230 5733 4455");
   await join.getByRole("button", { name: "Start the registration" }).click();
   await page.waitForURL(/\/register#token=/);
-  await signFor("Elder Sibling");
+  await expect(page.locator("#registration-form")).toBeVisible();
+  await page.getByLabel("Child’s full name", { exact: true }).fill("Elder Sibling");
+  await page.getByLabel("Date of birth", { exact: true }).fill("2016-05-04");
+  await page.getByLabel("Training rhythm", { exact: true }).selectOption("1");
+  for (const [label, value] of [
+    ["Full name · guardian 1", "Later Parent"],
+    ["Relationship · guardian 1", "Mother"],
+    ["Phone · guardian 1", "+230 5733 4455"],
+    ["Email · guardian 1", "later.parent@example.com"],
+    ["Type your full name to sign", "Later Parent"],
+  ] as const)
+    await page.getByLabel(label, { exact: true }).fill(value);
+  for (const box of await page.locator('#registration-form input[type="checkbox"][required]').all())
+    await box.check();
+  await page.locator('input[name="media"][value="yes"]').check();
+  await page.getByRole("button", { name: /^Sign and submit/ }).click();
+  await expect(page.locator("#signed-result")).toBeVisible({ timeout: 30000 });
 
-  // The way onward: back to the sign-up, with the parent's details carried over.
   await page.getByRole("link", { name: /^Register another child/ }).click();
   await page.waitForURL(/\/join$/);
   await expect(join.locator("[data-join-again]")).toBeVisible();
-  await expect(join.getByLabel("Parent / guardian")).toHaveValue("Sibling Parent");
-  await expect(join.getByLabel("WhatsApp number")).toHaveValue("+230 5722 3344");
+  await expect(join.getByLabel("Parent / guardian")).toHaveValue("Later Parent");
+  await expect(join.getByLabel("WhatsApp number")).toHaveValue("+230 5733 4455");
   await expect(join.getByLabel("Kid's name")).toHaveValue("");
-  await join.getByLabel("Kid's name").fill("Younger Sibling");
-  await join.getByRole("button", { name: "Start the registration" }).click();
-  await page.waitForURL(/\/register#token=/);
-  await signFor("Younger Sibling");
-
-  const { rows } = await db.query(
-    `SELECT k.name FROM club_kid k JOIN club_signed_waiver w ON w.kid_id=k.id
-    WHERE k.contact_phone=$1 ORDER BY k.created_at`,
-    ["+230 5722 3344"],
-  );
-  expect(rows.map((row) => row.name)).toEqual(["Elder Sibling", "Younger Sibling"]);
-  expect(errors).toEqual([]);
 });

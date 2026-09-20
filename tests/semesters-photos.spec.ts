@@ -2,6 +2,7 @@ import { test, expect, type APIRequestContext } from "@playwright/test";
 import pg from "pg";
 import sharp from "sharp";
 import { signIn } from "./auth-helpers";
+import { submission } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
@@ -300,7 +301,7 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   expect((await request.get(`/api/kids/${kidId}/photo`)).status()).toBe(404);
   expect(
     (
-      await guest.post("/api/registration", { headers, data: registration() })
+      await guest.post("/api/registration", { headers, data: submission(registration()) })
     ).status(),
   ).toBe(201);
   expect((await request.get(`/api/kids/${kidId}/photo`)).status()).toBe(200);
@@ -317,12 +318,16 @@ test("guardian photo is staged until signature; new-semester views retain the pr
   ).toBe(200);
   expect((await db.query("SELECT updated_at FROM club_kid_photo")).rows[0].updated_at).toEqual(before);
   const info = await (await guest.get("/api/registration", { headers })).json();
-  expect(info.signed.hasPhoto).toBe(true);
+  expect(info.signed.children[0].hasPhoto).toBe(true);
   expect(
     (
       await guest.post("/api/registration", {
         headers,
-        data: { ...registration(), supersedes: info.signed.id },
+        // A correction re-signs for the same child, so it carries their id.
+        data: {
+          ...submission({ ...registration(), kidId: info.signed.children[0].kidId }),
+          supersedes: info.signed.id,
+        },
       })
     ).status(),
   ).toBe(201);
