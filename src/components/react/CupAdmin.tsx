@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, type SubmitEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
 import {
-  formatScore, heatLabel, heatResults, heatShort, rashieLabel, RASHIES,
+  heatSecondsLeft, formatScore, heatLabel, heatResults, heatShort, rashieLabel, RASHIES,
   type CupConfig, type Entrant, type Heat, type HeatStatus, type Rashie,
 } from "../../lib/comp";
 import type { CompState } from "../../lib/server/comp";
@@ -8,6 +8,8 @@ import {
   avatar, avatarEmpty, dangerButton, errorNotice, heatCard, input, linkButton, mono, monoPlain, notice as noticeClass, panel, panelTitle, pill,
   primaryButton, rashieSwatch, select, slotRow, smallButton, statusPill,
 } from "../../lib/comp-ui";
+import { ParentPhoto, ParentPhotoUpload } from "./ParentProfileEditor";
+import { HeatCountdown, HeatWarnings, useCompetitionClock } from "./CupClock";
 import { Leaderboard } from "./CupLeaderboard";
 
 // The organiser's cup board: draw the rounds, move kids between heats, run the
@@ -20,12 +22,6 @@ const api = async (url: string, method = "GET", body?: unknown) => {
   if (!response.ok) throw Object.assign(new Error(data.error ?? "Couldn't save this change."), { status: response.status });
   return data;
 };
-const elapsed = (since: string | null, now: number) => {
-  if (!since) return "";
-  const seconds = Math.max(0, Math.floor((now - new Date(since).getTime()) / 1000));
-  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-};
-
 export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; judgeHref: string }) {
   const [state, setState] = useState<CompState | null>(null);
   const [round, setRound] = useState<RoundKey>(1);
@@ -34,23 +30,29 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const now = useCompetitionClock(state?.serverNow);
 
+  const generation = useRef(0);
+  const loading = useRef(false);
   async function load() {
-    try { setState(await api("/api/admin/cup")); setError(""); }
-    catch (e) { setError(e instanceof Error ? e.message : "Couldn't load the board."); }
+    if (loading.current) return;
+    loading.current = true;
+    const version = ++generation.current;
+    try { const next = await api("/api/admin/cup"); if (version !== generation.current) return; setState(next); setError(""); }
+    catch (e) { if (version === generation.current) setError(e instanceof Error ? e.message : "Couldn't load the board."); }
+    finally { loading.current = false; }
   }
   useEffect(() => { void load(); }, []);
-  // Running heats show a clock; scores from the judges' phones arrive every 20 s.
+  // Running heats show a clock; scores from the judges' phones arrive every 3 s.
   useEffect(() => {
-    const tick = window.setInterval(() => setNow(Date.now()), 1000);
-    const poll = window.setInterval(() => { if (!busy && !dragging) void load(); }, 20000);
-    return () => { window.clearInterval(tick); window.clearInterval(poll); };
+    const poll = window.setInterval(() => { if (!busy && !dragging) void load(); }, 3000);
+    return () => { window.clearInterval(poll); };
   }, [busy, dragging]);
 
   // Every write returns the whole board (or a slice of it); 409s mean somebody else moved first.
   async function act(work: () => Promise<Partial<CompState> | void>, done?: string) {
     if (busy) return;
+    generation.current++;
     setBusy(true); setError(""); setNotice("");
     try {
       const next = await work();
@@ -85,6 +87,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
   const ages = state.entrants.filter((kid) => kid.age !== null).map((kid) => kid.age!);
   return (
     <div className="mt-8 grid gap-8 text-fg">
+      <HeatWarnings heats={state.heats} now={now} />
       {(error || notice) && <p role="status" className={error ? errorNotice : noticeClass}>{error || notice}</p>}
 
       {/* Settings + live switch */}
@@ -158,11 +161,19 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                   <header className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <h3 className="font-display text-lg font-bold [font-variation-settings:'wdth'_110]">{heatLabel(heat)}</h3>
-                      <p className={mono}>{heat.slots.length}/{capacity} · {heat.status === "running" ? `in the water ${elapsed(heat.startedAt, now)}` : heat.status === "done" ? "done" : "scheduled"}</p>
+                      <p className={mono}>{heat.slots.length}/{capacity} · {heat.status === "running" ? "in the water" : heat.status === "done" ? "done" : "scheduled"}</p>
                     </div>
                     <span className={`${pill} ${statusPill[heat.status]}`}>{heat.status === "running" ? "● live" : heat.status}</span>
                   </header>
-                  <ul className="grid gap-2">
+                  {heat.status === "running" && <HeatCountdown heat={heat} now={now} />}
+                  {heat.status === "scheduled" && <form className="flex flex-wrap items-end gap-2" onSubmit={(event) => {
+                    event.preventDefault(); const durationMinutes = Number(new FormData(event.currentTarget).get("minutes"));
+                    void act(() => api(`/api/admin/cup/heats/${heat.id}`, "PATCH", { durationMinutes }), "Heat duration saved.");
+                  }}>
+                    <label className="grid gap-1"><span className={mono}>Heat minutes</span><input key={heat.durationMinutes} name="minutes" aria-label={`Minutes for ${heatLabel(heat)}`} type="number" min={1} max={60} required defaultValue={heat.durationMinutes} className={`${input} max-w-20`} disabled={busy} /></label>
+                    <button className={smallButton} type="submit" disabled={busy}>Set duration</button>
+                  </form>}
+                  <ul className="grid min-w-0 grid-cols-1 gap-2">
                     {heat.slots.map((slot) => {
                       const kid = kids.get(slot.kidId);
                       const result = results.get(slot.kidId);
@@ -180,7 +191,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                           <Avatar kid={kid} />
                           <div className="min-w-0 flex-1">
                             <p className="truncate font-display text-[0.98rem] font-bold [font-variation-settings:'wdth'_108]">{kid?.name ?? "Unknown"}</p>
-                            <p className={`${mono} truncate`}>{kid?.age ?? "?"} yrs · {result?.score === null || result === undefined ? `${result?.waves ?? 0} waves` : `${formatScore(result.score)} pts · ${result.waves} waves`}</p>
+                            <p className={`${mono} truncate`}>{kid?.age ?? "?"} yrs · {result?.score === null || result === undefined ? `${result?.waves ?? 0} waves` : `${formatScore(result.score)} ★ · ${result.waves} waves`}</p>
                           </div>
                           <select aria-label={`Move ${kid?.name ?? "kid"}`} className={`${select} max-w-[6.5rem] py-1 text-xs`} value={heat.id} disabled={busy}
                             onChange={(event) => void move(slot.kidId, round, event.target.value === "out" ? null : event.target.value)}>
@@ -192,10 +203,37 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                     })}
                     {heat.slots.length === 0 && <li className={`${mono} py-2`}>Empty — drop a kid here.</li>}
                   </ul>
+                  {state.volunteers.some((request) => request.heatId === heat.id) && <div className="grid gap-2 border-t border-line pt-3">
+                    <h4 className={mono}>Volunteers for this heat</h4>
+                    {state.volunteers.filter((request) => request.heatId === heat.id).map((request) => {
+                      const parent = state.parents.find((parent) => parent.email === request.email);
+                      const open = heat.status === "scheduled" || heatSecondsLeft(heat, now) > 0;
+                      return <div key={request.email} className="grid gap-2 rounded-xl border border-line p-3">
+                        <div className="flex min-w-0 items-center gap-2">{parent && <ParentPhoto profile={parent} className="h-12 w-12" />}<div className="min-w-0"><p className="font-bold">{parent?.name || request.email}</p><p className="break-all text-xs">{request.email}</p></div></div>
+                        {parent?.phone && <p className="text-sm">{parent.phone}</p>}
+                        {!!parent?.children.length && <p className="text-sm">Parent of {parent.children.map((kid) => kid.name).join(", ")}</p>}
+                        <p className={mono}>{request.status}</p>
+                        {open && <div className="flex flex-wrap gap-2">
+                          {request.status !== "approved" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void act(() => api(`/api/admin/cup/heats/${heat.id}/volunteers`, "PATCH", { email: request.email, decision: "approved" }), "Volunteer approved for this heat.")}>Approve {parent?.name || "volunteer"}</button>}
+                          {request.status !== "declined" && <button type="button" className={smallButton} disabled={busy} onClick={() => void act(() => api(`/api/admin/cup/heats/${heat.id}/volunteers`, "PATCH", { email: request.email, decision: "declined" }), "Volunteer selection updated.")}>{request.status === "approved" ? "Remove approval" : "Decline"}</button>}
+                        </div>}
+                      </div>;
+                    })}
+                  </div>}
+                  <fieldset className="grid gap-2 border-t border-line pt-3" disabled={busy || heat.status === "done" || (heat.status === "running" && !heatSecondsLeft(heat, now))}>
+                    <legend className={mono}>Judges for this heat</legend>
+                    {state.judges.map((judge) => <label key={judge.email} className="flex min-h-11 items-center gap-2 text-sm">
+                      <input type="checkbox" checked={heat.judges.includes(judge.email)} onChange={(event) => {
+                        const judges = event.target.checked ? [...heat.judges, judge.email] : heat.judges.filter((email) => email !== judge.email);
+                        void act(() => api(`/api/admin/cup/heats/${heat.id}/judges`, "PUT", { judges }), "Heat judges saved.");
+                      }} />{judge.name}
+                    </label>)}
+                    {!heat.judges.length && <p className="text-sm text-fg-muted">Nobody can score this heat until you select a judge.</p>}
+                  </fieldset>
                   <footer className="mt-auto flex flex-wrap gap-2">
-                    {heat.status !== "running" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "running")}>{heat.status === "done" ? "Reopen" : "Start heat"}</button>}
+                    {heat.status === "scheduled" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "running")}>Start heat</button>}
                     {heat.status === "running" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "done")}>Finish + post result</button>}
-                    {heat.status !== "scheduled" && <button type="button" className={smallButton} disabled={busy} onClick={() => void setStatus(heat, "scheduled")}>Reset</button>}
+                    {heat.status !== "scheduled" && !state.waves.some((wave) => wave.heatId === heat.id) && <button type="button" className={smallButton} disabled={busy} onClick={() => void setStatus(heat, "scheduled")}>Reset</button>}
                   </footer>
                 </article>
               );
@@ -226,12 +264,25 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
         )}
       </section>
 
+      <section className={`${panel} grid gap-4`}>
+        <h2 className={panelTitle}>Parents &amp; volunteers <span className={mono}>{state.parents.length}</span></h2>
+        <p className="text-sm text-fg-muted">Contact details from the latest signed registrations, with each adult’s own profile and photo. Only organisers can see this directory.</p>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {state.parents.map((parent) => <article key={parent.email} aria-label={`Parent profile: ${parent.name || parent.email}`} className="grid min-w-0 content-start gap-3 rounded-xl border border-line p-4">
+            <div className="flex items-center gap-3"><ParentPhoto profile={parent} /><div className="min-w-0"><h3 className="font-display text-lg font-bold">{parent.name || "Name not saved"}</h3><p className="break-all text-xs">{parent.email}</p></div></div>
+            {parent.phone && <p className="text-sm">{parent.phone}</p>}
+            {!!parent.children.length && <p className="text-sm">Parent of {parent.children.map((kid) => kid.name).join(", ")}</p>}
+            <ParentPhotoUpload profile={parent} onSaved={() => void load()} />
+          </article>)}
+        </div>
+      </section>
+
       <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
         {/* Leaderboard */}
         <section className={`${panel} overflow-x-auto`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className={panelTitle}>Leaderboard</h2>
-            <p className={mono}>best 2 waves per heat, judges averaged, rounds added up</p>
+            <p className={mono}>best 2 runs averaged · 5 stars maximum · final separate</p>
           </div>
           <Leaderboard rows={state.standings} rounds={config.rounds} />
         </section>
@@ -240,7 +291,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
           {/* Judges */}
           <section className={`${panel} grid gap-4`}>
             <h2 className={panelTitle}>Judges <span className={mono}>{state.judges.length}</span></h2>
-            <p className="text-sm text-fg-muted">Judges sign in at <a className="underline" href="/login?next=%2Fcup%2Fjudge">/login</a> with the email you add here — no club membership needed. Organisers can judge too.</p>
+            <p className="text-sm text-fg-muted">Parents can volunteer from the miniapp; approve their request on the heat card above. You can also invite judges by email. Judges sign in at <a className="underline" href="/login?next=%2Fcup%2Fjudge">/login</a> with the email you add here — no club membership needed. Select judges on each heat above. Organisers must also be invited and selected. Saved ratings stay if a judge is removed.</p>
             <ul className="grid gap-2">
               {state.judges.map((judge) => (
                 <li key={judge.email} className={`${slotRow} justify-between`}>

@@ -13,12 +13,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // The shop is a members-only drop: the page shows everyone else a teaser, reserving needs a member.
   const shop = /^\/shop(\/|$)/.test(path);
   const reservation = path === "/api/reserve";
-  // The judge sheet and its API need a session; whether that email may judge is checked in the route.
-  const judge = /^\/(cup\/judge|api\/cup\/(judge|photo))(\/|$)/.test(path);
+  // The miniapp is public; scoring and private photos require a session.
+  const judgePage = /^\/cup\/judge\/?$/.test(path);
+  const judge = /^\/api\/cup\/(judge|photo)(\/|$)/.test(path);
   const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
   const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
   const granolaAPI=/^\/api\/granola(?:\/|$)/.test(path);
-  const privateResponse = brandingPage||brandingTemplate||gallery||judge||shop||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
+  const privateResponse = brandingPage||brandingTemplate||gallery||judge||judgePage||shop||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
     if(brandingPage||brandingTemplate||granolaAPI){
@@ -29,7 +30,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if(brandingTemplate)return context.redirect("/branding-plan");
       }
     }
-    if (admin || account || members || reservation || gallery || judge || shop) {
+    if (admin || account || members || reservation || gallery || judge || judgePage || shop) {
       try {
         context.locals.session = await getSession(context.request);
         context.locals.isAdmin = isAdmin(context.locals.session);

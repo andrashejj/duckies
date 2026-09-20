@@ -2,6 +2,7 @@ import { test, expect, type APIRequestContext } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import { verify, createHash } from "node:crypto";
 import pg from "pg";
+import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
 import { signIn } from "./auth-helpers";
 import { submission } from "./registration-helpers";
@@ -90,7 +91,7 @@ async function pay(status: "paid" | "unpaid" = "paid") {
 }
 test.beforeEach(async ({ request, playwright }) => {
   await db.query(
-    'TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE',
+    'TRUNCATE club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE',
   );
   await db.query(
     "INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser'),('member@example.com','member')",
@@ -519,10 +520,19 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   await expect(consent).toBeInViewport();
   await consent.check();
   await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
+  const parentPhoto = page.getByLabel("Profile photo · guardian 1 (optional)", { exact: true });
+  await parentPhoto.setInputFiles({ name: "parent.png", mimeType: "image/png", buffer: await sharp({ create: { width: 32, height: 32, channels: 3, background: "#e9a366" } }).png().toBuffer() });
+  await expect(page.locator('[data-guardian] [data-photo-status]')).toContainText("Photo uploaded.");
+  await expect(email).toHaveAttribute("readonly", "");
+
   await page
     .getByRole("button", { name: /^Sign and submit/ })
     .click();
   await expect(page.locator("#signed-result")).toBeVisible({ timeout: 20000 });
+  const savedParent = (await db.query("SELECT name,phone,image FROM club_parent_profile WHERE email='guardian@example.com'")).rows[0];
+  expect(savedParent.name).toBe("Test Guardian");
+  expect(savedParent.phone).toBe("+230 5555 1234");
+  expect(savedParent.image.toString("ascii", 8, 12)).toBe("WEBP");
   // Corrections reopen the signed details through the same link.
   await page.getByRole("button", { name: "Edit details, add a duckie, sign again", exact: true }).click();
   await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("Test Guardian");
@@ -834,4 +844,79 @@ test("administrative birth-date corrections preserve the signature and update ag
   expect(refreshed.kids[0].registration.dateOfBirth).toBe("2019-11-08");
   expect(refreshed.kids[0].birthDateCorrection).toBeNull();
   expect((await db.query("SELECT * FROM club_birth_date_correction")).rowCount).toBe(1);
+});
+
+
+test("registration commits private parent profiles and photos; admin table refreshes and authenticated edits are preserved", async ({ request, playwright, page }) => {
+  const invitation = await issue(request);
+  const guest = await playwright.request.newContext({ baseURL: origin });
+  const parent = await playwright.request.newContext({ baseURL: origin });
+  try {
+    const photo = await sharp({ create: { width: 32, height: 32, channels: 3, background: "#e9a366" } }).png().toBuffer();
+    for (const email of ["guardian@example.com", "second@example.com", "removed@example.com"]) {
+      const upload = await guest.put(`/api/registration/parent-photo?email=${email}`, { headers: { ...invitation.headers, "content-type": "image/png" }, data: photo });
+      expect(upload.status()).toBe(200);
+    }
+    expect((await db.query("SELECT * FROM club_parent_profile")).rowCount).toBe(0);
+    expect((await complete(guest, invitation.headers, { ...payload(), waiverAccepted: false })).status()).toBe(400);
+    expect((await db.query("SELECT * FROM club_parent_profile")).rowCount).toBe(0);
+    await page.context().addCookies((await request.storageState()).cookies);
+    await page.goto("/admin/parents");
+    await page.getByRole("searchbox", { name: "Find a parent or duckie" }).fill("guardian@example.com");
+    await expect(page.getByText("No parents match your search.")).toBeVisible();
+    const signed = await complete(guest, invitation.headers);
+    expect(signed.status()).toBe(201);
+    const group = await signed.json();
+    const row = page.getByRole("row").filter({ hasText: "guardian@example.com" });
+    await expect(row).toContainText("Test Guardian", { timeout: 12000 });
+    await expect(row).toContainText("Zoë Test Surfer");
+    await expect(row).toContainText("Father");
+    await expect(row.getByRole("img")).toBeVisible();
+    expect(await row.getByRole("img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+    expect((await db.query("SELECT email FROM club_parent_profile ORDER BY email")).rows.map(row => row.email)).toEqual(["guardian@example.com", "second@example.com"]);
+    expect((await db.query("SELECT * FROM club_registration_parent_photo")).rowCount).toBe(0);
+    expect((await guest.get("/api/admin/parents")).status()).toBe(401);
+    expect((await guest.get("/api/parents/photo?email=guardian@example.com")).status()).toBe(401);
+    const corrected = payload(); corrected.guardians[0].phone = "+230 5555 1111";
+    const correction = submission({ ...corrected, supersedes: group.id });
+    correction.children[0].kidId = kidId;
+    const correctedResponse = await guest.post("/api/registration", { headers: invitation.headers, data: correction });
+    expect(correctedResponse.status()).toBe(201);
+    await expect(row).toContainText("+230 5555 1111", { timeout: 12000 });
+    await signIn(parent, "guardian@example.com");
+    expect((await parent.get("/api/admin/parents")).status()).toBe(403);
+    expect((await parent.get("/api/parents/photo?email=second@example.com")).status()).toBe(403);
+    expect((await parent.get("/api/parents/photo")).status()).toBe(200);
+    expect((await parent.put("/api/parents/profile", { headers: { origin }, data: { name: "Parent chosen name", phone: "+230 5555 2222" } })).status()).toBe(200);
+    expect((await parent.put("/api/parents/photo", { headers: { origin, "content-type": "image/png" }, data: photo })).status()).toBe(200);
+    const before = (await db.query("SELECT photo_updated_at FROM club_parent_profile WHERE email='guardian@example.com'")).rows[0];
+    expect((await guest.put("/api/registration/parent-photo?email=guardian@example.com", { headers: { ...invitation.headers, "content-type": "image/png" }, data: photo })).status()).toBe(200);
+    Object.assign(correction, { supersedes: (await correctedResponse.json()).id });
+    expect((await guest.post("/api/registration", { headers: invitation.headers, data: correction })).status()).toBe(201);
+    const saved = (await db.query("SELECT name,phone,photo_updated_at FROM club_parent_profile WHERE email='guardian@example.com'")).rows[0];
+    expect(saved).toEqual({ name: "Parent chosen name", phone: "+230 5555 2222", photo_updated_at: before.photo_updated_at });
+    await page.getByRole("searchbox").fill("");
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await expect(row).toContainText("Parent chosen name", { timeout: 12000 });
+    await page.screenshot({ path: "test-results/parents-admin-desktop.png", fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: "test-results/parents-admin-mobile.png", fullPage: true });
+  } finally { await guest.dispose(); await parent.dispose(); }
+});
+
+test("parent backfill restores older signed guardians without changing existing profiles or waivers", async ({ request }) => {
+  const invitation = await issue(request);
+  expect((await complete(request, invitation.headers)).status()).toBe(201);
+  const before = (await db.query("SELECT * FROM club_signed_waiver WHERE kid_id=$1", [kidId])).rows;
+  await db.query("DELETE FROM club_parent_profile WHERE email='guardian@example.com'");
+  await db.query("UPDATE club_parent_profile SET name='Parent edited name',phone='12345678',registration_link_id=NULL WHERE email='second@example.com'");
+  const backfill = await readFile("prisma/migrations/20260920180000_parent_profile_backfill/migration.sql", "utf8");
+  await db.query(backfill);
+  await db.query(backfill);
+  const profiles = (await db.query("SELECT email,name,phone,registration_link_id FROM club_parent_profile ORDER BY email")).rows;
+  expect(profiles).toHaveLength(2);
+  expect(profiles[0]).toMatchObject({ email: "guardian@example.com", name: "Test Guardian", phone: "+230 5555 1234", registration_link_id: before[0].link_id });
+  expect(profiles[1]).toMatchObject({ email: "second@example.com", name: "Parent edited name", phone: "12345678", registration_link_id: null });
+  expect((await db.query("SELECT * FROM club_signed_waiver WHERE kid_id=$1", [kidId])).rows).toEqual(before);
 });
