@@ -1473,7 +1473,7 @@ export const site = {
     edition: "Vol. 02",
     dateLabel: "Friday 16 October 2026",
     dateISO: "2026-10-16",
-    timeLabel: "Doors 12:00 · first heat 14:00 · bonfire 18:30",
+    timeLabel: "Meet the crew at the beach & start build-up 12:00 · first heat 14:00 · bonfire 18:30",
     location: "Tamarin Bay, Mauritius",
     memberFeeLabel: "Free",
     entryFeeLabel: "Rs 1,000",
@@ -1491,7 +1491,7 @@ export const site = {
         accent: "sun",
         tag: "When",
         title: "Fri 16 Oct · from 12:00",
-        text: "Arrive from 12:00: check in, warm up, find your people. First heat at 14:00, heats end at 18:00, bonfire from 18:30.",
+        text: "Meet the crew at the beach at 12:00 and start the build-up together. First heat at 14:00, heats end at 18:00, bonfire from 18:30.",
       },
       {
         photo: "heart-cake",
@@ -1530,7 +1530,7 @@ export const site = {
       },
     ],
     runOfShow: [
-      { time: "12:00", label: "Arrival — check in at the desk, warm-up on the sand, free surf", photo: "warm-up-circle" },
+      { time: "12:00", label: "Meet the crew at the beach and start the build-up", photo: "warm-up-circle" },
       { time: "14:00", label: "First heat — heats of 4, every surfer scored individually", photo: "first-waves-blue-sky" },
       { time: "all afternoon", label: "Music + BBQ between heats", photo: "sand-games" },
       { time: "18:00", label: "Last heat ends — scores tallied, awards", photo: "sunset-ride-arms-out" },
