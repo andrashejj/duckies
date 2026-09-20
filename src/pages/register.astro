@@ -6,6 +6,7 @@ import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
+import { site } from "../data/site";
 import { bodyCopy } from "../lib/ui";
 import { largeAvatar, memberForm, memberStatus, registrationCheck, registrationGrid, registrationPage, registrationPanel, registrationSheet, signaturePad, textButton } from "../lib/members-ui";
 const panel = `${registrationPanel} ${memberForm}`;
@@ -17,7 +18,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   <main class={registrationSheet}>
     <Kicker as="a" href="/">Sunset Duckies · Tamarin Bay</Kicker>
     <SectionTitle as="h1" class="mt-6">Ready for the <span class="font-accent italic">water.</span></SectionTitle>
-    <p id="registration-intro" data-paid="One child, one form. Your membership is paid — this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One child, one form. Fill it in and sign now; the place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. A parent or legal guardian can fill it in and sign without an account.</p>
+    <p id="registration-intro" data-paid="One child, one form — there's a link to register the next one at the end. Your membership is paid, so this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One child, one form — there's a link to register the next one at the end. Fill it in and sign now; the place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One child, one form — there's a link to enter the next one at the end. This completes your child's entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One child, one form. A parent or legal guardian can fill it in and sign without an account.</p>
     <p id="registration-status" class={memberStatus} role="status" aria-live="polite">Opening your private invitation…</p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
@@ -25,6 +26,11 @@ const panel = `${registrationPanel} ${memberForm}`;
       <div class="mt-4 flex flex-wrap gap-4"><Cta id="download-waiver" type="button">Download signed waiver</Cta><button id="download-audit" class={textButton} type="button">Download signature record</button></div>
       <p class="mt-6">Spotted a mistake — a date of birth, a phone number, the photo? You can correct the details and sign again while this link is valid. The corrected version replaces the earlier one; the club keeps both.</p>
       <button id="edit-registration" class={`mt-3 ${textButton}`} type="button">Edit details and sign again</button>
+      <div class="mt-7 border-t-2 border-dashed border-edge pt-6">
+        <SectionTitle size="none" class="text-2xl">Got another duckie?</SectionTitle>
+        <p id="another-child-copy" class="mt-2" data-club={`Brothers and sisters each sign their own form — the waiver is per surfer, and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} covers a whole family for the semester. Your name and number carry over, so the next one takes about two minutes.`} data-cup="Every surfer enters on their own form. Your name and number carry over, so the next entry takes about two minutes.">Brothers and sisters each sign their own form.</p>
+        <Cta id="register-another" href="/join" variant="secondary" class="mt-4">Register another child</Cta>
+      </div>
     </section>
     <form id="registration-form" data-waiver-version={WAIVER_VERSION} data-minimum-age={MINIMUM_AGE} class={memberForm} hidden>
       <p id="invitation-label" class={registrationPanel}></p>
@@ -116,6 +122,7 @@ const panel = `${registrationPanel} ${memberForm}`;
 </body>
 </html>
 <script>
+  import { rememberFamily } from "../lib/family-contact";
   import { guardianFields, textButton } from "../lib/members-ui";
   type Guardian = { name: string; relationship: string; phone: string; email: string };
   type Signed = { id: string; registration: Record<string, any> & { guardians: Guardian[] }; hasPhoto: boolean } | null;
@@ -186,8 +193,16 @@ const panel = `${registrationPanel} ${memberForm}`;
   const photoStatus = document.querySelector<HTMLElement>("#photo-status")!;
   const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview")!;
   const removePhoto = document.querySelector<HTMLButtonElement>("#remove-profile-photo")!;
+  // A cup entry sends the next sibling back to the cup form; a semester
+  // registration starts the next one at the club's join form.
+  function offerAnotherChild() {
+    document.querySelector<HTMLAnchorElement>("#register-another")!.href = cup ? "/sunset-duckies-cup-vol-2#register" : "/join";
+    const copy = document.querySelector<HTMLElement>("#another-child-copy")!;
+    copy.textContent = cup ? copy.dataset.cup! : copy.dataset.club!;
+  }
   function completed(canDownload: boolean) {
     form.hidden=true; result.hidden=false; supersedes="";
+    offerAnotherChild();
     document.querySelector<HTMLButtonElement>("#download-waiver")!.hidden = !canDownload; document.querySelector<HTMLButtonElement>("#download-audit")!.hidden = !canDownload;
     status.textContent = canDownload ? "Registration complete. Thank you." : "Already signed. Ask the club for a saved copy.";
     result.scrollIntoView({ behavior: "smooth" });
@@ -224,6 +239,9 @@ const panel = `${registrationPanel} ${memberForm}`;
       version = form.dataset.waiverVersion ?? "";
       if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
       signed = data.signed;
+      // The signing guardian, kept for the next child's sign-up form.
+      const signer = signed?.registration?.guardians?.[0];
+      if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone });
       // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
       cup = Boolean(data.cup);
       const intro = document.querySelector<HTMLElement>("#registration-intro")!;

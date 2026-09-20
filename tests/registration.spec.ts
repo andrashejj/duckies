@@ -550,3 +550,60 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
     .screenshot({ path: "test-results/registration-overview-mobile.png" });
   expect(errors).toEqual([]);
 });
+
+// A family with two duckies signs two waivers. The signed page has to lead
+// back to a new sign-up, and that sign-up has to remember who the parent is.
+test("a family registers a second child straight from the signed page, without retyping their details", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  async function signFor(child: string) {
+    await expect(page.locator("#registration-form")).toBeVisible();
+    await expect(page.getByLabel("Child’s full name", { exact: true })).toHaveValue(child);
+    await page.getByLabel("Date of birth", { exact: true }).fill("2016-05-04");
+    await page.getByLabel("Training rhythm", { exact: true }).selectOption("1");
+    for (const [label, value] of [
+      ["Full name · guardian 1", "Sibling Parent"],
+      ["Relationship · guardian 1", "Mother"],
+      ["Phone · guardian 1", "+230 5722 3344"],
+      ["Email · guardian 1", "sibling.parent@example.com"],
+      ["Type your full name to sign", "Sibling Parent"],
+    ] as const)
+      await page.getByLabel(label, { exact: true }).fill(value);
+    for (const box of await page.locator('#registration-form input[type="checkbox"][required]').all())
+      await box.check();
+    await page.locator('input[name="media"][value="yes"]').check();
+    await page.getByRole("button", { name: /^Sign and submit/ }).click();
+    await expect(page.locator("#signed-result")).toBeVisible({ timeout: 20000 });
+  }
+  const join = page.locator("[data-join][data-ready]");
+  await page.goto("/join", { waitUntil: "domcontentloaded" });
+  await expect(join.locator("[data-join-again]")).toBeHidden();
+  await join.getByLabel("Kid's name").fill("Elder Sibling");
+  await join.getByLabel("Parent / guardian").fill("Sibling Parent");
+  await join.getByLabel("WhatsApp number").fill("+230 5722 3344");
+  await join.getByRole("button", { name: "Start the registration" }).click();
+  await page.waitForURL(/\/register#token=/);
+  await signFor("Elder Sibling");
+
+  // The way onward: back to the sign-up, with the parent's details carried over.
+  await page.getByRole("link", { name: /^Register another child/ }).click();
+  await page.waitForURL(/\/join$/);
+  await expect(join.locator("[data-join-again]")).toBeVisible();
+  await expect(join.getByLabel("Parent / guardian")).toHaveValue("Sibling Parent");
+  await expect(join.getByLabel("WhatsApp number")).toHaveValue("+230 5722 3344");
+  await expect(join.getByLabel("Kid's name")).toHaveValue("");
+  await join.getByLabel("Kid's name").fill("Younger Sibling");
+  await join.getByRole("button", { name: "Start the registration" }).click();
+  await page.waitForURL(/\/register#token=/);
+  await signFor("Younger Sibling");
+
+  const { rows } = await db.query(
+    `SELECT k.name FROM club_kid k JOIN club_signed_waiver w ON w.kid_id=k.id
+    WHERE k.contact_phone=$1 ORDER BY k.created_at`,
+    ["+230 5722 3344"],
+  );
+  expect(rows.map((row) => row.name)).toEqual(["Elder Sibling", "Younger Sibling"]);
+  expect(errors).toEqual([]);
+});
