@@ -24,7 +24,7 @@ const links=[
 ];
 ---
 <aside class="journal-sidebar">
-  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies">duckies<span>.</span></a>
+  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
   <nav aria-label="Member navigation" class="journal-desktop-nav">
     {nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}
     {links.map(item=><a class="journal-secondary-link" href={item.href} aria-label={item.label} aria-current={path===item.href?'page':undefined}><PhotoIcon name={item.href==='/'?'external':'user'} class="h-4 w-4"/><span>{item.label}</span></a>)}
@@ -32,7 +32,7 @@ const links=[
   <div class="journal-sidebar-bottom"><div class="flex items-center gap-3"><ThemeToggle variant="performance" class="rounded-full border-0"/><span class="text-xs text-fg-muted">Light / dark</span></div><SignOutButton client:load className="social-signout"/></div>
 </aside>
 <header class="journal-mobile-header">
-  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies">duckies<span>.</span></a>
+  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
   <div class="flex items-center gap-2"><ThemeToggle variant="performance" class="rounded-full border-0"/><details class="journal-account-menu"><summary aria-label="Account and club links"><PhotoIcon name="user"/></summary><nav aria-label="Account and club links">{links.map(item=><a href={item.href} aria-current={path===item.href?'page':undefined}>{item.label}</a>)}<SignOutButton client:load className="social-signout"/></nav></details></div>
 </header>
 {nav.length>0&&<nav aria-label="Mobile photo navigation" class="journal-mobile-nav">{nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}</nav>}
