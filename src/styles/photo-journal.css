@@ -293,3 +293,70 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .social-public-link { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; padding: 15px 0; border-top: 1px solid var(--line); text-align: left; }
 .social-public-link > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
 .social-public-link > span:last-child { flex-shrink: 0; font-size: 12px; color: var(--fg-muted); }
+
+/* One club directory, with the same person labels on the private family page. */
+.club-home { max-width: 1100px; margin: auto; padding: 32px 36px 70px; }
+.club-search { display: grid; gap: 7px; max-width: 320px; font-size: 13px; font-weight: 550; margin-bottom: 22px; }
+.club-search input { width: 100%; min-height: 44px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-weight: 400; }
+.club-directory { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.club-person-card { min-width: 0; display: flex; align-items: center; gap: 13px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.club-person-card:hover h2 { text-decoration: underline; text-underline-offset: 3px; }
+.club-person-photo { width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%; }
+.club-person-initial { grid-column: span 2; display: grid; place-items: center; font-size: 26px; color: var(--fg-muted); }
+.club-person-info { min-width: 0; }
+.club-person-info h2 { font-size: 16px; font-weight: 600; overflow-wrap: anywhere; margin-bottom: 6px; }
+.club-person-info p { margin-top: 8px; font-size: 12px; color: var(--fg-muted); }
+.club-role { display: inline-flex; align-items: center; border-radius: 4px; padding: 3px 7px; font-size: 10px; font-weight: 600; line-height: 1.3; background: var(--surface-2); color: var(--fg); }
+.club-role[data-kind=duckie] { background: var(--accent); color: var(--accent-fg); }
+.club-moments { max-width: 620px; margin: 44px auto 0; border-top: 1px solid var(--line); padding-top: 26px; }
+.club-moments>h2 { font-size: 22px; font-weight: 600; margin-bottom: 20px; }
+.family-page { max-width: 1000px; margin: auto; padding: 32px 36px 64px; }
+.family-page .social-page-header { margin: 0 0 28px; }
+.family-self, .family-section-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.family-section-heading h2, .family-kids-heading { font-size: 18px; font-weight: 600; }
+.family-kids-heading { margin: 30px 0 15px; }
+.family-help { margin-top: 5px; font-size: 13px; line-height: 1.6; color: var(--fg-muted); }
+.family-text-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.family-parent-list { margin-top: 14px; }
+.family-parent { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.family-parent-identity { display: flex; align-items: center; gap: 14px; }
+.family-parent h3 { font-size: 16px; font-weight: 550; overflow-wrap: anywhere; margin-bottom: 5px; }
+.family-avatar { display: grid; place-items: center; width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%; object-fit: cover; background: var(--surface-2); font-size: 22px; }
+.family-you { font-weight: 400; color: var(--fg-muted); }
+.family-edit { margin-left: auto; flex-shrink: 0; }
+.family-access { margin: 8px 0 0 66px; font-size: 13px; }
+.family-access summary { cursor: pointer; min-height: 36px; display: list-item; align-content: center; }
+.family-access-body { padding: 12px 16px; background: var(--surface-2); border-radius: 8px; line-height: 1.7; }
+.family-access-body>button { margin-top: 14px; }
+.family-access-child { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); margin-top: 12px; }
+.family-page .family-kid { padding-left: 0; border: 1px solid var(--line); border-radius: 12px; box-shadow: none; transform: none; translate: none; animation: none; }
+.family-kid-head { padding-top: 20px; }
+.family-page :is(.font-display,.font-mono) { font-family: var(--font-sans); letter-spacing: normal; }
+.family-page .family-kid h3 { font-size: 22px; margin-bottom: 7px; }
+.family-page .family-kid-avatar { border-radius: 50%; }
+.family-page :is(.family-kid-row,.family-kid-summary,.family-kid-body) { border-style: solid; border-width: 1px 0 0; letter-spacing: normal; text-transform: none; font-size: 12px; }
+.family-page .family-standing { border-width: 1px; border-style: solid; rotate: none; text-transform: none; }
+.family-reference { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+.family-reference summary { min-height: 44px; cursor: pointer; font-size: 16px; font-weight: 550; }
+.family-reference h3 { font-size: 16px; font-weight: 600; margin: 22px 0 10px; }
+.family-reference p, .family-reference li { font-size: 14px; line-height: 1.7; }
+.family-dates { display: grid; gap: 12px; }
+.family-dates strong { display: block; }
+@media(min-width:769px) and (max-width:1300px) { .club-directory { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:768px) {
+  .club-home,.family-page { padding: 24px 18px 40px; }
+  .club-home .social-page-header { margin-inline: 0; }
+  .club-directory { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .club-person-card { display: block; padding: 13px; }
+  .club-person-info { margin-top: 12px; }
+  .club-person-info h2 { font-size: 14px; }
+  .club-person-info p { font-size: 11px; }
+  .club-moments .social-composer { margin-inline: 0; }
+  .family-page .social-page-header { flex-wrap: wrap; }
+  .family-page .social-page-header .journal-button { flex: none; }
+  .family-parent-identity { flex-wrap: wrap; }
+  .family-edit { margin-left: 66px; }
+  .family-access { margin-left: 0; }
+}
+
+.family-points { margin: 0 20px 16px; padding: 12px; border-radius: 8px; background: var(--surface-2); }

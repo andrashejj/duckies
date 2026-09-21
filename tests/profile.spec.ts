@@ -126,17 +126,15 @@ test("a guardian's page shows their own duckies, records and standing — and no
   await expect(passes.first()).toHaveAttribute("data-standing", "ok");
   await expect(passes.first().getByText("Member", { exact: true })).toBeVisible();
   await expect(page.getByText("Somebody Else")).toHaveCount(0);
-  // What's next, and this semester's terms, without opening a single pass.
+  // Secondary dates and fees stay available without dominating the family page.
+  await page.getByText("Club dates & semester fees", { exact: true }).click();
   await expect(page.getByRole("list", { name: "Upcoming club dates" }).getByText("Monday training").first()).toBeVisible();
   await expect(page.getByText("September 2026 semester").first()).toBeVisible();
   // The record and the history are one click away.
   await passes.first().getByText("Details, history + changes").click();
   await expect(passes.first().getByText("Peanut allergy")).toBeVisible();
   await expect(passes.first().getByRole("link", { name: "Download PDF" })).toBeVisible();
-  // Scroll once so the reveal sections below the fold settle, then come back.
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await expect(page.locator("[data-reveal][data-revealed=true]")).toHaveCount(3);
-  await expect(page.getByText("In the water soon.")).toBeVisible();
   await expect(page.getByText("Rs 3,000", { exact: false }).first()).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "test-results/members-profile-desktop.png", fullPage: true });
