@@ -1,0 +1,17 @@
+---
+import type { ProfilePhoto, PhotoTag } from "../lib/server/photo-profiles";
+interface Props { photo: ProfilePhoto; tags?: PhotoTag[]; canTag?: boolean; square?: boolean }
+const { photo, tags = [], canTag = false, square = false } = Astro.props;
+---
+<article class:list={["min-w-0 overflow-hidden border border-edge/20 bg-surface", square ? "" : "mb-4 break-inside-avoid rounded-xl border-2 border-edge shadow-sticker-sm"]}>
+  <button type="button" data-lb-trigger data-full={photo.full} data-alt={photo.caption} aria-label={`Open photo: ${photo.caption}`} class="group block w-full cursor-zoom-in overflow-hidden focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-teal-600">
+    <img src={photo.thumb} alt={photo.caption} width={photo.width} height={photo.height} loading="lazy" decoding="async" class:list={["w-full transition-transform duration-300 motion-safe:group-hover:scale-105", square ? "aspect-square object-cover" : "h-auto"]} />
+  </button>
+  {!square && photo.key.startsWith("upload:") && <p class="px-3 pt-2 text-sm text-fg-muted">{photo.caption}</p>}
+  <div class="flex min-h-10 flex-wrap items-center gap-x-3 gap-y-1 px-2 py-2 text-xs">
+    <div data-tags-for={photo.key} class="flex min-w-0 flex-1 flex-wrap gap-x-2 gap-y-1">
+      {tags.map(tag => <a href={`/gallery/duckies/${tag.id}`} class="min-w-0 break-words font-semibold underline decoration-teal-600/40 underline-offset-4">{tag.name}</a>)}
+    </div>
+    {canTag && <button type="button" data-tag-open={photo.key} data-tag-preview={photo.thumb} class="shrink-0 cursor-pointer rounded-md px-1 py-1 font-semibold hover:bg-highlight focus-visible:outline-2" aria-label={`Tag duckies in photo: ${photo.caption}`}>Tag +</button>}
+  </div>
+</article>

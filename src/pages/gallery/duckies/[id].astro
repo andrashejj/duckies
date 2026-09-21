@@ -1,0 +1,52 @@
+---
+export const prerender = false;
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Lightbox from "../../../components/Lightbox.astro";
+import GalleryPhoto from "../../../components/GalleryPhoto.astro";
+import PhotoTagger from "../../../components/PhotoTagger.astro";
+import { galleryPhotos, photoKids, photoTags } from "../../../lib/server/photo-profiles";
+import { ctaClass } from "../../../lib/ui";
+const member = Astro.locals.session!.member!;
+let data;
+try {
+  const [kids, photos, tags] = await Promise.all([photoKids(member), galleryPhotos(), photoTags(member)]);
+  const kid = kids.find(k => k.id === Astro.params.id);
+  if (kid) data = { kid, tags, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)) };
+  else Astro.response.status = 404;
+} catch { Astro.response.status = 503; }
+const title = data ? `${data.kid.name} in pictures · Sunset Duckies` : "Photo profile · Sunset Duckies";
+---
+<BaseLayout title={title} description="A duckie's photo journal, shared inside the club.">
+  <section class="mx-auto max-w-5xl px-3 pb-20 pt-10 sm:px-6">
+    <a href="/gallery/duckies" class="font-mono text-xs uppercase tracking-widest underline underline-offset-4">← All duckies</a>
+    {!data ? <h1 class="my-12 font-display text-3xl">{Astro.response.status === 404 ? "Duckie not found." : "Photo profile unavailable. Please try again."}</h1> : <>
+      <header class="my-10 flex items-center gap-5 sm:my-14 sm:gap-9">
+        <div class="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full border-[3px] border-edge bg-sticker-sun shadow-[4px_4px_0_var(--color-coral-500)] sm:h-36 sm:w-36">
+          <span class="font-accent text-5xl italic text-ink-950 sm:text-7xl" aria-hidden="true">{data.kid.name.slice(0,1)}</span>
+        </div>
+        <div class="min-w-0">
+          <p class="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-accent-text sm:text-xs">Sunset Duckies · photo journal</p>
+          <h1 class="mt-2 break-words font-display text-[clamp(1.8rem,6vw,3.6rem)] font-bold leading-tight tracking-tight">{data.kid.name}</h1>
+          <p class="mt-3 text-sm"><strong data-profile-count>{data.photos.length}</strong> {data.photos.length === 1 ? "photo" : "photos"} <span class="px-2 text-fg/30">/</span> Club members only</p>
+          {data.kid.canManage && <div class="mt-4 flex flex-wrap gap-3">
+            <a href={`/gallery/share?kid=${data.kid.id}`} class={ctaClass("primary", "sm")}>Upload photos</a>
+            <a href={`/gallery?duckie=${data.kid.id}`} class={ctaClass("secondary", "sm")}>Choose from gallery</a>
+          </div>}
+        </div>
+      </header>
+      <div class="mb-1 flex items-center justify-between border-t-2 border-edge py-4">
+        <h2 class="font-mono text-xs font-bold uppercase tracking-[0.16em]">▦ &nbsp; Photos & tags</h2>
+        <p class="text-xs text-fg-muted">All their moments, together</p>
+      </div>
+      {data.photos.length ? <div class="grid grid-cols-3 gap-1 sm:gap-2" aria-label={`${data.kid.name}'s photos`}>
+        {data.photos.map(photo => <GalleryPhoto photo={photo} tags={data.tags[photo.key]} canTag={data.kid.canManage} square />)}
+      </div> : <div class="rounded-xl border-2 border-dashed border-edge/30 bg-surface py-16 text-center">
+        <p class="font-accent text-3xl italic">The first frame is still to come.</p>
+        <p class="mx-auto mt-3 max-w-sm px-4 text-sm text-fg-muted">{data.kid.canManage ? "Upload a favourite or tag a photo from the club gallery. It will appear right here." : "Photos appear here when a parent or organiser tags this duckie."}</p>
+      </div>}
+      <p class="mt-6 max-w-xl text-xs leading-relaxed text-fg-muted">A photo can belong on more than one duckie's board. Removing a tag takes it off this profile; it stays in the club gallery.</p>
+      <Lightbox id="duckie-lightbox" label={`${data.kid.name}'s photos`} />
+      {data.kid.canManage && <PhotoTagger />}
+    </>}
+  </section>
+</BaseLayout>

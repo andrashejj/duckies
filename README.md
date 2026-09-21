@@ -170,3 +170,9 @@ Granola eligibility is snapshotted into `OrderItem.granolaBags` when reserving; 
 The follow-up migration `20260921093100_granola_point_snapshot` classifies new order lines in the database, including orders placed by the previous app version during deployment.
 
 The admin page refreshes totals every 20 seconds. Guardians can see each child's total, category breakdown and activity history on **My family**, restricted to their own linked children. `club_point_activity` derives awards from attendance, paid receipts and Cup runs so duplicate requests cannot create duplicate points. Apply both migrations before deploying this app version.
+
+## Duckie photo profiles
+
+`/gallery/duckies` lists the club's photo journals; `/gallery/duckies/:id` shows a three-column photo grid with a full-size viewer. The gallery and all these routes require an approved club-member sign-in. Being a guardian without club membership does not grant gallery access. Photos can be assigned on upload or tagged from the existing gallery; one photo can appear on several profiles. Member guardians manage only their own duckies, and organisers can manage any active duckie. Removing a tag leaves the photo in the club gallery. Hiding an upload also hides it from every profile; deleting an upload removes its tags. Archived duckies are excluded.
+
+Deploy `20260921120000_duckie_photo_tags` before this app version. The new table links kids to existing uploads or curated gallery photos, without copying image data or changing signed registrations. Private registration portraits are not used as gallery avatars. No photos are tagged automatically. `tests/photo-profiles.spec.ts` covers permissions, shared tags, uploads, moderation, deletion and mobile layout.

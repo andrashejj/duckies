@@ -1,0 +1,38 @@
+---
+export const prerender = false;
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { galleryPhotos, photoKids, photoTags } from "../../../lib/server/photo-profiles";
+import { ctaClass } from "../../../lib/ui";
+const member = Astro.locals.session!.member!;
+let data;
+try {
+  const [kids, photos, tags] = await Promise.all([photoKids(member), galleryPhotos(), photoTags(member)]);
+  data = kids.map(kid => ({ ...kid, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)) }));
+} catch { Astro.response.status = 503; }
+---
+<BaseLayout title="Duckies in pictures · Sunset Duckies" description="The club's photo journals. Only for signed-in club members.">
+  <section class="mx-auto max-w-6xl px-4 pb-20 pt-12 sm:px-6">
+    <a href="/gallery" class="font-mono text-xs uppercase tracking-widest underline underline-offset-4">← Club gallery</a>
+    <div class="my-10 flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-accent-text">Our crew · members only</p>
+        <h1 class="font-display text-[clamp(2.7rem,8vw,5rem)] font-bold leading-none tracking-tight">Duckies in <span class="font-accent italic">pictures.</span></h1>
+        <p class="mt-5 max-w-xl text-fg-muted">Their first waves, favourite sessions and the friends who were there. A little photo journal for every duckie.</p>
+      </div>
+      <a href="/gallery/share" class={ctaClass("primary", "sm")}>Share photos</a>
+    </div>
+    {!data ? <p role="alert">Photo profiles are temporarily unavailable. Please reload to try again.</p> : data.length === 0 ? <p>No duckies in the lineup yet.</p> : (
+      <div class="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3">
+        {data.map(kid => (
+          <a href={`/gallery/duckies/${kid.id}`} class="group min-w-0">
+            <div class="grid aspect-square grid-cols-2 gap-1 overflow-hidden rounded-xl border-2 border-edge bg-sticker-sun shadow-sticker-sm">
+              {kid.photos.length ? kid.photos.slice(0,4).map((photo, index) => <img src={photo.thumb} alt="" loading="lazy" class:list={["h-full min-h-0 w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-105", kid.photos.length === 1 && "col-span-2", kid.photos.length === 3 && index === 0 && "row-span-2"]} />) : <span class="col-span-2 grid place-items-center font-accent text-7xl italic text-ink-950/60">{kid.name.slice(0,1)}</span>}
+            </div>
+            <h2 class="mt-4 break-words font-display text-xl font-bold group-hover:underline">{kid.name}</h2>
+            <p class="mt-1 text-sm text-fg-muted">{kid.photos.length} {kid.photos.length === 1 ? "photo" : "photos"}{kid.canManage ? " · Your photo board" : ""}</p>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>

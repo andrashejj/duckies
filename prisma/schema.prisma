@@ -213,6 +213,7 @@ model BrandingAccessEvent {
 // ---------- Club: members, kids, registration, semesters ----------
 
 model ClubKid {
+  gallery_tags GalleryKidTag[]
   attendance ClubAttendance[]
   attendance_events ClubAttendanceEvent[]
   family_orders ClubOrderFamily[]
@@ -483,6 +484,7 @@ model CupTicker {
 }
 
 model GalleryUpload {
+  kid_tags GalleryKidTag[]
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at    DateTime  @default(now()) @db.Timestamptz(6)
   uploaded_by   String?
@@ -499,6 +501,20 @@ model GalleryUpload {
 
   @@index([status, created_at(sort: Desc)], map: "gallery_upload_status_idx")
   @@map("gallery_upload")
+}
+
+model GalleryKidTag {
+  kid_id String @db.Uuid
+  photo_key String
+  upload_id String? @db.Uuid
+  created_by String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  upload GalleryUpload? @relation(fields: [upload_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@id([kid_id, photo_key])
+  @@index([photo_key], map: "gallery_kid_tag_photo")
+  @@index([upload_id], map: "gallery_kid_tag_upload")
+  @@map("gallery_kid_tag")
 }
 
 model GranolaAiLimit {

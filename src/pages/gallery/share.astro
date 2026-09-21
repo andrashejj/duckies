@@ -3,10 +3,12 @@ export const prerender = false; // the middleware only gates pages rendered per 
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Kicker from "../../components/ui/Kicker.astro";
-import SectionTitle from "../../components/ui/SectionTitle.astro";
 import StickerCard from "../../components/ui/StickerCard.astro";
 import { bodyCopy, ctaClass, field, label } from "../../lib/ui";
 
+import { photoKids } from "../../lib/server/photo-profiles";
+const managedKids = (await photoKids(Astro.locals.session!.member!)).filter(kid => kid.canManage);
+const selectedKid = managedKids.find(kid => kid.id === Astro.url.searchParams.get("kid"));
 const title = `Share a photo — ${site.name}`;
 const description = "Members: add your photos from a session to the club gallery.";
 ---
@@ -41,6 +43,15 @@ const description = "Members: add your photos from a session to the club gallery
           <ul class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4" data-previews aria-live="polite"></ul>
         </div>
 
+        {managedKids.length > 0 && <div class="mt-6">
+          <label class={label} for="share-kid">Add to a duckie's profile</label>
+          <select id="share-kid" name="kid" class={`mt-2 ${field}`}>
+            <option value="">Gallery only</option>
+            {managedKids.map(kid => <option value={kid.id} selected={selectedKid?.id === kid.id}>{kid.name}</option>)}
+          </select>
+          <p class="mt-2 text-sm text-fg-muted">These photos also appear in the members' gallery. You can tag more duckies there later.</p>
+          {selectedKid && <a class="mt-2 inline-block text-sm underline" href={`/gallery/duckies/${selectedKid.id}`}>Back to {selectedKid.name}'s profile →</a>}
+        </div>}
         <div class="mt-6">
           <label class={label} for="share-note">When and where? <span class="normal-case tracking-normal text-fg/50">(optional, shown as the caption)</span></label>
           <input id="share-note" name="note" type="text" maxlength="280" class={`mt-2 ${field}`} placeholder="Friday session, 12 September" />
@@ -139,7 +150,10 @@ const description = "Members: add your photos from a session to the club gallery
     if (!pending.length) return showError("Choose at least one photo first.");
     if (!consent) return showError("Please tick the box to confirm the photos are yours to share.");
     const note = form.querySelector<HTMLInputElement>("[name=note]")?.value ?? "";
-    const query = new URLSearchParams({ note }).toString();
+    const params = new URLSearchParams({ note });
+    const kid = form.querySelector<HTMLSelectElement>("[name=kid]")?.value;
+    if (kid) params.set("kid", kid);
+    const query = params.toString();
     if (submit) submit.disabled = true;
     let sent = 0, failed = 0;
     for (const item of pending) {
@@ -150,7 +164,7 @@ const description = "Members: add your photos from a session to the club gallery
         const response = await fetch(`/api/gallery/uploads?${query}`, { method: "POST", body, headers: { "Content-Type": body.type || "application/octet-stream" } });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error ?? "Upload failed.");
-        item.status.textContent = "Added ✓"; item.done = true; sent++;
+        item.status.textContent = kid ? "Added to profile ✓" : "Added ✓"; item.done = true; sent++;
       } catch (error) {
         item.status.textContent = "Failed"; failed++;
         showError(error instanceof Error ? error.message : "Upload failed.");

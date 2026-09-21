@@ -3,6 +3,8 @@ import { sha256 } from "../../../lib/registration/records";
 import { sendNewUploadAdminAlert } from "../../../lib/email/send";
 import { cleanText, GalleryError, galleryRateLimit, insertUpload, readUpload } from "../../../lib/server/gallery";
 import { json, sameOrigin } from "../../../lib/server/http";
+import { getDatabase } from "../../../lib/server/db";
+import { requireManagedKid, writePhotoTag } from "../../../lib/server/photo-profiles";
 export const prerender = false;
 
 // One photo per request, raw bytes in the body, an optional note as a query
@@ -16,7 +18,20 @@ export const POST: APIRoute = async ({ request, clientAddress, url, locals }) =>
     await galleryRateLimit(clientAddress);
     const note = cleanText(url.searchParams.get("note"), 280);
     const photo = await readUpload(request);
-    const id = await insertUpload({ uploadedBy: member.email, note, ipHash: sha256(`gallery:${process.env.BETTER_AUTH_SECRET}:${clientAddress}`), ...photo });
+    const input = { uploadedBy: member.email, note, ipHash: sha256(`gallery:${process.env.BETTER_AUTH_SECRET}:${clientAddress}`), ...photo };
+    const kidId = url.searchParams.get("kid");
+    let id: string;
+    if (kidId !== null) {
+      const db = await getDatabase().connect();
+      try {
+        await db.query("BEGIN");
+        await requireManagedKid(db, member, kidId);
+        id = await insertUpload(input, db);
+        await writePhotoTag(db, member, kidId, `upload:${id}`);
+        await db.query("COMMIT");
+      } catch (error) { await db.query("ROLLBACK"); throw error; }
+      finally { db.release(); }
+    } else id = await insertUpload(input);
     void sendNewUploadAdminAlert({ id, note });
     return json({ id }, 201);
   } catch (error) {

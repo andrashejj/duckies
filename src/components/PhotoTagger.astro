@@ -1,0 +1,85 @@
+---
+import { ctaClass, field } from "../lib/ui";
+---
+<dialog data-photo-tagger aria-labelledby="tagger-title" class="m-auto max-h-[90dvh] w-[min(94vw,32rem)] overflow-y-auto rounded-2xl border-2 border-edge bg-surface p-5 text-fg shadow-sticker backdrop:bg-ink-950/70">
+  <div class="mb-4 flex items-center justify-between gap-4">
+    <h2 id="tagger-title" class="font-display text-2xl font-bold">Who's in this one?</h2>
+    <button type="button" data-tag-close class="cursor-pointer rounded-full border border-edge px-3 py-2" aria-label="Close photo tags">✕</button>
+  </div>
+  <img data-tag-image alt="Photo being tagged" class="max-h-64 w-full rounded-lg bg-canvas object-contain" />
+  <p class="my-4 text-sm text-fg-muted">Tag a duckie to add this photo to their profile. Parents manage their own duckies; organisers can tag anyone.</p>
+  <ul data-tag-list class="mb-4 grid gap-2" aria-label="Tagged duckies"></ul>
+  <form data-tag-form class="grid gap-3">
+    <label for="tagger-kid" class="font-semibold">Duckie</label>
+    <select id="tagger-kid" class={field} required></select>
+    <button type="submit" class={ctaClass("primary", "sm")} data-tag-save>Add to profile</button>
+  </form>
+  <p data-tag-status role="status" class="mt-3 text-sm"></p>
+</dialog>
+<script>
+  import type { PhotoKid, PhotoTag } from "../lib/server/photo-profiles";
+  const root = document.querySelector<HTMLDialogElement>("[data-photo-tagger]");
+  if (root) {
+  const dialog = root;
+  const select = dialog.querySelector<HTMLSelectElement>("select")!;
+  const form = dialog.querySelector<HTMLFormElement>("form")!;
+  const status = dialog.querySelector<HTMLElement>("[data-tag-status]")!;
+  const list = dialog.querySelector<HTMLUListElement>("[data-tag-list]")!;
+  const save = dialog.querySelector<HTMLButtonElement>("[data-tag-save]")!;
+  let photoKey = "", kids: PhotoKid[] = [], tags: Record<string, PhotoTag[]> = {}, busy = false, generation = 0;
+  const preferred = new URLSearchParams(location.search).get("duckie");
+  const paint = () => {
+    list.replaceChildren(); select.replaceChildren();
+    for (const tag of tags[photoKey] ?? []) {
+      const li = document.createElement("li"); li.className = "flex items-center justify-between gap-3 rounded-lg bg-canvas p-3";
+      const link = document.createElement("a"); link.textContent = tag.name; link.href = `/gallery/duckies/${tag.id}`; li.append(link);
+      if (tag.canManage) {
+        const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "Remove tag"; remove.className = "text-sm underline";
+        remove.disabled = busy; remove.setAttribute("aria-label", `Remove tag for ${tag.name}`);
+        remove.addEventListener("click", () => void change(tag.id, "DELETE")); li.append(remove);
+      }
+      list.append(li);
+    }
+    for (const kid of kids.filter(k => k.canManage && !(tags[photoKey] ?? []).some(tag => tag.id === k.id))) {
+      const option = new Option(kid.name, kid.id); select.append(option);
+    }
+    if (preferred && Array.from(select.options).some(option => option.value === preferred)) select.value = preferred;
+    save.disabled = busy || !select.options.length; select.disabled = save.disabled;
+    for (const element of document.querySelectorAll<HTMLElement>("[data-tags-for]")) {
+      element.replaceChildren();
+      for (const tag of tags[element.dataset.tagsFor!] ?? []) {
+        const link = document.createElement("a"); link.textContent = tag.name; link.href = `/gallery/duckies/${tag.id}`;
+        link.className = "min-w-0 break-words font-semibold underline decoration-teal-600/40 underline-offset-4"; element.append(link);
+      }
+    }
+  };
+  async function load() {
+    const response = await fetch("/api/gallery/tags", { cache: "no-store" });
+    const result = await response.json(); if (!response.ok) throw new Error(result.error ?? "Could not load tags.");
+    return result as { kids: PhotoKid[]; tags: Record<string, PhotoTag[]> };
+  }
+  async function change(kidId: string, method: string) {
+    if (busy) return; busy = true; paint(); status.textContent = "Saving…";
+    try {
+      const response = await fetch("/api/gallery/tags", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kidId, photoKey }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error ?? "Could not save tag.");
+      const next = await load(); kids = next.kids; tags = next.tags;
+      status.textContent = method === "DELETE" ? "Tag removed. The photo stays in the club gallery." : "Added to their photo profile.";
+      // Removing a tag from the current profile also removes its tile and count on close.
+      if (method === "DELETE" && location.pathname === `/gallery/duckies/${kidId}`) dialog.dataset.refresh = "true";
+    } catch (error) { status.textContent = error instanceof Error ? error.message : "Could not save tag. Please retry."; }
+    finally { busy = false; paint(); }
+  }
+  document.querySelectorAll<HTMLButtonElement>("[data-tag-open]").forEach(button => button.addEventListener("click", async () => {
+    const token = ++generation; photoKey = button.dataset.tagOpen!;
+    dialog.querySelector<HTMLImageElement>("[data-tag-image]")!.src = button.dataset.tagPreview!;
+    list.replaceChildren(); select.replaceChildren(); save.disabled = true; status.textContent = "Loading tags…"; dialog.showModal();
+    try { const result = await load(); if (token !== generation) return; kids = result.kids; tags = result.tags; paint(); status.textContent = ""; }
+    catch { if (token === generation) status.textContent = "Could not load tags. Close and try again."; }
+  }));
+  form.addEventListener("submit", event => { event.preventDefault(); if (select.value) void change(select.value, "POST"); });
+  dialog.querySelector("[data-tag-close]")!.addEventListener("click", () => { if (!busy) dialog.close(); });
+  dialog.addEventListener("cancel", event => { if (busy) event.preventDefault(); });
+  dialog.addEventListener("close", () => { generation++; if (dialog.dataset.refresh) location.reload(); });
+  }
+</script>

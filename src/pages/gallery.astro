@@ -8,6 +8,9 @@ import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import Lightbox from "../components/Lightbox.astro";
+import GalleryPhoto from "../components/GalleryPhoto.astro";
+import PhotoTagger from "../components/PhotoTagger.astro";
+import { photoKids, photoTags } from "../lib/server/photo-profiles";
 import { bodyCopy, mediaFrame } from "../lib/ui";
 
 const title = `${gallery.name} — ${site.name}`;
@@ -19,6 +22,14 @@ const photoCount = gallery.sections.reduce((n, section) => n + section.photos.le
 // if the database is unreachable. Who uploaded what stays in the database.
 let shared: GalleryUpload[] = [];
 try { shared = await listUploads("approved"); } catch { console.error("Gallery uploads could not be read; showing the curated set only."); }
+const actor = Astro.locals.session!.member!;
+let tags: Awaited<ReturnType<typeof photoTags>> = {};
+let kids: Awaited<ReturnType<typeof photoKids>> = [];
+let taggingError = false;
+try { [tags, kids] = await Promise.all([photoTags(actor), photoKids(actor)]); }
+catch { taggingError = true; }
+const canTag = kids.some(kid => kid.canManage);
+const selectedKid = kids.find(kid => kid.id === Astro.url.searchParams.get("duckie") && kid.canManage);
 const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a club member";
 ---
 
@@ -39,6 +50,11 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
       <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
         {gallery.tagline}
       </p>
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        <a href="/gallery/duckies" class="rounded-full border-2 border-edge bg-sticker-sun px-5 py-3 font-display font-bold shadow-sticker-sm">Duckies in pictures →</a>
+        {selectedKid && <p class="text-sm">Choose a photo, tap <strong>Tag +</strong>, then add <strong>{selectedKid.name}</strong>.</p>}
+        {taggingError && <p role="status">Photo tags are temporarily unavailable. Please reload to try again.</p>}
+      </div>
       <nav data-float aria-label="Gallery sections" class="mt-8 flex flex-wrap gap-2">
         {gallery.sections.map((section) => (
           <a href={`#${section.id}`} class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
@@ -65,28 +81,10 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
       </div>
 
       <div class="columns-2 gap-4 sm:columns-3 sm:gap-[1.15rem] lg:columns-4 lg:gap-5" data-reveal>
-        {section.photos.map((photo, i) => (
-          <button
-            type="button"
-            class="mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-[1.1rem] border-2 border-edge bg-surface p-0 shadow-sticker-md transition-[translate,rotate,box-shadow] duration-200 nth-[3n]:-rotate-[1.1deg] nth-[4n]:rotate-[0.9deg] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-[7px_7px_0_0_var(--edge)] focus-visible:-translate-x-0.5 focus-visible:-translate-y-0.5 focus-visible:rotate-0 focus-visible:shadow-[7px_7px_0_0_var(--edge)] focus-visible:outline-none"
-            data-lb-trigger
-            data-full={`/gallery/asset/${photo.slug}.webp`}
-            data-alt={photo.alt}
-            aria-label={`Open photo: ${photo.alt}`}
-          >
-            <img
-              src={`/gallery/asset/${photo.slug}-small.webp`}
-              srcset={`/gallery/asset/${photo.slug}-small.webp 800w, /gallery/asset/${photo.slug}.webp 1600w`}
-              sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 50vw"
-              alt={photo.alt}
-              width={photo.w}
-              height={photo.h}
-              loading={s === 0 && i < 4 ? "eager" : "lazy"}
-              decoding="async"
-              class="block h-auto w-full"
-            />
-          </button>
-        ))}
+        {section.photos.map(photo => <GalleryPhoto
+          photo={{ key: `curated:${photo.slug}`, full: `/gallery/asset/${photo.slug}.webp`, thumb: `/gallery/asset/${photo.slug}-small.webp`, caption: photo.alt, date: photo.date, width: photo.w, height: photo.h }}
+          tags={tags[`curated:${photo.slug}`]} canTag={canTag}
+        />)}
       </div>
     </section>
   ))}
@@ -100,19 +98,10 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
         <p class={`mt-4 ${bodyCopy}`}>Added by club members through the <a class="underline" href="/gallery/share">share page</a>. Newest first.</p>
       </div>
       <div class="columns-2 gap-4 sm:columns-3 sm:gap-[1.15rem] lg:columns-4 lg:gap-5" data-reveal>
-        {shared.map((photo) => (
-          <button
-            type="button"
-            class="mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-[1.1rem] border-2 border-edge bg-surface p-0 shadow-sticker-md transition-[translate,rotate,box-shadow] duration-200 nth-[3n]:-rotate-[1.1deg] nth-[4n]:rotate-[0.9deg] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-[7px_7px_0_0_var(--edge)] focus-visible:-translate-x-0.5 focus-visible:-translate-y-0.5 focus-visible:rotate-0 focus-visible:shadow-[7px_7px_0_0_var(--edge)] focus-visible:outline-none"
-            data-lb-trigger
-            data-full={`/gallery/photo/${photo.id}.webp`}
-            data-alt={sharedAlt(photo)}
-            aria-label={`Open photo: ${sharedAlt(photo)}`}
-          >
-            <img src={`/gallery/photo/${photo.id}.webp?size=thumb`} alt={sharedAlt(photo)} width={photo.width} height={photo.height} loading="lazy" decoding="async" class="block h-auto w-full" />
-            {(photo.caption ?? photo.note) && <span class="block px-3 py-2 text-left font-mono text-[0.62rem] uppercase tracking-[0.16em] text-fg/60">{photo.caption ?? photo.note}</span>}
-          </button>
-        ))}
+        {shared.map(photo => <GalleryPhoto
+          photo={{ key: `upload:${photo.id}`, full: `/gallery/photo/${photo.id}.webp`, thumb: `/gallery/photo/${photo.id}.webp?size=thumb`, caption: sharedAlt(photo), date: photo.createdAt, width: photo.width, height: photo.height }}
+          tags={tags[`upload:${photo.id}`]} canTag={canTag}
+        />)}
       </div>
     </section>
   )}
@@ -154,6 +143,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
   </section>
 
   <Lightbox id="gallery-lightbox" label="Photo viewer" />
+  {canTag && <PhotoTagger />}
 
   <!-- ===================== CTA ===================== -->
   <section class="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-10">
