@@ -12,6 +12,10 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
   const [adding, setAdding] = useState(false);
   const [message, setMessage] = useState("");
   const [removing, setRemoving] = useState<FamilyGuardian | null>(null);
+  const parents = Array.from(new Set(guardians.map(guardian => guardian.email))).map(email => {
+    const links = guardians.filter(guardian => guardian.email === email);
+    return { ...links[0], links };
+  });
   const refreshUrl = `/api/family/guardians?${new URLSearchParams(kids.map(kid => ["kidId",kid.id]))}`;
   async function refresh() {
     const response = await fetch(refreshUrl, { cache: "no-store" });
@@ -39,10 +43,10 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
     } catch (error) { setMessage(error instanceof Error ? error.message : "Couldn't add the guardian."); }
     finally { setBusy(false); }
   }
-  async function resend(guardian: FamilyGuardian) {
+  async function resend(guardian: FamilyGuardian & { links: FamilyGuardian[] }) {
     setBusy(true); setMessage("");
     try {
-      const result = await change("PATCH", { kidIds: [guardian.kidId], email: guardian.email });
+      const result = await change("PATCH", { kidIds: guardian.links.map(link => link.kidId), email: guardian.email });
       setMessage(result.notification === "sent" ? `Sign-in invitation sent to ${guardian.email}.` : "The invitation email could not be sent. Family access is still saved. Please try again later.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Couldn't send the invitation."); }
     finally { setBusy(false); }
@@ -54,23 +58,30 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
     catch (error) { setMessage(error instanceof Error ? error.message : "Couldn't remove access."); }
     finally { setBusy(false); }
   }
-  return <section aria-label="Family guardians" className="mt-8 rounded-2xl border-2 border-edge bg-surface p-5 sm:p-7">
-    <div className="flex flex-wrap items-end justify-between gap-3"><div><p className={mono}>Your family</p><h2 className="mt-2 font-display text-2xl font-bold">Parents & legal guardians</h2></div><a className="font-bold underline underline-offset-4" href="/account/orders">Family order history →</a></div>
-    <p className="mt-3 max-w-2xl text-sm leading-6 text-fg-muted">Each guardian signs in with their own email. They can see and update these duckies, open their signed records and share the family’s order history. Guardians of a club member’s family can also place orders.</p>
-    <div className="mt-5 grid gap-4">{kids.map(kid => <div key={kid.id} className="rounded-xl border border-line p-4">
-      <h3 className="font-display text-lg font-bold">{kid.name}</h3>
-      <ul className="mt-3 divide-y divide-line">{guardians.filter(g => g.kidId===kid.id).map(g => <li key={g.email} className="flex flex-wrap items-center justify-between gap-3 py-3">
-        <div className="flex min-w-0 items-center gap-3">{g.photoVersion && <img className="h-11 w-11 shrink-0 rounded-full object-cover" src={`/api/parents/photo?email=${encodeURIComponent(g.email)}&v=${encodeURIComponent(g.photoVersion)}`} alt={`${g.name}'s profile`} />}
-          <div className="min-w-0"><p className="font-semibold">{g.name} <span className="font-normal text-fg-muted">· {g.relationship}{g.email===actorEmail ? " · You" : ""}</span></p><p className="break-all text-sm">{g.email}</p><p className="text-sm text-fg-muted">{g.phone}</p></div></div>
-        {g.email!==actorEmail && <div className="flex flex-wrap gap-2"><button type="button" disabled={!ready||busy} className={smallButton} onClick={() => void resend(g)}>Resend invitation<span className="sr-only"> to {g.name} for {kid.name}</span></button><button type="button" disabled={!ready||busy} className={smallButton} onClick={() => setRemoving(g)}>Remove access<span className="sr-only"> for {g.name} to {kid.name}</span></button></div>}
-      </li>)}</ul>
-      {!guardians.some(g=>g.kidId===kid.id) && <p className="mt-2 text-sm">No guardians linked yet.</p>}
-    </div>)}</div>
+  return <section aria-label="Family guardians" className="family-parents">
+    <div className="family-section-heading"><h2>Parents & legal guardians</h2><a className="family-text-link" href="/account/orders">Family orders →</a></div>
+    <p className="family-help">Parents who can manage your duckies’ records.</p>
+    <ul className="family-parent-list">{parents.map(parent => <li key={parent.email} className="family-parent" data-family-parent data-guardian={parent.email === actorEmail ? '' : undefined}>
+      <div className="family-parent-identity">
+        {parent.photoVersion ? <img className="family-avatar" src={`/api/parents/photo?email=${encodeURIComponent(parent.email)}&v=${encodeURIComponent(parent.photoVersion)}`} alt={`${parent.name}'s profile`} /> : <span className="family-avatar" aria-hidden="true">{parent.name.slice(0, 1)}</span>}
+        <div className="min-w-0"><h3>{parent.name} {parent.email === actorEmail && <span className="family-you">· You</span>}</h3><span className="club-role" data-kind="parent">Parent</span><p className="family-help">{parent.links.map(link => kids.find(kid => kid.id === link.kidId)?.name).filter(Boolean).join(' · ')}</p></div>
+        {parent.email === actorEmail && <a href="/account/profile" className="family-text-link family-edit">Edit my profile</a>}
+      </div>
+      {parent.email !== actorEmail && <details className="family-access">
+        <summary>Manage access<span className="sr-only"> for {parent.name}</span></summary>
+        <div className="family-access-body"><p className="break-all">{parent.email}</p><p>{parent.phone}</p>
+          <p className="family-help">Can view these duckies’ details, signed records and shared family orders.</p>
+          <button type="button" disabled={!ready || busy} className={smallButton} onClick={() => void resend(parent)}>Resend invitation<span className="sr-only"> to {parent.name}</span></button>
+          {parent.links.map(link => <div key={link.kidId} className="family-access-child"><span>{kids.find(kid => kid.id === link.kidId)?.name}</span><button type="button" disabled={!ready || busy} className="family-text-link" onClick={() => setRemoving(link)}>Remove access<span className="sr-only"> for {parent.name} to {kids.find(kid => kid.id === link.kidId)?.name}</span></button></div>)}
+        </div>
+      </details>}
+    </li>)}</ul>
+    {!parents.length && <p className="family-help">No guardians linked yet.</p>}
     {removing && <div className="mt-4 rounded-xl border-2 border-edge bg-sticker-sun p-4" role="group" aria-label="Confirm removal">
       <p>Remove {removing.name}’s access to {kids.find(k=>k.id===removing.kidId)?.name}? They lose access to orders shared through this duckie unless another linked duckie also grants access. Signed records remain unchanged.</p>
       <div className="mt-3 flex flex-wrap gap-3"><button type="button" className={smallButton} disabled={busy} onClick={()=>void remove()}>Confirm removal</button><button type="button" className={smallButton} disabled={busy} onClick={()=>setRemoving(null)}>Keep access</button></div>
     </div>}
-    <div className="mt-6"><button type="button" className="cursor-pointer font-display text-lg font-bold" disabled={!ready||busy} aria-expanded={adding} onClick={() => setAdding(open => !open)}>Add a legal guardian</button>
+    <div className="mt-6"><button type="button" className="journal-button" disabled={!ready||busy} aria-expanded={adding} onClick={() => setAdding(open => !open)}>Add a legal guardian</button>
       {adding &&
       <form className="mt-4" onSubmit={event=>void add(event)}><fieldset disabled={!ready||busy} className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid gap-1"><span className={mono}>Guardian name</span><input className={input} name="name" required maxLength={120} autoComplete="off" placeholder="First and last name" /></label>

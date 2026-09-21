@@ -12,9 +12,7 @@ import {
   logRow,
   logWhen,
   noteCopy,
-  passBand,
   passBody,
-  passCard,
   passChevron,
   passGrid,
   passHead,
@@ -22,7 +20,6 @@ import {
   passName,
   passPhoto,
   passPhotoEmpty,
-  passPunch,
   passStub,
   passSummary,
   profileStatus,
@@ -145,7 +142,7 @@ function History({ kid }: { kid: FamilyKid }) {
   );
 }
 
-function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termLabel: string; index: number; reload: () => Promise<void>; report: (message: string) => void }) {
+function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: string; reload: () => Promise<void>; report: (message: string) => void }) {
   const tone = standingOf(kid, termLabel);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -174,24 +171,23 @@ function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termL
   }
 
   return (
-    <article className={passCard} style={{ animationDelay: `${Math.min(index, 8) * 90}ms` }} data-duckie-pass data-standing={tone.standing}>
-      <span className={passBand(tone.standing)} aria-hidden="true" />
-      <span className={passPunch} aria-hidden="true" />
-      <div className={passHead}>
+    <article className="family-kid" data-duckie-pass data-standing={tone.standing}>
+      <div className={cn(passHead, "family-kid-head")}>
         {kid.photoVersion ? (
-          <img className={passPhoto} src={`/api/family/kids/${kid.id}/photo?v=${encodeURIComponent(kid.photoVersion)}`} alt={`${kid.name}'s profile photo`} width={80} height={80} />
+          <img className={cn(passPhoto, "family-kid-avatar")} src={`/api/family/kids/${kid.id}/photo?v=${encodeURIComponent(kid.photoVersion)}`} alt={`${kid.name}'s profile photo`} width={80} height={80} />
         ) : (
-          <span className={passPhotoEmpty} aria-hidden="true">{kid.name.slice(0, 1).toUpperCase()}</span>
+          <span className={cn(passPhotoEmpty, "family-kid-avatar")} aria-hidden="true">{kid.name.slice(0, 1).toUpperCase()}</span>
         )}
         <div className="min-w-0 flex-1">
           <h3 className={passName}>{kid.name}</h3>
+          <span className="club-role" data-kind="duckie">Duckie</span>
           <p className={passMeta}>{kid.age === null ? "Age on file after signing" : `${kid.age} years · Tamarin Bay`}</p>
-          <p className="mt-2"><span className={stamp(tone.standing)}>{tone.label}</span></p>
+          <p className="mt-2"><span className={stamp(tone.standing, "family-standing")}>{tone.label}</span></p>
         </div>
       </div>
       <p className="px-5 pb-4 text-[0.9rem] leading-[1.6] text-fg-muted">{tone.note}</p>
-      <details className="mx-5 mb-5 rounded-xl border-2 border-edge bg-sticker-sun px-4 py-3">
-        <summary className="cursor-pointer font-display text-lg font-bold">★ {kid.points.total} club points</summary>
+      <details className="family-points">
+        <summary className="cursor-pointer text-sm font-semibold">★ {kid.points.total} club points</summary>
         <p className="mt-3 text-sm">Training {kid.points.training} · Granola {kid.points.granola} · Cup {kid.points.cup}</p>
         {kid.points.activities.length ? <ul className="mt-3 space-y-3 text-sm">{kid.points.activities.map(activity => <li key={`${activity.kind}:${activity.sourceId}`}><span className="font-bold">+{activity.points} · {activityLabel(activity)}</span><span className="block text-xs">{clubDayLabel(activity.date)}</span></li>)}</ul> : <p className="mt-3 text-sm">Points will appear after training check-in, a paid granola order shared with this duckie, or a scored Cup run.</p>}
       </details>
@@ -200,13 +196,13 @@ function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termL
           Under {RECOMMENDED_AGE}: have a word with the head coach about readiness before the next session.
         </p>
       )}
-      <div className={passStub}>
+      <div className={cn(passStub, "family-kid-row")}>
         <span>{termLabel}</span>
         <span className={kid.payment?.status === "paid" ? "text-ok" : "text-caution"}>
           {kid.payment?.status === "paid" ? `Paid${kid.payment.amountMur === null ? "" : ` · Rs ${kid.payment.amountMur}`}` : kid.payment ? "Fee outstanding" : "Fee not recorded yet"}
         </span>
       </div>
-      <div className={passStub}>
+      <div className={cn(passStub, "family-kid-row")}>
         <span>{CUP_LABEL}</span>
         {kid.cup ? (
           <span className="text-ok">On the list{kid.member ? " · free" : ""}</span>
@@ -216,11 +212,11 @@ function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termL
       </div>
 
       <details className="group">
-        <summary className={passSummary}>
+        <summary className={cn(passSummary, "family-kid-summary")}>
           <span>Details, history + changes</span>
           <span className={passChevron} aria-hidden="true">›</span>
         </summary>
-        <div className={passBody}>
+        <div className={cn(passBody, "family-kid-body")}>
           <Facts kid={kid} />
           <History kid={kid} />
 
@@ -318,10 +314,10 @@ export default function FamilyDeck({ profile }: { profile: FamilyProfile }) {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-edge bg-surface p-5" data-guardian>
+      {!family.guardians.some(guardian => guardian.email === family.email) && <div className="family-self" data-guardian>
         <div><p className="font-display text-xl font-bold">{family.name || "Your family account"}</p><p className="mt-1 break-all text-sm text-fg-muted">{family.email}</p></div>
-        <a href="/account/profile" className="inline-flex min-h-11 items-center rounded-full border-2 border-edge bg-sticker-sun px-5 py-2 font-display font-bold">Edit my profile →</a>
-      </div>
+        <a href="/account/profile" className="family-text-link">Edit my profile</a>
+      </div>}
 
       <p className={profileStatus} role="status" aria-live="polite" data-profile-status>{status}</p>
 
@@ -332,9 +328,10 @@ export default function FamilyDeck({ profile }: { profile: FamilyProfile }) {
       ) : (
         <>
           <FamilyGuardians kids={family.kids} initialGuardians={family.guardians} actorEmail={family.email} onChanged={() => void reload()} />
-          <div className={cn(passGrid, "mt-8")} data-duckie-passes>
-            {family.kids.map((kid, index) => (
-              <Pass key={kid.id} kid={kid} index={index} termLabel={family.term.label} reload={reload} report={setStatus} />
+          <h2 className="family-kids-heading">Duckies</h2>
+          <div className={passGrid} data-duckie-passes>
+            {family.kids.map((kid) => (
+              <Pass key={kid.id} kid={kid} termLabel={family.term.label} reload={reload} report={setStatus} />
             ))}
           </div>
           <p className={cn("mt-6 max-w-2xl", noteCopy)}>

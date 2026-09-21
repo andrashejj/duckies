@@ -182,3 +182,32 @@ test('legacy recovery keeps proven uploads without guessing a departure date or 
   expect((await request.get(`/gallery/photo/${tagged.id}.webp`)).status()).toBe(404);
   const html=await (await request.get('/members/me')).text();expect(html).toContain('Your previously shared photos, kept for you.');expect(html).not.toContain('Saved when your membership ended');
 });
+
+test('one club directory combines parents and duckies, keeps role labels accurate and supports old links', async ({page}) => {
+  await signIn(page.request,parent);
+  await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);
+  await page.goto('/gallery/duckies');
+  await expect(page).toHaveURL('/members');
+  const directory=page.getByRole('region',{name:'Club members'});
+  await expect(directory.getByRole('link',{name:/Maya Parent/})).toBeVisible();
+  await expect(directory.getByRole('link',{name:/Lara Test Duckie/})).toBeVisible();
+  await expect(directory.getByRole('link',{name:/Tom Member/})).toBeVisible();
+  await expect(page.getByRole('navigation',{name:'Member navigation'}).getByRole('link',{name:'Duckies',exact:true})).toHaveCount(0);
+  await page.getByLabel('Find someone').fill('lara');
+  await expect(directory.locator('[data-club-person]:visible')).toHaveCount(1);
+  await page.getByLabel('Find someone').fill('no such member');
+  await expect(directory.getByRole('status')).toHaveText('No one matches that name.');
+  await page.getByLabel('Find someone').fill('');
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`test-results/unified-club-${width}.png`,fullPage:true});
+  }
+  await page.getByRole('button',{name:'Switch to dark mode'}).click();
+  await page.screenshot({path:'test-results/unified-club-dark.png',fullPage:true});
+  await directory.getByRole('link',{name:/Lara Test Duckie/}).click();
+  await expect(page).toHaveURL(`/gallery/duckies/${kid}`);
+  await expect(page.getByRole('heading',{name:'Lara Test',exact:true})).toBeVisible();
+  await expect(page.locator('.journal-identity .club-role')).toHaveText('Duckie');
+  await expect(page.getByRole('navigation',{name:'Mobile photo navigation'}).getByRole('link',{name:'The club',exact:true})).toHaveAttribute('aria-current','page');
+});

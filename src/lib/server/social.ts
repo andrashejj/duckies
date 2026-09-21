@@ -47,12 +47,14 @@ export async function listPosts(actor:SocialActor,options:{author?:string;before
   return {posts:rows.slice(0,20),next:rows.length>20?rows[19].id:null};
 }
 export async function people() {
-  return (await getDatabase().query<SocialPerson>(`SELECT u.id,${name} AS name,true AS active FROM "user" u
+  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,true AS active,
+    EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent" FROM "user" u
     JOIN club_member m ON m.email=lower(u.email) LEFT JOIN club_parent_profile pp ON pp.email=m.email
     WHERE u."emailVerified"=true ORDER BY lower(${name}),u.id`)).rows;
 }
 export async function socialPerson(id:string) {
-  return (await getDatabase().query<SocialPerson>(`SELECT u.id,${name} AS name,EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)) AS active
+  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)) AS active,
+    EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent"
     FROM "user" u LEFT JOIN club_parent_profile pp ON pp.email=lower(u.email)
     WHERE u.id=$1 AND (EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)) OR EXISTS(SELECT 1 FROM club_post p WHERE p.author_id=u.id AND p.hidden_at IS NULL))`,[id])).rows[0]??null;
 }
