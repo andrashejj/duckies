@@ -1,3 +1,4 @@
+import { lockActiveMember } from "./social";
 import type { PoolClient } from "pg";
 import { gallery } from "../../data/gallery";
 import { uuid } from "../registration/schema";
@@ -63,7 +64,7 @@ export async function writePhotoTag(db: PoolClient, actor: PhotoActor, kidId: st
 
 export async function changePhotoTag(actor: PhotoActor, kidId: string, key: string, remove: boolean) {
   const db = await getDatabase().connect();
-  try { await db.query("BEGIN"); await writePhotoTag(db, actor, kidId, key, remove); await db.query("COMMIT"); }
+  try { await db.query("BEGIN"); const role = await lockActiveMember(db, actor.email); await writePhotoTag(db, {...actor,role}, kidId, key, remove); await db.query("COMMIT"); }
   catch (error) { await db.query("ROLLBACK"); throw error; }
   finally { db.release(); }
 }

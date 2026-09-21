@@ -61,7 +61,7 @@ async function pay(request: APIRequestContext, term = "2026-S2") {
 }
 test.beforeEach(async ({ request }) => {
   await db.query(
-    'TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,club_semester CASCADE',
+    'TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,club_semester CASCADE',
   );
   await db.query(
     "INSERT INTO club_semester(id,label,child_fee_mur,family_fee_mur,is_current) VALUES('2026-S2','September 2026 semester',3000,5000,true)",

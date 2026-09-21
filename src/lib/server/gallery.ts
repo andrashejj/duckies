@@ -5,8 +5,8 @@ import { sha256 } from "../registration/records";
 
 // Member photo uploads for /gallery. The gallery is members-only: a signed-in
 // club member's photo goes live straight away (status `approved`) and the
-// member's email is recorded in the row for the club's records — it is never
-// shown on the site. An admin can still hide (`rejected`) or delete a photo in
+// member's email stays private. New uploads also create a club feed post
+// with the author's display name. An admin can still hide (`rejected`) or delete a photo in
 // /admin/gallery. The uploaded file itself is never stored: sharp re-encodes it
 // (which also strips EXIF/GPS) into a 1600px image and an 800px thumb.
 

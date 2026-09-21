@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { lockActiveMember, createPost } from "../../../lib/server/social";
 import { sha256 } from "../../../lib/registration/records";
 import { sendNewUploadAdminAlert } from "../../../lib/email/send";
 import { cleanText, GalleryError, galleryRateLimit, insertUpload, readUpload } from "../../../lib/server/gallery";
@@ -21,19 +22,21 @@ export const POST: APIRoute = async ({ request, clientAddress, url, locals }) =>
     const input = { uploadedBy: member.email, note, ipHash: sha256(`gallery:${process.env.BETTER_AUTH_SECRET}:${clientAddress}`), ...photo };
     const kidId = url.searchParams.get("kid");
     let id: string;
-    if (kidId !== null) {
-      const db = await getDatabase().connect();
-      try {
-        await db.query("BEGIN");
-        await requireManagedKid(db, member, kidId);
-        id = await insertUpload(input, db);
-        await writePhotoTag(db, member, kidId, `upload:${id}`);
-        await db.query("COMMIT");
-      } catch (error) { await db.query("ROLLBACK"); throw error; }
-      finally { db.release(); }
-    } else id = await insertUpload(input);
+    let postId: string;
+    const db = await getDatabase().connect();
+    try {
+      await db.query("BEGIN");
+      const role = await lockActiveMember(db,member.email);
+      const actor = {...member,role};
+      if (kidId !== null) await requireManagedKid(db,actor,kidId);
+      id = await insertUpload(input,db);
+      if (kidId !== null) await writePhotoTag(db,actor,kidId,`upload:${id}`);
+      postId = await createPost(db,{...member,userId:locals.session!.user.id},note ?? "",id);
+      await db.query("COMMIT");
+    } catch(error) { await db.query("ROLLBACK"); throw error; }
+    finally { db.release(); }
     void sendNewUploadAdminAlert({ id, note });
-    return json({ id }, 201);
+    return json({ id, postId }, 201);
   } catch (error) {
     if (error instanceof GalleryError) return json({ error: error.message }, error.status);
     console.error("Gallery upload failed.", error);

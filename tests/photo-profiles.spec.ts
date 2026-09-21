@@ -10,7 +10,7 @@ const post = (data: unknown) => ({ headers: { origin }, data });
 const photoKey = "curated:standing-tall";
 
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'member'),($2,'organiser'),($3,'member')", [parent,organiser,stranger]);
   const kids = (await db.query("INSERT INTO club_kid(name) VALUES('Lara Test'),('Milo Test') RETURNING id")).rows;
   mine = kids[0].id; other = kids[1].id;
@@ -166,6 +166,6 @@ test("sign-in returns members to the requested photo profile and checks revoked 
   await expect(page.getByRole('heading',{name:'Lara Test',exact:true})).toBeVisible();
   await db.query('DELETE FROM club_member WHERE email=$1',[parent]);
   await page.goto(`/login?next=${encodeURIComponent(`/gallery/duckies/${mine}`)}`);
-  await expect(page).toHaveURL('/members/profile');
-  expect((await page.request.get(`/gallery/duckies/${mine}`,{maxRedirects:0})).headers().location).toBe('/#how-to-join');
+  await expect(page).toHaveURL('/members/me');
+  expect((await page.request.get(`/gallery/duckies/${mine}`,{maxRedirects:0})).headers().location).toBe('/members/me');
 });

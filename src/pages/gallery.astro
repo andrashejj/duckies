@@ -19,7 +19,7 @@ const photoCount = gallery.sections.reduce((n, section) => n + section.photos.le
 
 // Photos members added through /gallery/share (the middleware makes sure only
 // a signed-in club member gets this far). The page still renders without them
-// if the database is unreachable. Who uploaded what stays in the database.
+// if the database is unreachable. New uploads are also attributed in the feed.
 let shared: GalleryUpload[] = [];
 try { shared = await listUploads("approved"); } catch { console.error("Gallery uploads could not be read; showing the curated set only."); }
 const actor = Astro.locals.session!.member!;
@@ -33,47 +33,18 @@ const selectedKid = kids.find(kid => kid.id === Astro.url.searchParams.get("duck
 const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a club member";
 ---
 
-<BaseLayout title={title} description={description} image="/media/og-home.jpg" imageAlt="The Sunset Duckies lined up behind their colourful boards on Tamarin beach at sunset." imageWidth={1200} imageHeight={630}>
-  <!-- ===================== HERO ===================== -->
-  <section class="relative isolate overflow-hidden">
-    <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
-    <div class="pointer-events-none absolute top-10 -right-24 h-[280px] w-[280px] rounded-[60%_40%_55%_45%/42%_58%_42%_58%] bg-coral-500 opacity-40 blur-[44px]" aria-hidden="true"></div>
-
-    <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
-      <div data-float>
-        <Kicker>📸 {photoCount + shared.length} photos · {gallery.clips.length} clips · members only</Kicker>
-      </div>
-      <h1 data-float class="mt-6 font-display text-[clamp(2.8rem,9vw,6.6rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
-        Straight from the
-        <span class="font-accent font-medium italic text-accent-text">lineup</span>.
-      </h1>
-      <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
-        {gallery.tagline}
-      </p>
-      <div class="mt-6 flex flex-wrap items-center gap-4">
-        <a href="/gallery/duckies" class="rounded-full border-2 border-edge bg-sticker-sun px-5 py-3 font-display font-bold shadow-sticker-sm">Duckies in pictures →</a>
-        {selectedKid && <p class="text-sm">Choose a photo, tap <strong>Tag +</strong>, then add <strong>{selectedKid.name}</strong>.</p>}
-        {taggingError && <p role="status">Photo tags are temporarily unavailable. Please reload to try again.</p>}
-      </div>
-      <nav data-float aria-label="Gallery sections" class="mt-8 flex flex-wrap gap-2">
-        {gallery.sections.map((section) => (
-          <a href={`#${section.id}`} class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
-            {section.title}
-          </a>
-        ))}
-        {shared.length > 0 && <a href="#from-the-members" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">From the members</a>}
-        <a href="#clips" class="inline-flex items-center gap-[0.4rem] rounded-full border-[1.5px] border-edge bg-surface px-[0.95rem] py-[0.45rem] font-mono text-[0.72rem] font-medium tracking-[0.03em] text-fg no-underline shadow-sticker-xs transition-transform duration-200 hover:-translate-x-px hover:-translate-y-px hover:bg-highlight hover:text-highlight-fg">
-          Clips
-        </a>
-      </nav>
-    </div>
-  </section>
-
-  <div class="h-8 w-full bg-(image:--texture-wave) bg-repeat-x opacity-70" aria-hidden="true"></div>
-
+<BaseLayout variant="journal" title={title} description={description} image="/media/og-home.jpg" imageAlt="The Sunset Duckies lined up behind their colourful boards on Tamarin beach at sunset." imageWidth={1200} imageHeight={630}>
+  <header class="social-page-header mx-auto max-w-5xl px-4 pt-10">
+    <div><h1>The photo library</h1><p>{photoCount + shared.length} photos · {gallery.clips.length} clips · just for the club</p></div><a href="/gallery/share" class="journal-button journal-button-primary">Share photos</a>
+  </header>
+  <div class="mx-auto max-w-5xl px-4"><a class="social-text-button" href="/gallery/duckies">Duckies in pictures →</a>
+    {selectedKid&&<p class="mt-4 text-sm">Choose a photo, tap <strong>Tag +</strong>, then add <strong>{selectedKid.name}</strong>.</p>}
+    {taggingError&&<p role="status">Photo tags are temporarily unavailable. Please reload to try again.</p>}
+    <nav aria-label="Gallery sections" class="mt-5 flex flex-wrap gap-2">{gallery.sections.map(section=><a class="journal-button" href={`#${section.id}`}>{section.title}</a>)}<a class="journal-button" href="#from-the-members">Members’ photos</a><a class="journal-button" href="#clips">Clips</a></nav>
+  </div>
   <!-- ===================== SECTIONS ===================== -->
   {gallery.sections.map((section, s) => (
-    <section id={section.id} class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+    <section id={section.id} class="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
       <div class="mb-8 max-w-2xl" data-reveal>
         <Kicker tone="outline">{String(s + 1).padStart(2, "0")}</Kicker>
         <SectionTitle class="mt-4">{section.title}</SectionTitle>
@@ -91,7 +62,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
 
   <!-- ===================== FROM THE MEMBERS ===================== -->
   {shared.length > 0 && (
-    <section id="from-the-members" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+    <section id="from-the-members" class="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
       <div class="mb-8 max-w-2xl" data-reveal>
         <Kicker tone="outline">{String(gallery.sections.length + 1).padStart(2, "0")}</Kicker>
         <SectionTitle class="mt-4">From the members</SectionTitle>
@@ -107,7 +78,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
   )}
 
   <!-- ===================== CLIPS ===================== -->
-  <section id="clips" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
+  <section id="clips" class="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-10">
     <div class="mb-8 max-w-2xl" data-reveal>
       <Kicker>🎬 Rolling clips</Kicker>
       <SectionTitle class="mt-4">
@@ -146,7 +117,7 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
   {canTag && <PhotoTagger />}
 
   <!-- ===================== CTA ===================== -->
-  <section class="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-10">
+  <section class="mx-auto max-w-5xl px-4 pb-24 pt-8 sm:px-6 lg:px-10">
     <div class="flex flex-col items-start gap-6 rounded-sticker border-2 border-edge bg-sticker-sun p-[clamp(1.5rem,4vw,3rem)] shadow-sticker md:flex-row md:items-center md:justify-between" data-reveal>
       <div class="max-w-2xl">
         <SectionTitle size="sm">Got a better shot?</SectionTitle>

@@ -124,3 +124,124 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
   .journal-post-caption { padding: 20px 16px; overflow: visible; }
   .journal-post-footer { padding: 16px 16px max(16px,env(safe-area-inset-bottom)); }
 }
+/* The member area shares the same calm shell as the photo journals. */
+.journal-sidebar { overflow-y: auto; padding-top: 30px; }
+.journal-desktop-nav { gap: 3px; margin-top: 30px; }
+.journal-desktop-nav a { padding-block: 11px; }
+.journal-desktop-nav .journal-secondary-link { font-size: 12px; padding-block: 7px; color: var(--fg-muted); }
+.journal-sidebar-bottom { gap: 8px; padding-top: 24px; }
+.social-signout { text-align: left; font-size: 12px; padding: 10px 0; color: var(--fg-muted); cursor: pointer; }
+.journal-account-menu { position: relative; }
+.journal-account-menu summary { cursor: pointer; list-style: none; padding: 8px; }
+.journal-account-menu summary::-webkit-details-marker { display: none; }
+.journal-account-menu nav { position: absolute; right: 0; top: 44px; width: 220px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 8px 24px color-mix(in srgb,var(--fg) 10%,transparent); }
+.journal-account-menu nav a,.journal-account-menu .social-signout { display: block; padding: 11px 14px; font-size: 13px; }
+.social-layout { max-width: 1100px; margin: auto; padding: 32px 36px 70px; display: grid; grid-template-columns: minmax(0,620px) minmax(170px,240px); gap: 50px; }
+.social-feed-column { min-width: 0; }
+.social-page-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 26px; }
+.social-page-header h1 { font-size: 27px; font-weight: 550; letter-spacing: -.04em; }
+.social-page-header p { font-size: 13px; color: var(--fg-muted); margin-top: 5px; }
+.social-private { font-size: 10px; color: var(--fg-muted); white-space: nowrap; }
+.social-crew { display: flex; gap: 19px; overflow-x: auto; padding: 4px 1px 24px; }
+.social-crew a { display: grid; justify-items: center; gap: 7px; flex: 0 0 62px; font-size: 11px; }
+.social-avatar { display: inline-grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2); font-size: 19px; font-weight: 450; }
+.social-crew .social-avatar { width: 58px; height: 58px; border: 2px solid var(--canvas); outline: 1px solid var(--accent); font-size: 23px; }
+.social-person { display: flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 550; }
+.social-composer { padding: 20px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 28px; }
+.social-compose-top { display: flex; align-items: center; gap: 12px; }
+.social-compose-top label { font-size: 14px; font-weight: 550; }
+.social-compose-top p { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
+.social-composer textarea { display: block; width: 100%; resize: vertical; min-height: 85px; max-height: 350px; margin-top: 15px; padding: 8px 0; font-size: 14px; line-height: 1.6; border: 0; background: transparent; }
+.social-composer textarea:focus { outline: 0; box-shadow: 0 1px 0 var(--accent); }
+.social-compose-actions { display: flex; gap: 15px; align-items: center; border-top: 1px solid var(--line); padding-top: 13px; }
+.social-compose-actions span { margin-left: auto; font-size: 10px; color: var(--fg-muted); }
+.social-compose-actions .journal-button { flex: none; min-width: 80px; }
+.social-text-button { font-size: 13px; font-weight: 550; cursor: pointer; color: var(--accent-text); }
+.social-preview { position: relative; margin: 12px 0; }
+.social-preview img { max-height: 300px; width: 100%; object-fit: contain; background: var(--surface-2); border-radius: 6px; }
+.social-preview button { position: absolute; top: 10px; right: 10px; background: var(--surface); border-radius: 5px; padding: 6px 10px; font-size: 11px; cursor: pointer; }
+.social-tag-select { display: flex; align-items: center; gap: 10px; font-size: 12px; margin: 15px 0; }
+.social-tag-select select { min-width: 0; max-width: 70%; background: var(--surface-2); border-radius: 5px; padding: 7px 12px; }
+.social-consent { display: flex; align-items: start; gap: 8px; font-size: 12px; margin-bottom: 15px; }
+.social-consent input { margin-top: 3px; accent-color: var(--accent); }
+.social-post { border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 26px; }
+.social-post-head { display: flex; align-items: start; justify-content: space-between; padding: 12px 0 14px; }
+.social-post-head>div { position: relative; padding-bottom: 3px; }
+.social-post-head .social-person { align-items: start; line-height: 20px; }
+.social-post-date { position: absolute; left: 51px; bottom: 0; white-space: nowrap; font-size: 10px; color: var(--fg-muted); }
+.social-menu { position: relative; }
+.social-menu summary { cursor: pointer; list-style: none; padding: 9px; letter-spacing: 1px; }
+.social-menu summary::-webkit-details-marker { display: none; }
+.social-menu button { position: absolute; right: 0; z-index: 3; width: 150px; background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: 8px; font-size: 12px; text-align: left; cursor: pointer; }
+.social-post-photo { display: block; width: 100%; background: var(--surface-2); border-radius: 3px; overflow: hidden; cursor: zoom-in; }
+.social-post-photo img { width: 100%; max-height: 740px; object-fit: contain; }
+.social-caption { font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; padding-top: 15px; }
+.social-text-post { font-size: 23px; line-height: 1.5; letter-spacing: -.02em; padding: 17px 0 25px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.social-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.social-tags a { border-radius: 4px; background: var(--surface-2); padding: 4px 8px; font-size: 11px; }
+.social-post-actions { display: flex; gap: 20px; align-items: center; margin: 15px 0 4px; }
+.social-post-actions button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; cursor: pointer; font-size: 12px; }
+.social-post-actions .is-liked { color: var(--accent); }
+.social-post-actions .social-copy { margin-left: auto; font-size: 11px; color: var(--fg-muted); }
+.social-comments { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 15px; }
+.social-comment { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
+.social-comment>div { min-width: 0; }
+.social-comment a { font-weight: 600; }
+.social-comment p { overflow-wrap: anywhere; white-space: pre-wrap; }
+.social-comment time { color: var(--fg-muted); font-size: 10px; }
+.social-comment button { cursor: pointer; padding: 4px 8px; color: var(--fg-muted); }
+.social-comments form { display: flex; gap: 14px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-top: 18px; }
+.social-comments input { min-width: 0; flex: 1; font-size: 13px; background: transparent; }
+.social-comments form button { font-size: 12px; color: var(--accent-text); font-weight: 550; cursor: pointer; }
+.social-photo-tags { display: block; font-size: 10px; color: var(--fg-muted); margin-top: 10px; }
+.social-muted { color: var(--fg-muted); font-size: 13px; line-height: 1.6; }
+.social-error { border-left: 2px solid var(--accent); padding: 12px; margin: 12px 0; font-size: 13px; }
+.social-load { display: flex; margin: 25px auto; }
+.theme-journal button:disabled { opacity: .5; cursor: default; }
+.social-rail { padding-top: 107px; }
+.social-rail h2 { font-family: var(--font-script); font-size: 30px; }
+.social-rail p { color: var(--fg-muted); font-size: 13px; line-height: 1.7; margin-top: 10px; }
+.social-rail a { display: block; font-size: 12px; font-weight: 550; margin-top: 22px; }
+.social-rail .social-rail-note { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 28px; font-size: 11px; }
+.social-personal { max-width: 935px; margin: auto; padding: 40px 32px 70px; }
+.social-personal-tabs { display: flex; flex-wrap: wrap; gap: 24px; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 12px; }
+.social-section-title { font-size: 18px; font-weight: 550; margin: 28px 0 20px; }
+.social-own-posts { max-width: 620px; margin: auto; }
+.social-archive-note { padding: 20px; background: var(--surface-2); border-radius: 8px; margin: 24px 0; font-size: 14px; line-height: 1.7; }
+.social-archive-note p { color: var(--fg-muted); margin-top: 5px; font-size: 13px; }
+.social-archived-post { padding: 20px 0; border-bottom: 1px solid var(--line); }
+.social-archived-post time { font-size: 11px; color: var(--fg-muted); }
+.social-archived-post p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 10px 0; font-size: 15px; line-height: 1.6; }
+.social-archived-post img { width: 100%; max-height: 600px; object-fit: contain; }
+.social-member-header { display: flex; align-items: center; gap: 35px; margin: 20px 0 45px; }
+.social-member-header h1 { font-size: 27px; font-weight: 500; }
+.social-member-header p { font-size: 13px; color: var(--fg-muted); margin: 8px 0 18px; }
+.social-single { max-width: 684px; margin: auto; padding: 35px 32px; }
+.social-single>.journal-back { margin-bottom: 25px; }
+.social-lightbox { border: 0; padding: 0; margin: auto; width: min(1100px,90vw); max-width: none; overflow: visible; background: var(--canvas); color: var(--fg); }
+.social-lightbox img { width: 100%; max-height: 85dvh; object-fit: contain; }
+.social-lightbox button { position: absolute; right: 0; top: -40px; color: var(--journal-photo-icon); font-size: 30px; cursor: pointer; }
+.social-lightbox::backdrop { background: color-mix(in srgb,var(--color-ink-950) 90%,transparent); }
+.theme-journal .journal-main :is(.shadow-sticker,.shadow-sticker-sm,.shadow-sticker-lg,.shadow-sticker-xs) { box-shadow: none; }
+@media(max-width:1200px){ .social-layout { grid-template-columns: minmax(0,620px); justify-content: center; padding-inline: 28px; } .social-rail { display: none; } }
+@media(max-width:768px){
+  .social-layout { display: block; padding: 24px 0 40px; }
+  .social-page-header { margin: 0 16px 23px; }
+  .social-page-header h1 { font-size: 25px; }
+  .social-page-header p { font-size: 12px; }
+  .social-private { display: none; }
+  .social-crew { padding-inline: 18px; gap: 14px; }
+  .social-composer { margin: 0 12px 22px; padding: 16px; }
+  .social-post-head,.social-post-content { padding-left: 16px; padding-right: 16px; }
+  .social-post-photo { border-radius: 0; }
+  .social-text-post { font-size: 21px; }
+  .social-personal { padding: 26px 0 40px; }
+  .social-personal>.social-page-header .journal-button { flex: none; }
+  .social-personal-tabs { padding-inline: 16px; gap: 18px; }
+  .social-personal .social-section-title,.social-personal .social-muted,.social-archived-post,.social-archive-note { margin-left: 16px; margin-right: 16px; }
+  .social-member-header { margin: 0 18px 24px; gap: 24px; }
+  .social-member-header .journal-avatar { flex-shrink: 0; }
+  .social-member-header h1 { font-size: 23px; }
+  .social-single { padding: 20px 0; }
+  .social-feed-column> :is(.social-error,.social-muted) { margin-left: 16px; margin-right: 16px; }
+}

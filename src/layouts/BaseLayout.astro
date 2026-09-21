@@ -38,7 +38,7 @@ const {
   variant = "default",
 } = Astro.props;
 
-const journal = variant === "journal";
+const journal = variant === "journal" || workspace === "member";
 const performance = variant === "performance";
 const siteOrigin = Astro.site ?? new URL(site.url);
 const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
@@ -90,7 +90,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
   ]}>
     <div class="relative z-[1] min-h-screen overflow-x-clip">
       {/* Phones drop the translucent blur for an opaque header on its own compositor layer: the glass effect flickers as the address bar resizes. */}
-      {workspace ? <WorkspaceHeader mode={workspace} section={section} /> : journal ? <PhotoNavigation /> : <header class:list={[
+      {journal ? <PhotoNavigation /> : workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
         "sticky top-0 z-50 border-b-2 backdrop-blur-xl max-sm:transform-gpu max-sm:backface-hidden max-sm:backdrop-blur-none max-sm:will-change-transform",
         performance ? "border-line bg-canvas/92 max-sm:bg-canvas" : "border-edge bg-surface/92 max-sm:bg-surface",
       ]}>

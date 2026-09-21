@@ -1,28 +1,38 @@
 ---
-import PhotoIcon from "./PhotoIcon.astro";
-import ThemeToggle from "./ThemeToggle.astro";
-const nav = [
-  { href: "/gallery", label: "Gallery", icon: "home" as const },
-  { href: "/gallery/duckies", label: "Duckies", icon: "grid" as const },
-  { href: "/gallery/share", label: "Create", icon: "plus" as const },
-  { href: "/members/profile", label: "My family", icon: "user" as const },
+import PhotoIcon from './PhotoIcon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import SignOutButton from './react/SignOutButton';
+const session=Astro.locals.session;
+const active=!!session?.member,memories=active||!!session?.archivedAt;
+const family=active||session?.family;
+const path=Astro.url.pathname;
+const nav=[
+  ...(active?[
+    {href:'/members',label:'The club',icon:'home' as const,current:path==='/members'||path.startsWith('/members/posts/')},
+    {href:'/gallery/duckies',label:'Duckies',icon:'grid' as const,current:path.startsWith('/gallery')&&!path.startsWith('/gallery/share')},
+    {href:'/gallery/share',label:'Share',icon:'plus' as const,current:path==='/gallery/share'},
+  ]:[]),
+  ...(memories?[{href:'/members/me',label:active?'My moments':'My archive',icon:'user' as const,current:path==='/members/me'||path.startsWith('/members/people/')}]:[]),
+];
+const links=[
+  ...(family?[{href:'/members/profile',label:'My family'}]:[]),
+  {href:'/account/profile',label:'My profile'},
+  {href:'/account/orders',label:'Family orders'},
+  ...(active?[{href:'/gallery',label:'Photo library'},{href:'/members/lineup',label:'Club lineup'}]:[]),
+  ...(session?.user.role==='ADMIN'?[{href:'/admin/kids',label:'Club admin'}]:[]),
+  {href:'/',label:'Club website'},
 ];
 ---
 <aside class="journal-sidebar">
-  <a href="/gallery/duckies" class="journal-wordmark" aria-label="Sunset Duckies photos">duckies<span>.</span></a>
-  <nav aria-label="Photo navigation" class="journal-desktop-nav">
-    {nav.map(item => <a href={item.href} aria-label={item.label} aria-current={item.label === "Duckies" ? "page" : undefined}><PhotoIcon name={item.icon} /><span>{item.label}</span></a>)}
+  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies">duckies<span>.</span></a>
+  <nav aria-label="Member navigation" class="journal-desktop-nav">
+    {nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}
+    {links.map(item=><a class="journal-secondary-link" href={item.href} aria-label={item.label} aria-current={path===item.href?'page':undefined}><PhotoIcon name={item.href==='/'?'external':'user'} class="h-4 w-4"/><span>{item.label}</span></a>)}
   </nav>
-  <div class="journal-sidebar-bottom">
-    <a href="/" class="flex items-center gap-3 text-sm"><PhotoIcon name="external" class="h-5 w-5" />Back to the club</a>
-    <div class="flex items-center gap-3"><ThemeToggle variant="performance" class="rounded-full border-0" /><span class="text-xs text-fg-muted">Light / dark</span></div>
-    <p class="text-xs leading-relaxed text-fg-muted">Sunset Duckies<br />Tamarin, Mauritius</p>
-  </div>
+  <div class="journal-sidebar-bottom"><div class="flex items-center gap-3"><ThemeToggle variant="performance" class="rounded-full border-0"/><span class="text-xs text-fg-muted">Light / dark</span></div><SignOutButton client:load className="social-signout"/></div>
 </aside>
 <header class="journal-mobile-header">
-  <a href="/gallery/duckies" class="journal-wordmark" aria-label="Sunset Duckies photos">duckies<span>.</span></a>
-  <div class="flex items-center gap-2"><span class="text-xs text-fg-muted">Club photos</span><ThemeToggle variant="performance" class="rounded-full border-0" /></div>
+  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies">duckies<span>.</span></a>
+  <div class="flex items-center gap-2"><ThemeToggle variant="performance" class="rounded-full border-0"/><details class="journal-account-menu"><summary aria-label="Account and club links"><PhotoIcon name="user"/></summary><nav aria-label="Account and club links">{links.map(item=><a href={item.href} aria-current={path===item.href?'page':undefined}>{item.label}</a>)}<SignOutButton client:load className="social-signout"/></nav></details></div>
 </header>
-<nav aria-label="Mobile photo navigation" class="journal-mobile-nav">
-  {nav.map(item => <a href={item.href} aria-label={item.label} aria-current={item.label === "Duckies" ? "page" : undefined}><PhotoIcon name={item.icon} /><span>{item.label}</span></a>)}
-</nav>
+{nav.length>0&&<nav aria-label="Mobile photo navigation" class="journal-mobile-nav">{nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}</nav>}

@@ -5,7 +5,7 @@ import { signIn } from "./auth-helpers";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
 test.beforeEach(async () => {
-  await db.query('TRUNCATE club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES('parent@example.com','member'),('organiser@example.com','organiser')");
 });
 test.afterAll(async () => { await db.end(); });
@@ -26,8 +26,10 @@ test("signed-in members find their own profile from the public header and save i
   await expect(page.getByRole("navigation", { name: "Your account" }).getByRole("link", { name: /Club admin/ })).toBeHidden();
   await page.getByRole("navigation", { name: "Your account" }).getByRole("link", { name: "My profile", exact: true }).click();
   await expect(page).toHaveURL(/\/account\/profile$/);
-  const nav = page.getByRole("navigation", { name: "Member navigation" });
+  await page.locator(".journal-account-menu summary").click();
+  const nav = page.getByRole("navigation", { name: "Account and club links" });
   await expect(nav.getByRole("link", { name: "My profile", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.locator(".journal-account-menu summary").click();
   await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
   await page.getByLabel("Your name", { exact: true }).fill("Maya Parent");
   await page.getByLabel("Phone", { exact: true }).fill("+230 5555 1234");
@@ -48,6 +50,7 @@ test("signed-in members find their own profile from the public header and save i
   await page.getByRole("button", { name: "Switch to dark mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.screenshot({ path: "test-results/my-profile-dark.png", fullPage: true });
+  await page.locator(".journal-account-menu summary").click();
   await nav.getByRole("link", { name: "My family", exact: true }).click();
   await expect(page.getByRole("link", { name: "Edit my profile" })).toBeVisible();
   await expect(page.locator("[data-guardian]")).toContainText("Maya Parent");

@@ -4,7 +4,7 @@ import type { ProfilePhoto, PhotoTag } from "../lib/server/photo-profiles";
 interface Props { photo: ProfilePhoto; tags?: PhotoTag[]; canTag?: boolean; square?: boolean }
 const { photo, tags = [], canTag = false, square = false } = Astro.props;
 ---
-<article data-photo-card={photo.key} data-with-friends={tags.length > 1 ? "true" : "false"} class:list={[square ? "journal-tile" : "min-w-0 overflow-hidden bg-surface mb-4 break-inside-avoid rounded-xl border-2 border-edge shadow-sticker-sm"]}>
+<article id={photo.key.startsWith("upload:") ? `photo-${photo.key.slice(7)}` : undefined} data-photo-card={photo.key} data-with-friends={tags.length > 1 ? "true" : "false"} class:list={[square ? "journal-tile" : "min-w-0 overflow-hidden bg-surface mb-4 break-inside-avoid rounded-xl border-2 border-edge shadow-sticker-sm"]}>
   <button type="button" data-lb-trigger data-photo-key={photo.key} data-thumb={photo.thumb} data-date={photo.date} data-photo-tags={JSON.stringify(tags)} data-full={photo.full} data-alt={photo.caption} aria-label={`Open photo: ${photo.caption}`} class="group block w-full cursor-zoom-in overflow-hidden focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-teal-600">
     <img src={photo.thumb} alt={photo.caption} width={photo.width} height={photo.height} loading="lazy" decoding="async" class:list={["w-full transition-transform duration-300 motion-safe:group-hover:scale-105", square ? "aspect-square object-cover" : "h-auto"]} />
     {square && <span class="journal-tile-mark" data-friends-mark hidden={tags.length < 2}><PhotoIcon name="tag" class="h-5 w-5" /></span>}

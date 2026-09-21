@@ -4,7 +4,7 @@ import { signIn,codeFor } from "./auth-helpers";
 import { starterRecipe } from "../src/lib/granola";
 const db=new pg.Pool({connectionString:process.env.DUCKIES_DATABASE_URL});const origin="http://127.0.0.1:4329";const owner="andras@hejj.xyz";
 test.beforeEach(async()=>{
- await db.query('TRUNCATE branding_access_event,branding_access,shop_request_limit,granola_ai_limit,granola_revision,granola_pack,club_member,"user","session",account,verification,"rateLimit" CASCADE');
+ await db.query('TRUNCATE club_member_archive,branding_access_event,branding_access,shop_request_limit,granola_ai_limit,granola_revision,granola_pack,club_member,"user","session",account,verification,"rateLimit" CASCADE');
  await db.query("INSERT INTO club_member(email,role) VALUES('organiser@example.com','organiser')");
 });
 test.afterAll(async()=>{await db.end();});

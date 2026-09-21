@@ -35,13 +35,9 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
 
 <BaseLayout title={title} description={description} workspace="member" section="family">
   <section class={profileShell}>
-    <div class="max-w-3xl space-y-4" data-float>
-      <Kicker>Members · your family</Kicker>
-      <SectionTitle as="h1">Your crew, <span class="font-accent italic">on file.</span></SectionTitle>
-      <p class={bodyCopy}>
-        The duckies linked to you as a legal guardian: where they stand this semester, what you have signed,
-        what the club has recorded — and the things you keep current yourself.
-      </p>
+    <div class="social-page-header">
+      <div><h1>My family</h1><p>Your duckies, registrations and club records.</p></div>
+      {(session.member||session.archivedAt)&&<a href="/members/me" class="journal-button">Our photos & moments</a>}
     </div>
 
     {loadError ? (
@@ -56,7 +52,7 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
       </div>
     )}
 
-    <div class={profileSection} data-reveal>
+    {session.member && <div class={profileSection} data-reveal>
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div class="space-y-3">
           <Kicker>Next up</Kicker>
@@ -83,7 +79,7 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
       {events.length === 0 && (
         <p class={`mt-4 ${noteCopy}`}>No dates on the board right now. The club posts the next semester on WhatsApp.</p>
       )}
-    </div>
+    </div>}
 
     <div class={profileSection} data-reveal>
       <div class="space-y-3">
@@ -123,7 +119,7 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
 
     <div class={profileSection} data-reveal>
       <div class="flex flex-wrap gap-4">
-        {session.member && <Cta href="/members" variant="secondary">See the whole lineup</Cta>}
+        {session.member && <Cta href="/members/lineup" variant="secondary">See the whole lineup</Cta>}
         {session.member && <Cta href="/gallery/duckies" variant="secondary">Duckies in pictures</Cta>}
         <Cta href="/account">Your shop account</Cta>
       </div>

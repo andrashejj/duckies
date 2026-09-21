@@ -68,9 +68,10 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
     // A bookmarked photo profile should survive sign-in. Recheck membership
     // before returning, so a revoked member does not bounce into a 403 page.
     const familyPage = !!destination && /^\/members\/profile\/?([?#]|$)/.test(destination);
+    const archivePage = !!destination && /^\/members\/me\/?([?#]|$)/.test(destination);
     const memberPage = !!destination && /^\/(gallery|members)([/?#]|$)/.test(destination) && !familyPage;
     const adminPage = !!destination && /^\/admin([/?#]|$)/.test(destination);
-    const allowed = (!memberPage || session.member) && (!familyPage || session.member || session.family) && (!adminPage || session.admin);
+    const allowed = (!memberPage || session.member || (archivePage && session.archived)) && (!familyPage || session.member || session.family) && (!adminPage || session.admin);
     window.location.replace(destination && allowed ? destination : session.home);
   }
 

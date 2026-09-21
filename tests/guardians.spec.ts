@@ -29,7 +29,7 @@ async function reserve(request: APIRequestContext, familyKidIds?: string[]) {
   expect(response.status()).toBe(200); return response.json();
 }
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit","Drop","Product","Order",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit","Drop","Product","Order",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'organiser'),($2,'member'),('stranger@example.com','member')",[adminEmail,parent]);
   admin = await playwright.request.newContext({baseURL:origin}); guest=await playwright.request.newContext({baseURL:origin});
   await signIn(admin,adminEmail);

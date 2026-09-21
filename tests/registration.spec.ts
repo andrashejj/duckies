@@ -91,7 +91,7 @@ async function pay(status: "paid" | "unpaid" = "paid") {
 }
 test.beforeEach(async ({ request, playwright }) => {
   await db.query(
-    'TRUNCATE club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE',
+    'TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE',
   );
   await db.query(
     "INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser'),('member@example.com','member')",
