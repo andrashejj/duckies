@@ -1,7 +1,26 @@
 ---
-export const prerender = false;
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import MembersArea from "../../components/MembersArea.astro";
-if (Astro.locals.isAdmin) return Astro.redirect("/admin/kids");
+export const prerender=false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SocialFeed from '../../components/react/SocialFeed';
+import { listPosts,people,socialPerson } from '../../lib/server/social';
+import { photoKids } from '../../lib/server/photo-profiles';
+const session=Astro.locals.session!;
+const actor={...session.member!,userId:session.user.id};
+let data;
+try {
+  const [feed,crew,person,kids]=await Promise.all([listPosts(actor),people(),socialPerson(actor.userId),photoKids(actor)]);
+  data={feed,crew,person:person!,kids:kids.filter(k=>k.canManage)};
+}catch{Astro.response.status=503;}
 ---
-<BaseLayout title="Club lineup · Sunset Duckies" workspace="member" section="lineup"><MembersArea /></BaseLayout>
+<BaseLayout title="The club · Sunset Duckies" variant="journal">
+  <div class="social-layout">
+    <section class="social-feed-column">
+      <header class="social-page-header"><div><h1>The club</h1><p>Good waves. Good people. Our little corner.</p></div><span class="social-private">Members only</span></header>
+      {!data?<p role="alert" class="social-error">The club feed is taking a moment. Please reload to try again.</p>:<>
+        <nav class="social-crew" aria-label="Meet the crew">{data.crew.map(person=><a href={`/members/people/${encodeURIComponent(person.id)}`}><span class="social-avatar">{person.name.slice(0,1)}</span><span>{person.name.split(' ')[0]}</span></a>)}</nav>
+        <SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} compose kids={data.kids}/>
+      </>}
+    </section>
+    <aside class="social-rail"><h2>See you in the water.</h2><p>A first wave, a sandy smile, the whole crew at sunset. This is where we keep it together.</p><a href="/gallery/duckies">Meet the duckies →</a><a href="/gallery">Browse the photo library →</a><a href="/members/profile">Your family & registrations →</a><p class="social-rail-note">Shared with active club members. When membership ends, your own memories stay with you.</p></aside>
+  </div>
+</BaseLayout>

@@ -18,6 +18,7 @@ export async function changeGuardian(actor: string, kidIds: string[], guardian: 
   const db = await getDatabase().connect();
   try {
     await db.query("BEGIN");
+    let added = false;
     // Serialize changes per child, then recheck permission after taking the lock.
     const kids = await db.query("SELECT id FROM club_kid WHERE id=ANY($1::uuid[]) AND archived_at IS NULL ORDER BY id FOR UPDATE", [kidIds]);
     if (kids.rowCount !== kidIds.length) throw new RegistrationError("Duckie not found.", 404);
@@ -29,6 +30,7 @@ export async function changeGuardian(actor: string, kidIds: string[], guardian: 
       if (remove && !existing.rowCount) throw new RegistrationError("Guardian not found.", 404);
       if (!remove && !existing.rowCount && (await db.query("SELECT count(*)::int AS n FROM club_current_guardian WHERE kid_id=$1", [id])).rows[0].n >= 4)
         throw new RegistrationError("A duckie can have up to four legal guardians.");
+      if (!remove && !existing.rowCount) added = true;
       const details = remove ? existing.rows[0] : guardian as z.infer<typeof guardianSchema>;
       await db.query(`INSERT INTO club_guardian_access(kid_id,email,name,relationship,phone,revoked_at,updated_by)
         VALUES($1,$2,$3,$4,$5,CASE WHEN $6 THEN now() ELSE NULL END,$7)
@@ -37,6 +39,7 @@ export async function changeGuardian(actor: string, kidIds: string[], guardian: 
         [id,guardian.email,details.name,details.relationship,details.phone,remove,actor]);
     }
     await db.query("COMMIT");
+    return { added };
   } catch (error) { await db.query("ROLLBACK"); throw error; }
   finally { db.release(); }
 }

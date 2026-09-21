@@ -404,3 +404,16 @@
     }
   }
 }
+
+/* Members photo profiles use a quieter, photo-first palette. */
+html.theme-journal {
+  --canvas: #fff; --surface: #fff; --surface-2: #f4f4f4;
+  --fg: #202020; --fg-muted: #727272; --line: #e7e7e7; --edge: #202020;
+  --journal-photo-icon: #fff; --journal-photo-shadow: #0008;
+  --accent: #e94726; --accent-fg: #fff; --accent-text: #ce3b1d;
+}
+html.theme-journal[data-theme="dark"] {
+  --canvas: #101010; --surface: #171717; --surface-2: #262626;
+  --fg: #f5f5f5; --fg-muted: #a2a2a2; --line: #303030; --edge: #f5f5f5;
+  --accent-text: #ff896f;
+}

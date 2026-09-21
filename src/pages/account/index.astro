@@ -11,6 +11,8 @@ import { bodyCopy } from "../../lib/ui";
 
 const session = Astro.locals.session;
 const user = session!.user;
+if(session?.member) return Astro.redirect("/members");
+if(session?.archivedAt) return Astro.redirect("/members/me");
 
 let recentOrderCount = 0;
 try {

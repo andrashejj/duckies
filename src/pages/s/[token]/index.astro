@@ -1,0 +1,36 @@
+---
+export const prerender = false;
+import '../../../styles/global.css';
+import '../../../styles/photo-journal.css';
+import { readPublicShare } from '../../../lib/server/public-shares';
+let share;
+try { share = await readPublicShare(Astro.params.token ?? ''); if (!share) Astro.response.status = 404; }
+catch { Astro.response.status = 503; }
+const photo = share?.photoKey ? `${Astro.url.pathname.replace(/\/$/,'')}/photo.webp` : null;
+const title = share ? 'A moment with the Duckies' : 'This moment is unavailable';
+const description = share?.caption || (share ? 'Shared from Sunset Duckies.' : 'This link may have been stopped or the moment removed.');
+---
+<!doctype html>
+<html lang="en" class="theme-journal">
+  <head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>{title} · Sunset Duckies</title>
+    <meta name="robots" content="noindex,nofollow"/><meta name="referrer" content="no-referrer"/>
+    <meta name="description" content={description}/>
+    <meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:type" content="article"/>
+    <meta name="twitter:card" content={photo ? 'summary_large_image' : 'summary'}/>
+    {photo && <meta property="og:image" content={new URL(photo, Astro.url.origin).href}/>}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"/>
+  </head>
+  <body class="public-moment">
+    <header class="public-moment-header"><a href="/" aria-label="Sunset Duckies home">duckies<span>.</span></a><span>A little piece of the club</span></header>
+    <main>
+      {share ? <article class="public-moment-card">
+        <header><img src="/brand/sunset-duckies-logo-small.webp" width="40" height="40" alt=""/><div><h1>A moment with the Duckies</h1><p>Shared publicly · Sunset Duckies</p></div></header>
+        {photo && <img class="public-moment-photo" src={photo} alt="A publicly shared Duckies moment"/>}
+        {share.caption && <p class="public-moment-caption">{share.caption}</p>}
+      </article> : <div class="public-moment-unavailable"><h1>{Astro.response.status===503?'This moment could not load':title}</h1><p>{Astro.response.status===503?'Please try again in a moment.':description}</p></div>}
+      <footer>Salt water, little waves & good company.<br/><a href="/">Meet Sunset Duckies ↗</a></footer>
+    </main>
+  </body>
+</html>

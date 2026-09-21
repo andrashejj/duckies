@@ -80,3 +80,7 @@ export const formLinkRateLimit = (ip: string) =>
 // Anonymous sign-ups create kids and links, so they get a much smaller budget.
 export const signupRateLimit = (ip: string) =>
   rateLimit("signup", ip, 8, "10 minutes", "That's a lot of sign-ups from here. Take a breather and try again in ten minutes.");
+
+// Bound invitations per signed-in sender and recipient, including retries.
+export const guardianInviteRateLimit = (actor: string, recipient: string) =>
+  rateLimit("guardian-invite", `${actor}:${recipient}`, 5, "10 minutes", "Please wait ten minutes before sending another invitation to this guardian.");

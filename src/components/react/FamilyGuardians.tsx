@@ -23,16 +23,28 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Couldn't update the guardians.");
     await refresh();
+    return result;
   }
   async function add(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault(); const form = event.currentTarget; const data = new FormData(form);
     setBusy(true); setMessage("");
     try {
-      await change("POST", { kidIds: data.getAll("kidId"), confirm: data.get("confirm") === "on", guardian: {
+      const result = await change("POST", { kidIds: data.getAll("kidId"), confirm: data.get("confirm") === "on", guardian: {
         name: data.get("name"), email: data.get("email"), phone: data.get("phone"), relationship: data.get("relationship"),
       } });
-      form.reset(); setMessage("Guardian added. They can sign in with their own email to open My family.");
+      form.reset();
+      setMessage(result.notification === "sent" ? `Guardian added. Sign-in invitation sent to ${String(data.get("email")).trim()}.`
+        : result.notification === "failed" ? "Guardian added, but the invitation email could not be sent. Their family access is saved. Use Resend invitation in their guardian entry to try again."
+        : "Guardian details saved. They already have family access; use Resend invitation if they need the sign-in link again.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Couldn't add the guardian."); }
+    finally { setBusy(false); }
+  }
+  async function resend(guardian: FamilyGuardian) {
+    setBusy(true); setMessage("");
+    try {
+      const result = await change("PATCH", { kidIds: [guardian.kidId], email: guardian.email });
+      setMessage(result.notification === "sent" ? `Sign-in invitation sent to ${guardian.email}.` : "The invitation email could not be sent. Family access is still saved. Please try again later.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Couldn't send the invitation."); }
     finally { setBusy(false); }
   }
   async function remove() {
@@ -50,7 +62,7 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
       <ul className="mt-3 divide-y divide-line">{guardians.filter(g => g.kidId===kid.id).map(g => <li key={g.email} className="flex flex-wrap items-center justify-between gap-3 py-3">
         <div className="flex min-w-0 items-center gap-3">{g.photoVersion && <img className="h-11 w-11 shrink-0 rounded-full object-cover" src={`/api/parents/photo?email=${encodeURIComponent(g.email)}&v=${encodeURIComponent(g.photoVersion)}`} alt={`${g.name}'s profile`} />}
           <div className="min-w-0"><p className="font-semibold">{g.name} <span className="font-normal text-fg-muted">· {g.relationship}{g.email===actorEmail ? " · You" : ""}</span></p><p className="break-all text-sm">{g.email}</p><p className="text-sm text-fg-muted">{g.phone}</p></div></div>
-        {g.email!==actorEmail && <button type="button" disabled={!ready||busy} className={smallButton} onClick={() => setRemoving(g)}>Remove access<span className="sr-only"> for {g.name} to {kid.name}</span></button>}
+        {g.email!==actorEmail && <div className="flex flex-wrap gap-2"><button type="button" disabled={!ready||busy} className={smallButton} onClick={() => void resend(g)}>Resend invitation<span className="sr-only"> to {g.name} for {kid.name}</span></button><button type="button" disabled={!ready||busy} className={smallButton} onClick={() => setRemoving(g)}>Remove access<span className="sr-only"> for {g.name} to {kid.name}</span></button></div>}
       </li>)}</ul>
       {!guardians.some(g=>g.kidId===kid.id) && <p className="mt-2 text-sm">No guardians linked yet.</p>}
     </div>)}</div>
@@ -61,13 +73,13 @@ export default function FamilyGuardians({ kids, initialGuardians, actorEmail, on
     <div className="mt-6"><button type="button" className="cursor-pointer font-display text-lg font-bold" disabled={!ready||busy} aria-expanded={adding} onClick={() => setAdding(open => !open)}>Add a legal guardian</button>
       {adding &&
       <form className="mt-4" onSubmit={event=>void add(event)}><fieldset disabled={!ready||busy} className="grid min-w-0 gap-4 sm:grid-cols-2">
-        <label className="grid gap-1"><span className={mono}>Guardian name</span><input className={input} name="name" required maxLength={120} autoComplete="off" /></label>
-        <label className="grid gap-1"><span className={mono}>Guardian email</span><input className={input} type="email" name="email" required maxLength={200} autoComplete="off" /></label>
+        <label className="grid gap-1"><span className={mono}>Guardian name</span><input className={input} name="name" required maxLength={120} autoComplete="off" placeholder="First and last name" /></label>
+        <label className="grid gap-1"><span className={mono}>Guardian email</span><input className={input} type="email" name="email" required maxLength={200} autoComplete="off" autoCapitalize="none" spellCheck={false} placeholder="guardian@example.com" aria-describedby="guardian-email-help" /></label>
         <label className="grid gap-1"><span className={mono}>Phone</span><input className={input} type="tel" name="phone" required maxLength={40} placeholder="+230 …" /></label>
         <label className="grid gap-1"><span className={mono}>Relationship</span><input className={input} name="relationship" required maxLength={60} placeholder="Mother, father, legal guardian…" /></label>
         <fieldset className="space-y-2 sm:col-span-2"><legend className={`${mono} mb-2`}>Their duckies</legend>{kids.map(kid=><label key={kid.id} className="flex min-h-10 items-center gap-3"><input type="checkbox" name="kidId" value={kid.id} defaultChecked />{kid.name}</label>)}</fieldset>
         <label className="flex items-start gap-3 text-sm leading-6 sm:col-span-2"><input type="checkbox" name="confirm" required className="mt-1" /><span>I confirm this person is a legal guardian and can access the selected children’s details, signed records and our shared family order history.</span></label>
-        <p className="text-sm text-fg-muted sm:col-span-2">Existing signed registrations stay unchanged. Tell the guardian to sign in using this email; no email is sent automatically.</p>
+        <p id="guardian-email-help" className="text-sm text-fg-muted sm:col-span-2">We’ll email the guardian a sign-in invitation to access the selected duckies in My family. Existing signed registrations stay unchanged.</p>
         <button className={`${primaryButton} justify-self-start`} type="submit">{busy ? "Saving…" : "Add guardian"}</button>
       </fieldset></form>}
     </div>

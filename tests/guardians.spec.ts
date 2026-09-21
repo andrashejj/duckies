@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import pg from "pg";
 import { createPrismaClient } from "../src/lib/prisma-factory";
-import { signIn } from "./auth-helpers";
+import { signIn, codeFor } from "./auth-helpers";
 import { submission } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const origin = "http://127.0.0.1:4329";
@@ -12,6 +12,11 @@ const prisma = createPrismaClient();
 const parent = "parent@example.com", second = "second@example.com", adminEmail = "organiser@example.com";
 const details = (email = second) => ({ name: "Second Parent", email, phone: "+230 5555 4567", relationship: "Mother" });
 const post = (data?: unknown) => ({ headers: { origin }, data });
+async function invitations(email: string) {
+  const text=await readFile(process.env.DUCKIES_TEST_MAIL_FILE!,"utf8");
+  return text.trim().split("\n").map(line=>JSON.parse(line)).filter(mail=>mail.to.includes(email)&&mail.subject==="You're invited to My family — Sunset Duckies");
+}
+
 let admin: APIRequestContext, guest: APIRequestContext, productId: string;
 async function kid(name: string, extra = false) {
   const id = (await (await admin.post("/api/kids", post({ name }))).json()).kid.id;
@@ -29,7 +34,7 @@ async function reserve(request: APIRequestContext, familyKidIds?: string[]) {
   expect(response.status()).toBe(200); return response.json();
 }
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit","Drop","Product","Order",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit","Drop","Product","Order",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'organiser'),($2,'member'),('stranger@example.com','member')",[adminEmail,parent]);
   admin = await playwright.request.newContext({baseURL:origin}); guest=await playwright.request.newContext({baseURL:origin});
   await signIn(admin,adminEmail);
@@ -66,6 +71,7 @@ test("adding a guardian shares only chosen kids and their orders; changes preser
   const before=(await db.query("SELECT id,payload_sha256,pdf_sha256 FROM club_signed_waiver ORDER BY id")).rows;
   await signIn(page.request,parent);
   const shared=await reserve(page.request,[first]), privateOrder=await reserve(page.request,[other]);
+  const mailCount=(await invitations(second)).length;
   await page.goto("/members/profile");
   const area=page.getByRole("region",{name:"Family guardians"});
   await area.getByText("Add a legal guardian",{exact:true}).click();
@@ -76,7 +82,17 @@ test("adding a guardian shares only chosen kids and their orders; changes preser
   await area.getByRole("checkbox",{name:"Other Duckie",exact:true}).uncheck();
   await area.getByRole("checkbox",{name:/I confirm/}).check();
   await area.getByRole("button",{name:"Add guardian",exact:true}).click();
-  await expect(area.getByRole("status")).toContainText("Guardian added.");
+  await expect(area.getByRole("status")).toContainText(`Guardian added. Sign-in invitation sent to ${second}.`);
+  const mails=await invitations(second);expect(mails).toHaveLength(mailCount+1);
+  const invitation=mails.at(-1)!;
+  expect(invitation.text).toContain(second);expect(invitation.text).toContain("six-digit sign-in code");
+  for(const secret of ["First Duckie","Other Duckie","Private allergy note",shared.guestToken])expect(invitation.text).not.toContain(secret);
+  const url=new URL(invitation.text.match(/https?:\/\/\S+/)![0]);
+  expect(url.origin).toBe(origin);expect(url.pathname).toBe("/login");expect(url.searchParams.get("next")).toBe("/members/profile");
+  await area.getByRole("button",{name:/Resend invitation to Second Parent/}).click();
+  await expect(area.getByRole("status")).toHaveText(`Sign-in invitation sent to ${second}.`);
+  expect(await invitations(second)).toHaveLength(mailCount+2);
+
   const co=await playwright.request.newContext({baseURL:origin});await signIn(co,second);
   expect((await (await co.get("/api/family")).json()).kids.map((k:{id:string})=>k.id)).toEqual([first]);
   expect((await (await co.get("/api/cup/kids")).json()).kids.map((k:{id:string})=>k.id)).toEqual([first]);
@@ -139,4 +155,68 @@ test("signed-guardian revocation stays revoked and legacy orders gain family att
   expect((await (await co.get("/api/family")).json()).kids).toHaveLength(1);
   expect((await db.query("SELECT * FROM club_current_guardian WHERE kid_id=$1 AND email=$2",[id,second])).rowCount).toBe(1);
   await co.dispose();
+});
+
+
+test("guardian invitation link completes email-code sign-in to My family",async({page})=>{
+  const id=(await (await admin.post("/api/kids",post({name:"Invited Duckie"}))).json()).kid.id;
+  const response=await admin.post("/api/family/guardians",post({kidIds:[id],guardian:details(),confirm:true}));
+  expect(response.status()).toBe(201);expect((await response.json()).notification).toBe("sent");
+  const invitation=(await invitations(second)).at(-1)!;
+  await page.goto(invitation.text.match(/https?:\/\/\S+/)![0]);
+  await expect(page.locator('#login-intro')).toContainText("guardian invitation");
+  await page.getByLabel("Your email address",{exact:true}).fill(second);
+  await page.getByRole("button",{name:"Email me a code"}).click();
+  await expect(page.getByLabel("Your six-digit code",{exact:true})).toBeVisible();
+  await page.getByLabel("Your six-digit code",{exact:true}).fill(await codeFor(second));
+  await page.getByRole("button",{name:/^Sign in/}).click();
+  await expect(page).toHaveURL('/members/profile');
+  await expect(page.getByRole('region',{name:'Family guardians'})).toContainText('Invited Duckie');
+  expect((await (await page.request.get('/api/session')).json())).toMatchObject({family:true,member:false,admin:false});
+});
+
+test("failed invitations preserve access and show a retry control; invalid email never saves",async({page})=>{
+  const id=await kid("Delivery Duckie");await signIn(page.request,parent);
+  await page.goto('/members/profile');
+  const area=page.getByRole('region',{name:'Family guardians'});
+  await area.getByRole('button',{name:'Add a legal guardian',exact:true}).click();
+  await area.getByLabel('Guardian name',{exact:true}).fill('Dora Test');
+  await area.getByLabel('Guardian email',{exact:true}).fill('Hejj');
+  await area.getByLabel('Phone',{exact:true}).fill('+230 5555 6789');
+  await area.getByLabel('Relationship',{exact:true}).fill('Mother');
+  await area.getByRole('checkbox',{name:/I confirm/}).check();
+  await area.getByRole('button',{name:'Add guardian',exact:true}).click();
+  expect(await area.getByLabel('Guardian email',{exact:true}).evaluate((input:HTMLInputElement)=>input.validity.typeMismatch)).toBe(true);
+  expect((await page.request.post('/api/family/guardians',post({kidIds:[id],guardian:details('Hejj'),confirm:true}))).status()).toBe(400);
+  await area.getByLabel('Guardian email',{exact:true}).fill('delivery-failure@example.com');
+  await area.getByRole('button',{name:'Add guardian',exact:true}).click();
+  await expect(area.getByRole('status')).toContainText('Guardian added, but the invitation email could not be sent. Their family access is saved.');
+  expect((await db.query('SELECT 1 FROM club_current_guardian WHERE kid_id=$1 AND email=$2',[id,'delivery-failure@example.com'])).rowCount).toBe(1);
+  await area.getByRole('button',{name:/Resend invitation to Dora Test/}).click();
+  await expect(area.getByRole('status')).toHaveText('The invitation email could not be sent. Family access is still saved. Please try again later.');
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await area.scrollIntoViewIfNeeded();await area.screenshot({path:'test-results/guardian-invitation-mobile.png'});
+});
+
+test("duplicate additions do not resend; retries require current permissions and are rate limited",async({request,playwright})=>{
+  const id=await kid('Invitation Duckie');await signIn(request,parent);
+  const before=(await invitations(second)).length;
+  const body={kidIds:[id],guardian:details(),confirm:true};
+  expect((await request.post('/api/family/guardians',post(body))).status()).toBe(201);
+  expect((await (await request.post('/api/family/guardians',post(body))).json()).notification).toBe('not_needed');
+  expect(await invitations(second)).toHaveLength(before+1);
+  const stranger=await playwright.request.newContext({baseURL:origin});await signIn(stranger,'stranger@example.com');
+  const resend={kidIds:[id],email:second};
+  expect((await stranger.patch('/api/family/guardians',post(resend))).status()).toBe(404);
+  expect((await guest.patch('/api/family/guardians',post(resend))).status()).toBe(401);
+  expect((await request.patch('/api/family/guardians',{headers:{origin:'https://evil.example'},data:resend})).status()).toBe(403);
+  expect((await request.patch('/api/family/guardians',post({...resend,email:'unlinked@example.com'}))).status()).toBe(404);
+  expect(await invitations(second)).toHaveLength(before+1);
+  for(let n=0;n<3;n++)expect((await (await request.patch('/api/family/guardians',post(resend))).json()).notification).toBe('sent');
+  expect((await request.patch('/api/family/guardians',post(resend))).status()).toBe(429);
+  await request.delete('/api/family/guardians',post(resend));
+  expect((await admin.patch('/api/family/guardians',post(resend))).status()).toBe(404);
+  expect(await invitations(second)).toHaveLength(before+4);
+  await stranger.dispose();
 });

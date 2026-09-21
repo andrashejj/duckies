@@ -1,5 +1,8 @@
 ---
 import "../styles/global.css";
+import "../styles/photo-journal.css";
+import PublicShareDialog from "../components/PublicShareDialog.astro";
+import PhotoNavigation from "../components/PhotoNavigation.astro";
 import WorkspaceHeader from "../components/WorkspaceHeader.astro";
 import SessionNavigation from "../components/SessionNavigation.astro";
 import ClubNavigation from "../components/ClubNavigation.astro";
@@ -21,7 +24,7 @@ interface Props {
   imageWidth?: number;
   imageHeight?: number;
   page?: "home" | "materials";
-  variant?: "default" | "performance";
+  variant?: "default" | "performance" | "journal";
 }
 
 const {
@@ -36,6 +39,7 @@ const {
   variant = "default",
 } = Astro.props;
 
+const journal = variant === "journal" || workspace === "member";
 const performance = variant === "performance";
 const siteOrigin = Astro.site ?? new URL(site.url);
 const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
@@ -43,7 +47,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
 ---
 
 <!doctype html>
-<html lang="en" class:list={["scroll-smooth overflow-x-clip bg-canvas bg-(image:--texture-canvas) bg-fixed motion-reduce:scroll-auto", performance && "theme-performance [background-size:64px_64px,64px_64px,auto]"]}>
+<html lang="en" class:list={["scroll-smooth overflow-x-clip bg-canvas bg-(image:--texture-canvas) bg-fixed motion-reduce:scroll-auto", performance && "theme-performance [background-size:64px_64px,64px_64px,auto]", journal && "theme-journal"]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -83,11 +87,11 @@ const absoluteImage = new URL(image, siteOrigin).toString();
   </head>
   <body class:list={[
     "min-h-screen overflow-x-clip font-sans tracking-[-0.005em] text-fg antialiased [font-feature-settings:'ss01','cv11']",
-    "before:pointer-events-none before:fixed before:inset-0 before:z-0 before:bg-(image:--texture-grain) before:opacity-30 before:mix-blend-multiply before:content-[''] dark:before:opacity-[0.12] dark:before:mix-blend-screen",
+    !journal && "before:pointer-events-none before:fixed before:inset-0 before:z-0 before:bg-(image:--texture-grain) before:opacity-30 before:mix-blend-multiply before:content-[''] dark:before:opacity-[0.12] dark:before:mix-blend-screen",
   ]}>
     <div class="relative z-[1] min-h-screen overflow-x-clip">
       {/* Phones drop the translucent blur for an opaque header on its own compositor layer: the glass effect flickers as the address bar resizes. */}
-      {workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
+      {journal ? <PhotoNavigation /> : workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
         "sticky top-0 z-50 border-b-2 backdrop-blur-xl max-sm:transform-gpu max-sm:backface-hidden max-sm:backdrop-blur-none max-sm:will-change-transform",
         performance ? "border-line bg-canvas/92 max-sm:bg-canvas" : "border-edge bg-surface/92 max-sm:bg-surface",
       ]}>
@@ -104,20 +108,21 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             </div>
           </a>
 
-          <ClubNavigation variant={variant} />
+          <ClubNavigation variant={performance ? "performance" : "default"} />
 
           <div class="flex shrink-0 items-center gap-2 sm:gap-3">
-            <ThemeToggle variant={variant} />
+            <ThemeToggle variant={performance ? "performance" : "default"} />
             <SessionNavigation />
           </div>
         </div>
       </header>}
 
-      <main class="relative">
+      {journal && <PublicShareDialog />}
+      <main class:list={["relative", journal && "journal-main"]}>
         <slot />
       </main>
 
-      {!performance && !workspace && (
+      {!performance && !workspace && !journal && (
         <div class="relative mt-20 overflow-hidden border-y-2 border-edge bg-ink-950 py-[0.9rem] text-cream">
           <div class="inline-flex animate-marquee gap-10 whitespace-nowrap pr-10 font-display text-[1.2rem] font-bold uppercase tracking-[-0.01em] [font-variation-settings:'wdth'_108] motion-reduce:animate-none [&_em]:font-accent [&_em]:font-semibold [&_em]:italic [&_em]:text-sun-500 [&_em]:[font-variation-settings:'SOFT'_100,'WONK'_1] [&_i]:text-[1.3em] [&_i]:not-italic [&_i]:text-coral-400 [&_span]:inline-flex [&_span]:items-center [&_span]:gap-10">
             <span>
@@ -140,7 +145,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         </div>
       )}
 
-      {!workspace && <footer class:list={["border-t-2 text-fg", performance ? "border-line bg-surface" : "border-edge bg-surface"]}>
+      {!workspace && !journal && <footer class:list={["border-t-2 text-fg", performance ? "border-line bg-surface" : "border-edge bg-surface"]}>
         <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a data-account-link href="/account" class="text-sm font-semibold underline underline-offset-4">My account</a></div>
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
           <div class="space-y-5">

@@ -1,0 +1,15 @@
+---
+export const prerender=false;
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SocialFeed from '../../../components/react/SocialFeed';
+import {listPosts,socialPerson} from '../../../lib/server/social';
+import {uuid} from '../../../lib/registration/schema';
+const session=Astro.locals.session!;
+const actor={...session.member!,userId:session.user.id};
+let data;
+try{
+  if(uuid.safeParse(Astro.params.id).success){const feed=await listPosts(actor,{id:Astro.params.id});if(feed.posts.length)data={feed,person:(await socialPerson(actor.userId))!};}
+  if(!data)Astro.response.status=404;
+}catch{Astro.response.status=503;}
+---
+<BaseLayout title="A club moment · Sunset Duckies" variant="journal"><section class="social-single"><a class="journal-back" href="/members">← Back to the club</a>{data?<SocialFeed client:load initialPosts={data.feed.posts} next={null} person={data.person}/>:<h1 class="social-section-title">{Astro.response.status===404?'This moment is no longer available.':'Could not load this moment. Please try again.'}</h1>}</section></BaseLayout>
