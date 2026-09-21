@@ -4,7 +4,6 @@ import SurfPhoto from "../components/SurfPhoto.astro";
 
 import { site } from "../data/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import MembersArea from "../components/MembersArea.astro";
 import Chip from "../components/ui/Chip.astro";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
@@ -76,7 +75,7 @@ const glow = "pointer-events-none absolute rounded-full";
         <div data-float class="flex flex-col gap-3">
           <Cta href="#how-to-join" class="w-full">Start here · how to join</Cta>
           <Cta href={site.whatsappUrl} variant="secondary" target="_blank" rel="noreferrer" class="w-full">Slide into WhatsApp</Cta>
-          <a data-member-link class="py-2 text-center text-sm font-semibold text-white underline underline-offset-4" href="/login">Member sign-in</a>
+          <a data-account-link class="py-2 text-center text-sm font-semibold text-white underline underline-offset-4" href="/account">My account</a>
           <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
             Mon + Fri · 4-6pm · Tamarin Bay
           </p>
@@ -105,7 +104,7 @@ const glow = "pointer-events-none absolute rounded-full";
   </section>
 
   <!-- ===================== SEMESTER UPDATE ===================== -->
-  <MembersArea />
+
 
   <section id="semester-update" class="relative overflow-hidden border-b-2 border-edge bg-ink-950 py-16 text-white lg:py-20">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_10%_15%,var(--color-coral-500),transparent_38%),radial-gradient(circle_at_90%_85%,var(--color-teal-500),transparent_42%)] opacity-35" aria-hidden="true"></div>

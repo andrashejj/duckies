@@ -1,8 +1,9 @@
 ---
 import "../styles/global.css";
+import WorkspaceHeader from "../components/WorkspaceHeader.astro";
+import SessionNavigation from "../components/SessionNavigation.astro";
 import ClubNavigation from "../components/ClubNavigation.astro";
 import Chip from "../components/ui/Chip.astro";
-import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import ThemeScript from "../components/ThemeScript.astro";
@@ -11,6 +12,8 @@ import ThemeToggle from "../components/ThemeToggle.astro";
 import { site } from "../data/site";
 
 interface Props {
+  workspace?: "member" | "admin";
+  section?: string;
   title?: string;
   description?: string;
   image?: string;
@@ -22,6 +25,7 @@ interface Props {
 }
 
 const {
+  workspace, section,
   title = site.name,
   description = site.description,
   image = site.ogImage.path,
@@ -83,11 +87,11 @@ const absoluteImage = new URL(image, siteOrigin).toString();
   ]}>
     <div class="relative z-[1] min-h-screen overflow-x-clip">
       {/* Phones drop the translucent blur for an opaque header on its own compositor layer: the glass effect flickers as the address bar resizes. */}
-      <header class:list={[
+      {workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
         "sticky top-0 z-50 border-b-2 backdrop-blur-xl max-sm:transform-gpu max-sm:backface-hidden max-sm:backdrop-blur-none max-sm:will-change-transform",
         performance ? "border-line bg-canvas/92 max-sm:bg-canvas" : "border-edge bg-surface/92 max-sm:bg-surface",
       ]}>
-        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 sm:flex-nowrap sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 xl:flex-nowrap sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
           <a href="/" class="group flex min-w-0 items-center gap-2 sm:gap-3">
             <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" class="h-10 w-10 shrink-0 rounded-full sm:h-12 sm:w-12" />
             <div class:list={["min-w-0", performance && "max-sm:hidden"]}>
@@ -104,16 +108,16 @@ const absoluteImage = new URL(image, siteOrigin).toString();
 
           <div class="flex shrink-0 items-center gap-2 sm:gap-3">
             <ThemeToggle variant={variant} />
-            <Cta href="/login" variant={performance ? "performance" : "primary"} size="sm" class="shrink-0">Member sign-in</Cta>
+            <SessionNavigation />
           </div>
         </div>
-      </header>
+      </header>}
 
       <main class="relative">
         <slot />
       </main>
 
-      {!performance && (
+      {!performance && !workspace && (
         <div class="relative mt-20 overflow-hidden border-y-2 border-edge bg-ink-950 py-[0.9rem] text-cream">
           <div class="inline-flex animate-marquee gap-10 whitespace-nowrap pr-10 font-display text-[1.2rem] font-bold uppercase tracking-[-0.01em] [font-variation-settings:'wdth'_108] motion-reduce:animate-none [&_em]:font-accent [&_em]:font-semibold [&_em]:italic [&_em]:text-sun-500 [&_em]:[font-variation-settings:'SOFT'_100,'WONK'_1] [&_i]:text-[1.3em] [&_i]:not-italic [&_i]:text-coral-400 [&_span]:inline-flex [&_span]:items-center [&_span]:gap-10">
             <span>
@@ -136,8 +140,8 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         </div>
       )}
 
-      <footer class:list={["border-t-2 text-fg", performance ? "border-line bg-surface" : "border-edge bg-surface"]}>
-        <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a href="/login" class="text-sm font-semibold underline underline-offset-4">Member sign-in</a></div>
+      {!workspace && <footer class:list={["border-t-2 text-fg", performance ? "border-line bg-surface" : "border-edge bg-surface"]}>
+        <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a data-account-link href="/account" class="text-sm font-semibold underline underline-offset-4">My account</a></div>
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
           <div class="space-y-5">
             <a href="/" class="inline-flex items-center gap-4">
@@ -176,7 +180,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
         <div class="border-t border-line bg-canvas/70 px-6 py-4 text-center font-mono text-xs uppercase tracking-[0.22em] text-fg/60">
           © {new Date().getFullYear()} · Made with salt water & sunshine in Mauritius
         </div>
-      </footer>
+      </footer>}
     </div>
 
     <script>

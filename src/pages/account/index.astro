@@ -1,6 +1,5 @@
 ---
 export const prerender = false;
-import SignOutButton from "../../components/react/SignOutButton";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { prisma } from "../../lib/prisma";
@@ -25,7 +24,7 @@ const title = `Your account | ${site.name}`;
 const description = "Your Sunset Duckies account dashboard.";
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} workspace="member">
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-4" data-float>
       <div class="space-y-3">
@@ -38,7 +37,7 @@ const description = "Your Sunset Duckies account dashboard.";
           Your reservations and account details live here.
         </p>
       </div>
-      <SignOutButton client:load />
+      <Cta href="/account/profile">Edit my profile</Cta>
     </div>
 
     <div class="grid gap-6 md:grid-cols-3">
@@ -84,7 +83,7 @@ const description = "Your Sunset Duckies account dashboard.";
         </p>
       </StickerCard>}
 
-      {session?.member && <StickerCard href="/#our-duckies" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+      {session?.member && <StickerCard href="/members" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
         <Kicker>Members</Kicker>
         <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"
         >
@@ -108,7 +107,7 @@ const description = "Your Sunset Duckies account dashboard.";
           <p class="mt-1 font-display text-2xl font-bold [font-variation-settings:'wdth'_112]">
             Jump to the club backstage.
           </p>
-          <Cta class="mt-4" href="/admin">Open admin →</Cta>
+          <Cta class="mt-4" href="/admin/kids">Open admin →</Cta>
         </div>
       </div>
     )}

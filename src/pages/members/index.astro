@@ -1,4 +1,7 @@
 ---
 export const prerender = false;
-return Astro.redirect("/#our-duckies");
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MembersArea from "../../components/MembersArea.astro";
+if (Astro.locals.isAdmin) return Astro.redirect("/admin/kids");
 ---
+<BaseLayout title="Club lineup · Sunset Duckies" workspace="member" section="lineup"><MembersArea /></BaseLayout>
