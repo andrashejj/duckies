@@ -3,9 +3,9 @@ import { ctaClass } from "../lib/ui";
 const item = "block rounded-xl px-4 py-3 font-display text-sm font-bold hover:bg-highlight hover:text-highlight-fg focus-visible:outline-3 focus-visible:outline-accent";
 ---
 <div class="relative shrink-0" data-session-navigation>
-  <a href="/account" class={ctaClass("primary", "sm")} data-session-entry>My account</a>
+  <a href="/account" class={ctaClass("primary", "sm")} data-session-entry>Member area</a>
   <details hidden data-session-menu class="group">
-    <summary class={`${ctaClass("primary", "sm")} list-none cursor-pointer [&::-webkit-details-marker]:hidden`}>My club <span aria-hidden="true">⌄</span></summary>
+    <summary class={`${ctaClass("primary", "sm")} list-none cursor-pointer [&::-webkit-details-marker]:hidden`}>Member area <span aria-hidden="true">⌄</span></summary>
     <nav aria-label="Your account" class="absolute right-0 top-[calc(100%+0.75rem)] z-60 w-64 rounded-2xl border-2 border-edge bg-surface p-2 shadow-sticker-lg">
       <a href="/account/profile" class={item}>My profile</a>
       <a href="/members/profile" class={item} data-session-family>My family</a>
@@ -41,7 +41,7 @@ const item = "block rounded-xl px-4 py-3 font-display text-sm font-bold hover:bg
       root.querySelectorAll<HTMLElement>("[data-session-memories]").forEach(el => el.hidden=!(session.member || session.archived));
       root.querySelectorAll<HTMLElement>("[data-session-family]").forEach(el => el.hidden=!(session.member || session.family));
       root.querySelectorAll<HTMLElement>("[data-session-admin]").forEach(el => el.hidden=!session.admin);
-      document.querySelectorAll<HTMLAnchorElement>("[data-account-link]").forEach(link => { link.href=session.home; link.textContent=session.signedIn ? (session.admin ? "Club admin" : "My account") : "Member sign-in"; });
+      document.querySelectorAll<HTMLAnchorElement>("[data-account-link]").forEach(link => { link.href=session.home; link.textContent=session.signedIn ? (session.admin ? "Club admin" : "Member area") : "Member sign-in"; });
       // Preserve bookmarks to the old embedded roster without putting it back on the homepage.
       if(location.pathname==="/" && location.hash==="#our-duckies") location.replace(session.signedIn ? (session.admin ? "/admin/kids" : "/members") : "/login?next=/members");
     } catch { /* Keep the neutral account link; never mislabel a failed lookup as signed out. */ }

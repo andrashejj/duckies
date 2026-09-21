@@ -7,7 +7,7 @@ import { GalleryError, listUploads } from "./gallery";
 
 export type PhotoActor = { email: string; role: string };
 export type ProfilePhoto = { key: string; full: string; thumb: string; caption: string; date: string; width: number; height: number };
-export type PhotoKid = { id: string; name: string; canManage: boolean };
+export type PhotoKid = { id: string; name: string; canManage: boolean; profilePhoto: string | null };
 export type PhotoTag = { id: string; name: string; canManage: boolean };
 const curated = gallery.sections.flatMap(section => section.photos).map(photo => ({
   key: `curated:${photo.slug}`, full: `/gallery/asset/${photo.slug}.webp`,
@@ -23,9 +23,18 @@ export async function galleryPhotos(): Promise<ProfilePhoto[]> {
 }
 
 export async function photoKids(actor: PhotoActor): Promise<PhotoKid[]> {
-  return (await getDatabase().query<PhotoKid>(`SELECT k.id,k.name,
+  const kids = (await getDatabase().query<Omit<PhotoKid, "profilePhoto"> & { photoVersion: string | null }>(`SELECT k.id,k.name,
+    p.updated_at::text AS "photoVersion",
     ($2 OR EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.kid_id=k.id AND g.email=$1)) AS "canManage"
-    FROM club_kid k WHERE archived_at IS NULL ORDER BY lower(k.name),k.id`, [actor.email, actor.role === "organiser"])).rows;
+    FROM club_kid k LEFT JOIN club_kid_photo p ON p.kid_id=k.id
+    WHERE k.archived_at IS NULL ORDER BY lower(k.name),k.id`, [actor.email, actor.role === "organiser"])).rows;
+  // Registration portraits remain private to guardians and organisers. Use the
+  // existing protected routes without publishing the portrait to the gallery.
+  return kids.map(({ photoVersion, ...kid }) => ({ ...kid,
+    profilePhoto: kid.canManage && photoVersion
+      ? `/api/${actor.role === "organiser" ? "kids" : "family/kids"}/${kid.id}/photo?v=${encodeURIComponent(photoVersion)}`
+      : null,
+  }));
 }
 
 export async function photoTags(actor: PhotoActor): Promise<Record<string, PhotoTag[]>> {

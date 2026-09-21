@@ -22,6 +22,43 @@ test.beforeEach(async ({ playwright }) => {
 test.afterEach(async()=>{await admin.dispose();await guest.dispose();});
 test.afterAll(async()=>{await db.end();});
 
+test("registration portraits appear for guardians and organisers without becoming shared gallery photos", async ({ page }) => {
+  const image = await readFile('src/assets/gallery/standing-tall.webp');
+  expect((await admin.put(`/api/kids/${mine}/photo`, { headers: { origin, 'content-type': 'image/webp' }, data: image })).status()).toBe(200);
+  await signIn(page.request, parent);
+  await page.goto('/gallery/duckies');
+  const portrait = page.getByAltText("Lara Test's profile photo");
+  await expect(portrait).toBeVisible();
+  await portrait.evaluate(image => (image as HTMLImageElement).decode());
+  await expect(page.getByRole('link', { name: /Lara Test 0 gallery photos/ })).toBeVisible();
+  await page.goto(`/gallery/duckies/${mine}`);
+  await expect(page.locator('[data-profile-count]')).toHaveText('0');
+  await expect(page.getByRole('heading', { name: 'No gallery photos yet' })).toBeVisible();
+  await portrait.evaluate(image => (image as HTMLImageElement).decode());
+  for (const width of [1440, 900, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const logo = page.locator(width <= 768 ? '.journal-mobile-header .journal-wordmark img' : '.journal-sidebar .journal-wordmark img');
+    await expect(logo).toHaveAttribute('src', '/brand/sunset-duckies-logo-small.webp');
+    await logo.evaluate(image => (image as HTMLImageElement).decode());
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/profile-portrait-${width}.png`, fullPage: true });
+  }
+  const adminHtml = await (await admin.get(`/gallery/duckies/${mine}`)).text();
+  expect(adminHtml).toContain(`/api/kids/${mine}/photo?v=`);
+  const guardianPhoto = (await (await page.request.get('/api/gallery/tags')).json()).kids.find((kid: {id:string}) => kid.id === mine).profilePhoto;
+  expect((await page.request.get(guardianPhoto)).status()).toBe(200);
+  await signIn(guest, stranger);
+  const strangerData = await (await guest.get('/api/gallery/tags')).json();
+  expect(strangerData.kids.find((kid: {id:string}) => kid.id === mine).profilePhoto).toBeNull();
+  expect(await (await guest.get(`/gallery/duckies/${mine}`)).text()).not.toContain(`/api/family/kids/${mine}/photo`);
+  expect((await guest.get(guardianPhoto)).status()).toBe(404);
+  expect((await guest.get(`/api/kids/${mine}/photo`)).status()).toBe(403);
+  expect((await db.query('SELECT count(*)::int AS n FROM gallery_kid_tag')).rows[0].n).toBe(0);
+  expect((await admin.delete(`/api/kids/${mine}/photo`, { headers: { origin } })).status()).toBe(200);
+  await page.reload();
+  await expect(portrait).toHaveCount(0);
+});
+
 test("profiles and tag APIs stay inside membership; guardians can manage only their own duckies",async({request,playwright,page})=>{
   expect((await guest.get(`/gallery/duckies/${mine}`,{maxRedirects:0})).status()).toBe(302);
   const denied=await guest.get('/api/gallery/tags');expect(denied.status()).toBe(401);
@@ -141,7 +178,7 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await page.evaluate(()=>document.fonts.ready);
   await page.locator('.journal-directory-cover img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
   await page.screenshot({path:'test-results/duckie-photo-directory-mobile.png',fullPage:true});
-  await page.getByRole('link',{name:/Lara Test 6 photos/}).click();
+  await page.getByRole('link',{name:/Lara Test 6 gallery photos/}).click();
   await page.getByRole('link',{name:/Upload photos/}).click();
   await expect(page.getByLabel("Add to a duckie's profile")).toHaveValue(mine);
   await page.locator('#share-files').setInputFiles('src/assets/gallery/standing-tall.webp');

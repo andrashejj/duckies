@@ -21,10 +21,10 @@ try {
         {data.map(kid => (
           <a href={`/gallery/duckies/${kid.id}`} class="group min-w-0">
             <div class="journal-directory-cover">
-              {kid.photos.length ? kid.photos.slice(0,4).map((photo, index) => <img src={photo.thumb} alt="" loading="lazy" class:list={[kid.photos.length === 1 && "col-span-2", kid.photos.length === 3 && index === 0 && "row-span-2"]} />) : <span class="col-span-2 grid place-items-center text-6xl text-fg-muted">{kid.name.slice(0,1)}</span>}
+              {kid.photos.length ? kid.photos.slice(0,4).map((photo, index) => <img src={photo.thumb} alt="" loading="lazy" class:list={[kid.photos.length === 1 && "col-span-2", kid.photos.length === 3 && index === 0 && "row-span-2"]} />) : kid.profilePhoto ? <img src={kid.profilePhoto} alt={`${kid.name}'s profile photo`} loading="lazy" class="col-span-2" /> : <span class="col-span-2 grid place-items-center text-6xl text-fg-muted">{kid.name.slice(0,1)}</span>}
             </div>
             <h2 class="journal-directory-name group-hover:underline">{kid.name}</h2>
-            <p class="mt-1 text-xs text-fg-muted">{kid.photos.length} {kid.photos.length === 1 ? "photo" : "photos"}{kid.canManage ? " · Your duckie" : ""}</p>
+            <p class="mt-1 text-xs text-fg-muted">{kid.photos.length} gallery {kid.photos.length === 1 ? "photo" : "photos"}{kid.canManage ? " · Your duckie" : ""}</p>
           </a>
         ))}
       </div>

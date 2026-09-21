@@ -15,6 +15,8 @@ test("signed-in members find their own profile from the public header and save i
   await signIn(page.request, "parent@example.com");
   await page.goto("/");
   await expect(page.locator("[data-session-menu]")).toBeVisible();
+  await expect(page.locator("[data-session-menu] summary")).toContainText("Member area");
+  await expect(page.locator("[data-account-link]").first()).toHaveText("Member area");
   await expect(page.getByRole("link", { name: /Member sign-in/ })).toHaveCount(0);
   await expect(page.locator("[data-members]")).toHaveCount(0);
   await page.locator("[data-session-menu] summary").click();

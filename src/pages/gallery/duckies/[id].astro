@@ -23,9 +23,9 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
     <a href="/gallery/duckies" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />All duckies</a>
     {!data ? <h1 class="my-12 px-4 text-2xl">{Astro.response.status === 404 ? "Duckie not found." : "Photo profile unavailable. Please try again."}</h1> : <>
       <header class="journal-profile">
-        <div class="journal-avatar"><div class="journal-avatar-inner"><span aria-hidden="true">{data.kid.name.slice(0,1)}</span></div></div>
+        <div class="journal-avatar"><div class="journal-avatar-inner">{data.kid.profilePhoto ? <img src={data.kid.profilePhoto} alt={`${data.kid.name}'s profile photo`} width="150" height="150" /> : <span aria-hidden="true">{data.kid.name.slice(0,1)}</span>}</div></div>
         <div class="journal-identity"><h1>{data.kid.name}</h1><span class="journal-private"><PhotoIcon name="lock" class="h-3 w-3" />Members only</span></div>
-        <div class="journal-stats"><span><strong data-profile-count>{data.photos.length}</strong> {data.photos.length === 1 ? "photo" : "photos"}</span><span><strong data-friends-count>{sharedCount}</strong> with friends</span></div>
+        <div class="journal-stats"><span><strong data-profile-count>{data.photos.length}</strong> gallery {data.photos.length === 1 ? "photo" : "photos"}</span><span><strong data-friends-count>{sharedCount}</strong> with friends</span></div>
         <div class="journal-bio"><strong>Sunset Duckies</strong><p>Salt water, little waves & good company.<br />Tamarin, Mauritius</p></div>
         {data.kid.canManage && <div class="journal-actions">
           <a href={`/gallery/share?kid=${data.kid.id}`} class="journal-button journal-button-primary"><PhotoIcon name="plus" class="h-4 w-4" />Upload photos</a>
@@ -41,7 +41,7 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
           {data.photos.map(photo => <GalleryPhoto photo={photo} tags={data.tags[photo.key]} square />)}
         </div>
         <div class="journal-empty" data-photo-empty hidden={data.photos.length > 0}>
-          <PhotoIcon name="camera" class="mx-auto h-12 w-12" /><h2 data-empty-title>No photos yet</h2>
+          <PhotoIcon name="camera" class="mx-auto h-12 w-12" /><h2 data-empty-title>No gallery photos yet</h2>
           <p data-empty-copy>{data.kid.canManage ? "Share a favourite from your camera roll or add a photo from the gallery." : "Their moments will appear here when a parent or organiser adds a photo."}</p>
         </div>
       </div>
@@ -62,7 +62,7 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
     let count = 0;
     for (const card of cards) { card.hidden = filter === "friends" && card.dataset.withFriends !== "true"; if (!card.hidden) count++; }
     const empty = document.querySelector<HTMLElement>("[data-photo-empty]");
-    if (empty) { empty.hidden = count > 0; if (filter === "friends") { empty.querySelector("[data-empty-title]")!.textContent = "Better together"; empty.querySelector("[data-empty-copy]")!.textContent = "Photos with more than one duckie tagged will appear here."; } else { empty.querySelector("[data-empty-title]")!.textContent = "No photos yet"; empty.querySelector("[data-empty-copy]")!.textContent = "Their moments will appear here when a parent or organiser adds a photo."; } }
+    if (empty) { empty.hidden = count > 0; if (filter === "friends") { empty.querySelector("[data-empty-title]")!.textContent = "Better together"; empty.querySelector("[data-empty-copy]")!.textContent = "Photos with more than one duckie tagged will appear here."; } else { empty.querySelector("[data-empty-title]")!.textContent = "No gallery photos yet"; empty.querySelector("[data-empty-copy]")!.textContent = "Their moments will appear here when a parent or organiser adds a photo."; } }
     const status = document.querySelector("[data-filter-status]"); if (status) status.textContent = `${count} ${filter === "friends" ? "photos with friends" : "photos"}`;
   }
   tabs.forEach((tab,index) => { tab.addEventListener("click", () => { filter = tab.dataset.photoFilter!; apply(); }); tab.addEventListener("keydown", event => { const direction = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0; if (direction || event.key === "Home" || event.key === "End") { event.preventDefault(); const next = event.key === "Home" ? tabs[0] : event.key === "End" ? tabs[tabs.length - 1] : tabs[(index + direction + tabs.length) % tabs.length]; next.click(); next.focus(); } }); });
