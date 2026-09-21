@@ -89,6 +89,7 @@ test("adding a guardian shares only chosen kids and their orders; changes preser
   for(const secret of ["First Duckie","Other Duckie","Private allergy note",shared.guestToken])expect(invitation.text).not.toContain(secret);
   const url=new URL(invitation.text.match(/https?:\/\/\S+/)![0]);
   expect(url.origin).toBe(origin);expect(url.pathname).toBe("/login");expect(url.searchParams.get("next")).toBe("/members/profile");
+  await area.getByText('Manage access for Second Parent', { exact: true }).click();
   await area.getByRole("button",{name:/Resend invitation to Second Parent/}).click();
   await expect(area.getByRole("status")).toHaveText(`Sign-in invitation sent to ${second}.`);
   expect(await invitations(second)).toHaveLength(mailCount+2);
@@ -192,6 +193,7 @@ test("failed invitations preserve access and show a retry control; invalid email
   await area.getByRole('button',{name:'Add guardian',exact:true}).click();
   await expect(area.getByRole('status')).toContainText('Guardian added, but the invitation email could not be sent. Their family access is saved.');
   expect((await db.query('SELECT 1 FROM club_current_guardian WHERE kid_id=$1 AND email=$2',[id,'delivery-failure@example.com'])).rowCount).toBe(1);
+  await area.getByText('Manage access for Dora Test', { exact: true }).click();
   await area.getByRole('button',{name:/Resend invitation to Dora Test/}).click();
   await expect(area.getByRole('status')).toHaveText('The invitation email could not be sent. Family access is still saved. Please try again later.');
   await page.setViewportSize({width:390,height:844});
@@ -219,4 +221,35 @@ test("duplicate additions do not resend; retries require current permissions and
   expect((await admin.patch('/api/family/guardians',post(resend))).status()).toBe(404);
   expect(await invitations(second)).toHaveLength(before+4);
   await stranger.dispose();
+});
+
+test('family lists each parent once and removing access stays scoped to the chosen duckie', async ({page}) => {
+  const first=await kid('Lara Test',true), other=await kid('Noah Test',true);
+  await signIn(page.request,parent);
+  await page.goto('/members/profile');
+  const area=page.getByRole('region',{name:'Family guardians'});
+  const parents=area.locator('[data-family-parent]');
+  await expect(parents).toHaveCount(2);
+  const co=parents.filter({has:page.getByRole('heading',{name:'Second Parent',exact:true})});
+  await expect(co).toContainText('Lara Test');
+  await expect(co).toContainText('Noah Test');
+  await expect(co.getByRole('button',{name:/Remove access/})).toHaveCount(0);
+  await expect(page.locator('[data-duckie-pass] .club-role')).toHaveText(['Duckie','Duckie']);
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`test-results/family-simplified-${width}.png`,fullPage:true});
+  }
+  await page.getByRole('button',{name:'Switch to dark mode'}).click();
+  await page.screenshot({path:'test-results/family-simplified-dark.png',fullPage:true});
+  await co.getByText('Manage access for Second Parent',{exact:true}).click();
+  await co.getByRole('button',{name:'Remove access for Second Parent to Lara Test',exact:true}).click();
+  await area.getByRole('button',{name:'Keep access',exact:true}).click();
+  expect((await db.query('SELECT kid_id FROM club_current_guardian WHERE email=$1',[second])).rows).toHaveLength(2);
+  await co.getByRole('button',{name:'Remove access for Second Parent to Lara Test',exact:true}).click();
+  await area.getByRole('button',{name:'Confirm removal',exact:true}).click();
+  await expect(area.getByRole('status')).toHaveText('Family access removed for this duckie.');
+  await expect(parents).toHaveCount(2);
+  expect((await db.query('SELECT kid_id FROM club_current_guardian WHERE email=$1',[second])).rows).toEqual([{kid_id:other}]);
+  expect((await db.query('SELECT id FROM club_signed_waiver WHERE kid_id=$1',[first])).rowCount).toBe(1);
 });

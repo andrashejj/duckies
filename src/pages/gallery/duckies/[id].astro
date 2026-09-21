@@ -20,11 +20,11 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
 ---
 <BaseLayout title={title} description="A duckie's photo journal, shared inside the club." variant="journal">
   <section class="journal-shell">
-    <a href="/gallery/duckies" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />All duckies</a>
+    <a href="/members" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />The club</a>
     {!data ? <h1 class="my-12 px-4 text-2xl">{Astro.response.status === 404 ? "Duckie not found." : "Photo profile unavailable. Please try again."}</h1> : <>
       <header class="journal-profile">
         <div class="journal-avatar"><div class="journal-avatar-inner">{data.kid.profilePhoto ? <img src={data.kid.profilePhoto} alt={`${data.kid.name}'s profile photo`} width="150" height="150" /> : <span aria-hidden="true">{data.kid.name.slice(0,1)}</span>}</div></div>
-        <div class="journal-identity"><h1>{data.kid.name}</h1><span class="journal-private"><PhotoIcon name="lock" class="h-3 w-3" />Members only</span></div>
+        <div class="journal-identity"><h1>{data.kid.name}</h1><span class="club-role" data-kind="duckie">Duckie</span><span class="journal-private"><PhotoIcon name="lock" class="h-3 w-3" />Members only</span></div>
         <div class="journal-stats"><span><strong data-profile-count>{data.photos.length}</strong> gallery {data.photos.length === 1 ? "photo" : "photos"}</span><span><strong data-friends-count>{sharedCount}</strong> with friends</span></div>
         <div class="journal-bio"><strong>Sunset Duckies</strong><p>Salt water, little waves & good company.<br />Tamarin, Mauritius</p></div>
         {data.kid.canManage && <div class="journal-actions">

@@ -30,7 +30,7 @@ test("registration portraits appear for guardians and organisers without becomin
   const portrait = page.getByAltText("Lara Test's profile photo");
   await expect(portrait).toBeVisible();
   await portrait.evaluate(image => (image as HTMLImageElement).decode());
-  await expect(page.getByRole('link', { name: /Lara Test 0 gallery photos/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Lara Test.*0 gallery photos/ })).toBeVisible();
   await page.goto(`/gallery/duckies/${mine}`);
   await expect(page.locator('[data-profile-count]')).toHaveText('0');
   await expect(page.getByRole('heading', { name: 'No gallery photos yet' })).toBeVisible();
@@ -172,13 +172,13 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await page.getByRole('button',{name:'Switch to dark mode'}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.screenshot({path:'test-results/duckie-photo-profile-dark.png',fullPage:true});
-  await page.getByRole('link',{name:'All duckies',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'The duckies',exact:true})).toBeVisible();
+  await page.getByRole('main').getByRole('link',{name:'The club',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'The club',exact:true})).toBeVisible();
   await expect(page.getByRole('navigation',{name:'Mobile photo navigation'})).toBeInViewport();
   await page.evaluate(()=>document.fonts.ready);
   await page.locator('.journal-directory-cover img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
   await page.screenshot({path:'test-results/duckie-photo-directory-mobile.png',fullPage:true});
-  await page.getByRole('link',{name:/Lara Test 6 gallery photos/}).click();
+  await page.getByRole('link',{name:/Lara Test.*6 gallery photos/}).click();
   await page.getByRole('link',{name:/Upload photos/}).click();
   await expect(page.getByLabel("Add to a duckie's profile")).toHaveValue(mine);
   await page.locator('#share-files').setInputFiles('src/assets/gallery/standing-tall.webp');
