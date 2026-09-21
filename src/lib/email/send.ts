@@ -41,3 +41,12 @@ export function sendNewUploadAdminAlert(upload: { id: string; note: string | nul
   return send(to, "New photo in the members' gallery — Sunset Duckies",
     `A club member added a photo to the gallery.${upload.note ? `\n\n"${upload.note}"` : ""}\n\nIt is live for members already; hide or remove it here if needed: ${getSiteUrl()}/admin/gallery`);
 }
+
+export async function sendGuardianInvitation(guardian: { name: string; email: string }): Promise<Delivery> {
+  try {
+    const link = new URL("/login", getSiteUrl());
+    link.searchParams.set("next", "/members/profile");
+    return await send(guardian.email, "You're invited to My family — Sunset Duckies",
+      `Hi ${guardian.name},\n\nYou've been added as a legal guardian on Sunset Duckies. You can now view and update your linked children's details, open their signed records and see orders shared with your family.\n\nSign in to My family: ${link.href}\n\nUse this email address: ${guardian.email}. We'll send you a six-digit sign-in code — no password needed.\n\nThis invitation grants access to your linked family records. Access to the private club community requires active club membership.\n\nIf you weren't expecting this invitation, please contact the club before signing in.\n\nSunset Duckies`);
+  } catch { return { ok: false, error: "Email delivery is unavailable." }; }
+}
