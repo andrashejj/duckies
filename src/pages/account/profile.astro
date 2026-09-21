@@ -1,0 +1,24 @@
+---
+export const prerender = false;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MyProfile from "../../components/react/MyProfile";
+import { readOwnProfile } from "../../lib/server/parent-profiles";
+const user = Astro.locals.session!.user;
+const profile = await readOwnProfile(user.email.trim().toLowerCase(), user.name);
+---
+<BaseLayout title="My profile · Sunset Duckies" workspace="member" section="profile">
+  <section class="mx-auto max-w-5xl px-4 py-10 sm:px-8 sm:py-14">
+    <p class="font-mono text-xs uppercase tracking-widest text-accent-text">Your details</p>
+    <h1 class="mt-3 font-display text-4xl font-bold sm:text-5xl">My <span class="font-accent italic">profile.</span></h1>
+    <p class="mt-4 max-w-xl text-lg text-fg-muted">Your name, phone number and photo. Keep them current so the club can recognise you and get in touch.</p>
+    <div class="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_16rem]">
+      <MyProfile client:load initialProfile={profile} />
+      <aside class="self-start rounded-2xl border-2 border-edge bg-sticker-sun p-5">
+        <h2 class="font-display text-xl font-bold">Your sign-in email</h2>
+        <p class="mt-3 break-all text-sm">{profile.email}</p>
+        <p class="mt-3 text-sm leading-6">This email connects you to your duckies and signed registrations. Editing your profile leaves signed records intact.</p>
+        {Astro.locals.session?.member && <a href="/members/profile" class="mt-5 inline-flex min-h-11 items-center font-bold underline underline-offset-4">Open my family →</a>}
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

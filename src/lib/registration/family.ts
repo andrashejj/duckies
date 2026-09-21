@@ -151,7 +151,9 @@ export async function familyProfile(guardian: { email: string; name: string }): 
 // The name the club greets this guardian by. Their address is the identity
 // and never changes here — a new address means a new sign-in.
 export async function renameGuardian(userId: string, name: string) {
-  await getDatabase().query('UPDATE "user" SET name=$1, "updatedAt"=now() WHERE id=$2', [name, userId]);
+  await getDatabase().query(`WITH renamed AS (
+    UPDATE "user" SET name=$1,"updatedAt"=now() WHERE id=$2 RETURNING lower(email) AS email
+  ) UPDATE club_parent_profile SET name=$1,registration_link_id=NULL,updated_at=now() WHERE email IN (SELECT email FROM renamed)`, [name, userId]);
 }
 
 // The club's quick way to reach this family about this kid. Unlike the signed

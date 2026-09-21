@@ -5,18 +5,13 @@ import SectionTitle from "./ui/SectionTitle.astro";
 import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterToolbar, textButton } from "../lib/members-ui";
 ---
 
-<section id="our-duckies" data-members hidden class="relative scroll-mt-28 border-b-2 border-edge bg-canvas py-14 motion-safe:animate-crew-arrive sm:py-20">
+<section id="our-duckies" data-members hidden class="relative scroll-mt-28 bg-canvas py-6 motion-safe:animate-crew-arrive sm:py-10">
   <div class="mx-auto max-w-7xl px-6 lg:px-10">
     <div class="flex flex-wrap items-start justify-between gap-6">
       <div>
         <Kicker>Members · Tamarin Bay</Kicker>
-        <SectionTitle class="mt-4">Our <span class="font-accent italic">duckies.</span></SectionTitle>
+        <SectionTitle as="h1" class="mt-4">Our <span class="font-accent italic">duckies.</span></SectionTitle>
         <p class="mt-4 text-base leading-7">The kids we paddle out with. Shared only with signed-in club members.</p>
-      </div>
-      <div class="max-w-full text-sm">
-        <p data-member-email class="break-all"></p>
-        <a href="/members/profile" class={`mt-2 block ${textButton}`}>Your family — records, fees, what’s next</a>
-        <button data-sign-out type="button" class={`mt-2 ${textButton}`}>Sign out</button>
       </div>
     </div>
     <div data-semester-controls hidden class="mt-8"></div>
@@ -55,7 +50,6 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
   import { duckieAvatar, duckieAvatarEmpty, duckieChevron, duckieEdit, duckieFlag, duckieIdentity, duckieIdentityRow, duckieName, duckiePanel, duckieProfile, duckieRow, duckieSummary, duckieActions, textButton } from "../lib/members-ui";
   import { semesterControls } from "../lib/registration/semester-controls";
   import type { Semester } from "../lib/registration/semesters";
-  import { authClient } from "../lib/auth-client";
   import { rosterCells, rosterSearch, matchesRosterFilter } from "../lib/registration/roster";
   import { kidOverview } from "../lib/registration/overview";
   import type { OrganiserKid } from "../lib/registration/records";
@@ -68,7 +62,6 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
   const form = section.querySelector<HTMLFormElement>("[data-add-kid]")!;
   const status = section.querySelector<HTMLElement>("[data-roster-status]")!;
   const loadError = document.querySelector<HTMLElement>("[data-member-load-error]")!;
-  const memberLinks = document.querySelectorAll<HTMLAnchorElement>("[data-member-link]");
   const search = section.querySelector<HTMLInputElement>("[data-roster-search]")!;
   const filter = section.querySelector<HTMLSelectElement>("[data-roster-filter]")!;
   let currentRoster: Roster | null = null;
@@ -85,10 +78,8 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
     section.querySelector("[data-semester-controls]")!.replaceChildren();
     form.reset();
     form.hidden = true;
-    section.querySelector("[data-member-email]")!.textContent = "";
     section.querySelector("[data-roster-count]")!.textContent = "";
     status.textContent = "";
-    for (const link of memberLinks) { link.href = "/login"; link.textContent = "Member sign-in"; }
   }
 
   function button(label: string, action: () => void) {
@@ -229,7 +220,6 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
       list.append(row);
       if (focusedKid === kid.id) summary.focus();
     });
-    section.querySelector("[data-member-email]")!.textContent = data.member.email;
     filterRoster();
     section.querySelector<HTMLElement>("[data-empty]")!.hidden = data.kids.length > 0;
     form.hidden = data.member.role !== "organiser";
@@ -242,7 +232,7 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
     try {
       const response = await fetch(`/api/kids${selectedTerm ? `?term=${encodeURIComponent(selectedTerm)}` : ""}`, { cache: "no-store" });
       if (version !== generation) return;
-      if (response.status === 401) { clearRoster(); loadError.hidden = true; return; }
+      if (response.status === 401) { clearRoster(); loadError.hidden = true; window.location.replace("/login?next="+encodeURIComponent(location.pathname)); return; }
       if (!response.ok) throw new Error("Unavailable");
       const data: Roster = await response.json();
       if (version !== generation) return;
@@ -251,7 +241,6 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
       const wasHidden = section.hidden;
       section.hidden = false;
       loadError.hidden = true;
-      for (const link of memberLinks) { link.href = "#our-duckies"; link.textContent = "Our duckies"; }
       if (wasHidden && window.location.hash === "#our-duckies") section.scrollIntoView();
     } catch {
       if (version !== generation) return;
@@ -271,17 +260,6 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
     finally { submit.disabled = false; }
   });
 
-  section.querySelector<HTMLButtonElement>("[data-sign-out]")!.addEventListener("click", async (event) => {
-    const target = event.currentTarget as HTMLButtonElement;
-    target.disabled = true;
-    try {
-      const { error } = await authClient.signOut();
-      if (error) throw new Error("Sign-out failed");
-      clearRoster();
-      window.location.replace("/");
-    } catch { status.textContent = "Couldn't sign out. Please try again."; }
-    finally { target.disabled = false; }
-  });
   document.querySelector("[data-retry-members]")!.addEventListener("click", () => void loadRoster());
   window.addEventListener("pagehide", clearRoster);
   window.addEventListener("pageshow", () => void loadRoster());

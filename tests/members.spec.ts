@@ -160,7 +160,7 @@ test("public HTML never embeds roster names; read-only members have no editor", 
   const html = await request.get("/");
   expect(await html.text()).not.toContain("ServerOnlyTestDuckie");
   await signIn(page.request, member);
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/members", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".duckie-name")).toHaveText("ServerOnlyTestDuckie");
   await expect(page.locator("[data-add-kid]")).toBeHidden();
   expect(await page.locator(".duckie-actions").count()).toBe(0);
@@ -169,7 +169,7 @@ test("public HTML never embeds roster names; read-only members have no editor", 
   await db.query("DELETE FROM club_member WHERE email = $1", [member]);
   await page.evaluate(() => window.dispatchEvent(new Event("pageshow")));
   await expect(page.locator("[data-members]")).toBeHidden();
-  await expect(page.locator("[data-roster]")).toBeEmpty();
+  await expect(page).toHaveURL(/\/(login|account)/);
 });
 
 test("30-kid roster stays compact, filters contacts and keeps open drafts", async ({ page }) => {

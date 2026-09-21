@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import type { ParentProfile } from "../../lib/parent-profile";
 import { errorNotice, input, mono, primaryButton, smallButton } from "../../lib/comp-ui";
 
@@ -26,7 +26,9 @@ export function ParentPhotoUpload({ profile, onSaved }: { profile: ParentProfile
   </label>{error && <p role="status" className={errorNotice}>{error}</p>}</div>;
 }
 
-export default function ParentProfileEditor({ profile, onSaved }: { profile: ParentProfile; onSaved: () => void }) {
+export default function ParentProfileEditor({ profile, onSaved, expanded = false }: { profile: ParentProfile; onSaved: () => void; expanded?: boolean }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   async function save(event: SubmitEvent<HTMLFormElement>) {
@@ -40,8 +42,9 @@ export default function ParentProfileEditor({ profile, onSaved }: { profile: Par
     } catch (e) { setMessage(e instanceof Error ? e.message : "Couldn't save your profile."); }
     finally { setBusy(false); }
   }
-  return <details className="rounded-card border-2 border-edge bg-surface p-4" open={!profile.name || undefined}>
-    <summary className="cursor-pointer font-display font-bold">Your parent profile</summary>
+  // The page renders on the server. Prevent native form submission (and lost
+  // edits) until React has attached the save and photo handlers.
+  const fields = <fieldset disabled={!ready} className="min-w-0">
     <p className="mt-2 text-sm text-fg-muted">Your name, photo and contact details help the organisers recognise you. These details are private to you and organisers.</p>
     <div className="mt-4 flex items-center gap-4"><ParentPhoto profile={profile} /><ParentPhotoUpload profile={profile} onSaved={onSaved} /></div>
     <form className="mt-4 grid gap-3" onSubmit={(event) => void save(event)}>
@@ -51,5 +54,6 @@ export default function ParentProfileEditor({ profile, onSaved }: { profile: Par
       <button className={primaryButton} disabled={busy} type="submit">{busy ? "Saving…" : "Save profile"}</button>
       {message && <p role="status" className="text-sm">{message}</p>}
     </form>
-  </details>;
+  </fieldset>;
+  return expanded ? <section aria-label="Edit my profile" className="rounded-card border-2 border-edge bg-surface p-6 shadow-sticker-sm">{fields}</section> : <details className="rounded-card border-2 border-edge bg-surface p-4" open={!profile.name || undefined}><summary className="cursor-pointer font-display font-bold">Your parent profile</summary>{fields}</details>;
 }

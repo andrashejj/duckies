@@ -63,11 +63,10 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
 
   async function finishSignIn() {
     if (destination) { window.location.replace(destination); return; }
-    const membership = await fetch("/api/kids", { cache: "no-store" });
-    if (membership.ok) { window.location.replace("/#our-duckies"); return; }
-    // Cup judges are not members: their home is the judge sheet.
-    const judging = await fetch("/api/cup/judge", { cache: "no-store" });
-    window.location.replace(judging.ok ? "/cup/judge" : "/account");
+    const response = await fetch("/api/session", { cache: "no-store" });
+    if (!response.ok) throw new Error("Couldn't load your account. Please try again.");
+    const session = await response.json();
+    window.location.replace(session.home);
   }
 
   async function submit(form: HTMLFormElement, action: () => Promise<void>) {

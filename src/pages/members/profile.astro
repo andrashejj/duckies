@@ -33,7 +33,7 @@ const title = `Your family | ${site.name}`;
 const description = "Manage your Sunset Duckies family: your duckies, their records, what you owe and what is coming up.";
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} workspace="member" section="family">
   <section class={profileShell}>
     <div class="max-w-3xl space-y-4" data-float>
       <Kicker>Members · your family</Kicker>
@@ -123,7 +123,7 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
 
     <div class={profileSection} data-reveal>
       <div class="flex flex-wrap gap-4">
-        <Cta href="/#our-duckies" variant="secondary">See the whole lineup</Cta>
+        <Cta href="/members" variant="secondary">See the whole lineup</Cta>
         <Cta href="/gallery" variant="secondary">The members' gallery</Cta>
         <Cta href="/account">Your shop account</Cta>
       </div>

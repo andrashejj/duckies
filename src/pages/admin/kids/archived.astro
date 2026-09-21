@@ -10,10 +10,10 @@ const { rows } = await getDatabase().query(`SELECT k.id,k.name,k.archived_at,
   (SELECT coalesce(json_agg(json_build_object('status',p.status,'note',p.note,'amount',p.amount_mur,'term',p.term) ORDER BY p.recorded_at DESC),'[]') FROM club_payment_event p WHERE p.kid_id=k.id) AS payments
   FROM club_kid k WHERE k.archived_at IS NOT NULL ORDER BY archived_at DESC`);
 ---
-<AdminLayout title="Archived kids">
+<AdminLayout title="Archived kids" section="kids">
   <SectionTitle as="h1">Archived kids</SectionTitle>
   <p class={`mt-4 ${bodyCopy}`}>Signed records and payment history are retained when a child leaves the active list.</p>
-  <a class="member-text-button" href="/#our-duckies">Back to the active kids list</a>
+  <a class="member-text-button" href="/admin/kids">Back to the active kids list</a>
   {rows.length === 0 && <p class="mt-8">No archived kids.</p>}
   {rows.map(kid => <StickerCard as="section" class="p-6 mt-6"><h2 class="font-display text-2xl">{kid.name}</h2>
     <ul>{kid.waivers.map((w: any) => <li class="mt-3"><a class="underline" href={`/api/waivers/${w.id}`}>{w.term} · {new Date(w.signedAt).toLocaleDateString()} · Signed PDF</a> · <a class="underline" href={`/api/waivers/${w.id}?format=audit`}>Signature record</a></li>)}</ul>
