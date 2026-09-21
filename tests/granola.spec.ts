@@ -10,7 +10,7 @@ const db=new pg.Pool({connectionString:process.env.DUCKIES_DATABASE_URL});
 const origin="http://127.0.0.1:4329";
 
 test.beforeEach(async()=>{
-  await db.query('TRUNCATE branding_access_event, branding_access, granola_ai_limit, granola_revision, granola_pack, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
+  await db.query('TRUNCATE club_member_archive,branding_access_event, branding_access, granola_ai_limit, granola_revision, granola_pack, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ('organiser@example.com','organiser'),('parent@example.com','member')");
   await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('organiser@example.com','Editor','approved',true,now()),('parent@example.com','Reader','approved',false,now())");
 });

@@ -2,32 +2,19 @@
 export const prerender = false; // the middleware only gates pages rendered per request
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Kicker from "../../components/ui/Kicker.astro";
-import SectionTitle from "../../components/ui/SectionTitle.astro";
 import StickerCard from "../../components/ui/StickerCard.astro";
 import { bodyCopy, ctaClass, field, label } from "../../lib/ui";
 
+import { photoKids } from "../../lib/server/photo-profiles";
+const managedKids = (await photoKids(Astro.locals.session!.member!)).filter(kid => kid.canManage);
+const selectedKid = managedKids.find(kid => kid.id === Astro.url.searchParams.get("kid"));
 const title = `Share a photo — ${site.name}`;
 const description = "Members: add your photos from a session to the club gallery.";
 ---
 
-<BaseLayout title={title} description={description}>
-  <section class="relative isolate overflow-hidden">
-    <div class="pointer-events-none absolute -top-24 -left-20 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,var(--color-sun-500)_0%,var(--color-sun-500)_40%,transparent_70%)] opacity-60 blur-[1px]" aria-hidden="true"></div>
-    <div class="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10">
-      <div data-float><Kicker as="a" href="/gallery" class="no-underline">← The gallery</Kicker></div>
-      <h1 data-float class="mt-6 font-display text-[clamp(2.6rem,8vw,5.8rem)] font-[650] leading-[0.92] tracking-[-0.045em] text-fg [font-variation-settings:'wdth'_112,'opsz'_96]">
-        Your shot, <span class="font-accent font-medium italic text-accent-text">our wall</span>.
-      </h1>
-      <p data-float class={`mt-6 max-w-2xl text-lg ${bodyCopy}`}>
-        Took a good one at training? Add it here. The gallery is for club members only, and your photos show up there the moment they are uploaded.
-      </p>
-    </div>
-  </section>
-
-  <div class="h-8 w-full bg-(image:--texture-wave) bg-repeat-x opacity-70" aria-hidden="true"></div>
-
-  <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+<BaseLayout variant="journal" title={title} description={description}>
+  <header class="social-page-header mx-auto max-w-5xl px-4 pt-10"><div><h1>Share with the club</h1><p>Your photos, in the feed and on the duckies’ profiles.</p></div></header>
+  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-10">
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start">
       <StickerCard as="form" tone="none" hover={false} class="p-6 sm:p-8" data-share-form novalidate>
         <div>
@@ -41,6 +28,15 @@ const description = "Members: add your photos from a session to the club gallery
           <ul class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4" data-previews aria-live="polite"></ul>
         </div>
 
+        {managedKids.length > 0 && <div class="mt-6">
+          <label class={label} for="share-kid">Add to a duckie's profile</label>
+          <select id="share-kid" name="kid" class={`mt-2 ${field}`}>
+            <option value="">Gallery only</option>
+            {managedKids.map(kid => <option value={kid.id} selected={selectedKid?.id === kid.id}>{kid.name}</option>)}
+          </select>
+          <p class="mt-2 text-sm text-fg-muted">These photos also appear in the members' gallery. You can tag more duckies there later.</p>
+          {selectedKid && <a class="mt-2 inline-block text-sm underline" href={`/gallery/duckies/${selectedKid.id}`}>Back to {selectedKid.name}'s profile →</a>}
+        </div>}
         <div class="mt-6">
           <label class={label} for="share-note">When and where? <span class="normal-case tracking-normal text-fg/50">(optional, shown as the caption)</span></label>
           <input id="share-note" name="note" type="text" maxlength="280" class={`mt-2 ${field}`} placeholder="Friday session, 12 September" />
@@ -48,7 +44,7 @@ const description = "Members: add your photos from a session to the club gallery
 
         <label class="mt-6 flex items-start gap-3 rounded-xl border-2 border-edge bg-canvas p-4">
           <input name="consent" type="checkbox" required class="mt-1 h-5 w-5 shrink-0 accent-[var(--color-coral-500)]" />
-          <span class={`text-[0.95rem] leading-[1.6] text-fg`}>These are my photos (or I have the photographer's OK) and I'm fine with other club members seeing them in the gallery. If a family would rather their Duckie wasn't in a shot, the club takes it down.</span>
+          <span class={`text-[0.95rem] leading-[1.6] text-fg`}>These are my photos (or I have the photographer's OK) and I'm fine with sharing them under my name inside the club. If a family would rather their Duckie wasn't in a shot, the club takes it down.</span>
         </label>
 
         <p class="mt-4 hidden rounded-xl border-2 border-coral-500 bg-sticker-coral px-4 py-3 text-sm text-ink-950" data-form-error role="alert"></p>
@@ -63,9 +59,9 @@ const description = "Members: add your photos from a session to the club gallery
         <StickerCard tone="sun" tilt="right" class="p-6">
           <p class="font-display text-xl font-semibold text-fg">How it works</p>
           <ol class={`mt-3 list-decimal space-y-2 pl-5 ${bodyCopy}`}>
-            <li>Your photos go straight into <a class="underline" href="/gallery#from-the-members">From the members</a> on the gallery page.</li>
-            <li>Only signed-in club members can see the gallery; nothing here is public.</li>
-            <li>The club keeps a record of who uploaded what, but names are not shown on the page.</li>
+            <li>Your photos appear in <a class="underline" href="/members">the club feed</a> and the photo library.</li>
+            <li>Only active club members can browse. Former members keep their own photos and previously tagged memories.</li>
+            <li>Your name appears beside your new posts. Your email and phone number stay private.</li>
           </ol>
         </StickerCard>
         <StickerCard tone="teal" tilt="left" class="p-6">
@@ -139,7 +135,10 @@ const description = "Members: add your photos from a session to the club gallery
     if (!pending.length) return showError("Choose at least one photo first.");
     if (!consent) return showError("Please tick the box to confirm the photos are yours to share.");
     const note = form.querySelector<HTMLInputElement>("[name=note]")?.value ?? "";
-    const query = new URLSearchParams({ note }).toString();
+    const params = new URLSearchParams({ note });
+    const kid = form.querySelector<HTMLSelectElement>("[name=kid]")?.value;
+    if (kid) params.set("kid", kid);
+    const query = params.toString();
     if (submit) submit.disabled = true;
     let sent = 0, failed = 0;
     for (const item of pending) {
@@ -150,7 +149,7 @@ const description = "Members: add your photos from a session to the club gallery
         const response = await fetch(`/api/gallery/uploads?${query}`, { method: "POST", body, headers: { "Content-Type": body.type || "application/octet-stream" } });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error ?? "Upload failed.");
-        item.status.textContent = "Added ✓"; item.done = true; sent++;
+        item.status.textContent = kid ? "Added to profile ✓" : "Added ✓"; item.done = true; sent++;
       } catch (error) {
         item.status.textContent = "Failed"; failed++;
         showError(error instanceof Error ? error.message : "Upload failed.");

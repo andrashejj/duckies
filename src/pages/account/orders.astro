@@ -9,9 +9,7 @@ import { shortOrderId } from "../../lib/format";
 import { STATUS_COLOR, STATUS_LABEL } from "../../lib/admin-orders";
 import { prisma } from "../../lib/prisma";
 import Cta from "../../components/ui/Cta.astro";
-import Kicker from "../../components/ui/Kicker.astro";
 import StickerCard from "../../components/ui/StickerCard.astro";
-import { bodyCopy } from "../../lib/ui";
 
 const session = Astro.locals.session;
 const user = session!.user;
@@ -39,16 +37,7 @@ const description = "Your Sunset Duckies reservations.";
 
 <BaseLayout title={title} description={description} workspace="member">
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
-    <div class="mb-10 space-y-3" data-float>
-      <Kicker>Family order history</Kicker>
-      <h1 class="font-display text-fg text-[clamp(2rem,4.5vw,3.25rem)] leading-[1] tracking-[-0.03em] [font-variation-settings:'wdth'_114] font-bold"
-      >
-        Every sesh, every kit.
-      </h1>
-      <p class={`max-w-xl ${bodyCopy}`}>
-        Your reservations and orders shared with your duckies’ legal guardians.
-      </p>
-    </div>
+    <header class="social-page-header"><div><h1>Family orders</h1><p>Your reservations and orders shared with your duckies’ legal guardians.</p></div></header>
 
     {loadError ? (
       <StickerCard class="p-8">

@@ -1,0 +1,70 @@
+---
+export const prerender = false;
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GalleryPhoto from "../../../components/GalleryPhoto.astro";
+import PhotoTagger from "../../../components/PhotoTagger.astro";
+import PhotoViewer from "../../../components/PhotoViewer.astro";
+import PhotoIcon from "../../../components/PhotoIcon.astro";
+import { galleryPhotos, photoKids, photoTags } from "../../../lib/server/photo-profiles";
+import { personalPhotoKeys } from "../../../lib/server/public-shares";
+const member = Astro.locals.session!.member!;
+let data;
+try {
+  const [kids, photos, tags, shareableKeys] = await Promise.all([photoKids(member), galleryPhotos(), photoTags(member), personalPhotoKeys(member.email)]);
+  const kid = kids.find(k => k.id === Astro.params.id);
+  if (kid) data = { kid, tags, shareableKeys, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)) };
+  else Astro.response.status = 404;
+} catch { Astro.response.status = 503; }
+const title = data ? `${data.kid.name} in pictures · Sunset Duckies` : "Photo profile · Sunset Duckies";
+const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 1).length ?? 0;
+---
+<BaseLayout title={title} description="A duckie's photo journal, shared inside the club." variant="journal">
+  <section class="journal-shell">
+    <a href="/gallery/duckies" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />All duckies</a>
+    {!data ? <h1 class="my-12 px-4 text-2xl">{Astro.response.status === 404 ? "Duckie not found." : "Photo profile unavailable. Please try again."}</h1> : <>
+      <header class="journal-profile">
+        <div class="journal-avatar"><div class="journal-avatar-inner"><span aria-hidden="true">{data.kid.name.slice(0,1)}</span></div></div>
+        <div class="journal-identity"><h1>{data.kid.name}</h1><span class="journal-private"><PhotoIcon name="lock" class="h-3 w-3" />Members only</span></div>
+        <div class="journal-stats"><span><strong data-profile-count>{data.photos.length}</strong> {data.photos.length === 1 ? "photo" : "photos"}</span><span><strong data-friends-count>{sharedCount}</strong> with friends</span></div>
+        <div class="journal-bio"><strong>Sunset Duckies</strong><p>Salt water, little waves & good company.<br />Tamarin, Mauritius</p></div>
+        {data.kid.canManage && <div class="journal-actions">
+          <a href={`/gallery/share?kid=${data.kid.id}`} class="journal-button journal-button-primary"><PhotoIcon name="plus" class="h-4 w-4" />Upload photos</a>
+          <a href={`/gallery?duckie=${data.kid.id}`} class="journal-button">Choose from gallery</a>
+        </div>}
+      </header>
+      <div class="journal-tabs" role="tablist" aria-label="Photo views">
+        <button type="button" id="all-photos-tab" role="tab" aria-selected="true" aria-controls="journal-grid" data-photo-filter="all"><PhotoIcon name="grid" class="h-4 w-4" />Photos</button>
+        <button type="button" id="friends-photos-tab" role="tab" aria-selected="false" aria-controls="journal-grid" tabindex="-1" data-photo-filter="friends"><PhotoIcon name="tag" class="h-4 w-4" />With friends</button>
+      </div>
+      <div id="journal-grid" role="tabpanel" aria-labelledby="all-photos-tab">
+        <div class="journal-grid" aria-label={`${data.kid.name}'s photos`}>
+          {data.photos.map(photo => <GalleryPhoto photo={photo} tags={data.tags[photo.key]} square />)}
+        </div>
+        <div class="journal-empty" data-photo-empty hidden={data.photos.length > 0}>
+          <PhotoIcon name="camera" class="mx-auto h-12 w-12" /><h2 data-empty-title>No photos yet</h2>
+          <p data-empty-copy>{data.kid.canManage ? "Share a favourite from your camera roll or add a photo from the gallery." : "Their moments will appear here when a parent or organiser adds a photo."}</p>
+        </div>
+      </div>
+      <p class="sr-only" data-filter-status role="status"></p>
+      <p class="journal-footer">Shared inside the club. Made with salt water & sunshine.</p>
+      <PhotoViewer label={`${data.kid.name}'s photos`} name={data.kid.name} kidId={data.kid.id} canManage={data.kid.canManage} shareableKeys={data.shareableKeys} />
+      {data.kid.canManage && <PhotoTagger />}
+    </>}
+  </section>
+</BaseLayout>
+<script>
+  import type { PhotoTag } from "../../../lib/server/photo-profiles";
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-photo-filter]"));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-photo-card]"));
+  let filter = "all";
+  function apply() {
+    for (const tab of tabs) { const active = tab.dataset.photoFilter === filter; tab.setAttribute("aria-selected", String(active)); tab.tabIndex = active ? 0 : -1; if (active) document.getElementById("journal-grid")!.setAttribute("aria-labelledby", tab.id); }
+    let count = 0;
+    for (const card of cards) { card.hidden = filter === "friends" && card.dataset.withFriends !== "true"; if (!card.hidden) count++; }
+    const empty = document.querySelector<HTMLElement>("[data-photo-empty]");
+    if (empty) { empty.hidden = count > 0; if (filter === "friends") { empty.querySelector("[data-empty-title]")!.textContent = "Better together"; empty.querySelector("[data-empty-copy]")!.textContent = "Photos with more than one duckie tagged will appear here."; } else { empty.querySelector("[data-empty-title]")!.textContent = "No photos yet"; empty.querySelector("[data-empty-copy]")!.textContent = "Their moments will appear here when a parent or organiser adds a photo."; } }
+    const status = document.querySelector("[data-filter-status]"); if (status) status.textContent = `${count} ${filter === "friends" ? "photos with friends" : "photos"}`;
+  }
+  tabs.forEach((tab,index) => { tab.addEventListener("click", () => { filter = tab.dataset.photoFilter!; apply(); }); tab.addEventListener("keydown", event => { const direction = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0; if (direction || event.key === "Home" || event.key === "End") { event.preventDefault(); const next = event.key === "Home" ? tabs[0] : event.key === "End" ? tabs[tabs.length - 1] : tabs[(index + direction + tabs.length) % tabs.length]; next.click(); next.focus(); } }); });
+  document.addEventListener("photo-tags-updated", event => { const tags = (event as CustomEvent<{tags:Record<string,PhotoTag[]>}>).detail.tags; let shared = 0; for (const card of cards) { const withFriends = (tags[card.dataset.photoCard!] ?? []).length > 1; card.dataset.withFriends = String(withFriends); const mark = card.querySelector<HTMLElement>("[data-friends-mark]"); if (mark) mark.hidden = !withFriends; if (withFriends) shared++; } const count = document.querySelector("[data-friends-count]"); if (count) count.textContent = String(shared); apply(); });
+</script>

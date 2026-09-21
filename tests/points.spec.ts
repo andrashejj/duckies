@@ -16,7 +16,7 @@ let alice: string, ben: string, ownerRequest: APIRequestContext;
 const board = async (request: APIRequestContext, date = today): Promise<TrainingBoard> => (await request.get(`/api/admin/training?date=${date}`)).json();
 const check = (request: APIRequestContext, kidId = alice, present = true, date = today) => request.patch("/api/admin/training", post({ date, kidId, present }));
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_kid,club_member,club_parent_profile,club_training,club_point_rule,"user","session",account,verification,"rateLimit",shop_request_limit,"Drop","Product","Order",cup_heat,cup_judge,cup_ticker CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_kid,club_member,club_parent_profile,club_training,club_point_rule,"user","session",account,verification,"rateLimit",shop_request_limit,"Drop","Product","Order",cup_heat,cup_judge,cup_ticker CASCADE');
   await db.query("INSERT INTO club_point_rule(effective_at,training,granola,cup,recorded_by) VALUES('1970-01-01',10,5,20,'test')");
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'organiser'),($2,'member'),('other@example.com','organiser')", [owner, parent]);
   const kids = await db.query("INSERT INTO club_kid(name) VALUES('Alice Duckie'),('Ben Duckie') RETURNING id,name");

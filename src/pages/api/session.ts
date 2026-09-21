@@ -6,6 +6,6 @@ export const prerender = false;
 export const GET = safeRoute(async ({ request }) => {
   const session = await getSession(request);
   const admin = session?.user.role === "ADMIN";
-  return json({ signedIn: !!session, member: !!session?.member, family: !!session?.family, admin,
-    home: !session ? "/login" : admin ? "/admin/kids" : (session.member || session.family) ? "/members/profile" : "/account" });
+  return json({ signedIn: !!session, member: !!session?.member, family: !!session?.family, archived: !!session?.archivedAt, admin,
+    home: !session ? "/login" : admin ? "/admin/kids" : session.member ? "/members" : session.archivedAt ? "/members/me" : session.family ? "/members/profile" : "/account" });
 });

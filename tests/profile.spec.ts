@@ -41,7 +41,7 @@ const pay = (kidId: string, term = "2026-S2") =>
   db.query("INSERT INTO club_payment_event (kid_id,term,status,amount_mur,note,actor_email) VALUES ($1,$2,'paid',3000,'Cash',$3)", [kidId, term, owner]);
 
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query(
     "INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser'),($3,'member'),($4,'member')",
     [owner, organiser, guardian, stranger],
@@ -144,7 +144,7 @@ test("a guardian's page shows their own duckies, records and standing — and no
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "test-results/members-profile-mobile.png", fullPage: true });
   // Dark mode re-points the sticker tints, so the type on them must follow.
-  await page.locator("[data-theme-toggle]").first().click();
+  await page.getByRole("button",{name:"Switch to dark mode"}).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.screenshot({ path: "test-results/members-profile-dark.png", fullPage: true });

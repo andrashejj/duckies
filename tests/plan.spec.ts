@@ -7,7 +7,7 @@ const origin="http://127.0.0.1:4329";
 const seededTasks=planMilestones.reduce((n,m)=>n+m.tasks.length,0);
 
 test.beforeEach(async()=>{
-  await db.query('TRUNCATE plan_task_event, plan_task, plan_milestone, plan_person, branding_access_event, branding_access, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
+  await db.query('TRUNCATE club_member_archive,plan_task_event, plan_task, plan_milestone, plan_person, branding_access_event, branding_access, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ('organiser@example.com','organiser'),('parent@example.com','member')");
   await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('organiser@example.com','Editor','approved',true,now()),('parent@example.com','Reader','approved',false,now())");
 });

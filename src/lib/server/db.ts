@@ -29,6 +29,7 @@ export async function canSignIn(email: string) {
   email=email.trim().toLowerCase();
   if(email===BRANDING_OWNER)return true;
   if (await findMember(email)) return true;
+  if ((await getDatabase().query("SELECT 1 FROM club_member_archive WHERE email=$1", [email])).rowCount) return true;
   const result = await getDatabase().query('SELECT 1 FROM "Order" WHERE email = $1 LIMIT 1', [email.trim().toLowerCase()]);
   if(result.rowCount!==0)return true;
   if((await getDatabase().query("SELECT 1 FROM branding_access WHERE email=$1",[email])).rowCount!==0)return true;

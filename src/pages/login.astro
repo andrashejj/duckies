@@ -45,9 +45,11 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
   let email = "";
 
   const requestedPath = new URLSearchParams(window.location.search).get("next");
-  const destination = requestedPath && /^\/(account|admin|members|branding-plan|product-ideas|sunset-duckies-cup-vol-2|cup\/judge)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
+  const destination = requestedPath && /^\/(account|admin|members|gallery|branding-plan|product-ideas|sunset-duckies-cup-vol-2|cup\/judge)([/?#]|$)/.test(requestedPath) && !/[\\\r\n]/.test(requestedPath)
     ? requestedPath : null;
-  if (destination?.startsWith("/branding-plan") || destination?.startsWith("/product-ideas")) {
+  if (destination?.startsWith("/members/profile")) {
+    document.querySelector("#login-intro")!.textContent="Sign in with the email that received your guardian invitation or is on your child’s registration. We’ll email you a six-digit code and take you to My family.";
+  } else if (destination?.startsWith("/branding-plan") || destination?.startsWith("/product-ideas")) {
     document.querySelector("#login-kicker")!.textContent="Project Molt / Private workspace";
     document.querySelector("#login-intro")!.textContent="Sign in with your approved email. We’ll send a six-digit code.";
   } else if (destination?.startsWith("/sunset-duckies-cup-vol-2")) {
@@ -62,11 +64,17 @@ import { memberForm, memberStatus, textButton } from "../lib/members-ui";
   }).catch(() => {});
 
   async function finishSignIn() {
-    if (destination) { window.location.replace(destination); return; }
     const response = await fetch("/api/session", { cache: "no-store" });
     if (!response.ok) throw new Error("Couldn't load your account. Please try again.");
     const session = await response.json();
-    window.location.replace(session.home);
+    // A bookmarked photo profile should survive sign-in. Recheck membership
+    // before returning, so a revoked member does not bounce into a 403 page.
+    const familyPage = !!destination && /^\/members\/profile\/?([?#]|$)/.test(destination);
+    const archivePage = !!destination && /^\/members\/me\/?([?#]|$)/.test(destination);
+    const memberPage = !!destination && /^\/(gallery|members)([/?#]|$)/.test(destination) && !familyPage;
+    const adminPage = !!destination && /^\/admin([/?#]|$)/.test(destination);
+    const allowed = (!memberPage || session.member || (archivePage && session.archived)) && (!familyPage || session.member || session.family) && (!adminPage || session.admin);
+    window.location.replace(destination && allowed ? destination : session.home);
   }
 
   async function submit(form: HTMLFormElement, action: () => Promise<void>) {

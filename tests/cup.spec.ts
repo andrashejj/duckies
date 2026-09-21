@@ -37,7 +37,7 @@ async function pay(playwright: PlaywrightWorkerArgs["playwright"], kidId: string
   await andras.dispose();
 }
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser'),('member@example.com','member')", [owner, organiser]);
   // The semesters suite truncates club_semester; put the migration's cup term back the way it seeds it.
   await db.query(
