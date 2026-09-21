@@ -6,6 +6,7 @@ import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
+import RegistrationStart from "../components/RegistrationStart.astro";
 import { site } from "../data/site";
 import { bodyCopy } from "../lib/ui";
 import { largeAvatar, memberForm, memberStatus, registrationCheck, registrationGrid, registrationPage, registrationPanel, registrationSheet, signaturePad, textButton } from "../lib/members-ui";
@@ -13,13 +14,16 @@ const panel = `${registrationPanel} ${memberForm}`;
 ---
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><meta name="referrer" content="no-referrer" /><title>Private registration | Sunset Duckies</title></head>
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><meta name="referrer" content="no-referrer" /><title>Club membership or Cup registration | Sunset Duckies</title></head>
 <body class={registrationPage}>
   <main class={registrationSheet}>
     <Kicker as="a" href="/">Sunset Duckies · Tamarin Bay</Kicker>
-    <SectionTitle as="h1" class="mt-6">Ready for the <span class="font-accent italic">water.</span></SectionTitle>
+    <SectionTitle as="h1" id="registration-title" class="mt-6">Club membership <span class="font-accent italic">or Cup?</span></SectionTitle>
     <p id="registration-intro" data-paid="One form for the whole family: add every duckie, then sign once for all of them. Your membership is paid, so this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One form for the whole family: add every duckie, then sign once for all of them. Fill it in and sign now; each place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One form for the whole family: add every child coming, then sign once for all of them. This completes their entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One form for the whole family: add every duckie, then sign once for all of them. A parent or legal guardian can fill it in and sign without an account.</p>
-    <p id="registration-status" class={memberStatus} role="status" aria-live="polite">Opening your private invitation…</p>
+    <p id="registration-status" class={memberStatus} role="status" aria-live="polite"></p>
+    <RegistrationStart />
+    <noscript><p class="mt-4">Please enable JavaScript to choose your registration and complete the form.</p></noscript>
+    <p id="registration-scope" hidden class={`${registrationPanel} border-teal-600 bg-teal-600/10 font-semibold`}></p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
       <p id="signed-summary" data-one="Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour." data-many="Each duckie's registration and signed waiver are saved with the club — one record per child, all from your single signature. Download your copy now; this private download is available for one hour.">Your registration and signed waiver are saved with the club. Download your copy now; this private download is available for one hour.</p>
@@ -132,7 +136,7 @@ const panel = `${registrationPanel} ${memberForm}`;
         <button data-remove-child type="button" class={`justify-self-start ${textButton}`} hidden>Remove this child</button>
       </fieldset>
     </template>
-    <p class="mt-8 text-sm">Sunset Duckies · Monday + Friday, 4–6pm · Tamarin Bay</p>
+    <p class="mt-8 text-sm">Sunset Duckies · Tamarin Bay</p>
   </main>
 </body>
 </html>
@@ -157,6 +161,7 @@ const panel = `${registrationPanel} ${memberForm}`;
   const validation = registrationValidation(form, document.querySelector<HTMLElement>("#validation-summary")!);
   let version = "";
   let cup = false;
+  let registrationLabel = "registration";
   let signed: Signed = null;
   let supersedes = "";
   let signature: [number, number][][] = [];
@@ -364,7 +369,13 @@ const panel = `${registrationPanel} ${memberForm}`;
   }
   editButton.addEventListener("click", edit);
   async function load() {
-    if (!token) { status.textContent = "Open the individual invitation link sent by the club to register your child."; return; }
+    if (!token) {
+      document.querySelector<HTMLElement>("#registration-intro")!.textContent = "Choose club membership, Cup entry, or both. Start with a blank form below — no invitation link or account needed.";
+      document.querySelector<HTMLFormElement>("#registration-start")!.hidden = false;
+      return;
+    }
+    document.querySelector<HTMLElement>("#registration-title")!.textContent = "Your registration";
+    status.textContent = "Opening your private invitation…";
     try {
       const response = await fetch("/api/registration", { headers, cache: "no-store" }); const data = await response.json();
       if (!response.ok) throw new Error(data.error);
@@ -377,6 +388,18 @@ const panel = `${registrationPanel} ${memberForm}`;
       if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone, contactEmail: signer.email });
       // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
       cup = Boolean(data.cup);
+      registrationLabel = cup ? "Cup entry" : data.cupIncluded ? "club membership + Cup" : "club membership";
+      const title = cup ? "Cup entry only" : data.cupIncluded ? "Club membership + Cup" : "Club membership";
+      document.querySelector<HTMLElement>("#registration-title")!.textContent = title;
+      document.title = `${title} | Sunset Duckies`;
+      const scope = document.querySelector<HTMLElement>("#registration-scope")!;
+      scope.textContent = cup
+        ? `${data.termLabel} · This form is for the Cup only. Club membership and regular training are not included.`
+        : data.cupIncluded
+          ? `${data.termLabel} · This form covers club membership and your Cup entry. The semester membership fee covers both.`
+          : `${data.termLabel} · This form is for club membership and regular training. To enter the Cup, register separately on the Cup page.`;
+      scope.hidden = false;
+      submit.textContent = `Sign and submit ${registrationLabel}`;
       const intro = document.querySelector<HTMLElement>("#registration-intro")!;
       const fee = (value: number) => value.toLocaleString("en-US");
       intro.textContent = cup ? intro.dataset.cup! : data.paid ? intro.dataset.paid! : intro.dataset.pending!.replace("{child}", fee(data.childFeeMur)).replace("{family}", fee(data.familyFeeMur));
@@ -392,7 +415,12 @@ const panel = `${registrationPanel} ${memberForm}`;
       document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} and any brothers or sisters · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
       if (data.completedAt) { completed(Boolean(data.canDownload)); editButton.hidden = !signed; return; }
       status.textContent=""; form.hidden=false;
-    } catch (error) { status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again."; }
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : "Couldn't open this invitation. Try again.";
+      const restart = document.createElement("a");
+      restart.href = "/register"; restart.className = `block mt-3 ${textButton}`; restart.textContent = "Start a new club or Cup registration";
+      status.append(restart);
+    }
   }
   form.addEventListener("submit", async event => {
     event.preventDefault(); if (submitting || photoBusy) return;
@@ -424,7 +452,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       if (!response.ok) throw new Error(data.error);
       submitStatus.textContent=""; await load();
     } catch(error) { submitStatus.textContent = error instanceof Error ? error.message : "Couldn't save your registration. Please try again."; submitStatus.scrollIntoView({ behavior: "smooth", block: "center" }); }
-    finally { submitting=false; submit.disabled=false; submit.textContent = "Sign and submit"; }
+    finally { submitting=false; submit.disabled=false; submit.textContent = `Sign and submit ${registrationLabel}`; }
   });
   async function download(audit=false) {
     try { const response = await fetch(`/api/registration/document${audit ? "?format=audit" : ""}`, { headers, cache:"no-store" });

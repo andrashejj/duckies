@@ -49,6 +49,44 @@ test.beforeEach(async ({ playwright }) => {
 test.afterEach(async () => { await guest.dispose(); });
 test.afterAll(async () => { await db.end(); });
 
+for (const [type, title, cupOnly, cupIncluded] of [
+  ["club", "Club membership", false, false],
+  ["cup", "Cup entry only", true, false],
+  ["both", "Club membership + Cup", false, true],
+] as const) {
+  test(`shared registration starts blank and opens the ${type} form`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/register", { waitUntil: "domcontentloaded" });
+    const start = page.locator("#registration-start");
+    await expect(start).toBeVisible();
+    await expect(start.locator("input:checked")).toHaveCount(0);
+    for (const name of ["kidName", "contactName", "contactPhone"])
+      await expect(start.locator(`[name="${name}"]`)).toHaveValue("");
+    await start.locator(`[value="${type}"]`).check();
+    await start.getByLabel("First child’s name").fill("Shared Link Surfer");
+    await start.getByLabel("Parent / guardian").fill("Shared Link Parent");
+    await start.getByLabel("WhatsApp number").fill("+230 5999 8877");
+    await start.getByRole("button", { name: "Continue to family details" }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+    await expect(start).toBeHidden();
+    await expect(page.locator("#registration-form")).toBeVisible();
+    await expect(page.locator("#registration-scope")).toContainText(cupOnly ? "Cup only" : cupIncluded ? "membership and your Cup entry" : "register separately");
+    await expect(page.locator("#cup-covers")).toBeVisible({ visible: cupOnly });
+    await expect(page.locator("#membership-covers")).toBeVisible({ visible: !cupOnly });
+    await expect(page.locator("#cup-included")).toBeVisible({ visible: cupIncluded });
+    await expect(page.getByLabel("Training rhythm", { exact: true })).toBeVisible({ visible: !cupOnly });
+    await expect(page.locator("#submit-registration")).toContainText(cupOnly ? "Cup entry" : "club membership");
+    const info = await (await guest.get("/api/registration", { headers: linkHeaders(page.url()) })).json();
+    expect(info).toMatchObject({ cup: cupOnly, cupIncluded, term: cupOnly ? CUP_TERM : "2026-S2" });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    // Sharing the bare link again must not carry over the previous family's details.
+    await page.goto("/register", { waitUntil: "domcontentloaded" });
+    await expect(start).toBeVisible();
+    for (const name of ["kidName", "contactName", "contactPhone"])
+      await expect(start.locator(`[name="${name}"]`)).toHaveValue("");
+  });
+}
+
 test("the cup term is a regular term with the entry fee, never the current semester", async ({ request }) => {
   const { rows } = await db.query("SELECT label, child_fee_mur::float AS fee, is_current, starts_on::text AS starts FROM club_semester WHERE id=$1", [CUP_TERM]);
   expect(rows[0]).toMatchObject({ label: "Sunset Duckies Cup Vol. 02", fee: 1000, is_current: false, starts: "2026-10-16" });
