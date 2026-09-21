@@ -30,6 +30,7 @@ import {
   type Standing,
 } from "../../lib/profile-ui";
 import FamilyGuardians from "./FamilyGuardians";
+import { activityLabel, clubDayLabel } from "../../lib/club-points";
 import { Cta } from "./ui";
 
 // The family's own passes. Everything a guardian can change lives here; the
@@ -189,6 +190,11 @@ function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termL
         </div>
       </div>
       <p className="px-5 pb-4 text-[0.9rem] leading-[1.6] text-fg-muted">{tone.note}</p>
+      <details className="mx-5 mb-5 rounded-xl border-2 border-edge bg-sticker-sun px-4 py-3">
+        <summary className="cursor-pointer font-display text-lg font-bold">★ {kid.points.total} club points</summary>
+        <p className="mt-3 text-sm">Training {kid.points.training} · Granola {kid.points.granola} · Cup {kid.points.cup}</p>
+        {kid.points.activities.length ? <ul className="mt-3 space-y-3 text-sm">{kid.points.activities.map(activity => <li key={`${activity.kind}:${activity.sourceId}`}><span className="font-bold">+{activity.points} · {activityLabel(activity)}</span><span className="block text-xs">{clubDayLabel(activity.date)}</span></li>)}</ul> : <p className="mt-3 text-sm">Points will appear after training check-in, a paid granola order shared with this duckie, or a scored Cup run.</p>}
+      </details>
       {kid.age !== null && kid.age < RECOMMENDED_AGE && (
         <p className="mx-5 mb-4 rounded-xl border-2 border-alert px-4 py-3 text-[0.85rem] font-semibold leading-[1.5] text-alert">
           Under {RECOMMENDED_AGE}: have a word with the head coach about readiness before the next session.

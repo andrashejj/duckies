@@ -127,6 +127,7 @@ model Order {
 }
 
 model OrderItem {
+  granolaBags        Int     @default(0)
   id                 String  @id @default(cuid())
   orderId            String
   productId          String
@@ -212,6 +213,8 @@ model BrandingAccessEvent {
 // ---------- Club: members, kids, registration, semesters ----------
 
 model ClubKid {
+  attendance ClubAttendance[]
+  attendance_events ClubAttendanceEvent[]
   family_orders ClubOrderFamily[]
   guardian_access ClubGuardianAccess[]
   id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -747,4 +750,51 @@ model ClubOrderFamily {
   @@id([order_id, kid_id])
   @@index([kid_id], map: "club_order_family_kid")
   @@map("club_order_family")
+}
+
+model ClubPointRule {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  effective_at DateTime @default(dbgenerated("clock_timestamp()")) @db.Timestamptz(6)
+  training Int
+  granola Int
+  cup Int
+  recorded_by String
+  @@index([effective_at(sort: Desc)], map: "club_point_rule_effective")
+  @@map("club_point_rule")
+}
+
+model ClubTraining {
+  date DateTime @id @db.Date
+  points Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_by String
+  attendance ClubAttendance[]
+  events ClubAttendanceEvent[]
+  @@map("club_training")
+}
+
+model ClubAttendance {
+  date DateTime @db.Date
+  kid_id String @db.Uuid
+  present Boolean
+  updated_at DateTime @default(dbgenerated("clock_timestamp()")) @db.Timestamptz(6)
+  updated_by String
+  session ClubTraining @relation(fields: [date], references: [date], onDelete: NoAction, onUpdate: NoAction)
+  kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@id([date,kid_id])
+  @@index([kid_id], map: "club_attendance_kid")
+  @@map("club_attendance")
+}
+
+model ClubAttendanceEvent {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime @db.Date
+  kid_id String @db.Uuid
+  present Boolean
+  recorded_at DateTime @default(dbgenerated("clock_timestamp()")) @db.Timestamptz(6)
+  recorded_by String
+  session ClubTraining @relation(fields: [date], references: [date], onDelete: NoAction, onUpdate: NoAction)
+  kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@index([date,recorded_at], map: "club_attendance_event_session")
+  @@map("club_attendance_event")
 }

@@ -1,4 +1,6 @@
 import { kidGuardians, type FamilyGuardian } from "./guardians";
+import { pointsForKids } from "../server/club-points";
+import type { KidPoints } from "../club-points";
 import { getDatabase } from "../server/db";
 import { CUP_TERM } from "./cup";
 import { issueLink, memberPaidSql, RegistrationError } from "./records";
@@ -23,6 +25,7 @@ export type FamilyPayment = {
 };
 export type FamilyWaiver = { id: string; term: string; termLabel: string; signedAt: string };
 export type FamilyKid = {
+  points: KidPoints;
   id: string;
   name: string;
   age: number | null;
@@ -121,6 +124,7 @@ export async function familyProfile(guardian: { email: string; name: string }): 
     [guardian.email, term.id, CUP_TERM],
   );
   const history = await familyHistory(rows.map((row) => row.id as string));
+  const points = await pointsForKids(rows.map(row => row.id));
   return {
     email: guardian.email,
     name: guardian.name,
@@ -131,6 +135,7 @@ export async function familyProfile(guardian: { email: string; name: string }): 
       if (registration) delete (registration as Partial<RegistrationInput>).signature;
       return {
         id: row.id,
+        points: points.get(row.id)!,
         name: row.name,
         age: registration ? ageAt(registration.dateOfBirth) : null,
         photoVersion: row.photo_version,

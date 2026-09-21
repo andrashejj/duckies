@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-interface Props { title?: string; section?: "dashboard" | "orders" | "drops" | "products" | "customers" | "gallery" | "cup" | "parents" | "kids" }
+interface Props { title?: string; section?: "dashboard" | "orders" | "drops" | "products" | "customers" | "gallery" | "cup" | "parents" | "kids" | "training" }
 const { title = "Admin · Sunset Duckies", section = "dashboard" } = Astro.props;
 ---
 <BaseLayout title={title} workspace="admin" section={section}>
