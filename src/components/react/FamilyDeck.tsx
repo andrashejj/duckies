@@ -29,6 +29,7 @@ import {
   stamp,
   type Standing,
 } from "../../lib/profile-ui";
+import FamilyGuardians from "./FamilyGuardians";
 import { Cta } from "./ui";
 
 // The family's own passes. Everything a guardian can change lives here; the
@@ -80,7 +81,7 @@ function Facts({ kid }: { kid: FamilyKid }) {
         <dd>{rhythm}</dd>
       </div>
       <div>
-        <dt>Legal guardians</dt>
+        <dt>Guardians on signed registration</dt>
         <dd>{r.guardians.map((g) => `${g.name} (${g.relationship})\n${g.phone} · ${g.email}`).join("\n\n")}</dd>
       </div>
       <div>
@@ -320,18 +321,18 @@ export default function FamilyDeck({ profile }: { profile: FamilyProfile }) {
 
       {family.kids.length === 0 ? (
         <p className={cn("mt-8 max-w-2xl", noteCopy)}>
-          No duckies are registered under <span className="font-mono">{family.email}</span> yet. We match kids to the guardian email on their signed club registration — if the other parent signed, sign in with their address. New to the club? Start at <a className={textButton} href="/join">join the club</a>.
+          No duckies are registered under <span className="font-mono">{family.email}</span> yet. Ask the other parent to add your email under Parents & legal guardians on their family page, or ask the club to link you. New to the club? Start at <a className={textButton} href="/join">join the club</a>.
         </p>
       ) : (
         <>
+          <FamilyGuardians kids={family.kids} initialGuardians={family.guardians} actorEmail={family.email} onChanged={() => void reload()} />
           <div className={cn(passGrid, "mt-8")} data-duckie-passes>
             {family.kids.map((kid, index) => (
               <Pass key={kid.id} kid={kid} index={index} termLabel={family.term.label} reload={reload} report={setStatus} />
             ))}
           </div>
           <p className={cn("mt-6 max-w-2xl", noteCopy)}>
-            Someone missing? A duckie appears here once their registration is signed with your email on it — the
-            club matches families by the guardian emails on the form, nothing else.
+            Someone missing? Ask their other guardian or the club to link your email. Each parent uses their own sign-in.
           </p>
         </>
       )}

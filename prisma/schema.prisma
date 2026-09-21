@@ -95,6 +95,7 @@ model User {
 // ---------- Orders ----------
 
 model Order {
+  family_sharing ClubOrderFamily[]
   id                    String       @id @default(cuid())
   guestToken            String       @unique
   confirmationEmailSent Boolean      @default(false)
@@ -211,6 +212,8 @@ model BrandingAccessEvent {
 // ---------- Club: members, kids, registration, semesters ----------
 
 model ClubKid {
+  family_orders ClubOrderFamily[]
+  guardian_access ClubGuardianAccess[]
   id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                   String
   created_by             String?
@@ -718,4 +721,30 @@ model CupHeatVolunteer {
   heat CupHeat @relation(fields: [heat_id], references: [id], onDelete: Cascade)
   @@id([heat_id, email])
   @@map("cup_heat_volunteer")
+}
+
+// Overrides guardian access without changing any signed waiver.
+model ClubGuardianAccess {
+  kid_id String @db.Uuid
+  email String
+  name String
+  relationship String
+  phone String
+  revoked_at DateTime? @db.Timestamptz(6)
+  updated_by String
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@id([kid_id, email])
+  @@index([email], map: "club_guardian_access_email")
+  @@map("club_guardian_access")
+}
+
+model ClubOrderFamily {
+  order_id String
+  kid_id String @db.Uuid
+  order Order @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  kid ClubKid @relation(fields: [kid_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@id([order_id, kid_id])
+  @@index([kid_id], map: "club_order_family_kid")
+  @@map("club_order_family")
 }

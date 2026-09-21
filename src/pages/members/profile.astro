@@ -39,7 +39,7 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
       <Kicker>Members · your family</Kicker>
       <SectionTitle as="h1">Your crew, <span class="font-accent italic">on file.</span></SectionTitle>
       <p class={bodyCopy}>
-        Every duckie registered under your email: where they stand this semester, what you have signed,
+        The duckies linked to you as a legal guardian: where they stand this semester, what you have signed,
         what the club has recorded — and the things you keep current yourself.
       </p>
     </div>
@@ -123,8 +123,8 @@ const description = "Manage your Sunset Duckies family: your duckies, their reco
 
     <div class={profileSection} data-reveal>
       <div class="flex flex-wrap gap-4">
-        <Cta href="/members" variant="secondary">See the whole lineup</Cta>
-        <Cta href="/gallery" variant="secondary">The members' gallery</Cta>
+        {session.member && <Cta href="/members" variant="secondary">See the whole lineup</Cta>}
+        {session.member && <Cta href="/gallery" variant="secondary">The members' gallery</Cta>}
         <Cta href="/account">Your shop account</Cta>
       </div>
     </div>

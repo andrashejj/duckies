@@ -184,10 +184,11 @@ test("30-kid roster stays compact, filters contacts and keeps open drafts", asyn
       emergencyName: "Emergency contact", emergencyRelationship: "Parent", emergencyPhone: "999999",
       media: index < 10 ? "yes" : "no", parentInWater: true, signerName: "Sample Parent", medicalNotes: "", rashieSize: "S", rashieName: "Sample", membership: "child",
     } : null,
+    familyGuardians: index < 15 ? [{ name: `Guardian ${index + 1}`, relationship: "Parent", phone: `123${index}`, email: "sample@example.com" }] : [],
     waiverId: index < 15 ? `waiver-${index}` : null, signedAt: index < 15 ? "2026-09-01" : null,
     payment: index < 20 ? { status: "paid", amountMur: 3000, note: "Sample", recordedAt: "2026-09-01" } : null, link: null,
   }));
-  await page.route("**/api/kids", route => route.fulfill({ json: roster }));
+  await page.route(/\/api\/kids(?:\?.*)?$/, route => route.fulfill({ json: roster }));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".duckie-row")).toHaveCount(30);

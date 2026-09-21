@@ -45,7 +45,7 @@ export default function ParentsTable({ initialParents }: { initialParents: Paren
           <td><div className="flex w-32 flex-col items-start gap-2"><ParentPhoto profile={parent} /><ParentPhotoUpload profile={parent} onSaved={() => void refresh()} /></div></td>
           <td className="font-display font-bold">{parent.name || "Name not added"}</td>
           <td><div className="grid gap-1"><a className="break-all underline underline-offset-4" href={`mailto:${parent.email}`}>{parent.email}</a>{parent.phone ? <a href={`tel:${parent.phone.replace(/[^+\d]/g, "")}`}>{parent.phone}</a> : <span className="text-fg-muted">No phone added</span>}</div></td>
-          <td>{parent.children.length ? <ul className="space-y-2">{parent.children.map(kid => <li key={kid.id}><span className="font-semibold">{kid.name}</span>{kid.relationship && <span className="block text-xs text-fg-muted">{kid.relationship}</span>}</li>)}</ul> : <span className="text-fg-muted">No registered duckies</span>}</td>
+          <td>{parent.children.length ? <ul className="space-y-2">{parent.children.map(kid => <li key={kid.id}><a className="font-semibold underline underline-offset-4" href={`/admin/kids/${kid.id}/guardians`}>{kid.name}</a>{kid.relationship && <span className="block text-xs text-fg-muted">{kid.relationship}</span>}</li>)}</ul> : <span className="text-fg-muted">No registered duckies</span>}</td>
         </tr>)}</tbody>
       </table>
     </div>

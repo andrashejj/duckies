@@ -371,6 +371,7 @@ export type OrganiserKid = {
   memberPaid: boolean;
   // Guardian emails (from the signed registration) that may sign in.
   approvedGuardians: string[];
+  familyGuardians: RegistrationInput["guardians"];
   cup: {
     edition: string;
     member: boolean;
@@ -391,7 +392,8 @@ export async function organiserRoster(term: string, currentTerm: string): Promis
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
     (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
     ${memberPaidSql("k.id", "$2")} AS member_paid,
-    COALESCE((SELECT json_agg(m.email) FROM jsonb_array_elements(w.snapshot->'registration'->'guardians') g JOIN club_member m ON m.email=lower(g->>'email')), '[]'::json) AS approved_guardians
+    COALESCE((SELECT json_agg(m.email) FROM club_current_guardian g JOIN club_member m ON m.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS approved_guardians,
+    COALESCE((SELECT json_agg(json_build_object('name',COALESCE(p.name,g.name),'email',g.email,'phone',COALESCE(p.phone,g.phone),'relationship',g.relationship)) FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS family_guardians
     FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
     WHERE k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
     [term, currentTerm],
@@ -412,6 +414,7 @@ export async function organiserRoster(term: string, currentTerm: string): Promis
     waiverTerm: row.waiver_term,
     memberPaid: row.member_paid,
     approvedGuardians: row.approved_guardians,
+    familyGuardians: row.family_guardians,
     cup: row.cup,
   }));
 }

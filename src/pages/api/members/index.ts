@@ -4,9 +4,9 @@ import { emailSchema } from "../../../lib/registration/schema";
 import { getDatabase } from "../../../lib/server/db";
 import { json } from "../../../lib/server/http";
 export const prerender = false;
-// Sign-in access is approved by hand: an organiser grants (or revokes) a
-// guardian email from the kid's overview. Payment is recorded separately and
-// never grants access on its own.
+// Full club membership is approved by hand. Family-only sign-in is scoped
+// separately through current guardian relationships; payment never grants
+// club membership on its own.
 export const POST = safeRoute(async ({ request }) => {
   await requireOrganiser(request, true);
   const parsed = emailSchema.safeParse((await readBody(request))?.email);
