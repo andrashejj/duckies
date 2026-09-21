@@ -1,0 +1,37 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+import SignOutButton from "./react/SignOutButton";
+interface Props { mode: "member" | "admin"; section?: string }
+const { mode, section } = Astro.props;
+const session = Astro.locals.session;
+const admin = mode === "admin";
+const path = Astro.url.pathname;
+const items = admin ? [
+  ["kids", "Duckies", "/admin/kids"], ["parents", "Parents", "/admin/parents"], ["cup", "Cup day", "/admin/cup"],
+  ["dashboard", "Shop overview", "/admin"], ["orders", "Reservations", "/admin/orders"], ["drops", "Drops", "/admin/drops"],
+  ["products", "Products", "/admin/products"], ["customers", "Customers", "/admin/customers"], ["gallery", "Gallery", "/admin/gallery"],
+] : [
+  ...(session?.member ? [["family", "My family", "/members/profile"], ["lineup", "Club lineup", "/members"]] : []),
+  ["profile", "My profile", "/account/profile"], ["orders", "My orders", "/account/orders"], ["cup", "Cup & judging", "/cup/judge"],
+];
+const link = "inline-flex min-h-11 items-center rounded-full border-2 border-transparent px-4 py-2 font-display text-sm font-bold no-underline transition hover:bg-cream-soft/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun-500";
+---
+<header class="relative z-50 border-b-2 border-edge bg-ink-950 text-cream-soft" data-workspace-header>
+  <div class="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-8">
+    <a href={admin ? "/admin/kids" : session?.member ? "/members/profile" : "/account/profile"} class="flex items-center gap-3 no-underline">
+      <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" class="h-12 w-12 rounded-full border-2 border-cream-soft" />
+      <span><span class="block font-mono text-[0.65rem] uppercase tracking-[0.18em] text-sun-500">{admin ? "Club admin" : "Your club"}</span><span class="font-display text-xl font-bold">Sunset Duckies</span></span>
+    </a>
+    <div class="flex flex-wrap items-center gap-2">
+      {admin ? <><a href="/members/profile" class={link}>My family</a><a href="/account/profile" class={link}>My profile</a></> : session?.user.role === "ADMIN" && <a href="/admin/kids" class={`${link} border-sun-500 text-sun-500`}>Club admin ↗</a>}
+      <a href="/" class={link}>Club website ↗</a>
+      <ThemeToggle class="border-cream-soft/40 bg-transparent text-cream-soft hover:bg-sun-500 hover:text-ink-950" />
+      <SignOutButton client:load className={link} />
+    </div>
+  </div>
+  <div class="border-t border-cream-soft/20">
+    <nav aria-label={admin ? "Admin navigation" : "Member navigation"} class="mx-auto max-w-screen-2xl px-4 py-3 sm:px-8">
+      <ul class="flex flex-wrap gap-1.5">{items.map(([key,label,href]) => <li><a href={href} aria-current={(section ? section === key : path === href) ? "page" : undefined} class:list={[link, (section ? section === key : path === href) && "border-sun-500 bg-sun-500 text-ink-950 shadow-[2px_2px_0_var(--color-cream-soft)] hover:bg-sun-500"]}>{label}</a></li>)}</ul>
+    </nav>
+  </div>
+</header>

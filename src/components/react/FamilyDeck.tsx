@@ -303,51 +303,17 @@ function Pass({ kid, termLabel, index, reload, report }: { kid: FamilyKid; termL
 export default function FamilyDeck({ profile }: { profile: FamilyProfile }) {
   const [family, setFamily] = useState(profile);
   const [status, setStatus] = useState("");
-  const [name, setName] = useState(profile.name);
-  const [editingName, setEditingName] = useState(false);
 
   const reload = useCallback(async () => {
     const next: FamilyProfile = await api("/api/family", "GET");
     setFamily(next);
-    setName(next.name);
   }, []);
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3" data-guardian>
-        {editingName ? (
-          <form
-            className={cn(memberForm, "w-full max-w-sm")}
-            onSubmit={(event) => {
-              event.preventDefault();
-              void (async () => {
-                try {
-                  await api("/api/family", "PATCH", { name });
-                  setEditingName(false);
-                  setStatus("Your name is saved.");
-                  await reload();
-                } catch (error) { setStatus(error instanceof Error ? error.message : "Couldn't save your name."); }
-              })();
-            }}
-          >
-            <label htmlFor="guardian-name">Your name</label>
-            <input id="guardian-name" required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} />
-            <div className={editRow}>
-              <button type="submit" className={textButton}>Save</button>
-              <button type="button" className={textButton} onClick={() => { setName(family.name); setEditingName(false); }}>Cancel</button>
-            </div>
-          </form>
-        ) : (
-          <>
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-fg/60">
-              {family.name ? <>{family.name} · </> : null}
-              <span className="break-all lowercase tracking-[0.1em]">{family.email}</span>
-            </p>
-            <button type="button" className={textButton} onClick={() => setEditingName(true)}>
-              {family.name ? "Change your name" : "Add your name"}
-            </button>
-          </>
-        )}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-edge bg-surface p-5" data-guardian>
+        <div><p className="font-display text-xl font-bold">{family.name || "Your family account"}</p><p className="mt-1 break-all text-sm text-fg-muted">{family.email}</p></div>
+        <a href="/account/profile" className="inline-flex min-h-11 items-center rounded-full border-2 border-edge bg-sticker-sun px-5 py-2 font-display font-bold">Edit my profile →</a>
       </div>
 
       <p className={profileStatus} role="status" aria-live="polite" data-profile-status>{status}</p>

@@ -37,6 +37,8 @@ export async function readOwnProfile(email: string, fallbackName = ""): Promise<
   return (await readParentProfiles(email))[0] ?? { email, name: fallbackName, phone: "", photoVersion: null, children: [] };
 }
 export async function saveParentProfile(email: string, profile: { name: string; phone: string }) {
-  await getDatabase().query(`INSERT INTO club_parent_profile(email,name,phone) VALUES($1,$2,$3)
-    ON CONFLICT(email) DO UPDATE SET name=$2,phone=$3,registration_link_id=NULL,updated_at=now()`, [email, profile.name, profile.phone]);
+  await getDatabase().query(`WITH saved AS (
+    INSERT INTO club_parent_profile(email,name,phone) VALUES($1,$2,$3)
+    ON CONFLICT(email) DO UPDATE SET name=$2,phone=$3,registration_link_id=NULL,updated_at=now() RETURNING email
+  ) UPDATE "user" SET name=$2,"updatedAt"=now() WHERE lower(email) IN (SELECT email FROM saved)`, [email, profile.name, profile.phone]);
 }

@@ -15,6 +15,10 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 - `/`
 - `/training-materials`
 - `/login` — shared email-code sign-in for members and customers
+- `/members` — member-only club lineup
+- `/members/profile` — your family, registrations and fees
+- `/account/profile` — edit your own name, phone and photo
+- `/admin/kids`, `/admin/parents` — organiser tables, with shared top navigation
 - `/api/auth/*` — Better Auth endpoints (server-rendered)
 - `/api/kids` — authenticated roster; organisers can add kids
 - `/api/kids/:id` — organisers can rename or remove kids
@@ -33,7 +37,7 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 
 ## Members area setup
 
-The landing page stays static. After sign-in it loads the kids list from a private API. Kids’ names are never embedded in public HTML or JavaScript bundles. The API validates the session and current membership on every request, sets `no-store` headers for browsers and CDNs, and permits only organisers to change the roster. The roster starts empty; no competition entries are imported automatically.
+The landing page stays static. Its header checks `/api/session` for navigation state and shows signed-in users a **My club** menu. The roster lives on `/members` for members and `/admin/kids` for organisers; old `/#our-duckies` bookmarks redirect there. Private pages have top navigation with direct links to **My profile** and **My family**. Kids’ names are never embedded in public HTML or JavaScript bundles. The roster API validates the session and current membership on every request, sets `no-store` headers for browsers and CDNs, and permits only organisers to change the roster. The roster starts empty; no competition entries are imported automatically.
 
 1. Run `docker compose up -d` for a dedicated local PostgreSQL database on port 54329, or provision a dedicated PostgreSQL database yourself.
 2. Add the variables from `.env.example` to your local `.env`, preserving any existing configuration. `DUCKIES_DATABASE_URL` is deliberately separate from legacy `DATABASE_URL`. Generate `BETTER_AUTH_SECRET` with `openssl rand -base64 32`. Set `BETTER_AUTH_URL` to the exact site origin (`http://localhost:4321` locally).

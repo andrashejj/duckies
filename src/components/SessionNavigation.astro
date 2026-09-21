@@ -1,0 +1,57 @@
+---
+import { ctaClass } from "../lib/ui";
+const item = "block rounded-xl px-4 py-3 font-display text-sm font-bold hover:bg-highlight hover:text-highlight-fg focus-visible:outline-3 focus-visible:outline-accent";
+---
+<div class="relative shrink-0" data-session-navigation>
+  <a href="/account" class={ctaClass("primary", "sm")} data-session-entry>My account</a>
+  <details hidden data-session-menu class="group">
+    <summary class={`${ctaClass("primary", "sm")} list-none cursor-pointer [&::-webkit-details-marker]:hidden`}>My club <span aria-hidden="true">⌄</span></summary>
+    <nav aria-label="Your account" class="absolute right-0 top-[calc(100%+0.75rem)] z-60 w-64 rounded-2xl border-2 border-edge bg-surface p-2 shadow-sticker-lg">
+      <a href="/account/profile" class={item}>My profile</a>
+      <a href="/members/profile" class={item} data-session-member>My family</a>
+      <a href="/members" class={item} data-session-member>Club lineup</a>
+      <a href="/admin/kids" class={`${item} text-accent-text`} data-session-admin>Club admin ↗</a>
+      <a href="/account/orders" class={item}>My orders</a>
+      <a href="/cup/judge" class={item}>Cup & judging</a>
+      <button type="button" class={`${item} w-full border-t border-line text-left`} data-session-signout>Sign out</button>
+      <p data-session-error role="status" class="px-4 text-sm"></p>
+    </nav>
+  </details>
+</div>
+<script>
+  import { authClient } from "../lib/auth-client";
+  const root = document.querySelector<HTMLElement>("[data-session-navigation]")!;
+  if (root) {
+  const entry = root.querySelector<HTMLAnchorElement>("[data-session-entry]")!;
+  const menu = root.querySelector<HTMLDetailsElement>("[data-session-menu]")!;
+  const status = root.querySelector<HTMLElement>("[data-session-error]")!;
+  let generation = 0;
+  async function refresh() {
+    const version = ++generation;
+    try {
+      const response = await fetch("/api/session", { cache: "no-store" });
+      if (!response.ok) throw new Error("Unavailable");
+      const session = await response.json();
+      if(version!==generation)return;
+      entry.hidden = session.signedIn; menu.hidden = !session.signedIn;
+      if(!session.signedIn) { menu.open=false; entry.textContent="Member sign-in"; entry.href="/login"; }
+      root.querySelectorAll<HTMLElement>("[data-session-member]").forEach(el => el.hidden=!session.member);
+      root.querySelectorAll<HTMLElement>("[data-session-admin]").forEach(el => el.hidden=!session.admin);
+      document.querySelectorAll<HTMLAnchorElement>("[data-account-link]").forEach(link => { link.href=session.home; link.textContent=session.signedIn ? (session.admin ? "Club admin" : "My account") : "Member sign-in"; });
+      // Preserve bookmarks to the old embedded roster without putting it back on the homepage.
+      if(location.pathname==="/" && location.hash==="#our-duckies") location.replace(session.signedIn ? (session.admin ? "/admin/kids" : "/members") : "/login?next=/members");
+    } catch { /* Keep the neutral account link; never mislabel a failed lookup as signed out. */ }
+  }
+  root.querySelector<HTMLButtonElement>("[data-session-signout]")!.addEventListener("click", async event => {
+    const button=event.currentTarget as HTMLButtonElement;button.disabled=true;status.textContent="";
+    try { const result=await authClient.signOut();if(result.error)throw new Error();location.replace("/"); }
+    catch{status.textContent="Couldn't sign out. Please try again.";button.disabled=false;}
+  });
+  document.addEventListener("click",event=>{if(event.target instanceof Node && !root.contains(event.target))menu.open=false;});
+  document.addEventListener("keydown",event=>{if(event.key==="Escape"&&menu.open){menu.open=false;menu.querySelector("summary")?.focus();}});
+  window.addEventListener("pageshow",()=>void refresh());
+  window.addEventListener("focus",()=>void refresh());
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)void refresh();});
+  void refresh();
+  }
+</script>
