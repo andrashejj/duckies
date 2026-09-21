@@ -120,7 +120,7 @@ export default function ReserveForm({ product, sizes, whatsappUrl, familyKids = 
 
       {familyKids.length > 0 && <fieldset className="rounded-xl border border-line p-4">
         <legend className="px-1 font-display font-bold">Share with family</legend>
-        <p className="mb-3 text-sm text-fg-muted">The legal guardians of these duckies can see this reservation in their family order history.</p>
+        <p className="mb-3 text-sm text-fg-muted">The legal guardians of these duckies can see this reservation in their family order history. Paid granola orders also earn club points for each selected duckie.</p>
         {familyKids.map(kid => <label className="flex min-h-10 items-center gap-3" key={kid.id}><input type="checkbox" checked={familyKidIds.includes(kid.id)} onChange={event => setFamilyKidIds(ids => event.target.checked ? [...ids,kid.id] : ids.filter(id=>id!==kid.id))} />{kid.name}</label>)}
       </fieldset>}
       {sizeOptions.length > 1 && (

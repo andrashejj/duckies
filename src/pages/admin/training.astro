@@ -1,0 +1,13 @@
+---
+export const prerender = false;
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import TrainingAttendance from "../../components/react/TrainingAttendance";
+import { trainingBoard } from "../../lib/server/club-points";
+import { clubToday } from "../../lib/club-points";
+import { z } from "zod";
+const chosen = z.iso.date().safeParse(Astro.url.searchParams.get("date") ?? clubToday());
+const board = await trainingBoard(chosen.success ? chosen.data : clubToday(), Astro.locals.session!.user.email);
+---
+<AdminLayout title="Training & points · Sunset Duckies" section="training">
+  <TrainingAttendance client:load initial={board} />
+</AdminLayout>
