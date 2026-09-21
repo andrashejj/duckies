@@ -23,7 +23,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
   const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
   const granolaAPI=/^\/api\/granola(?:\/|$)/.test(path);
-  const privateResponse = brandingPage||brandingTemplate||gallery||judge||judgePage||shop||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
+  const privateResponse = /^\/s(\/|$)/.test(path)||brandingPage||brandingTemplate||gallery||judge||judgePage||shop||/^\/(api|admin|account|orders|members|register)(\/|$)/.test(path);
 
   async function handle() {
     if(brandingPage||brandingTemplate||granolaAPI){

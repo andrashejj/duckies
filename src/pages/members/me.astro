@@ -7,10 +7,13 @@ import PhotoViewer from '../../components/PhotoViewer.astro';
 import { readMemberArchive } from '../../lib/server/member-archive';
 import { listPosts,socialPerson } from '../../lib/server/social';
 import { galleryPhotos } from '../../lib/server/photo-profiles';
+import { ownedPublicLinks } from '../../lib/server/public-shares';
 import { getDatabase } from '../../lib/server/db';
 const session=Astro.locals.session!;
 let data;
+let publicLinks: Awaited<ReturnType<typeof ownedPublicLinks>> = [];
 try{
+  publicLinks=await ownedPublicLinks(session.user.id);
   if(session.member){
     const actor={...session.member,userId:session.user.id};
     const [feed,person,photos,own]=await Promise.all([listPosts(actor,{author:actor.userId}),socialPerson(actor.userId),galleryPhotos(),getDatabase().query('SELECT \'upload:\'||id AS key FROM gallery_upload WHERE uploaded_by=$1 UNION SELECT t.photo_key AS key FROM gallery_kid_tag t JOIN club_current_guardian g ON g.kid_id=t.kid_id WHERE g.email=$1',[actor.email])]);
@@ -27,12 +30,16 @@ try{
     <header class="social-page-header"><div><h1>{data?.active?'My moments':'Your memories'}</h1><p>{data?.active?'The moments you shared and the duckies you love.':'Your own corner of the club, kept for you.'}</p></div><a class="journal-button" href="/account/profile">Edit my profile</a></header>
     {!data?<p role="alert">Your memories could not load. Please try again.</p>:<>
       {!data.active&&<div class="social-archive-note"><strong>Your personal archive</strong><p>{data.archive?.departureKnown ? `Saved when your membership ended on ${new Date(data.archive.endedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}.` : 'Your previously shared photos, kept for you.'} Your photos, posts and comments are here to revisit. New club moments and conversations are for active members.</p></div>}
-      <nav class="social-personal-tabs" aria-label="Your moments"><a href="#my-photos">Photos · {data.photos.length}</a><a href="#my-posts">Posts</a>{session.family&&<a href="/members/profile">My family</a>}<a href="/account/orders">Orders</a></nav>
+      <nav class="social-personal-tabs" aria-label="Your moments"><a href="#my-photos">Photos · {data.photos.length}</a><a href="#my-posts">Posts</a><a href="#my-public-links">Public links</a>{session.family&&<a href="/members/profile">My family</a>}<a href="/account/orders">Orders</a></nav>
       <section id="my-photos"><h2 class="social-section-title">Your photos</h2><div class="journal-grid">{data.photos.map(photo=><GalleryPhoto photo={photo} square/>)}</div>{!data.photos.length&&<p class="social-muted py-6">Your photos will live here.</p>}</section>
-      <PhotoViewer label="Your photos" name={data.person.name} kidId="" canManage={false}/>
+      <PhotoViewer label="Your photos" name={data.person.name} kidId="" canManage={false} shareableKeys={data.photos.map(p=>p.key)}/>
+      <section id="my-public-links" class="social-public-links"><h2 class="social-section-title">Your public links</h2><p class="social-muted">Only moments you choose to share appear here. Open a link to review it or stop sharing.</p>
+        <div data-public-link-list>{publicLinks.map(link=><button class="social-public-link" data-public-share={link.sourceKey}><span>{link.caption || 'Shared photo'}</span><span>Manage link ↗</span></button>)}</div>
+        <p class="social-muted" data-public-links-empty hidden={publicLinks.length>0}>No public links yet.</p>
+      </section>
       <section id="my-posts" class="social-own-posts"><h2 class="social-section-title">Your posts</h2>
         {data.feed?<SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} author={session.user.id}/>:<>
-          {data.archive?.posts.map(post=><article class="social-archived-post"><time>{new Date(post.date).toLocaleDateString('en-GB')}</time><p>{post.body}</p>{post.photoId&&<img src={`/gallery/photo/${post.photoId}.webp`} alt={post.body||'Your shared photo'} loading="lazy"/>}</article>)}
+          {data.archive?.posts.map(post=><article class="social-archived-post"><button class="journal-button" data-public-share={`post:${post.id}`}>Share publicly</button><time>{new Date(post.date).toLocaleDateString('en-GB')}</time><p>{post.body}</p>{post.photoId&&<img src={`/gallery/photo/${post.photoId}.webp`} alt={post.body||'Your shared photo'} loading="lazy"/>}</article>)}
           {!data.archive?.posts.length&&<p class="social-muted">No saved posts.</p>}
           {!!data.archive?.comments.length&&<><h2 class="social-section-title">Your comments</h2>{data.archive.comments.map(comment=><article class="social-archived-post"><time>{new Date(comment.date).toLocaleDateString('en-GB')}</time><p>{comment.body}</p></article>)}</>}
         </>}
@@ -40,3 +47,13 @@ try{
     </>}
   </section>
 </BaseLayout>
+
+<script>
+  document.addEventListener('public-share-changed', event => {
+    const {sourceKey,caption,active}=(event as CustomEvent<{sourceKey:string;caption:string;active:boolean}>).detail;
+    const list=document.querySelector('[data-public-link-list]'); if(!list)return;
+    list.querySelectorAll<HTMLElement>('[data-public-share]').forEach(button=>{if(button.dataset.publicShare===sourceKey)button.remove();});
+    if(active){const button=document.createElement('button');button.className='social-public-link';button.dataset.publicShare=sourceKey;const label=document.createElement('span');label.textContent=caption||'Shared photo';const action=document.createElement('span');action.textContent='Manage link ↗';button.append(label,action);list.prepend(button);}
+    document.querySelector<HTMLElement>('[data-public-links-empty]')!.hidden=list.children.length>0;
+  });
+</script>

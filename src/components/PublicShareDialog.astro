@@ -1,0 +1,103 @@
+<dialog class="public-share-dialog" data-public-share-dialog aria-labelledby="public-share-title">
+  <form data-public-share-form>
+    <header><div><span class="public-share-eyebrow">Beyond the club</span><h2 id="public-share-title">Share this moment</h2></div><button type="button" data-share-close aria-label="Close public sharing">×</button></header>
+    <p class="public-share-intro">Anyone with the link can see this one moment. Your profile, tags and club conversations stay private.</p>
+    <p data-share-loading role="status">Loading your preview…</p>
+    <div data-share-content hidden>
+      <div class="public-share-preview"><span>Public preview</span><img data-share-photo alt="The photo you are sharing" hidden/><p data-share-caption-preview></p></div>
+      <div data-share-create>
+        <label class="public-share-label" for="public-share-caption">Public caption</label>
+        <textarea id="public-share-caption" name="caption" maxlength="2000" rows="3" placeholder="A little context, if you like…"></textarea>
+        <label class="public-share-consent"><input type="checkbox" name="consent" required/><span>I have permission to share this publicly, including from the photographer and the parents of any children pictured.</span></label>
+        <button type="submit" class="journal-button journal-button-primary">Create public link</button>
+      </div>
+      <div data-share-existing hidden>
+        <p data-share-live>Only this preview is public. To change it, stop sharing and create a new link.</p>
+        <label class="public-share-label" for="public-share-url">Your public link</label>
+        <input id="public-share-url" type="url" readonly/>
+        <div class="public-share-actions"><button type="button" class="journal-button journal-button-primary" data-share-copy>Copy link</button><button type="button" class="journal-button" data-share-native hidden>Share…</button><a class="journal-button" data-share-open target="_blank" rel="noopener noreferrer">Open public view ↗</a></div>
+        <button type="button" class="public-share-stop" data-share-stop>Stop sharing</button>
+      </div>
+      <p class="public-share-footnote">You can stop sharing at any time. Copies or previews already saved elsewhere can’t be recalled.</p>
+    </div>
+    <p data-share-feedback role="status" aria-live="polite"></p>
+  </form>
+</dialog>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-public-share-dialog]')!;
+  const form = dialog.querySelector<HTMLFormElement>('form')!;
+  const field = dialog.querySelector<HTMLTextAreaElement>('textarea')!;
+  const consent = dialog.querySelector<HTMLInputElement>('[name=consent]')!;
+  const photo = dialog.querySelector<HTMLImageElement>('[data-share-photo]')!;
+  const caption = dialog.querySelector<HTMLElement>('[data-share-caption-preview]')!;
+  const feedback = dialog.querySelector<HTMLElement>('[data-share-feedback]')!;
+  const loading = dialog.querySelector<HTMLElement>('[data-share-loading]')!;
+  const content = dialog.querySelector<HTMLElement>('[data-share-content]')!;
+  const creating = dialog.querySelector<HTMLElement>('[data-share-create]')!;
+  const existing = dialog.querySelector<HTMLElement>('[data-share-existing]')!;
+  const url = dialog.querySelector<HTMLInputElement>('#public-share-url')!;
+  const native = dialog.querySelector<HTMLButtonElement>('[data-share-native]')!;
+  let key = '', busy = false, version = 0;
+  async function api(method: string, body?: object) {
+    const response = await fetch(`/api/public-shares${method==='GET'?`?source=${encodeURIComponent(key)}`:''}`, { method, cache:'no-store', headers:{'Content-Type':'application/json'}, ...(body ? {body:JSON.stringify(body)} : {}) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Please try again.');
+    return result;
+  }
+  function setBusy(value: boolean) { busy=value; form.querySelectorAll<HTMLButtonElement>('button:not([data-share-close])').forEach(button=>button.disabled=value); }
+  async function load() {
+    const current=++version;
+    loading.hidden=false;content.hidden=true;feedback.textContent='';setBusy(true);
+    try {
+      const result=await api('GET'); if(current!==version)return;
+      field.value=result.caption;caption.textContent=result.caption;caption.hidden=!result.caption;
+      photo.hidden=!result.photo; if(result.photo)photo.src=result.photo;else photo.removeAttribute('src');
+      creating.hidden=!!result.path||!result.available;existing.hidden=!result.path;
+      consent.required=!result.path&&result.available;consent.checked=false;
+      if(result.path){url.value=new URL(result.path,location.origin).href;dialog.querySelector<HTMLAnchorElement>('[data-share-open]')!.href=url.value;}
+      dialog.querySelector('[data-share-live]')!.textContent=result.available?'Only this preview is public. To change it, stop sharing and create a new link.':'This moment is no longer available publicly. You can remove its link below.';
+      native.hidden=!navigator.share;content.hidden=false;
+    } catch(error) { if(current===version)feedback.textContent=(error as Error).message; }
+    finally {if(current===version){loading.hidden=true;setBusy(false);}}
+  }
+  document.addEventListener('click',event=>{
+    const trigger=(event.target as Element).closest<HTMLElement>('[data-public-share]');
+    if(!trigger?.dataset.publicShare)return;
+    key=trigger.dataset.publicShare;dialog.showModal();void load();
+  });
+  dialog.querySelector('[data-share-close]')!.addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('close',()=>{version++;});
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+  // A photo viewer may be underneath this modal. Keep its arrow navigation still.
+  dialog.addEventListener('keydown',event=>event.stopPropagation());
+  field.addEventListener('input',()=>{caption.textContent=field.value;caption.hidden=!field.value;});
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();if(busy)return;
+    const sourceKey=key, publicCaption=field.value, current=version;
+    setBusy(true);feedback.textContent='';
+    try{
+      await api('POST',{sourceKey,caption:publicCaption,publicConsent:consent.checked});
+      document.dispatchEvent(new CustomEvent('public-share-changed',{detail:{sourceKey,caption:publicCaption,active:true}}));
+      if(current!==version)return;
+      await load();if(version===current+1)feedback.textContent='Your public link is ready.';
+    }catch(error){if(current===version)feedback.textContent=(error as Error).message;}
+    finally{if(current===version)setBusy(false);}
+  });
+  dialog.querySelector('[data-share-copy]')!.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(url.value);feedback.textContent='Public link copied.';}
+    catch{url.focus();url.select();feedback.textContent='Select and copy the link above.';}
+  });
+  native.addEventListener('click',async()=>{try{await navigator.share({title:'A moment with the Duckies',url:url.value});}catch(error){if((error as Error).name!=='AbortError')feedback.textContent='Use Copy link to share this moment.';}});
+  dialog.querySelector('[data-share-stop]')!.addEventListener('click',async()=>{
+    if(busy)return;
+    const sourceKey=key,current=version;
+    setBusy(true);feedback.textContent='';
+    try{
+      await api('DELETE',{sourceKey});
+      document.dispatchEvent(new CustomEvent('public-share-changed',{detail:{sourceKey,caption:'',active:false}}));
+      if(current!==version)return;
+      await load();if(version===current+1)feedback.textContent='Sharing stopped. The old link no longer works.';
+    }catch(error){if(current===version)feedback.textContent=(error as Error).message;}
+    finally{if(current===version)setBusy(false);}
+  });
+</script>

@@ -6,12 +6,13 @@ import PhotoTagger from "../../../components/PhotoTagger.astro";
 import PhotoViewer from "../../../components/PhotoViewer.astro";
 import PhotoIcon from "../../../components/PhotoIcon.astro";
 import { galleryPhotos, photoKids, photoTags } from "../../../lib/server/photo-profiles";
+import { personalPhotoKeys } from "../../../lib/server/public-shares";
 const member = Astro.locals.session!.member!;
 let data;
 try {
-  const [kids, photos, tags] = await Promise.all([photoKids(member), galleryPhotos(), photoTags(member)]);
+  const [kids, photos, tags, shareableKeys] = await Promise.all([photoKids(member), galleryPhotos(), photoTags(member), personalPhotoKeys(member.email)]);
   const kid = kids.find(k => k.id === Astro.params.id);
-  if (kid) data = { kid, tags, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)) };
+  if (kid) data = { kid, tags, shareableKeys, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)) };
   else Astro.response.status = 404;
 } catch { Astro.response.status = 503; }
 const title = data ? `${data.kid.name} in pictures · Sunset Duckies` : "Photo profile · Sunset Duckies";
@@ -46,7 +47,7 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
       </div>
       <p class="sr-only" data-filter-status role="status"></p>
       <p class="journal-footer">Shared inside the club. Made with salt water & sunshine.</p>
-      <PhotoViewer label={`${data.kid.name}'s photos`} name={data.kid.name} kidId={data.kid.id} canManage={data.kid.canManage} />
+      <PhotoViewer label={`${data.kid.name}'s photos`} name={data.kid.name} kidId={data.kid.id} canManage={data.kid.canManage} shareableKeys={data.shareableKeys} />
       {data.kid.canManage && <PhotoTagger />}
     </>}
   </section>

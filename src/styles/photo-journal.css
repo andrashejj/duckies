@@ -179,7 +179,7 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .social-text-post { font-size: 23px; line-height: 1.5; letter-spacing: -.02em; padding: 17px 0 25px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .social-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .social-tags a { border-radius: 4px; background: var(--surface-2); padding: 4px 8px; font-size: 11px; }
-.social-post-actions { display: flex; gap: 20px; align-items: center; margin: 15px 0 4px; }
+.social-post-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 15px 0 4px; }
 .social-post-actions button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; cursor: pointer; font-size: 12px; }
 .social-post-actions .is-liked { color: var(--accent); }
 .social-post-actions .social-copy { margin-left: auto; font-size: 11px; color: var(--fg-muted); }
@@ -245,3 +245,49 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
   .social-single { padding: 20px 0; }
   .social-feed-column> :is(.social-error,.social-muted) { margin-left: 16px; margin-right: 16px; }
 }
+
+/* A deliberate preview before a single private moment becomes public. */
+.public-share-dialog { width: min(520px, calc(100% - 24px)); max-height: calc(100dvh - 24px); margin: auto; padding: 26px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--fg); overflow-y: auto; font-family: 'Outfit', sans-serif; }
+.public-share-dialog::backdrop { background: var(--journal-photo-shadow); backdrop-filter: blur(5px); }
+.public-share-dialog header { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.public-share-dialog h2 { font-size: 25px; font-weight: 650; letter-spacing: -.04em; }
+.public-share-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .13em; color: var(--fg-muted); }
+.public-share-dialog [data-share-close] { width: 36px; height: 36px; font-size: 28px; }
+.public-share-intro, .public-share-footnote, [data-share-live] { color: var(--fg-muted); font-size: 13px; line-height: 1.55; margin: 14px 0; }
+.public-share-preview { margin: 20px 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; }
+.public-share-preview > span { display: block; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid var(--line); }
+.public-share-preview img { width: 100%; max-height: 270px; object-fit: contain; background: var(--surface-2); }
+.public-share-preview p { padding: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; }
+.public-share-label { display: block; margin: 12px 0 7px; font-weight: 600; font-size: 13px; }
+.public-share-dialog textarea, .public-share-dialog input[type=url] { width: 100%; padding: 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--fg); font: inherit; font-size: 14px; }
+.public-share-consent { display: flex; align-items: start; gap: 10px; font-size: 12px; line-height: 1.5; margin: 16px 0; }
+.public-share-consent input { flex-shrink: 0; margin-top: 3px; width: 17px; height: 17px; accent-color: var(--accent); }
+.public-share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.public-share-stop { font-size: 13px; text-decoration: underline; text-underline-offset: 3px; padding: 10px 0; }
+.public-share-footnote { font-size: 11px; }
+[data-share-feedback] { font-size: 13px; line-height: 1.5; }
+.public-moment { min-height: 100dvh; background: var(--surface-2); color: var(--fg); font-family: 'Outfit', sans-serif; }
+.public-moment-header { max-width: 660px; margin: auto; padding: 25px 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.public-moment-header > a { font-family: var(--font-script); font-size: 35px; font-weight: 700; letter-spacing: -.07em; }
+.public-moment-header > a span { color: var(--accent); }
+.public-moment-header > span { color: var(--fg-muted); font-size: 12px; }
+.public-moment main { max-width: 620px; margin: 0 auto; }
+.public-moment-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.public-moment-card header { padding: 18px; display: flex; gap: 12px; align-items: center; }
+.public-moment-card header img { border-radius: 50%; }
+.public-moment-card h1 { font-size: 15px; font-weight: 600; }
+.public-moment-card header p { font-size: 12px; color: var(--fg-muted); margin-top: 3px; }
+.public-moment-photo { width: 100%; max-height: 760px; object-fit: contain; background: var(--surface-2); }
+.public-moment-caption { font-size: 17px; line-height: 1.6; padding: 22px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.public-moment-unavailable { padding: 70px 25px; text-align: center; }
+.public-moment-unavailable h1 { font-size: 26px; font-weight: 600; margin-bottom: 12px; }
+.public-moment-unavailable p, .public-moment footer { color: var(--fg-muted); font-size: 13px; line-height: 1.7; }
+.public-moment footer { padding: 30px 20px; text-align: center; }
+.public-moment footer a { display: inline-block; margin-top: 10px; color: var(--fg); }
+@media (max-width: 640px) { .public-moment-card { border-radius: 0; border-left: 0; border-right: 0; } .public-share-dialog { padding: 20px; } .public-share-preview img { max-height: 200px; } }
+
+.social-public-links { padding: 24px 0; border-bottom: 1px solid var(--line); }
+.social-public-links > p { margin: 8px 0 14px; font-size: 13px; }
+.social-public-link { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; padding: 15px 0; border-top: 1px solid var(--line); text-align: left; }
+.social-public-link > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+.social-public-link > span:last-child { flex-shrink: 0; font-size: 12px; color: var(--fg-muted); }

@@ -31,7 +31,8 @@ function PostCard({initial,onRemove,onPhoto}:{initial:SocialPost;onRemove:()=>vo
       <div className="social-post-actions">
         <button disabled={busy||!ready} className={post.liked?'is-liked':''} aria-label={post.liked?'Unlike post':'Like post'} aria-pressed={post.liked} onClick={()=>void act(async()=>{await api(endpoint,json('PUT',{liked:!post.liked}));await refresh();})}><Heart filled={post.liked}/><span>{post.likes||''}</span></button>
         <button aria-label="Comments" aria-expanded={open} disabled={busy||!ready} onClick={()=>void act(async()=>{if(!open)await refresh();setOpen(!open);})}><CommentIcon/><span>{post.comments||''}</span></button>
-        <button disabled={!ready} className="social-copy" onClick={()=>void act(async()=>{await navigator.clipboard.writeText(`${location.origin}/members/posts/${post.id}`);setCopied(true);})}>{copied?'Link copied':'Copy link'}</button>
+        {post.canShare&&<button className="social-copy" data-public-share={`post:${post.id}`}>Share publicly</button>}
+        <button disabled={!ready} className="social-copy" onClick={()=>void act(async()=>{await navigator.clipboard.writeText(`${location.origin}/members/posts/${post.id}`);setCopied(true);})}>{copied?'Link copied':'Copy club link'}</button>
       </div>
       {open&&<section className="social-comments" aria-label="Post comments">
         {comments.length===0&&<p className="social-muted">Start the conversation.</p>}

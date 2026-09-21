@@ -6,7 +6,7 @@ import { sha256 } from "../registration/records";
 export type SocialActor = { userId: string; email: string; role: string };
 export type SocialPerson = { id: string; name: string; active: boolean };
 export type SocialComment = { id: string; body: string; date: string; author: SocialPerson; canDelete: boolean };
-export type SocialPost = { id: string; body: string; date: string; photoId: string | null; author: SocialPerson; likes: number; liked: boolean; comments: number; canDelete: boolean; tags: { id:string; name:string }[] };
+export type SocialPost = { id: string; body: string; date: string; photoId: string | null; author: SocialPerson; likes: number; liked: boolean; comments: number; canDelete: boolean; canShare: boolean; tags: { id:string; name:string }[] };
 const name = `COALESCE(NULLIF(pp.name,''),NULLIF(u.name,''),'Club member')`;
 const visible = `p.hidden_at IS NULL AND (p.photo_id IS NULL OR photo.status='approved')`;
 const person = `jsonb_build_object('id',u.id,'name',${name},'active',EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)))`;
@@ -36,7 +36,7 @@ export async function listPosts(actor:SocialActor,options:{author?:string;before
     (SELECT count(*)::int FROM club_post_like l WHERE l.post_id=p.id) AS likes,
     EXISTS(SELECT 1 FROM club_post_like l WHERE l.post_id=p.id AND l.user_id=$1) AS liked,
     (SELECT count(*)::int FROM club_post_comment c WHERE c.post_id=p.id) AS comments,
-    (p.author_id=$1 OR $2) AS "canDelete",
+    (p.author_id=$1 OR $2) AS "canDelete", (p.author_id=$1) AS "canShare",
     COALESCE((SELECT jsonb_agg(jsonb_build_object('id',k.id,'name',k.name)) FROM gallery_kid_tag t JOIN club_kid k ON k.id=t.kid_id
       WHERE t.upload_id=p.photo_id AND k.archived_at IS NULL),'[]') AS tags
     FROM club_post p JOIN "user" u ON u.id=p.author_id LEFT JOIN club_parent_profile pp ON pp.email=lower(u.email)
