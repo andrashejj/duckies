@@ -1,0 +1,28 @@
+---
+import PhotoIcon from "./PhotoIcon.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+const nav = [
+  { href: "/gallery", label: "Gallery", icon: "home" as const },
+  { href: "/gallery/duckies", label: "Duckies", icon: "grid" as const },
+  { href: "/gallery/share", label: "Create", icon: "plus" as const },
+  { href: "/members/profile", label: "My family", icon: "user" as const },
+];
+---
+<aside class="journal-sidebar">
+  <a href="/gallery/duckies" class="journal-wordmark" aria-label="Sunset Duckies photos">duckies<span>.</span></a>
+  <nav aria-label="Photo navigation" class="journal-desktop-nav">
+    {nav.map(item => <a href={item.href} aria-label={item.label} aria-current={item.label === "Duckies" ? "page" : undefined}><PhotoIcon name={item.icon} /><span>{item.label}</span></a>)}
+  </nav>
+  <div class="journal-sidebar-bottom">
+    <a href="/" class="flex items-center gap-3 text-sm"><PhotoIcon name="external" class="h-5 w-5" />Back to the club</a>
+    <div class="flex items-center gap-3"><ThemeToggle variant="performance" class="rounded-full border-0" /><span class="text-xs text-fg-muted">Light / dark</span></div>
+    <p class="text-xs leading-relaxed text-fg-muted">Sunset Duckies<br />Tamarin, Mauritius</p>
+  </div>
+</aside>
+<header class="journal-mobile-header">
+  <a href="/gallery/duckies" class="journal-wordmark" aria-label="Sunset Duckies photos">duckies<span>.</span></a>
+  <div class="flex items-center gap-2"><span class="text-xs text-fg-muted">Club photos</span><ThemeToggle variant="performance" class="rounded-full border-0" /></div>
+</header>
+<nav aria-label="Mobile photo navigation" class="journal-mobile-nav">
+  {nav.map(item => <a href={item.href} aria-label={item.label} aria-current={item.label === "Duckies" ? "page" : undefined}><PhotoIcon name={item.icon} /><span>{item.label}</span></a>)}
+</nav>

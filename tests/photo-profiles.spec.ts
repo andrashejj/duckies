@@ -48,6 +48,7 @@ test("profiles and tag APIs stay inside membership; guardians can manage only th
   await expect(page.getByRole('button',{name:/Tag duckies in photo:/})).toHaveCount(0);
   await page.getByRole('button',{name:/Open photo:/}).click();
   await expect(page.getByRole('dialog',{name:"Lara Test's photos"})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Manage tags'})).toHaveCount(0);
   expect(browserErrors).toEqual([]);
   await unrelated.dispose();
 });
@@ -70,11 +71,10 @@ test("tagging a shared photo puts it on two profiles; removing one tag preserves
   await page.goto(`/gallery/duckies/${mine}`);
   await expect(page.getByRole('heading',{name:'Lara Test',exact:true})).toBeVisible();
   await expect(page.locator('[data-profile-count]')).toHaveText('1');
-  await expect(page.getByRole('link',{name:'Milo Test',exact:true})).toBeVisible();
   await page.getByRole('button',{name:/Open photo:/}).click();
+  await expect(page.getByRole('link',{name:'Milo Test',exact:true})).toBeVisible();
   await expect(page.getByRole('dialog',{name:"Lara Test's photos"})).toBeVisible();
-  await page.keyboard.press('Escape');
-  await page.getByRole('button',{name:/Tag duckies in photo:/}).click();
+  await page.getByRole('button',{name:'Manage tags'}).click();
   await page.getByRole('button',{name:'Remove tag for Lara Test'}).click();
   await expect(dialog.getByRole('status')).toContainText('Tag removed.');
   await page.getByRole('button',{name:'Close photo tags'}).click();
@@ -103,6 +103,7 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await signIn(page.request,parent);
   for(const slug of ['standing-tall','sunset-ride-arms-out','cup-arms-out','crew-and-boards','little-reef-long-wave','bonfire-crew'])
     expect((await admin.post('/api/gallery/tags',post({kidId:mine,photoKey:`curated:${slug}`}))).status()).toBe(200);
+  expect((await admin.post('/api/gallery/tags',post({kidId:other,photoKey}))).status()).toBe(200);
   await page.setViewportSize({width:390,height:844});await page.goto(`/gallery/duckies/${mine}`);
   await expect(page.getByRole('button',{name:/Open photo:/})).toHaveCount(6);
   await expect(page.locator('article img').first()).toBeVisible();
@@ -110,6 +111,37 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/duckie-photo-profile-mobile.png',fullPage:true});
   await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:'test-results/duckie-photo-profile-desktop.png',fullPage:true});
+  await page.getByRole('tab',{name:'With friends'}).click();
+  await expect(page.getByRole('button',{name:/Open photo:/})).toHaveCount(1);
+  await page.getByRole('button',{name:/Open photo:/}).click();
+  const viewer = page.getByRole('dialog',{name:"Lara Test's photos"});
+  await expect(viewer.getByRole('link',{name:'Milo Test',exact:true})).toBeVisible();
+  await expect(viewer.getByRole('button',{name:'Next photo'})).toBeDisabled();
+  await page.keyboard.press('Escape');
+  await page.getByRole('tab',{name:'With friends'}).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByRole('tab',{name:'Photos',exact:true})).toHaveAttribute('aria-selected','true');
+  await page.getByRole('button',{name:/Open photo:/}).first().click();
+  const firstPhoto = await viewer.locator('[data-viewer-image]').getAttribute('src');
+  await page.keyboard.press('ArrowRight');
+  await expect(viewer.locator('[data-viewer-image]')).not.toHaveAttribute('src',firstPhoto!);
+  await expect(viewer.locator('[data-viewer-count]')).toHaveText('2 / 6');
+  await viewer.locator('[data-viewer-image]').evaluate(image=>(image as HTMLImageElement).decode());
+  await page.screenshot({path:'test-results/duckie-photo-viewer-desktop.png'});
+  await page.setViewportSize({width:390,height:844});
+  expect(await viewer.evaluate(dialog=>dialog.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'test-results/duckie-photo-viewer-mobile.png'});
+  await viewer.getByRole('button',{name:'Close photo',exact:true}).click();
+  await page.getByRole('button',{name:'Switch to dark mode'}).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await page.screenshot({path:'test-results/duckie-photo-profile-dark.png',fullPage:true});
+  await page.getByRole('link',{name:'All duckies',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'The duckies',exact:true})).toBeVisible();
+  await expect(page.getByRole('navigation',{name:'Mobile photo navigation'})).toBeInViewport();
+  await page.evaluate(()=>document.fonts.ready);
+  await page.locator('.journal-directory-cover img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
+  await page.screenshot({path:'test-results/duckie-photo-directory-mobile.png',fullPage:true});
+  await page.getByRole('link',{name:/Lara Test 6 photos/}).click();
   await page.getByRole('link',{name:/Upload photos/}).click();
   await expect(page.getByLabel("Add to a duckie's profile")).toHaveValue(mine);
   await page.locator('#share-files').setInputFiles('src/assets/gallery/standing-tall.webp');
@@ -120,7 +152,9 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await expect(page.locator('[data-profile-count]')).toHaveText('7');
   await db.query('UPDATE club_kid SET archived_at=now() WHERE id=$1',[mine]);
   expect((await page.request.get(`/gallery/duckies/${mine}`)).status()).toBe(404);
-  const tags=await (await page.request.get('/api/gallery/tags')).json();expect(Object.keys(tags.tags)).toHaveLength(0);
+  const tags=await (await page.request.get('/api/gallery/tags')).json();
+  expect(Object.keys(tags.tags)).toEqual([photoKey]);
+  expect(tags.tags[photoKey].map((tag:{id:string})=>tag.id)).toEqual([other]);
 });
 
 test("sign-in returns members to the requested photo profile and checks revoked access",async({page})=>{

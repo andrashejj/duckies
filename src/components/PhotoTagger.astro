@@ -64,6 +64,7 @@ import { ctaClass, field } from "../lib/ui";
       const response = await fetch("/api/gallery/tags", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kidId, photoKey }) });
       const result = await response.json(); if (!response.ok) throw new Error(result.error ?? "Could not save tag.");
       const next = await load(); kids = next.kids; tags = next.tags;
+      document.dispatchEvent(new CustomEvent("photo-tags-updated", { detail: { tags } }));
       status.textContent = method === "DELETE" ? "Tag removed. The photo stays in the club gallery." : "Added to their photo profile.";
       // Removing a tag from the current profile also removes its tile and count on close.
       if (method === "DELETE" && location.pathname === `/gallery/duckies/${kidId}`) dialog.dataset.refresh = "true";
