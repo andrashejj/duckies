@@ -1,3 +1,4 @@
+import { kidGuardians, type FamilyGuardian } from "./guardians";
 import { getDatabase } from "../server/db";
 import { CUP_TERM } from "./cup";
 import { issueLink, memberPaidSql, RegistrationError } from "./records";
@@ -7,7 +8,7 @@ import { getSemester, type Semester } from "./semesters";
 // What a signed-in guardian sees and changes about their own family.
 //
 // A family is found the way the Cup finds it: the kids whose latest signed
-// registration lists this email among the legal guardians. Nothing else on
+// registration lists this email, or a guardian explicitly shares access. Nothing else on
 // the roster is reachable from here, and the signed record itself is never
 // edited in place — corrections are re-signed through a fresh private link.
 
@@ -46,6 +47,7 @@ export type FamilyProfile = {
   name: string;
   term: Semester;
   kids: FamilyKid[];
+  guardians: FamilyGuardian[];
 };
 
 const kidColumns = `SELECT k.id, k.name, k.contact_name, k.contact_phone,
@@ -60,15 +62,14 @@ const kidColumns = `SELECT k.id, k.name, k.contact_name, k.contact_phone,
   (SELECT json_build_object('edition',c.edition,'member',c.member,'createdAt',c.created_at)
     FROM club_cup_entry c WHERE c.kid_id=k.id AND c.edition=$3 LIMIT 1) AS cup,
   ${memberPaidSql("k.id", "$2")} AS member_paid
-  FROM club_kid k JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
-  WHERE k.archived_at IS NULL AND EXISTS (SELECT 1 FROM jsonb_array_elements(w.snapshot->'registration'->'guardians') g WHERE lower(g->>'email')=$1)`;
+  FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
+  WHERE k.archived_at IS NULL AND EXISTS (SELECT 1 FROM club_current_guardian g WHERE g.kid_id=k.id AND g.email=$1)`;
 
 // The ids this email may act on. Everything that writes goes through here
 // first, so a guessed uuid never reaches another family's duckie.
 export async function familyKidIds(email: string): Promise<string[]> {
   const { rows } = await getDatabase().query(
-    `SELECT k.id FROM club_kid k JOIN LATERAL (SELECT snapshot->'registration' AS r FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
-    WHERE k.archived_at IS NULL AND EXISTS (SELECT 1 FROM jsonb_array_elements(w.r->'guardians') g WHERE lower(g->>'email')=$1)`,
+    `SELECT kid_id AS id FROM club_current_guardian WHERE email=$1`,
     [email],
   );
   return rows.map((row) => row.id as string);
@@ -123,6 +124,7 @@ export async function familyProfile(guardian: { email: string; name: string }): 
   return {
     email: guardian.email,
     name: guardian.name,
+    guardians: await kidGuardians(rows.map(row => row.id)),
     term,
     kids: rows.map((row) => {
       const registration = row.registration as RegistrationInput | null;

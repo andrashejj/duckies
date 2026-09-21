@@ -10,6 +10,7 @@ import { productSizes } from "./sizes";
 
 export const reserveSchema = z.object({
   requestKey: z.uuid(),
+  familyKidIds: z.array(z.uuid()).max(20).optional(),
   customer: z.object({
     name: z.string().trim().min(1, "Name is required").max(120),
     email: z.email("Valid email is required").max(200).transform(email => email.toLowerCase()),
@@ -88,6 +89,12 @@ export async function createReservation(
           message: opts.userId ? "Reservation placed (signed-in customer)." : "Reservation placed (guest)." } },
       }, include: { items: true },
     });
+    if (opts.userId) {
+      const allowed = await tx.$queryRaw<{kid_id: string}[]>`SELECT g.kid_id FROM club_current_guardian g JOIN "user" u ON lower(u.email)=g.email WHERE u.id=${opts.userId}`;
+      const kidIds = [...new Set(input.familyKidIds ?? allowed.map(g => g.kid_id))];
+      if (kidIds.some(id => !allowed.some(g => g.kid_id===id))) throw new ReservationError("Choose only your own duckies for shared family access.");
+      if (kidIds.length) await tx.clubOrderFamily.createMany({ data: kidIds.map(kid_id=>({order_id:order.id,kid_id})) });
+    }
     return { ...order, replayed: false };
   }, { timeout: 15000 });
 }

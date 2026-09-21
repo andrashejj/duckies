@@ -2,12 +2,13 @@ import { test, expect, type APIRequestContext } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
-import { createPrismaClient } from "../src/lib/prisma-factory";
-import { getDatabase } from "../src/lib/server/db";
+import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 import { codeFor, signIn } from "./auth-helpers";
 
-const db = getDatabase();
-const prisma = createPrismaClient();
+const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
+const prisma = new PrismaClient({ adapter: new PrismaPg(db, { disposeExternalPool: false }) });
 const origin = "http://127.0.0.1:4329";
 const organiser = "organiser@example.com";
 const member = "parent@example.com";
@@ -142,7 +143,7 @@ test("shop customers use shared sign-in but cannot access the roster, admin, or 
     expect((await page.request.post(route, { data: {}, headers: { origin } })).status()).toBe(403);
   }
   await page.goto("/account/orders", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("link", { name: "View reservation" })).toHaveAttribute("href", `/orders/${own.orderId}?t=${own.guestToken}`);
+  await expect(page.getByRole("link", { name: "View reservation" })).toHaveAttribute("href", `/orders/${own.orderId}`);
   expect(await page.content()).not.toContain(other.orderId);
   expect(await prisma.user.count({ where: { email: "shopper@example.com" } })).toBe(1);
   expect((await db.query('SELECT to_regclass(\'public."User"\') AS legacy')).rows[0].legacy).toBeNull();

@@ -17,7 +17,7 @@ const profile = await readOwnProfile(user.email.trim().toLowerCase(), user.name)
         <h2 class="font-display text-xl font-bold">Your sign-in email</h2>
         <p class="mt-3 break-all text-sm">{profile.email}</p>
         <p class="mt-3 text-sm leading-6">This email connects you to your duckies and signed registrations. Editing your profile leaves signed records intact.</p>
-        {Astro.locals.session?.member && <a href="/members/profile" class="mt-5 inline-flex min-h-11 items-center font-bold underline underline-offset-4">Open my family →</a>}
+        {(Astro.locals.session?.member || Astro.locals.session?.family) && <a href="/members/profile" class="mt-5 inline-flex min-h-11 items-center font-bold underline underline-offset-4">Open my family →</a>}
       </aside>
     </div>
   </section>

@@ -1,5 +1,7 @@
 ---
 export const prerender = false;
+import { familyOrderWhere } from "../../lib/server/family-access";
+import { prisma } from "../../lib/prisma";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { shortOrderId } from "../../lib/format";
@@ -15,7 +17,7 @@ import { bodyCopy } from "../../lib/ui";
 const { id } = Astro.params;
 const token = Astro.url.searchParams.get("t");
 
-if (!id || !token) {
+if (!id) {
   return Astro.redirect("/shop");
 }
 
@@ -25,7 +27,9 @@ let activeDrop: Awaited<ReturnType<typeof getActiveDrop>> = null;
 
 try {
   [order, activeDrop] = await Promise.all([
-    getOrderForGuest(id, token),
+    token ? getOrderForGuest(id, token) : Astro.locals.session
+      ? prisma.order.findFirst({ where: { id, AND: await familyOrderWhere(Astro.locals.session.user) }, include: { items: true } })
+      : Promise.resolve(null),
     getActiveDrop(),
   ]);
 } catch (err) {

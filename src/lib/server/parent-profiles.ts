@@ -1,16 +1,14 @@
 import { getDatabase } from "./db";
 import type { ParentProfile } from "../parent-profile";
 
-/** Latest signed guardian relationships, with editable adult profiles layered on top. */
+/** Current guardian relationships, with editable adult profiles layered on top. */
 export async function readParentProfiles(email?: string): Promise<ParentProfile[]> {
   const db = getDatabase();
   const guardians = await db.query<{ email: string; name: string; phone: string; kid_id: string; kid_name: string; relationship: string }>(`
-    SELECT lower(trim(g->>'email')) AS email, g->>'name' AS name, g->>'phone' AS phone, g->>'relationship' AS relationship, k.id AS kid_id, COALESCE(w.r->>'childName',k.name) AS kid_name
-    FROM club_kid k JOIN LATERAL (
-      SELECT snapshot->'registration' AS r, signed_at FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1
-    ) w ON true, jsonb_array_elements(COALESCE(w.r->'guardians','[]'::jsonb)) g
-    WHERE k.archived_at IS NULL AND COALESCE(g->>'email','')<>'' AND ($1::text IS NULL OR lower(trim(g->>'email'))=$1)
-    ORDER BY w.signed_at DESC, k.id`, [email ?? null]);
+    SELECT g.email,g.name,g.phone,g.relationship,g.kid_id,k.name AS kid_name
+    FROM club_current_guardian g JOIN club_kid k ON k.id=g.kid_id
+    WHERE ($1::text IS NULL OR g.email=$1)
+    ORDER BY k.id`, [email ?? null]);
   const accounts = await db.query<{ email: string; name: string | null; phone: string | null; photo_updated_at: Date | null; saved_name: string | null }>(`
     WITH emails AS (
       SELECT email FROM club_member UNION SELECT email FROM cup_judge UNION SELECT email FROM club_parent_profile

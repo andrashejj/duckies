@@ -33,13 +33,9 @@ export type GuardianKid = {
 // guardian relationship. Other adults on the same waiver stay private.
 export async function guardianContact(email: string) {
   const { rows } = await getDatabase().query(
-    `SELECT g->>'name' AS "contactName", g->>'phone' AS "contactPhone"
-    FROM club_kid k JOIN LATERAL (
-      SELECT snapshot->'registration' AS r, signed_at FROM club_signed_waiver
-      WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1
-    ) w ON true, jsonb_array_elements(w.r->'guardians') g
-    WHERE k.archived_at IS NULL AND lower(g->>'email')=$1
-    ORDER BY w.signed_at DESC, k.id LIMIT 1`,
+    `SELECT COALESCE(p.name,g.name) AS "contactName",COALESCE(p.phone,g.phone) AS "contactPhone"
+    FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email
+    WHERE g.email=$1 ORDER BY g.kid_id LIMIT 1`,
     [email],
   );
   return (rows[0] as { contactName: string; contactPhone: string } | undefined) ?? null;
@@ -53,7 +49,7 @@ export async function guardianKids(email: string): Promise<GuardianKid[]> {
     `SELECT k.id, k.name, ${memberPaidSql("k.id", "$2")} AS member,
       EXISTS (SELECT 1 FROM club_cup_entry c WHERE c.kid_id=k.id AND c.edition=$3) AS registered
     FROM club_kid k JOIN LATERAL (SELECT snapshot->'registration' AS r FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true
-    WHERE k.archived_at IS NULL AND EXISTS (SELECT 1 FROM jsonb_array_elements(w.r->'guardians') g WHERE lower(g->>'email')=$1)
+    WHERE k.archived_at IS NULL AND EXISTS (SELECT 1 FROM club_current_guardian g WHERE g.kid_id=k.id AND g.email=$1)
     ORDER BY lower(k.name), k.id`,
     [email, semester.id, CUP_TERM],
   );
@@ -67,9 +63,9 @@ export async function registerGuardianKid(email: string, kidId: string) {
   if (!kid) throw new RegistrationError("That kid is not on a club registration under this email.", 404);
   await getDatabase().query(
     `INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone)
-    SELECT $1, $2, true, g->>'name', g->>'phone'
-    FROM club_signed_waiver w, jsonb_array_elements(w.snapshot->'registration'->'guardians') g
-    WHERE w.kid_id=$1 AND lower(g->>'email')=$3 ORDER BY w.signed_at DESC LIMIT 1
+    SELECT $1, $2, true, COALESCE(p.name,g.name), COALESCE(p.phone,g.phone)
+    FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email
+    WHERE g.kid_id=$1 AND g.email=$3
     ON CONFLICT (kid_id, edition) DO UPDATE SET member=true, contact_name=EXCLUDED.contact_name, contact_phone=EXCLUDED.contact_phone`,
     [kidId, CUP_TERM, email],
   );

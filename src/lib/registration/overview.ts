@@ -66,7 +66,7 @@ export function kidOverview(
     fact("Birth date correction", `Club corrected ${correction.previousDate} to ${correction.dateOfBirth} on ${new Date(correction.recordedAt).toLocaleDateString()} (${correction.actorEmail}). ${correction.reason} The original signed waiver is unchanged.`);
   }
   fact(
-    "Legal guardians",
+    "Guardians on signed registration",
     r
       ? r.guardians
           .map((g) => `${g.name} (${g.relationship}) · ${g.phone} · ${g.email}`)
@@ -166,25 +166,26 @@ export function kidOverview(
       : "Not issued — generate and send the link",
   );
   section.append(facts);
+  section.append(link("Manage parents & legal guardians", `/admin/kids/${kid.id}/guardians`));
   // Sign-in access is approved by hand, guardian by guardian. Payment never
   // grants it on its own.
-  if (r) {
+  if (kid.familyGuardians.length) {
     const access = document.createElement("div");
     access.className = duckieBox;
-    access.append(text("h3", "Sign-in access"));
-    access.append(text("p", "Approved guardians can sign in, see the lineup and register this kid for the Cup."));
-    for (const guardian of r.guardians) {
+    access.append(text("h3", "Club membership access"));
+    access.append(text("p", "All linked guardians can sign in to their own family. Club approval also opens the full lineup and gallery; the family can use the shop."));
+    for (const guardian of kid.familyGuardians) {
       const email = guardian.email.toLowerCase();
       const approved = (kid.approvedGuardians ?? []).includes(email);
       const row = document.createElement("div");
       row.className = duckieActions;
-      row.append(text("span", `${guardian.name} · ${email} · ${approved ? "can sign in" : "no access"}`));
+      row.append(text("span", `${guardian.name} · ${email} · ${approved ? "club member" : "family access only"}`));
       row.append(
-        button(approved ? "Revoke sign-in" : "Approve sign-in", async () => {
+        button(approved ? "Revoke membership" : "Approve membership", async () => {
           try {
             await api(approved ? `/api/members?email=${encodeURIComponent(email)}` : "/api/members", approved ? "DELETE" : "POST", approved ? undefined : { email });
             await reload();
-            report(approved ? `${email} can no longer sign in.` : `${email} can sign in now.`);
+            report(approved ? `${email} no longer has club membership.` : `${email} now has club membership.`);
           } catch (error) {
             report(error instanceof Error ? error.message : "Couldn't change sign-in access.");
           }

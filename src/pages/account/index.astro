@@ -1,5 +1,6 @@
 ---
 export const prerender = false;
+import { familyOrderWhere } from "../../lib/server/family-access";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { prisma } from "../../lib/prisma";
@@ -14,7 +15,7 @@ const user = session!.user;
 let recentOrderCount = 0;
 try {
   recentOrderCount = await prisma.order.count({
-    where: { OR: [{ userId: user.id }, { email: user.email ?? "" }] },
+    where: await familyOrderWhere(user),
   });
 } catch (err) {
   console.error("[account] order count failed:", err);
@@ -48,7 +49,7 @@ const description = "Your Sunset Duckies account dashboard.";
           {recentOrderCount}
         </p>
         <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-fg/60">
-          All orders linked to {user.email}
+          Your shared family reservations
         </p>
         <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500">
           View history →
@@ -69,7 +70,7 @@ const description = "Your Sunset Duckies account dashboard.";
         </p>
       </StickerCard>
 
-      {session?.member && <StickerCard href="/members/profile" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
+      {(session?.member || session?.family) && <StickerCard href="/members/profile" as="a" class="block space-y-2 p-6 hover:-translate-y-0.5 transition-transform">
         <Kicker>Your family</Kicker>
         <p class="font-display text-2xl text-fg [font-variation-settings:'wdth'_112] font-bold"
         >
