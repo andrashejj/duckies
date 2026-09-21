@@ -11,14 +11,15 @@ const items = admin ? [
   ["dashboard", "Shop overview", "/admin"], ["orders", "Reservations", "/admin/orders"], ["drops", "Drops", "/admin/drops"],
   ["products", "Products", "/admin/products"], ["customers", "Customers", "/admin/customers"], ["gallery", "Gallery", "/admin/gallery"],
 ] : [
-  ...(session?.member ? [["family", "My family", "/members/profile"], ["lineup", "Club lineup", "/members"]] : []),
-  ["profile", "My profile", "/account/profile"], ["orders", "My orders", "/account/orders"], ["cup", "Cup & judging", "/cup/judge"],
+  ...(session?.member || session?.family ? [["family", "My family", "/members/profile"]] : []),
+  ...(session?.member ? [["lineup", "Club lineup", "/members"]] : []),
+  ["profile", "My profile", "/account/profile"], ["orders", "Family orders", "/account/orders"], ["cup", "Cup & judging", "/cup/judge"],
 ];
 const link = "inline-flex min-h-11 items-center rounded-full border-2 border-transparent px-4 py-2 font-display text-sm font-bold no-underline transition hover:bg-cream-soft/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun-500";
 ---
 <header class="relative z-50 border-b-2 border-edge bg-ink-950 text-cream-soft" data-workspace-header>
   <div class="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-8">
-    <a href={admin ? "/admin/kids" : session?.member ? "/members/profile" : "/account/profile"} class="flex items-center gap-3 no-underline">
+    <a href={admin ? "/admin/kids" : (session?.member || session?.family) ? "/members/profile" : "/account/profile"} class="flex items-center gap-3 no-underline">
       <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" class="h-12 w-12 rounded-full border-2 border-cream-soft" />
       <span><span class="block font-mono text-[0.65rem] uppercase tracking-[0.18em] text-sun-500">{admin ? "Club admin" : "Your club"}</span><span class="font-display text-xl font-bold">Sunset Duckies</span></span>
     </a>

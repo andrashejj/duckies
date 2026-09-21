@@ -1,3 +1,4 @@
+import { familyEmails } from "../../../lib/server/family-access";
 import { registrationRateLimit, requireSignedIn, safeRoute } from "../../../lib/registration/http";
 import { RegistrationError } from "../../../lib/registration/records";
 import { readPhoto } from "../../../lib/registration/photos";
@@ -8,7 +9,7 @@ export const prerender = false;
 async function access(request: Request, mutation = false) {
   const user = await requireSignedIn(request, mutation);
   const email = new URL(request.url).searchParams.get("email")?.trim().toLowerCase() || user.email;
-  if (email !== user.email && (await findMember(user.email))?.role !== "organiser") throw new RegistrationError("This photo is private.", 403);
+  if (email !== user.email && (await findMember(user.email))?.role !== "organiser" && (mutation || !(await familyEmails(user.email)).includes(email))) throw new RegistrationError("This photo is private.", 403);
   if (email !== user.email && !(await readParentProfiles(email)).length) throw new RegistrationError("Parent not found.", 404);
   return email;
 }

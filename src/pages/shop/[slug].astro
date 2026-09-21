@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import { formatPrice } from "../../lib/format";
+import { getDatabase } from "../../lib/server/db";
 import ReserveForm from "../../components/react/ReserveForm";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -20,7 +21,7 @@ import { bodyCopy, eyebrowBadge } from "../../lib/ui";
 const { slug } = Astro.params;
 
 // Non-members land on the shop's coming-soon teaser instead of a product.
-if (!slug || !Astro.locals.session?.member) {
+if (!slug || !Astro.locals.session?.canShop) {
   return Astro.redirect("/shop");
 }
 
@@ -44,6 +45,7 @@ if (!product && !loadError) {
   return new Response(null, { status: 404, statusText: "Product not found" });
 }
 
+const familyKids = (await getDatabase().query("SELECT k.id,k.name FROM club_current_guardian g JOIN club_kid k ON k.id=g.kid_id WHERE g.email=$1 ORDER BY lower(k.name)", [Astro.locals.session!.user.email.toLowerCase()])).rows;
 const dropLabel = product?.drop?.name ?? "Club granola";
 const pack = product ? packLabel(product) : null;
 
@@ -126,6 +128,7 @@ const description = product
             <StickerCard class="space-y-4 p-6">
               <Kicker>Reserve your granola</Kicker>
               {product.stock === 0 ? <Chip>Currently sold out</Chip> : <ReserveForm
+                familyKids={familyKids}
                 client:load
                 product={{
                   productId: product.id,

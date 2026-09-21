@@ -12,17 +12,19 @@ type Props = {
     productId: string;
     name: string;
   };
+  familyKids?: { id: string; name: string }[];
   sizes: string[];
   whatsappUrl: string;
 };
 
-export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
+export default function ReserveForm({ product, sizes, whatsappUrl, familyKids = [] }: Props) {
   const ready = useHydrated();
   const sizeOptions = useMemo(
     () => productSizes(sizes),
     [sizes],
   );
 
+  const [familyKidIds, setFamilyKidIds] = useState(familyKids.map(k => k.id));
   const [requestKey] = useState(() => crypto.randomUUID());
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -48,6 +50,7 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           requestKey,
+          familyKidIds,
           customer: {
             name: name.trim(),
             email: email.trim(),
@@ -115,6 +118,11 @@ export default function ReserveForm({ product, sizes, whatsappUrl }: Props) {
         />
       </div>
 
+      {familyKids.length > 0 && <fieldset className="rounded-xl border border-line p-4">
+        <legend className="px-1 font-display font-bold">Share with family</legend>
+        <p className="mb-3 text-sm text-fg-muted">The legal guardians of these duckies can see this reservation in their family order history.</p>
+        {familyKids.map(kid => <label className="flex min-h-10 items-center gap-3" key={kid.id}><input type="checkbox" checked={familyKidIds.includes(kid.id)} onChange={event => setFamilyKidIds(ids => event.target.checked ? [...ids,kid.id] : ids.filter(id=>id!==kid.id))} />{kid.name}</label>)}
+      </fieldset>}
       {sizeOptions.length > 1 && (
         <div>
           <p className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-fg/70">

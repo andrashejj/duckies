@@ -195,12 +195,12 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   const open = page.locator(".duckie-profile[open]");
   await expect(open.getByText("Member · registered and current semester paid", { exact: true })).toBeVisible();
   await expect(open.getByText("Club member · free entry")).toBeVisible();
-  await expect(open.getByText(`Test Guardian · ${guardian} · can sign in`)).toBeVisible();
-  await open.getByRole("button", { name: "Revoke sign-in" }).click();
-  await expect(open.getByText(`Test Guardian · ${guardian} · no access`)).toBeVisible();
+  await expect(open.getByText(`Test Guardian · ${guardian} · club member`)).toBeVisible();
+  await open.getByRole("button", { name: "Revoke membership" }).click();
+  await expect(open.getByText(`Test Guardian · ${guardian} · family access only`)).toBeVisible();
   expect((await guest.get("/api/cup/kids")).status()).toBe(401);
-  await open.getByRole("button", { name: "Approve sign-in" }).click();
-  await expect(open.getByText(`Test Guardian · ${guardian} · can sign in`)).toBeVisible();
+  await open.getByRole("button", { name: "Approve membership" }).click();
+  await expect(open.getByText(`Test Guardian · ${guardian} · club member`)).toBeVisible();
   expect((await request.delete(`/api/members?email=${encodeURIComponent(organiser)}`, { headers: { origin } })).status()).toBe(400);
   expect((await request.delete(`/api/members?email=${encodeURIComponent(owner)}`, { headers: { origin } })).status()).toBe(409);
 });

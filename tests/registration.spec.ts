@@ -869,7 +869,7 @@ test("registration commits private parent profiles and photos; admin table refre
     const group = await signed.json();
     const row = page.getByRole("row").filter({ hasText: "guardian@example.com" });
     await expect(row).toContainText("Test Guardian", { timeout: 12000 });
-    await expect(row).toContainText("Zoë Test Surfer");
+    await expect(row).toContainText("Test Surfer");
     await expect(row).toContainText("Father");
     await expect(row.getByRole("img")).toBeVisible();
     expect(await row.getByRole("img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -885,7 +885,9 @@ test("registration commits private parent profiles and photos; admin table refre
     await expect(row).toContainText("+230 5555 1111", { timeout: 12000 });
     await signIn(parent, "guardian@example.com");
     expect((await parent.get("/api/admin/parents")).status()).toBe(403);
-    expect((await parent.get("/api/parents/photo?email=second@example.com")).status()).toBe(403);
+    expect((await parent.get("/api/parents/photo?email=second@example.com")).status()).toBe(200);
+    expect((await parent.put("/api/parents/photo?email=second@example.com", { headers: { origin, "content-type": "image/png" }, data: photo })).status()).toBe(403);
+    expect((await parent.get("/api/parents/photo?email=outsider@example.com")).status()).toBe(403);
     expect((await parent.get("/api/parents/photo")).status()).toBe(200);
     expect((await parent.put("/api/parents/profile", { headers: { origin }, data: { name: "Parent chosen name", phone: "+230 5555 2222" } })).status()).toBe(200);
     expect((await parent.put("/api/parents/photo", { headers: { origin, "content-type": "image/png" }, data: photo })).status()).toBe(200);

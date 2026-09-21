@@ -23,7 +23,7 @@ const { shop } = site;
 
 // The drop is for club members; everyone else gets the teaser and no catalogue query.
 const session = Astro.locals.session;
-const member = Boolean(session?.member);
+const member = Boolean(session?.canShop);
 
 let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
 let loadError: string | null = null;

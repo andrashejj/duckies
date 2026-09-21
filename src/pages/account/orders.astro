@@ -2,6 +2,7 @@
 export const prerender = false;
 import type { Order, OrderItem } from "../../generated/prisma/client";
 
+import { familyOrderWhere } from "../../lib/server/family-access";
 import { site } from "../../data/site";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { shortOrderId } from "../../lib/format";
@@ -22,7 +23,7 @@ let loadError: string | null = null;
 
 try {
   orders = await prisma.order.findMany({
-    where: { OR: [{ userId: user.id }, { email: user.email ?? "" }] },
+    where: await familyOrderWhere(user),
     orderBy: { createdAt: "desc" },
     include: { items: true },
   });
@@ -39,13 +40,13 @@ const description = "Your Sunset Duckies reservations.";
 <BaseLayout title={title} description={description} workspace="member">
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-12 lg:px-10 lg:pt-16">
     <div class="mb-10 space-y-3" data-float>
-      <Kicker>Reservation history</Kicker>
+      <Kicker>Family order history</Kicker>
       <h1 class="font-display text-fg text-[clamp(2rem,4.5vw,3.25rem)] leading-[1] tracking-[-0.03em] [font-variation-settings:'wdth'_114] font-bold"
       >
         Every sesh, every kit.
       </h1>
       <p class={`max-w-xl ${bodyCopy}`}>
-        Reservations linked to this account or placed under <span class="font-mono">{user.email}</span>.
+        Your reservations and orders shared with your duckies’ legal guardians.
       </p>
     </div>
 
@@ -106,7 +107,7 @@ const description = "Your Sunset Duckies reservations.";
             </ul>
             <div class="mt-4">
               <a class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-coral-500 hover:underline"
-                href={`/orders/${order.id}?t=${order.guestToken}`}
+                href={`/orders/${order.id}`}
               >
                 View reservation →
               </a>

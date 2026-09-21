@@ -15,7 +15,7 @@ const phone = text(40).refine(
   (value) => /^\+?[0-9 ()-]{6,40}$/.test(value) && value.replace(/\D/g, "").length >= 6,
   "Enter a reachable phone number, including country code.",
 );
-const guardian = z
+export const guardianSchema = z
   .object({
     name: text(120),
     relationship: text(60),
@@ -47,7 +47,7 @@ const childFields = {
 };
 const signedOnceFields = {
   version: z.literal(WAIVER_VERSION),
-  guardians: z.array(guardian).min(1).max(4),
+  guardians: z.array(guardianSchema).min(1).max(4),
   emergencyName: text(120),
   emergencyRelationship: text(60),
   emergencyPhone: phone,
