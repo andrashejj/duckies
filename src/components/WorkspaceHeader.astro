@@ -7,6 +7,7 @@ const session = Astro.locals.session;
 const admin = mode === "admin";
 const path = Astro.url.pathname;
 const items = admin ? [
+  ["training", "Training & points", "/admin/training"],
   ["kids", "Duckies", "/admin/kids"], ["parents", "Parents", "/admin/parents"], ["cup", "Cup day", "/admin/cup"],
   ["dashboard", "Shop overview", "/admin"], ["orders", "Reservations", "/admin/orders"], ["drops", "Drops", "/admin/drops"],
   ["products", "Products", "/admin/products"], ["customers", "Customers", "/admin/customers"], ["gallery", "Gallery", "/admin/gallery"],
@@ -31,8 +32,8 @@ const link = "inline-flex min-h-11 items-center rounded-full border-2 border-tra
     </div>
   </div>
   <div class="border-t border-cream-soft/20">
-    <nav aria-label={admin ? "Admin navigation" : "Member navigation"} class="mx-auto max-w-screen-2xl px-4 py-3 sm:px-8">
-      <ul class="flex flex-wrap gap-1.5">{items.map(([key,label,href]) => <li><a href={href} aria-current={(section ? section === key : path === href) ? "page" : undefined} class:list={[link, (section ? section === key : path === href) && "border-sun-500 bg-sun-500 text-ink-950 shadow-[2px_2px_0_var(--color-cream-soft)] hover:bg-sun-500"]}>{label}</a></li>)}</ul>
+    <nav aria-label={admin ? "Admin navigation" : "Member navigation"} class="mx-auto max-w-screen-2xl overflow-x-auto px-4 py-3 sm:px-8">
+      <ul class:list={["flex gap-1.5", admin ? "whitespace-nowrap md:flex-wrap" : "flex-wrap"]}>{items.map(([key,label,href]) => <li><a href={href} aria-current={(section ? section === key : path === href) ? "page" : undefined} class:list={[link, (section ? section === key : path === href) && "border-sun-500 bg-sun-500 text-ink-950 shadow-[2px_2px_0_var(--color-cream-soft)] hover:bg-sun-500"]}>{label}</a></li>)}</ul>
     </nav>
   </div>
 </header>
