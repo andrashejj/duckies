@@ -53,7 +53,7 @@ const dropHeading = activeDrop?.name ?? shop.dropLabel;
 const dropDescription = activeDrop?.description ?? shop.intro;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} workspace={member ? "member" : undefined}>
   {!member && <ShopTeaser email={session?.user.email ?? null} />}
   {member && (
   <!-- ===================== SHOP HERO ===================== -->

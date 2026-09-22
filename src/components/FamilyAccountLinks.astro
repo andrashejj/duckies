@@ -1,0 +1,16 @@
+---
+import SignOutButton from './react/SignOutButton';
+const session = Astro.locals.session!;
+interface Props { profile?: boolean }
+const { profile = false } = Astro.props;
+---
+<section class="family-account-links" aria-label="Family account">
+  <h2>Account & orders</h2>
+  <div class="family-link-list">
+    {!profile && <a href="/account/profile">Your contact details <span aria-hidden="true">→</span></a>}
+    <a href="/account/orders">Family orders <span aria-hidden="true">→</span></a>
+    {session.canShop && <a href="/shop">Club shop <span aria-hidden="true">→</span></a>}
+    {session.user.role === 'ADMIN' && <a href="/admin/kids">Club admin <span aria-hidden="true">↗</span></a>}
+  </div>
+  <SignOutButton client:load className="social-signout" />
+</section>

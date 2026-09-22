@@ -1,6 +1,50 @@
 ---
-export const prerender=false;
+export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import MembersArea from '../../components/MembersArea.astro';
+import { people } from '../../lib/server/social';
+import { galleryPhotos, photoKids, photoTags } from '../../lib/server/photo-profiles';
+const session = Astro.locals.session!;
+const actor = { ...session.member!, userId: session.user.id };
+let data;
+try {
+  const [crew, kids, photos, tags] = await Promise.all([
+    people(), photoKids(actor), galleryPhotos(), photoTags(actor),
+  ]);
+  const directory = [
+    ...crew.map(person => ({ id: `parent:${person.id}`, name: person.name, role: person.isParent ? 'Parent' : 'Member', href: `/members/people/${encodeURIComponent(person.id)}`, photos: [] as typeof photos, portrait: null as string | null, own: person.id === actor.userId, kid: false })),
+    ...kids.map(kid => ({ id: `kid:${kid.id}`, name: kid.name, role: 'Duckie', href: `/gallery/duckies/${kid.id}`, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)), portrait: kid.profilePhoto, own: kid.canManage, kid: true })),
+  ].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+  data = { directory };
+} catch { Astro.response.status = 503; }
 ---
-<BaseLayout title="Club lineup · Sunset Duckies" workspace="member" section="lineup"><MembersArea/></BaseLayout>
+<BaseLayout title="The crew · Sunset Duckies" variant="journal">
+  <section class="club-home">
+    <header class="social-page-header"><div><h1>The crew</h1><p>Find a parent or duckie.</p></div><a href="/members" class="journal-button">Back to Club</a></header>
+    {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <>
+      <section aria-label="Club members" class="club-directory-section">
+        <label class="club-search">Find someone<input type="search" placeholder="Search by name…" data-club-search /></label>
+        <div class="club-directory">
+          {data.directory.map(person => <a href={person.href} class="club-person-card" data-club-person={person.name.toLocaleLowerCase()}>
+            <div class="club-person-photo journal-directory-cover">
+              {person.photos.length ? <img src={person.photos[0].thumb} alt="" loading="lazy" width="240" height="240" class="col-span-2" /> : person.portrait ? <img src={person.portrait} alt={`${person.name}'s profile photo`} loading="lazy" width="240" height="240" class="col-span-2" /> : <span aria-hidden="true" class="club-person-initial">{person.name.slice(0, 1)}</span>}
+            </div>
+            <div class="club-person-info"><h2>{person.name}</h2><span class="club-role" data-kind={person.kid ? 'duckie' : 'parent'}>{person.role}</span>
+              <p>{person.kid ? `${person.photos.length} gallery ${person.photos.length === 1 ? 'photo' : 'photos'}` : person.own ? 'You' : 'View profile'}</p>
+            </div>
+          </a>)}
+        </div>
+        <p data-club-empty hidden class="social-muted" role="status">No one matches that name.</p>
+      </section>
+
+    </>}
+  </section>
+</BaseLayout>
+<script>
+  const search = document.querySelector<HTMLInputElement>('[data-club-search]');
+  const people = Array.from(document.querySelectorAll<HTMLElement>('[data-club-person]'));
+  search?.addEventListener('input', () => {
+    const query = search.value.trim().toLocaleLowerCase();
+    for (const person of people) person.hidden = !person.dataset.clubPerson!.includes(query);
+    document.querySelector<HTMLElement>('[data-club-empty]')!.hidden = people.some(person => !person.hidden);
+  });
+</script>

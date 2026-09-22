@@ -57,7 +57,7 @@ const description = product
   : "Sunset Duckies granola. Reserve online and pick up at the session.";
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} workspace="member">
   {loadError || !product ? (
     <section class="mx-auto max-w-3xl px-6 py-32 text-center">
       <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">

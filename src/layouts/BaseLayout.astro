@@ -4,7 +4,6 @@ import "../styles/photo-journal.css";
 import PublicShareDialog from "../components/PublicShareDialog.astro";
 import PhotoNavigation from "../components/PhotoNavigation.astro";
 import WorkspaceHeader from "../components/WorkspaceHeader.astro";
-import SessionNavigation from "../components/SessionNavigation.astro";
 import ClubNavigation from "../components/ClubNavigation.astro";
 import Chip from "../components/ui/Chip.astro";
 import Kicker from "../components/ui/Kicker.astro";
@@ -35,7 +34,6 @@ const {
   imageAlt = site.ogImage.alt,
   imageWidth = site.ogImage.width,
   imageHeight = site.ogImage.height,
-  page = "home",
   variant = "default",
 } = Astro.props;
 
@@ -89,16 +87,17 @@ const absoluteImage = new URL(image, siteOrigin).toString();
     "min-h-screen overflow-x-clip font-sans tracking-[-0.005em] text-fg antialiased [font-feature-settings:'ss01','cv11']",
     !journal && "before:pointer-events-none before:fixed before:inset-0 before:z-0 before:bg-(image:--texture-grain) before:opacity-30 before:mix-blend-multiply before:content-[''] dark:before:opacity-[0.12] dark:before:mix-blend-screen",
   ]}>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="relative z-[1] min-h-screen overflow-x-clip">
       {/* Phones drop the translucent blur for an opaque header on its own compositor layer: the glass effect flickers as the address bar resizes. */}
       {journal ? <PhotoNavigation /> : workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
         "sticky top-0 z-50 border-b-2 backdrop-blur-xl max-sm:transform-gpu max-sm:backface-hidden max-sm:backdrop-blur-none max-sm:will-change-transform",
         performance ? "border-line bg-canvas/92 max-sm:bg-canvas" : "border-edge bg-surface/92 max-sm:bg-surface",
       ]}>
-        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 xl:flex-nowrap sm:gap-4 sm:px-6 lg:px-10 lg:py-4">
-          <a href="/" class="group flex min-w-0 items-center gap-2 sm:gap-3">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2 sm:gap-4 sm:px-6 lg:px-10 lg:py-3">
+          <a href="/" aria-label="Sunset Duckies home" class="group flex min-w-0 items-center gap-2 sm:gap-3">
             <img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" class="h-10 w-10 shrink-0 rounded-full sm:h-12 sm:w-12" />
-            <div class:list={["min-w-0", performance && "max-sm:hidden"]}>
+            <div class="hidden min-w-0 sm:block">
               <p class:list={["truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] sm:text-xs sm:tracking-[0.28em]", performance ? "text-fg" : "text-accent-text"]}>
                 {performance ? "Sunset Duckies" : "Sunset ★ Duckies"}
               </p>
@@ -108,45 +107,16 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             </div>
           </a>
 
-          <ClubNavigation variant={performance ? "performance" : "default"} />
-
-          <div class="flex shrink-0 items-center gap-2 sm:gap-3">
-            <ThemeToggle variant={performance ? "performance" : "default"} />
-            <SessionNavigation />
-          </div>
+          <ClubNavigation />
         </div>
       </header>}
 
       {journal && <PublicShareDialog />}
-      <main class:list={["relative", journal && "journal-main"]}>
+      <main id="main-content" tabindex="-1" class:list={["relative", journal && "journal-main"]}>
         <slot />
       </main>
 
-      {!performance && !workspace && !journal && (
-        <div class="relative mt-20 overflow-hidden border-y-2 border-edge bg-ink-950 py-[0.9rem] text-cream">
-          <div class="inline-flex animate-marquee gap-10 whitespace-nowrap pr-10 font-display text-[1.2rem] font-bold uppercase tracking-[-0.01em] [font-variation-settings:'wdth'_108] motion-reduce:animate-none [&_em]:font-accent [&_em]:font-semibold [&_em]:italic [&_em]:text-sun-500 [&_em]:[font-variation-settings:'SOFT'_100,'WONK'_1] [&_i]:text-[1.3em] [&_i]:not-italic [&_i]:text-coral-400 [&_span]:inline-flex [&_span]:items-center [&_span]:gap-10">
-            <span>
-              Tamarin Bay · Kid-first <i>✦</i>
-              <em>Monday + Friday</em> <i>✦</i>
-              4 comps a year <i>✦</i>
-              <em>Kids only · No cap</em> <i>✦</i>
-              Confidence in the water <i>✦</i>
-              <em>Community on the beach</em> <i>✦</i>
-            </span>
-            <span aria-hidden="true">
-              Tamarin Bay · Kid-first <i>✦</i>
-              <em>Monday + Friday</em> <i>✦</i>
-              4 comps a year <i>✦</i>
-              <em>Kids only · No cap</em> <i>✦</i>
-              Confidence in the water <i>✦</i>
-              <em>Community on the beach</em> <i>✦</i>
-            </span>
-          </div>
-        </div>
-      )}
-
       {!workspace && !journal && <footer class:list={["border-t-2 text-fg", performance ? "border-line bg-surface" : "border-edge bg-surface"]}>
-        <div class="mx-auto max-w-7xl px-6 pt-8 lg:px-10"><a data-account-link href="/account" class="text-sm font-semibold underline underline-offset-4">Member area</a></div>
         <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.3fr_0.7fr] lg:px-10">
           <div class="space-y-5">
             <a href="/" class="inline-flex items-center gap-4">
@@ -169,13 +139,10 @@ const absoluteImage = new URL(image, siteOrigin).toString();
             <Kicker tone={performance ? "outline" : "sticker"}>Quick links</Kicker>
             <div class="grid gap-3">
               {[
-                { href: "/training-materials", label: "→ Training library" },
-                { href: "/blog", label: "→ The logbook" },
-                { href: "/gallery", label: "→ The gallery" },
-                { href: "/shop", label: "→ The shop" },
-                { href: "/branding-plan", label: "→ Branding" },
-                { href: site.whatsappUrl, label: "→ Apply via WhatsApp", external: true },
-                { href: site.sponsorContactUrl, label: "→ Sponsor conversations", external: true },
+                { href: "/#how-to-join", label: "Join the club" },
+                { href: "/blog", label: "Blog" },
+                { href: "/account", label: "Club members" },
+                { href: site.whatsappUrl, label: "Contact us on WhatsApp", external: true },
               ].map(link => (
                 <a href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined} class="font-semibold text-fg transition hover:text-accent-text">{link.label}</a>
               ))}
@@ -183,6 +150,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
           </div>
         </div>
         <div class="border-t border-line bg-canvas/70 px-6 py-4 text-center font-mono text-xs uppercase tracking-[0.22em] text-fg/60">
+          <ThemeToggle variant={performance ? "performance" : "default"} class="mr-3" />
           © {new Date().getFullYear()} · Made with salt water & sunshine in Mauritius
         </div>
       </footer>}

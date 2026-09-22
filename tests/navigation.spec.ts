@@ -14,24 +14,43 @@ test("signed-in members find their own profile from the public header and save i
   const errors: string[] = []; page.on("pageerror", e => errors.push(e.message));
   await signIn(page.request, "parent@example.com");
   await page.goto("/");
-  await expect(page.locator("[data-session-menu]")).toBeVisible();
-  await expect(page.locator("[data-session-menu] summary")).toContainText("Member area");
-  await expect(page.locator("[data-account-link]").first()).toHaveText("Member area");
-  await expect(page.getByRole("link", { name: /Member sign-in/ })).toHaveCount(0);
+  await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/members");
+  const publicNav = page.getByRole("navigation", { name: "Club navigation", exact: true });
+  await expect(publicNav.getByRole("link")).toHaveCount(3);
+  await expect(publicNav.locator("details")).toHaveCount(0);
   await expect(page.locator("[data-members]")).toHaveCount(0);
-  await page.locator("[data-session-menu] summary").click();
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.screenshot({ path: "test-results/account-menu-desktop.png" });
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/simple-home-${width}.png`, fullPage: true });
+  }
   await page.setViewportSize({ width: 390, height: 844 });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "test-results/account-menu-mobile.png" });
-  await expect(page.getByRole("navigation", { name: "Your account" }).getByRole("link", { name: /Club admin/ })).toBeHidden();
-  await page.getByRole("navigation", { name: "Your account" }).getByRole("link", { name: "My profile", exact: true }).click();
+  await page.locator("[data-session-entry]").click();
+  await expect(page).toHaveURL(/\/members$/);
+  const nav = page.getByRole("navigation", { name: "Mobile member navigation" });
+  await expect(nav.getByRole("link")).toHaveText(["Club", "Photos", "Family"]);
+  await expect(nav.getByRole("link", { name: "Club", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByLabel("Your post")).toBeHidden();
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(nav).toBeInViewport();
+  }
+  await page.screenshot({ path: "test-results/simple-club-mobile.png", fullPage: true });
+  await nav.getByRole("link", { name: "Photos", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Photos", exact: true })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Photos", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("link", { name: "Share photos", exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/simple-photos-mobile.png" });
+  await page.getByLabel("Jump to an album").selectOption("clips");
+  await expect(page).toHaveURL(/#clips$/);
+  await expect(page.locator("#clips")).toBeFocused();
+  await page.getByRole("link", { name: "Our photos & moments", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Our photos & moments", exact: true })).toBeVisible();
+  await nav.getByRole("link", { name: "Family", exact: true }).click();
+  await expect(nav.getByRole("link", { name: "Family", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("link", { name: "Your contact details" }).click();
   await expect(page).toHaveURL(/\/account\/profile$/);
-  await page.locator(".journal-account-menu summary").click();
-  const nav = page.getByRole("navigation", { name: "Account and club links" });
-  await expect(nav.getByRole("link", { name: "My profile", exact: true })).toHaveAttribute("aria-current", "page");
-  await page.locator(".journal-account-menu summary").click();
   await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
   await page.getByLabel("Your name", { exact: true }).fill("Maya Parent");
   await page.getByLabel("Phone", { exact: true }).fill("+230 5555 1234");
@@ -52,10 +71,12 @@ test("signed-in members find their own profile from the public header and save i
   await page.getByRole("button", { name: "Switch to dark mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.screenshot({ path: "test-results/my-profile-dark.png", fullPage: true });
-  await page.locator(".journal-account-menu summary").click();
-  await nav.getByRole("link", { name: "My family", exact: true }).click();
+  await nav.getByRole("link", { name: "Family", exact: true }).click();
   await expect(page.getByRole("link", { name: "Edit my profile" })).toBeVisible();
   await expect(page.locator("[data-guardian]")).toContainText("Maya Parent");
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page).toHaveURL(origin + "/");
+  await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/login");
   expect(errors).toEqual([]);
 });
 
@@ -76,7 +97,7 @@ test("admin has a top menu, legacy roster bookmarks redirect, and sign-out reset
   await expect(page).toHaveURL(/\/admin\/kids$/);
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(origin + "/");
-  await expect(page.locator("[data-session-entry]")).toHaveText("Member sign-in");
+  await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/login");
   expect((await request.get("/api/session")).headers()["cache-control"]).toContain("no-store");
   for (const path of ["/admin/kids", "/account/profile", "/members"]) {
     expect((await request.get(path, { maxRedirects: 0 })).status()).toBe(302);
@@ -86,11 +107,11 @@ test("admin has a top menu, legacy roster bookmarks redirect, and sign-out reset
 test("session changes refresh public navigation and ordinary members cannot enter admin", async ({ page }) => {
   await signIn(page.request, "parent@example.com");
   await page.goto("/training-materials");
-  await expect(page.locator("[data-session-menu]")).toBeVisible();
+  await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/members");
   expect((await page.request.get("/admin/kids")).status()).toBe(403);
   expect((await page.request.get("/api/admin/parents")).status()).toBe(403);
   await db.query('DELETE FROM "session"');
   await page.evaluate(() => window.dispatchEvent(new Event("focus")));
-  await expect(page.locator("[data-session-entry]")).toHaveText("Member sign-in");
-  await expect(page.locator("[data-session-menu]")).toBeHidden();
+  await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/login");
+  await expect(page.getByRole("navigation", { name: "Club navigation", exact: true }).getByRole("link")).toHaveCount(3);
 });

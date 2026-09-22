@@ -68,13 +68,13 @@ export default function SocialFeed({initialPosts,next:initialNext,person,author,
     }catch(e){setError(e instanceof Error?e.message:'Could not share this. Please try again.');}finally{setBusy(false);}
   }
   return <>
-    {compose&&<form className="social-composer" onSubmit={event=>{event.preventDefault();void publish();}}>
+    {compose&&<details className="club-compose"><summary>Share a moment</summary><form className="social-composer" onSubmit={event=>{event.preventDefault();void publish();}}>
       <div className="social-compose-top"><span className="social-avatar" aria-hidden="true">{person.name.slice(0,1)}</span><div><label htmlFor="post-body">Share a moment</label><p>Only inside the club</p></div></div>
       <textarea disabled={!ready} id="post-body" aria-label="Your post" placeholder="Good waves? A first stand-up? Tell the crew…" maxLength={file?280:2000} value={body} onChange={e=>setBody(e.target.value)} rows={3}/>
       {preview&&<div className="social-preview"><img src={preview} alt="Photo to share"/><button type="button" onClick={()=>{setFile(null);if(fileInput.current)fileInput.current.value='';}}>Remove photo</button></div>}
       {file&&<><div className="social-tag-select"><label htmlFor="post-kid">Tag a duckie</label><select id="post-kid" value={kid} onChange={e=>setKid(e.target.value)}><option value="">No tag</option>{kids.map(k=><option key={k.id} value={k.id}>{k.name}</option>)}</select></div><label className="social-consent"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>I have permission to share this photo with the club.</label></>}
       <div className="social-compose-actions"><label className="social-text-button" htmlFor="post-photo">＋ Photo<input ref={fileInput} id="post-photo" className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onChange={e=>{setFile(e.target.files?.[0]??null);setConsent(false);}}/></label><span>{body.length}/{file?280:2000}</span><button className="journal-button journal-button-primary" disabled={busy||(!body.trim()&&!file)}>{busy?'Sharing…':'Share'}</button></div>
-    </form>}
+    </form></details>}
     {error&&<p className="social-error" role="alert">{error}</p>}{status&&<p className="social-muted" role="status">{status}</p>}
     <div className="social-posts">{posts.map(post=><PostCard key={post.id} initial={post} onRemove={()=>setPosts(posts.filter(p=>p.id!==post.id))} onPhoto={src=>{setPhoto(src);dialog.current?.showModal();}}/>)}</div>
     {posts.length===0&&<div className="journal-empty"><h2>A little quiet here</h2><p>{compose?'Share a photo, a small win, or a note for the crew.':'Shared moments will appear here.'}</p></div>}

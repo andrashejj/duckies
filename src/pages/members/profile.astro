@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import FamilyAccountLinks from "../../components/FamilyAccountLinks.astro";
 import FamilyDeck from "../../components/react/FamilyDeck";
 import { site } from "../../data/site";
 import { upcomingEvents } from "../../lib/club-events";
@@ -40,5 +41,6 @@ const events = upcomingEvents({ term: profile?.term ?? null });
         <a class="family-text-link" href={site.whatsappUrl} target="_blank" rel="noreferrer">Questions? Message the club</a>
       </details>
     </>}
+    <FamilyAccountLinks />
   </section>
 </BaseLayout>

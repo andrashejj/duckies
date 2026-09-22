@@ -1,37 +1,47 @@
 ---
 import PhotoIcon from './PhotoIcon.astro';
 import ThemeToggle from './ThemeToggle.astro';
-import SignOutButton from './react/SignOutButton';
-const session=Astro.locals.session;
-const active=!!session?.member,memories=active||!!session?.archivedAt;
-const family=active||session?.family;
-const path=Astro.url.pathname;
-const nav=[
-  ...(active?[
-    {href:'/members',label:'The club',icon:'home' as const,current:path==='/members'||path.startsWith('/members/posts/')||path.startsWith('/members/people/')||path.startsWith('/gallery/duckies')},
-    {href:'/gallery/share',label:'Share',icon:'plus' as const,current:path==='/gallery/share'},
-  ]:[]),
-  ...(memories?[{href:'/members/me',label:active?'My moments':'My archive',icon:'user' as const,current:path==='/members/me'}]:[]),
-];
-const links=[
-  ...(family?[{href:'/members/profile',label:'My family'}]:[]),
-  {href:'/account/profile',label:'My profile'},
-  {href:'/account/orders',label:'Family orders'},
-  ...(active?[{href:'/gallery',label:'Photo library'}]:[]),
-  ...(session?.user.role==='ADMIN'?[{href:'/admin/kids',label:'Club admin'}]:[]),
-  {href:'/',label:'Club website'},
+const session = Astro.locals.session;
+const active = !!session?.member;
+const memories = active || !!session?.archivedAt;
+const family = active || !!session?.family;
+const path = Astro.url.pathname;
+const photos = path.startsWith('/gallery') || path === '/members/me';
+const familyPage = path.startsWith('/account') || path === '/members/profile' || path.startsWith('/orders') || path.startsWith('/shop');
+const nav = [
+  ...(active ? [{ href: '/members', label: 'Club', icon: 'home' as const, current: !photos && !familyPage }] : []),
+  ...(memories ? [{ href: active ? '/gallery' : '/members/me', label: active ? 'Photos' : 'Memories', icon: 'camera' as const, current: photos }] : []),
+  { href: family ? '/members/profile' : '/account/profile', label: family ? 'Family' : 'Account', icon: 'user' as const, current: familyPage },
 ];
 ---
-<aside class="journal-sidebar">
-  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
+<aside class="journal-sidebar" data-member-active={String(active)}>
+  <a href="/" class="journal-wordmark" aria-label="Sunset Duckies website"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
   <nav aria-label="Member navigation" class="journal-desktop-nav">
-    {nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}
-    {links.map(item=><a class="journal-secondary-link" href={item.href} aria-label={item.label} aria-current={path===item.href?'page':undefined}><PhotoIcon name={item.href==='/'?'external':'user'} class="h-4 w-4"/><span>{item.label}</span></a>)}
+    {nav.map(item => <a href={item.href} aria-current={item.current ? 'page' : undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}
   </nav>
-  <div class="journal-sidebar-bottom"><div class="flex items-center gap-3"><ThemeToggle variant="performance" class="rounded-full border-0"/><span class="text-xs text-fg-muted">Light / dark</span></div><SignOutButton client:load className="social-signout"/></div>
+  <div class="journal-sidebar-bottom"><ThemeToggle variant="performance" class="rounded-full border-0"/></div>
 </aside>
 <header class="journal-mobile-header">
-  <a href={active?'/members':memories?'/members/me':'/account'} class="journal-wordmark" aria-label="Sunset Duckies"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
-  <div class="flex items-center gap-2"><ThemeToggle variant="performance" class="rounded-full border-0"/><details class="journal-account-menu"><summary aria-label="Account and club links"><PhotoIcon name="user"/></summary><nav aria-label="Account and club links">{links.map(item=><a href={item.href} aria-current={path===item.href?'page':undefined}>{item.label}</a>)}<SignOutButton client:load className="social-signout"/></nav></details></div>
+  <a href="/" class="journal-wordmark" aria-label="Sunset Duckies website"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
+  <ThemeToggle variant="performance" class="rounded-full border-0"/>
 </header>
-{nav.length>0&&<nav aria-label="Mobile photo navigation" class="journal-mobile-nav">{nav.map(item=><a href={item.href} aria-label={item.label} aria-current={item.current?'page':undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}</nav>}
+<nav aria-label="Mobile member navigation" class="journal-mobile-nav">{nav.map(item => <a href={item.href} aria-current={item.current ? 'page' : undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}</nav>
+
+<script>
+  // Recheck private screens when returning from another tab or browser history.
+  const activeMember = document.querySelector<HTMLElement>('[data-member-active]')?.dataset.memberActive === 'true';
+  async function checkAccess() {
+    try {
+      const response = await fetch('/api/session', { cache: 'no-store' });
+      if (!response.ok) return;
+      const session = await response.json();
+      if (!session.signedIn || (activeMember && !session.member)) {
+        document.querySelector<HTMLElement>('main')?.setAttribute('hidden', '');
+        location.replace('/account');
+      }
+    } catch { /* Keep the current screen available through a temporary network failure. */ }
+  }
+  window.addEventListener('pageshow', () => void checkAccess());
+  window.addEventListener('focus', () => void checkAccess());
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) void checkAccess(); });
+</script>

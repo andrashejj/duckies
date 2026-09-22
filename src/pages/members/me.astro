@@ -25,12 +25,12 @@ try{
   }
 }catch{Astro.response.status=503;}
 ---
-<BaseLayout title="My moments · Sunset Duckies" variant="journal">
+<BaseLayout title={`${session.member ? "Our photos & moments" : "Your memories"} · Sunset Duckies`} variant="journal">
   <section class="social-personal">
-    <header class="social-page-header"><div><h1>{data?.active?'My moments':'Your memories'}</h1><p>{data?.active?'The moments you shared and the duckies you love.':'Your own corner of the club, kept for you.'}</p></div><a class="journal-button" href="/account/profile">Edit my profile</a></header>
+    <header class="social-page-header"><div><h1>{session.member?'Our photos & moments':'Your memories'}</h1><p>{data?.active?'Photos of your family and moments you shared.':'Your own corner of the club, kept for you.'}</p></div><a class="journal-button" href={session.member ? '/gallery' : '/account/profile'}>{session.member ? 'All club photos' : 'Your account'}</a></header>
     {!data?<p role="alert">Your memories could not load. Please try again.</p>:<>
       {!data.active&&<div class="social-archive-note"><strong>Your personal archive</strong><p>{data.archive?.departureKnown ? `Saved when your membership ended on ${new Date(data.archive.endedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}.` : 'Your previously shared photos, kept for you.'} Your photos, posts and comments are here to revisit. New club moments and conversations are for active members.</p></div>}
-      <nav class="social-personal-tabs" aria-label="Your moments"><a href="#my-photos">Photos · {data.photos.length}</a><a href="#my-posts">Posts</a><a href="#my-public-links">Public links</a>{session.family&&<a href="/members/profile">My family</a>}<a href="/account/orders">Orders</a></nav>
+      <nav class="social-personal-tabs" aria-label="Your moments"><a href="#my-photos">Photos · {data.photos.length}</a><a href="#my-posts">Posts</a><a href="#my-public-links">Public links</a></nav>
       <section id="my-photos"><h2 class="social-section-title">Your photos</h2><div class="journal-grid">{data.photos.map(photo=><GalleryPhoto photo={photo} square/>)}</div>{!data.photos.length&&<p class="social-muted py-6">Your photos will live here.</p>}</section>
       <PhotoViewer label="Your photos" name={data.person.name} kidId="" canManage={false} shareableKeys={data.photos.map(p=>p.key)}/>
       <section id="my-public-links" class="social-public-links"><h2 class="social-section-title">Your public links</h2><p class="social-muted">Only moments you choose to share appear here. Open a link to review it or stop sharing.</p>

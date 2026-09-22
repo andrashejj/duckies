@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import FamilyAccountLinks from "../../components/FamilyAccountLinks.astro";
 import MyProfile from "../../components/react/MyProfile";
 import { readOwnProfile } from "../../lib/server/parent-profiles";
 const user = Astro.locals.session!.user;
@@ -18,5 +19,6 @@ const profile = await readOwnProfile(user.email.trim().toLowerCase(), user.name)
         {(Astro.locals.session?.member || Astro.locals.session?.family) && <a href="/members/profile" class="mt-5 inline-flex min-h-11 items-center font-bold underline underline-offset-4">Open my family →</a>}
       </aside>
     </div>
+    <FamilyAccountLinks profile />
   </section>
 </BaseLayout>

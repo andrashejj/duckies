@@ -57,7 +57,7 @@ const whatsappConfirmUrl = order
   : site.whatsappUrl;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} workspace={Astro.locals.session ? "member" : undefined}>
   {loadError || !order ? (
     <section class="mx-auto max-w-3xl px-6 py-32 text-center">
       <p class="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-coral-500">

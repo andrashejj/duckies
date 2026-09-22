@@ -1,46 +1,10 @@
 ---
-import { site } from "../data/site";
-interface Props { variant?: "default" | "performance" }
-const { variant = "default" } = Astro.props;
-const performance = variant === "performance";
-const currentPath = Astro.url.pathname;
-// The branding workspace keeps only its own link on phones and uses mono caps.
-const item = (last = false) => performance
-  ? ["cursor-pointer items-center gap-[0.3rem] whitespace-nowrap rounded-[0.35rem] px-2 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.1em] text-fg no-underline hover:bg-accent/12 hover:text-accent-text aria-[current=page]:bg-accent/12 aria-[current=page]:text-accent-text sm:px-3 sm:py-2", last ? "flex" : "hidden sm:flex"]
-  : "flex cursor-pointer items-center gap-[0.3rem] whitespace-nowrap rounded-full px-2 py-1.5 font-display text-[0.72rem] font-semibold text-fg no-underline hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg sm:px-3 sm:py-2 sm:text-sm";
-const focus = "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-coral-500";
+import SessionNavigation from "./SessionNavigation.astro";
+const path = Astro.url.pathname;
+const link = "inline-flex min-h-11 items-center justify-center rounded-full px-3 font-display text-sm font-semibold hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent";
 ---
-<nav aria-label="Club navigation" class="order-3 flex w-full shrink-0 items-center justify-between gap-0.5 sm:order-none sm:w-auto sm:gap-2">
-  {site.navigation.map((entry, index) => "children" in entry ? (
-    <details class="group relative" data-cup-menu>
-      <summary class:list={[item(), focus, "list-none [&::-webkit-details-marker]:hidden", !performance && "group-open:bg-highlight group-open:text-highlight-fg"]}>
-        <span class="sm:hidden">{entry.label}</span>
-        <span class="hidden sm:inline">{entry.labelFull}</span>
-        <span class="font-sans transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
-      </summary>
-      <div class="absolute top-[calc(100%+0.7rem)] left-0 z-60 w-[min(17rem,calc(100vw-2rem))] rounded-[0.8rem] border-2 border-edge bg-surface p-[0.65rem] shadow-sticker-lg">
-        <p class="px-[0.6rem] py-2 font-mono text-[0.6rem] uppercase tracking-[0.1em]">Two editions. One Cup.</p>
-        {entry.children.map(edition => (
-          <a href={edition.href} aria-current={currentPath === edition.href ? "page" : undefined} class:list={["block rounded-[0.4rem] px-[0.6rem] py-3 text-[0.85rem] font-semibold no-underline hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg", focus]}>{edition.label}</a>
-        ))}
-      </div>
-    </details>
-  ) : (
-    <a class:list={[item(index === site.navigation.length - 1), focus]} href={entry.href} aria-current={currentPath === entry.href ? "page" : undefined}>
-      <span class="sm:hidden">{entry.label}</span>
-      <span class="hidden sm:inline">{entry.labelFull}</span>
-    </a>
-  ))}
+<nav aria-label="Club navigation" class="flex shrink-0 items-center gap-1">
+  <a class={link} href="/" aria-current={path === "/" ? "page" : undefined}>Home</a>
+  <a class={link} href="/blog" aria-current={path.startsWith("/blog") ? "page" : undefined}>Blog</a>
+  <SessionNavigation />
 </nav>
-<script>
-  const cupMenu = document.querySelector<HTMLDetailsElement>("[data-cup-menu]");
-  document.addEventListener("click", event => {
-    if (cupMenu?.open && event.target instanceof Node && !cupMenu.contains(event.target)) cupMenu.open = false;
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && cupMenu?.open) {
-      cupMenu.open = false;
-      cupMenu.querySelector("summary")?.focus();
-    }
-  });
-</script>

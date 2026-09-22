@@ -2,53 +2,36 @@
 export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SocialFeed from '../../components/react/SocialFeed';
-import { listPosts, people, socialPerson } from '../../lib/server/social';
-import { galleryPhotos, photoKids, photoTags } from '../../lib/server/photo-profiles';
+import { listPosts, socialPerson } from '../../lib/server/social';
+import { photoKids } from '../../lib/server/photo-profiles';
+import { site } from '../../data/site';
 const session = Astro.locals.session!;
 const actor = { ...session.member!, userId: session.user.id };
+const cupComing = site.cupVol2.dateISO >= new Intl.DateTimeFormat('en-CA', { timeZone: 'Indian/Mauritius', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 let data;
 try {
-  const [feed, crew, person, kids, photos, tags] = await Promise.all([
-    listPosts(actor), people(), socialPerson(actor.userId), photoKids(actor), galleryPhotos(), photoTags(actor),
-  ]);
-  const directory = [
-    ...crew.map(person => ({ id: `parent:${person.id}`, name: person.name, role: person.isParent ? 'Parent' : 'Member', href: `/members/people/${encodeURIComponent(person.id)}`, photos: [] as typeof photos, portrait: null as string | null, own: person.id === actor.userId, kid: false })),
-    ...kids.map(kid => ({ id: `kid:${kid.id}`, name: kid.name, role: 'Duckie', href: `/gallery/duckies/${kid.id}`, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)), portrait: kid.profilePhoto, own: kid.canManage, kid: true })),
-  ].sort((a, b) => a.name.localeCompare(b.name, 'en'));
-  data = { feed, person: person!, kids: kids.filter(k => k.canManage), directory };
+  const [feed, person, kids] = await Promise.all([listPosts(actor), socialPerson(actor.userId), photoKids(actor)]);
+  data = { feed, person: person!, kids: kids.filter(k => k.canManage) };
 } catch { Astro.response.status = 503; }
 ---
 <BaseLayout title="The club · Sunset Duckies" variant="journal">
-  <section class="club-home">
-    <header class="social-page-header"><div><h1>The club</h1><p>Parents, duckies and the moments we share.</p></div><span class="social-private">Members only</span></header>
-    {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <>
-      <section aria-label="Club members" class="club-directory-section">
-        <label class="club-search">Find someone<input type="search" placeholder="Search by name…" data-club-search /></label>
-        <div class="club-directory">
-          {data.directory.map(person => <a href={person.href} class="club-person-card" data-club-person={person.name.toLocaleLowerCase()}>
-            <div class="club-person-photo journal-directory-cover">
-              {person.photos.length ? <img src={person.photos[0].thumb} alt="" loading="lazy" class="col-span-2" /> : person.portrait ? <img src={person.portrait} alt={`${person.name}'s profile photo`} loading="lazy" class="col-span-2" /> : <span aria-hidden="true" class="club-person-initial">{person.name.slice(0, 1)}</span>}
-            </div>
-            <div class="club-person-info"><h2>{person.name}</h2><span class="club-role" data-kind={person.kid ? 'duckie' : 'parent'}>{person.role}</span>
-              <p>{person.kid ? `${person.photos.length} gallery ${person.photos.length === 1 ? 'photo' : 'photos'}` : person.own ? 'You' : 'View profile'}</p>
-            </div>
-          </a>)}
-        </div>
-        <p data-club-empty hidden class="social-muted" role="status">No one matches that name.</p>
-      </section>
-      <section class="club-moments" aria-labelledby="club-moments-heading">
-        <h2 id="club-moments-heading">Club moments</h2>
-        <SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} compose kids={data.kids} />
-      </section>
-    </>}
+  <section class="club-home club-home-simple">
+    <header class="social-page-header"><div><h1>The club</h1><p>See you in the water.</p></div><span class="social-private">Members only</span></header>
+    <section class="club-session" aria-labelledby="session-title">
+      <p class="club-session-eyebrow">Our weekly surf</p>
+      <h2 id="session-title">Monday & Friday <span>4–6pm</span></h2>
+      <p>Tamarin Bay · Bring your board and a wetsuit or rashie. One parent from each family stays in the water for the full session.</p>
+      <a href={site.whatsappUrl} target="_blank" rel="noreferrer">Check the latest surf call on WhatsApp ↗</a>
+    </section>
+    {cupComing && <a href="/sunset-duckies-cup-vol-2" class="club-event-link"><span><strong>{site.cupVol2.name} · {site.cupVol2.edition}</strong><span>{site.cupVol2.dateLabel}</span></span><span aria-hidden="true">→</span></a>}
+    <div class="club-useful-links" aria-label="Around the club">
+      <a href="/members/lineup">Meet the crew</a>
+      <a href="/training-materials">Surf tips</a>
+      {!cupComing && <a href="/sunset-duckies-cup-vol-2">The Cup</a>}
+    </div>
+    {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <section class="club-moments" aria-labelledby="club-moments-heading">
+      <h2 id="club-moments-heading">From the crew</h2>
+      <SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} compose kids={data.kids} />
+    </section>}
   </section>
 </BaseLayout>
-<script>
-  const search = document.querySelector<HTMLInputElement>('[data-club-search]');
-  const people = Array.from(document.querySelectorAll<HTMLElement>('[data-club-person]'));
-  search?.addEventListener('input', () => {
-    const query = search.value.trim().toLocaleLowerCase();
-    for (const person of people) person.hidden = !person.dataset.clubPerson!.includes(query);
-    document.querySelector<HTMLElement>('[data-club-empty]')!.hidden = people.some(person => !person.hidden);
-  });
-</script>

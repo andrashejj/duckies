@@ -172,9 +172,9 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await page.getByRole('button',{name:'Switch to dark mode'}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.screenshot({path:'test-results/duckie-photo-profile-dark.png',fullPage:true});
-  await page.getByRole('main').getByRole('link',{name:'The club',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'The club',exact:true})).toBeVisible();
-  await expect(page.getByRole('navigation',{name:'Mobile photo navigation'})).toBeInViewport();
+  await page.getByRole('main').getByRole('link',{name:'The crew',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'The crew',exact:true})).toBeVisible();
+  await expect(page.getByRole('navigation',{name:'Mobile member navigation'})).toBeInViewport();
   await page.evaluate(()=>document.fonts.ready);
   await page.locator('.journal-directory-cover img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
   await page.screenshot({path:'test-results/duckie-photo-directory-mobile.png',fullPage:true});

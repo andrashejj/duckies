@@ -30,6 +30,7 @@ test('active members share text and photos, like, comment and remove only permit
   await other.post('/api/social/posts',send({body:'Lovely little waves this morning. See you Friday!'}));
   await page.goto('/members');
   await expect(page.getByRole('heading',{name:'The club',exact:true})).toBeVisible();
+  await page.locator('.club-compose > summary').click();
   await page.getByLabel('Your post').fill('First stand-up today!');
   await page.getByRole('button',{name:'Share',exact:true}).click();
   await expect(page.getByRole('status')).toHaveText('Shared with the club.');
@@ -63,7 +64,7 @@ test('active members share text and photos, like, comment and remove only permit
   await page.setViewportSize({width:390,height:844});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
-  await expect(page.getByRole('navigation',{name:'Mobile photo navigation'})).toBeInViewport();
+  await expect(page.getByRole('navigation',{name:'Mobile member navigation'})).toBeInViewport();
   await page.screenshot({path:'test-results/member-social-mobile.png'});
   await page.getByRole('button',{name:'Switch to dark mode'}).click();
   await page.screenshot({path:'test-results/member-social-dark.png'});
@@ -187,7 +188,7 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await signIn(page.request,parent);
   await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);
   await page.goto('/gallery/duckies');
-  await expect(page).toHaveURL('/members');
+  await expect(page).toHaveURL('/members/lineup');
   const directory=page.getByRole('region',{name:'Club members'});
   await expect(directory.getByRole('link',{name:/Maya Parent/})).toBeVisible();
   await expect(directory.getByRole('link',{name:/Lara Test Duckie/})).toBeVisible();
@@ -209,5 +210,5 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await expect(page).toHaveURL(`/gallery/duckies/${kid}`);
   await expect(page.getByRole('heading',{name:'Lara Test',exact:true})).toBeVisible();
   await expect(page.locator('.journal-identity .club-role')).toHaveText('Duckie');
-  await expect(page.getByRole('navigation',{name:'Mobile photo navigation'}).getByRole('link',{name:'The club',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(page.getByRole('navigation',{name:'Mobile member navigation'}).getByRole('link',{name:'Photos',exact:true})).toHaveAttribute('aria-current','page');
 });

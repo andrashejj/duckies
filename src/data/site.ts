@@ -44,17 +44,6 @@ export const site = {
     { name: "Flipp", href: "https://www.flippapp.ai/", logo: "/media/flipp-logo.svg", wordmark: null },
     { name: "andrashejj.com", href: "https://www.andrashejj.com/", logo: null, wordmark: "andras" },
   ],
-  navigation: [
-    { label: "Cup", labelFull: "Sunset Duckies Cup", href: "/sunset-duckies-cup", children: [
-      { label: "Vol. 01 · The first Cup", href: "/sunset-duckies-cup" },
-      { label: "Vol. 02 · The next edition", href: "/sunset-duckies-cup-vol-2" },
-    ] },
-    { label: "Training", labelFull: "Training Materials", href: "/training-materials" },
-    { label: "Blog", labelFull: "The Logbook", href: "/blog" },
-    { label: "Photos", labelFull: "The Gallery", href: "/gallery" },
-    { label: "Shop", labelFull: "The Shop", href: "/shop" },
-    { label: "Branding", labelFull: "Branding", href: "/branding-plan" },
-  ],
   stats: [
     { value: "100%", label: "kids in the lineup" },
     { value: "2x", label: "training sessions a week" },

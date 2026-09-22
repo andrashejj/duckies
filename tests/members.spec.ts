@@ -29,7 +29,7 @@ test("anonymous and forged sessions cannot read or change the roster", async ({ 
   expect((await request.post("/api/kids", { data: { name: "Hidden" }, headers: { origin } })).status()).toBe(401);
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.locator("[data-members]")).toBeHidden();
-  await expect(page.getByRole("link", { name: "Member sign-in" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Club · sign in" }).first()).toBeVisible();
 });
 
 test("unapproved addresses receive no code and cannot register", async ({ request }) => {
@@ -161,15 +161,15 @@ test("public HTML never embeds roster names; read-only members have no editor", 
   expect(await html.text()).not.toContain("ServerOnlyTestDuckie");
   await signIn(page.request, member);
   await page.goto("/members/lineup", { waitUntil: "domcontentloaded" });
-  await expect(page.locator(".duckie-name")).toHaveText("ServerOnlyTestDuckie");
+  await expect(page.getByRole("heading", { name: "ServerOnlyTestDuckie" })).toBeVisible();
   await expect(page.locator("[data-add-kid]")).toBeHidden();
   expect(await page.locator(".duckie-actions").count()).toBe(0);
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.locator("[data-members]").screenshot({ path: "test-results/members-desktop.png" });
+  await page.getByRole("region", { name: "Club members" }).screenshot({ path: "test-results/members-desktop.png" });
   await db.query("DELETE FROM club_member WHERE email = $1", [member]);
   await page.evaluate(() => window.dispatchEvent(new Event("pageshow")));
-  await expect(page.locator("[data-members]")).toBeHidden();
   await expect(page).toHaveURL(/\/(login|account|members\/me)/);
+  await expect(page.getByRole("heading", { name: "ServerOnlyTestDuckie" })).toHaveCount(0);
 });
 
 test("30-kid roster stays compact, filters contacts and keeps open drafts", async ({ page }) => {
