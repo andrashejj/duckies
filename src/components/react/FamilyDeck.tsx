@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
+import { useHydrated } from "./useHydrated";
 import type { FamilyKid, FamilyProfile } from "../../lib/registration/family";
 import { CUP_LABEL } from "../../lib/registration/cup";
 import { RECOMMENDED_AGE } from "../../lib/registration/policy";
@@ -144,11 +145,11 @@ function History({ kid }: { kid: FamilyKid }) {
 
 function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: string; reload: () => Promise<void>; report: (message: string) => void }) {
   const tone = standingOf(kid, termLabel);
+  const ready = useHydrated();
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [contact, setContact] = useState({ contactName: kid.contactName ?? "", contactPhone: kid.contactPhone ?? "" });
   const [formLink, setFormLink] = useState<{ url: string; emailed: boolean } | null>(null);
-  const file = useRef<HTMLInputElement>(null);
 
   async function run(action: () => Promise<string>) {
     setBusy(true);
@@ -157,27 +158,34 @@ function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: s
     finally { setBusy(false); }
   }
 
-  async function uploadPhoto() {
-    const chosen = file.current?.files?.[0];
-    if (!chosen) { report("Choose a photo first."); return; }
+  // Picking a file is the whole gesture: the photo saves as soon as it is chosen.
+  async function uploadPhoto(chosen: File | undefined) {
+    if (!chosen) return;
     if (chosen.size > MAX_PHOTO_BYTES) { report("Choose a photo smaller than 4 MB."); return; }
     await run(async () => {
       const response = await fetch(`/api/family/kids/${kid.id}/photo`, { method: "PUT", headers: { "Content-Type": chosen.type }, body: chosen });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error ?? "That photo could not be saved.");
-      if (file.current) file.current.value = "";
       return `${kid.name}'s photo is saved.`;
     });
   }
+  const photoInput = `photo-${kid.id}`;
+  const photoAction = kid.photoVersion ? "Change photo" : "Add a photo";
 
   return (
     <article className="family-kid" data-duckie-pass data-standing={tone.standing}>
       <div className={cn(passHead, "family-kid-head")}>
-        {kid.photoVersion ? (
-          <img className={cn(passPhoto, "family-kid-avatar")} src={`/api/family/kids/${kid.id}/photo?v=${encodeURIComponent(kid.photoVersion)}`} alt={`${kid.name}'s profile photo`} width={80} height={80} />
-        ) : (
-          <span className={cn(passPhotoEmpty, "family-kid-avatar")} aria-hidden="true">{kid.name.slice(0, 1).toUpperCase()}</span>
-        )}
+        <label className="family-kid-avatar-button" htmlFor={photoInput} title={photoAction} data-busy={busy || undefined}>
+          {kid.photoVersion ? (
+            <img className={cn(passPhoto, "family-kid-avatar")} src={`/api/family/kids/${kid.id}/photo?v=${encodeURIComponent(kid.photoVersion)}`} alt={`${kid.name}'s profile photo`} width={80} height={80} />
+          ) : (
+            <span className={cn(passPhotoEmpty, "family-kid-avatar")} aria-hidden="true">{kid.name.slice(0, 1).toUpperCase()}</span>
+          )}
+          <span className="family-kid-avatar-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.2" /></svg>
+          </span>
+          <input id={photoInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || !ready} aria-label={`${photoAction} for ${kid.name}`} onChange={(event) => { const chosen = event.target.files?.[0]; event.target.value = ""; void uploadPhoto(chosen); }} />
+        </label>
         <div className="min-w-0 flex-1">
           <h3 className={passName}>{kid.name}</h3>
           <span className="club-role" data-kind="duckie">Duckie</span>
@@ -252,18 +260,16 @@ function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: s
             )}
           </div>
 
-          <form className={editPanel} onSubmit={(event) => { event.preventDefault(); void uploadPhoto(); }}>
+          <div className={editPanel}>
             <p className="font-[650]">Profile photo</p>
-            <p className={noteCopy}>So the coaches match faces to names on the beach. Private to the club — it is never published, whatever your media choice.</p>
-            <label htmlFor={`photo-${kid.id}`}>Choose a photo</label>
-            <input id={`photo-${kid.id}`} ref={file} type="file" accept="image/jpeg,image/png,image/webp" />
+            <p className={noteCopy}>So the coaches match faces to names on the beach — tap the picture on the card to swap it any time. Private to the club — it is never published, whatever your media choice.</p>
             <div className={editRow}>
-              <button type="submit" className={textButton} disabled={busy}>Upload photo</button>
+              <label htmlFor={photoInput} className={textButton}>{photoAction}</label>
               {kid.photoVersion && (
                 <button type="button" className={textButton} disabled={busy} onClick={() => void run(async () => { await api(`/api/family/kids/${kid.id}/photo`, "DELETE"); return "Photo removed."; })}>Remove photo</button>
               )}
             </div>
-          </form>
+          </div>
 
           <div className={editPanel}>
             <p className="font-[650]">Update the signed details</p>

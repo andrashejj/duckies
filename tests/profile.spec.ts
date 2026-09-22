@@ -128,6 +128,15 @@ test("a guardian's page shows their own duckies, records and standing — and no
   await expect(passes.first()).toHaveAttribute("data-standing", "ok");
   await expect(passes.first().getByText("Member", { exact: true })).toBeVisible();
   await expect(page.getByText("Somebody Else")).toHaveCount(0);
+  // The picture on the card is the way to change it: pick a file and it saves.
+  const portrait = passes.first().getByAltText("Zoë T.'s profile photo");
+  const staged = await portrait.getAttribute("src");
+  const picker = passes.first().getByLabel("Change photo for Zoë T.");
+  await expect(picker).toBeEnabled();
+  await picker.setInputFiles({ name: "zoe.png", mimeType: "image/png", buffer: await png() });
+  await expect(page.locator("[data-profile-status]")).toHaveText("Zoë T.'s photo is saved.");
+  await expect(portrait).not.toHaveAttribute("src", staged!);
+  expect((await db.query("SELECT source FROM club_kid_photo WHERE kid_id=$1", [mine])).rows[0].source).toBe("guardian");
   // Secondary dates and fees stay available without dominating the family page.
   await page.getByText("Club dates & semester fees", { exact: true }).click();
   await expect(page.getByRole("list", { name: "Upcoming club dates" }).getByText("Monday training").first()).toBeVisible();
@@ -135,6 +144,8 @@ test("a guardian's page shows their own duckies, records and standing — and no
   // The record and the history are one click away.
   await passes.first().getByText("Details, history + changes").click();
   await expect(passes.first().getByText("Peanut allergy")).toBeVisible();
+  await expect(passes.first().getByText("Change photo", { exact: true })).toBeVisible();
+  await expect(passes.first().getByRole("button", { name: "Remove photo" })).toBeVisible();
   await expect(passes.first().getByRole("link", { name: "Download PDF" })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(page.getByText("Rs 3,000", { exact: false }).first()).toBeVisible();

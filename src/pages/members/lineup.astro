@@ -2,6 +2,7 @@
 export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { people } from '../../lib/server/social';
+import { avatarUrl } from '../../lib/avatar';
 import { galleryPhotos, photoKids, photoTags } from '../../lib/server/photo-profiles';
 const session = Astro.locals.session!;
 const actor = { ...session.member!, userId: session.user.id };
@@ -11,7 +12,7 @@ try {
     people(), photoKids(actor), galleryPhotos(), photoTags(actor),
   ]);
   const directory = [
-    ...crew.map(person => ({ id: `parent:${person.id}`, name: person.name, role: person.isParent ? 'Parent' : 'Member', href: `/members/people/${encodeURIComponent(person.id)}`, photos: [] as typeof photos, portrait: null as string | null, own: person.id === actor.userId, kid: false })),
+    ...crew.map(person => ({ id: `parent:${person.id}`, name: person.name, role: person.isParent ? 'Parent' : 'Member', href: `/members/people/${encodeURIComponent(person.id)}`, photos: [] as typeof photos, portrait: avatarUrl(person), own: person.id === actor.userId, kid: false })),
     ...kids.map(kid => ({ id: `kid:${kid.id}`, name: kid.name, role: 'Duckie', href: `/gallery/duckies/${kid.id}`, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)), portrait: kid.profilePhoto, own: kid.canManage, kid: true })),
   ].sort((a, b) => a.name.localeCompare(b.name, 'en'));
   data = { directory };

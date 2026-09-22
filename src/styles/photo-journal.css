@@ -138,6 +138,7 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .social-crew { display: flex; gap: 19px; overflow-x: auto; padding: 4px 1px 24px; }
 .social-crew a { display: grid; justify-items: center; gap: 7px; flex: 0 0 62px; font-size: 11px; }
 .social-avatar { display: inline-grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2); font-size: 19px; font-weight: 450; }
+img.social-avatar { object-fit: cover; }
 .social-crew .social-avatar { width: 58px; height: 58px; border: 2px solid var(--canvas); outline: 1px solid var(--accent); font-size: 23px; }
 .social-person { display: flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 550; }
 .social-composer { padding: 20px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 28px; }
@@ -329,6 +330,13 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .family-page :is(.font-display,.font-mono) { font-family: var(--font-sans); letter-spacing: normal; }
 .family-page .family-kid h3 { font-size: 22px; margin-bottom: 7px; }
 .family-page .family-kid-avatar { border-radius: 50%; }
+.family-kid-avatar-button { position: relative; flex-shrink: 0; cursor: pointer; }
+.family-kid-avatar-button .family-kid-avatar { transition: transform .18s ease; }
+.family-kid-avatar-button:hover .family-kid-avatar { transform: scale(1.04); }
+.family-kid-avatar-button:has(input:focus-visible) .family-kid-avatar { outline: 3px solid var(--color-teal-600); outline-offset: 3px; }
+.family-kid-avatar-button[data-busy] { cursor: wait; opacity: .6; }
+.family-kid-avatar-badge { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); background: var(--accent); color: var(--accent-fg); box-shadow: 0 1px 3px rgb(0 0 0 / .25); }
+@media (prefers-reduced-motion: reduce) { .family-kid-avatar-button .family-kid-avatar { transition: none; } .family-kid-avatar-button:hover .family-kid-avatar { transform: none; } }
 .family-page :is(.family-kid-row,.family-kid-summary,.family-kid-body) { border-style: solid; border-width: 1px 0 0; letter-spacing: normal; text-transform: none; font-size: 12px; }
 .family-page .family-standing { border-width: 1px; border-style: solid; rotate: none; text-transform: none; }
 .family-reference { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }

@@ -212,3 +212,49 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await expect(page.locator('.journal-identity .club-role')).toHaveText('Duckie');
   await expect(page.getByRole('navigation',{name:'Mobile member navigation'}).getByRole('link',{name:'Members',exact:true})).toHaveAttribute('aria-current','page');
 });
+test('a parent photo appears on their posts, profile and directory card, and the avatar route is members-only', async ({page,playwright})=>{
+  await signIn(page.request,parent);
+  await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);
+  await db.query("DELETE FROM club_parent_profile WHERE email=$1",[parent]);
+  const photo=await page.request.put(`/api/parents/photo?email=${encodeURIComponent(parent)}`,{headers:{origin,'content-type':'image/webp'},data:await readFile('src/assets/gallery/standing-tall.webp')});
+  expect(photo.status()).toBe(200);
+  const mayaId=(await db.query('SELECT id FROM "user" WHERE email=$1',[parent])).rows[0].id as string;
+  await page.request.post('/api/social/posts',send({body:'Sunrise session, everyone up on their feet.'}));
+  await other.post('/api/social/posts',send({body:'Tom here, still working on the pop-up.'}));
+  // The version rides in the URL and no email does; only the avatar itself is fetched.
+  const feed=await (await other.get('/api/social/posts')).json();
+  const authors=feed.posts.map((post:{author:{id:string;photoVersion:string|null}})=>post.author);
+  expect(authors.find((author:{id:string})=>author.id===mayaId).photoVersion).toBeTruthy();
+  expect(authors.find((author:{id:string})=>author.id!==mayaId).photoVersion).toBeNull();
+  expect(JSON.stringify(feed)).not.toContain('@example.com');
+  const avatar=await other.get(`/api/social/avatars/${mayaId}`);
+  expect(avatar.status()).toBe(200);expect(avatar.headers()['content-type']).toBe('image/webp');
+  expect(avatar.headers()['cache-control']).toContain('no-store');
+  const tomId=(await db.query('SELECT id FROM "user" WHERE email=$1',[friend])).rows[0].id as string;
+  expect((await other.get(`/api/social/avatars/${tomId}`)).status()).toBe(404);
+  expect((await other.get('/api/social/avatars/nobody')).status()).toBe(404);
+  const anonymous=await playwright.request.newContext({baseURL:origin});
+  expect((await anonymous.get(`/api/social/avatars/${mayaId}`)).status()).toBe(401);await anonymous.dispose();
+  // A fourth sign-in code in one minute: clear the OTP rate limit, as beforeEach does.
+  await db.query('TRUNCATE "rateLimit"');
+  const family=await playwright.request.newContext({baseURL:origin});
+  await db.query("INSERT INTO club_guardian_access(kid_id,email,name,relationship,phone,updated_by) VALUES($1,'social-family@example.com','Family','Parent','+230 5555 0001',$2)",[kid,parent]);
+  await signIn(family,'social-family@example.com');
+  expect((await family.get(`/api/social/avatars/${mayaId}`)).status()).toBe(403);await family.dispose();
+  // In the club: Maya's photo on her post, the composer, her header and directory card; Tom keeps his initial.
+  await page.goto('/members');
+  const mayaPost=page.locator('[data-post]').filter({hasText:'Sunrise session'});
+  await expect(mayaPost.locator('img.social-avatar')).toHaveAttribute('src',new RegExp(`^/api/social/avatars/${mayaId}\\?v=`));
+  await expect(page.locator('.club-compose > summary img.social-avatar')).toBeVisible();
+  const tomPost=page.locator('[data-post]').filter({hasText:'Tom here'});
+  await expect(tomPost.locator('span.social-avatar')).toHaveText('T');
+  await page.goto(`/members/people/${mayaId}`);
+  await expect(page.getByAltText("Maya's profile photo")).toBeVisible();
+  await page.goto('/members/lineup');
+  await expect(page.getByRole('region',{name:'Club members'}).getByRole('link',{name:/Maya Parent/}).getByAltText("Maya's profile photo")).toBeVisible();
+  // Removing the photo takes it off the club again.
+  expect((await page.request.delete(`/api/parents/photo?email=${encodeURIComponent(parent)}`,{headers:{origin}})).status()).toBe(200);
+  expect((await other.get(`/api/social/avatars/${mayaId}`)).status()).toBe(404);
+  await page.goto(`/members/people/${mayaId}`);
+  await expect(page.locator('.journal-avatar-inner')).toHaveText('M');
+});

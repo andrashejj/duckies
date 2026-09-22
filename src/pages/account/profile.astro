@@ -9,7 +9,7 @@ const profile = await readOwnProfile(user.email.trim().toLowerCase(), user.name)
 ---
 <BaseLayout title="My profile · Sunset Duckies" workspace="member" section="profile">
   <section class="mx-auto max-w-5xl px-4 py-10 sm:px-8 sm:py-14">
-    <header class="social-page-header"><div><h1>My profile</h1><p>Your name appears on club posts. Contact details stay in your family records.</p></div></header>
+    <header class="social-page-header"><div><h1>My profile</h1><p>Your name and photo appear on club posts. Contact details stay in your family records.</p></div></header>
     <div class="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_16rem]">
       <MyProfile client:load initialProfile={profile} />
       <aside class="self-start rounded-xl border border-line bg-surface-2 p-5">

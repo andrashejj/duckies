@@ -4,12 +4,17 @@ import { GalleryError } from "./gallery";
 import { sha256 } from "../registration/records";
 
 export type SocialActor = { userId: string; email: string; role: string };
-export type SocialPerson = { id: string; name: string; active: boolean };
+export type SocialPerson = { id: string; name: string; active: boolean; photoVersion: string | null };
 export type SocialComment = { id: string; body: string; date: string; author: SocialPerson; canDelete: boolean };
 export type SocialPost = { id: string; body: string; date: string; photoId: string | null; author: SocialPerson; likes: number; liked: boolean; comments: number; canDelete: boolean; canShare: boolean; tags: { id:string; name:string }[] };
 const name = `COALESCE(NULLIF(pp.name,''),NULLIF(u.name,''),'Club member')`;
 const visible = `p.hidden_at IS NULL AND (p.photo_id IS NULL OR photo.status='approved')`;
-const person = `jsonb_build_object('id',u.id,'name',${name},'active',EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)))`;
+// A parent's profile photo, keyed by its last change so a new one shows straight away.
+const photoVersion = `CASE WHEN pp.image IS NOT NULL THEN pp.photo_updated_at::text END`;
+const inClub = `EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email))`;
+// Who shows up in the club: current members, and past members whose posts are still up.
+const knownPerson = `(${inClub} OR EXISTS(SELECT 1 FROM club_post p WHERE p.author_id=u.id AND p.hidden_at IS NULL))`;
+const person = `jsonb_build_object('id',u.id,'name',${name},'active',${inClub},'photoVersion',${photoVersion})`;
 
 // Lock membership for the whole write. Revocation waits, snapshots the completed
 // write, then removes access; a write starting after revocation fails here.
@@ -47,16 +52,21 @@ export async function listPosts(actor:SocialActor,options:{author?:string;before
   return {posts:rows.slice(0,20),next:rows.length>20?rows[19].id:null};
 }
 export async function people() {
-  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,true AS active,
+  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,true AS active,${photoVersion} AS "photoVersion",
     EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent" FROM "user" u
     JOIN club_member m ON m.email=lower(u.email) LEFT JOIN club_parent_profile pp ON pp.email=m.email
     WHERE u."emailVerified"=true ORDER BY lower(${name}),u.id`)).rows;
 }
 export async function socialPerson(id:string) {
-  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)) AS active,
+  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,${inClub} AS active,${photoVersion} AS "photoVersion",
     EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent"
     FROM "user" u LEFT JOIN club_parent_profile pp ON pp.email=lower(u.email)
-    WHERE u.id=$1 AND (EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email)) OR EXISTS(SELECT 1 FROM club_post p WHERE p.author_id=u.id AND p.hidden_at IS NULL))`,[id])).rows[0]??null;
+    WHERE u.id=$1 AND ${knownPerson}`,[id])).rows[0]??null;
+}
+// The photo behind a member's avatar. Same audience as their profile page.
+export async function avatarImage(id:string) {
+  return (await getDatabase().query<{image:Buffer}>(`SELECT pp.image FROM "user" u JOIN club_parent_profile pp ON pp.email=lower(u.email)
+    WHERE u.id=$1 AND pp.image IS NOT NULL AND ${knownPerson}`,[id])).rows[0]?.image??null;
 }
 export async function createPost(db:PoolClient,actor:SocialActor,body:string,photoId:string|null=null) {
   return (await db.query<{id:string}>('INSERT INTO club_post(author_id,body,photo_id) VALUES($1,$2,$3) RETURNING id',[actor.userId,body,photoId])).rows[0].id;

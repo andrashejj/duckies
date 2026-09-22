@@ -21,7 +21,7 @@ try{
     data={active:true,person:person!,feed,photos:photos.filter(p=>keys.has(p.key)),archive:null};
   }else{
     const archive=await readMemberArchive(session.user.email);
-    data={active:false,person:{id:session.user.id,name:session.user.name||'Your memories',active:false},feed:null,photos:archive?.photos??[],archive};
+    data={active:false,person:{id:session.user.id,name:session.user.name||'Your memories',active:false,photoVersion:null},feed:null,photos:archive?.photos??[],archive};
   }
 }catch{Astro.response.status=503;}
 ---

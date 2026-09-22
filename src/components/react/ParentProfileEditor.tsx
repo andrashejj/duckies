@@ -45,7 +45,7 @@ export default function ParentProfileEditor({ profile, onSaved, expanded = false
   // The page renders on the server. Prevent native form submission (and lost
   // edits) until React has attached the save and photo handlers.
   const fields = <fieldset disabled={!ready} className="min-w-0">
-    <p className="mt-2 text-sm text-fg-muted">Your name, photo and contact details help the organisers recognise you. These details are private to you and organisers.</p>
+    <p className="mt-2 text-sm text-fg-muted">Your name and photo appear on your club posts and member profile, and help the organisers recognise you. Your phone number stays private to you and the organisers.</p>
     <div className="mt-4 flex items-center gap-4"><ParentPhoto profile={profile} /><ParentPhotoUpload profile={profile} onSaved={onSaved} /></div>
     <form className="mt-4 grid gap-3" onSubmit={(event) => void save(event)}>
       <label className="grid gap-1"><span className={mono}>Your name</span><input name="name" className={input} required maxLength={120} defaultValue={profile.name} autoComplete="name" /></label>
