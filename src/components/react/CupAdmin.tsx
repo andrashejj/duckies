@@ -1,3 +1,5 @@
+import CupPlanner from "./CupPlanner";
+import { boundaryTies, roundReadiness } from "../../lib/cup-planner";
 import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
 import {
   heatSecondsLeft, formatScore, heatLabel, heatResults, heatShort, rashieLabel, RASHIES,
@@ -64,15 +66,15 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
       if ((e as { status?: number }).status === 409) await load();
     } finally { setBusy(false); }
   }
-  const saveConfig = (patch: Partial<Pick<CupConfig, "rounds" | "heatSize" | "finalSize" | "live">>, done?: string) =>
+  const saveConfig = (patch: Partial<Pick<CupConfig, "rounds" | "heatSize" | "finalSize" | "live" | "plan">>, done?: string) =>
     act(async () => ({ config: (await api("/api/admin/cup", "PATCH", { ...patch, version: state!.config.version })).config }), done);
-  const draw = (target: RoundKey) => act(() => target === "final" ? api("/api/admin/cup/final", "POST", {}) : api("/api/admin/cup/rounds", "POST", { round: target }), target === "final" ? "The final is set." : `Round ${target} drawn.`);
+  const draw = (target: RoundKey, review?: { order: string[]; reason: string }) => act(() => target === "final" ? api("/api/admin/cup/final", "POST", review ?? {}) : api("/api/admin/cup/rounds", "POST", { round: target }), target === "final" ? "The final is set." : `Round ${target} drawn.`);
   const deleteRound = (target: RoundKey) => {
     if (!window.confirm(`Delete the heats of ${target === "final" ? "the final" : `round ${target}`}?`)) return;
     void act(() => api(`/api/admin/cup/rounds/${target}`, "DELETE"), "Heats deleted.");
   };
-  const move = (kidId: string, target: RoundKey, heatId: string | null, colour?: Rashie) =>
-    act(() => api("/api/admin/cup/slots", "POST", { kidId, stage: target === "final" ? "final" : "round", round: target === "final" ? 0 : target, heatId, colour }));
+  const move = (kidId: string, target: RoundKey, heatId: string | null, colour?: Rashie, swapKidId?: string) =>
+    act(() => api("/api/admin/cup/slots", "POST", { kidId, stage: target === "final" ? "final" : "round", round: target === "final" ? 0 : target, heatId, colour, swapKidId }));
   const setStatus = (heat: Heat, status: HeatStatus) => act(() => api(`/api/admin/cup/heats/${heat.id}`, "PATCH", { status }), status === "running" ? `${heatLabel(heat)} is in the water.` : status === "done" ? `${heatLabel(heat)} posted to the ticker.` : undefined);
 
   const config = state?.config;
@@ -80,7 +82,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
   const roundHeats = useMemo(() => (state?.heats ?? []).filter((heat) => round === "final" ? heat.stage === "final" : heat.stage === "round" && heat.round === round), [state, round]);
   const placed = new Set(roundHeats.flatMap((heat) => heat.slots.map((slot) => slot.kidId)));
   const spare = (state?.entrants ?? []).filter((kid) => !placed.has(kid.id));
-  const scored = roundHeats.some((heat) => state!.waves.some((wave) => wave.heatId === heat.id));
+  const scored = !!config?.plan && roundHeats.some(heat => heat.status !== "scheduled") || roundHeats.some((heat) => state!.waves.some((wave) => wave.heatId === heat.id));
   const rounds: RoundKey[] = config ? [...Array.from({ length: config.rounds }, (_, i) => i + 1), "final"] : [];
 
   if (!state || !config) return <p className={error ? errorNotice : `${mono} py-6`}>{error || "Loading the board…"}</p>;
@@ -90,6 +92,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
       <HeatWarnings heats={state.heats} now={now} />
       {(error || notice) && <p role="status" className={error ? errorNotice : noticeClass}>{error || notice}</p>}
 
+      <CupPlanner state={state} busy={busy} save={plan => void saveConfig({ plan }, "Guided format and timetable saved.")} chooseRound={value => { setRound(value); document.getElementById("cup-round-controls")?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' }); }} buildFinals={review => void draw("final", review)} />
       {/* Settings + live switch */}
       <section className={`${panel} grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start`}>
         <div className="grid gap-4">
@@ -101,12 +104,12 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
             {([["rounds", "Rounds", [1, 2, 3, 4, 5, 6]], ["heatSize", "Kids per heat", [2, 3, 4]], ["finalSize", "In the final", [2, 3, 4]]] as const).map(([key, label, options]) => (
               <label key={key} className="grid gap-1">
                 <span className={mono}>{label}</span>
-                <select className={select} value={config[key]} disabled={busy} onChange={(event) => void saveConfig({ [key]: Number(event.target.value) }, "Settings saved.")}>
+                <select className={select} value={config[key]} disabled={busy || !!config.plan} onChange={(event) => void saveConfig({ [key]: Number(event.target.value) }, "Settings saved.")}>
                   {options.map((option) => <option key={option} value={option}>{option}</option>)}
                 </select>
               </label>
             ))}
-            <p className="max-w-md text-sm text-fg-muted">Round 1 goes by age, youngest together. Every later round is shuffled, keeping kids who already surfed together apart. Everyone surfs once per round; the final takes the top of the leaderboard.</p>
+            <p className="max-w-md text-sm text-fg-muted">{config.plan ? `Three rounds and a placement final for everyone. Group by scores after round ${config.plan.seedAfter}; qualifying scores decide final groups.` : "Legacy draw: round 1 by age, later rounds shuffled. Save the guided format above before drawing to give everyone four surfs."}</p>
           </div>
         </div>
         <div className="grid gap-3 rounded-card border-2 border-edge bg-canvas p-4">
@@ -124,7 +127,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
       </section>
 
       {/* Rounds */}
-      <section className="grid gap-4">
+      <section id="cup-round-controls" className="grid scroll-mt-6 gap-4">
         <div role="tablist" aria-label="Rounds" className="flex flex-wrap gap-2">
           {rounds.map((key) => {
             const count = state.heats.filter((heat) => key === "final" ? heat.stage === "final" : heat.stage === "round" && heat.round === key).length;
@@ -139,12 +142,12 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {round === "final" ? (
-            <button type="button" className={primaryButton} disabled={busy || scored} onClick={() => void draw("final")}>{roundHeats.length ? "Rebuild the final from the leaderboard" : `Build the final (top ${config.finalSize})`}</button>
+            <button type="button" className={primaryButton} disabled={busy || scored || (!!config.plan && (!!roundReadiness(state.entrants, state.heats, config.rounds) || boundaryTies(state.standings).length > 0))} onClick={() => void draw("final")}>{roundHeats.length ? "Rebuild the final from the leaderboard" : (config.plan ? "Build placement finals for everyone" : `Build the final (top ${config.finalSize})`)}</button>
           ) : (
-            <button type="button" className={primaryButton} disabled={busy || scored || !state.entrants.length} onClick={() => void draw(round)}>{roundHeats.length ? `Redraw round ${round}` : `Draw round ${round}`}</button>
+            <button type="button" className={primaryButton} disabled={busy || scored || !state.entrants.length || (!!config.plan && !!roundReadiness(state.entrants, state.heats, Number(round) - 1))} onClick={() => void draw(round)}>{roundHeats.length ? `Redraw round ${round}` : `Draw round ${round}`}</button>
           )}
           {roundHeats.length > 0 && <button type="button" className={dangerButton} disabled={busy || scored} onClick={() => deleteRound(round)}>Delete these heats</button>}
-          {scored && <p className={mono}>Judges have scored this round — move kids by hand, no redraw.</p>}
+          {scored && <p className={mono}>This round has started or has scores. The draw is protected.</p>}
           {!roundHeats.length && round !== "final" && round > 1 && !state.heats.some((heat) => heat.stage === "round" && heat.round === round - 1) && <p className={mono}>Draw round {round - 1} first so the shuffle can avoid repeats.</p>}
         </div>
 
@@ -166,7 +169,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                     <span className={`${pill} ${statusPill[heat.status]}`}>{heat.status === "running" ? "● live" : heat.status}</span>
                   </header>
                   {heat.status === "running" && <HeatCountdown heat={heat} now={now} />}
-                  {heat.status === "scheduled" && <form className="flex flex-wrap items-end gap-2" onSubmit={(event) => {
+                  {heat.status === "scheduled" && !config.plan && <form className="flex flex-wrap items-end gap-2" onSubmit={(event) => {
                     event.preventDefault(); const durationMinutes = Number(new FormData(event.currentTarget).get("minutes"));
                     void act(() => api(`/api/admin/cup/heats/${heat.id}`, "PATCH", { durationMinutes }), "Heat duration saved.");
                   }}>
@@ -178,12 +181,12 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                       const kid = kids.get(slot.kidId);
                       const result = results.get(slot.kidId);
                       return (
-                        <li key={slot.kidId} className={slotRow} draggable={!busy} data-dragging={dragging === slot.kidId}
+                        <li key={slot.kidId} className={slotRow} draggable={!busy && (!config.plan || (heat.status === "scheduled" && heat.stage !== "final"))} data-dragging={dragging === slot.kidId}
                           onDragStart={(event) => { event.dataTransfer.effectAllowed = "move"; setDragging(slot.kidId); }} onDragEnd={() => { setDragging(null); setDropTarget(null); }}>
                           {/* The swatch is the colour itself with its initial; the select sits invisibly on top so the menu still lists the rashies. */}
                           <span className="relative shrink-0">
                             <span className={rashieSwatch(slot.colour, "h-8 w-8")} aria-hidden="true">{rashieLabel[slot.colour].slice(0, 1)}</span>
-                            <select aria-label={`${kid?.name ?? "Kid"}'s rashie`} title="Change rashie" className="absolute inset-0 cursor-pointer opacity-0" value={slot.colour} disabled={busy}
+                            <select aria-label={`${kid?.name ?? "Kid"}'s rashie`} title="Change rashie" className="absolute inset-0 cursor-pointer opacity-0" value={slot.colour} disabled={busy || (!!config.plan && heat.status !== "scheduled")}
                               onChange={(event) => void move(slot.kidId, round, heat.id, event.target.value as Rashie)}>
                               {RASHIES.map((colour) => <option key={colour} value={colour} disabled={heat.slots.some((other) => other.kidId !== slot.kidId && other.colour === colour)}>{rashieLabel[colour]}</option>)}
                             </select>
@@ -193,9 +196,10 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                             <p className="truncate font-display text-[0.98rem] font-bold [font-variation-settings:'wdth'_108]">{kid?.name ?? "Unknown"}</p>
                             <p className={`${mono} truncate`}>{kid?.age ?? "?"} yrs · {result?.score === null || result === undefined ? `${result?.waves ?? 0} waves` : `${formatScore(result.score)} ★ · ${result.waves} waves`}</p>
                           </div>
-                          <select aria-label={`Move ${kid?.name ?? "kid"}`} className={`${select} max-w-[6.5rem] py-1 text-xs`} value={heat.id} disabled={busy}
-                            onChange={(event) => void move(slot.kidId, round, event.target.value === "out" ? null : event.target.value)}>
+                          <select aria-label={`Move ${kid?.name ?? "kid"}`} className={`${select} max-w-[6.5rem] py-1 text-xs`} value={heat.id} disabled={busy || (!!config.plan && (heat.status !== "scheduled" || heat.stage === "final"))}
+                            onChange={(event) => { const value = event.target.value; if (value.startsWith("swap:")) { const [, target, other] = value.split(":"); void move(slot.kidId, round, target, undefined, other); } else void move(slot.kidId, round, value === "out" ? null : value); }}>
                             {roundHeats.map((other) => <option key={other.id} value={other.id}>{other.id === heat.id ? "Here" : `→ ${heatShort(other)}`}</option>)}
+                            {roundHeats.filter(other => other.id !== heat.id && other.status === "scheduled").flatMap(other => other.slots.map(swap => <option key={`swap:${swap.kidId}`} value={`swap:${other.id}:${swap.kidId}`}>Swap with {kids.get(swap.kidId)?.name} ({heatShort(other)})</option>))}
                             <option value="out">Take out</option>
                           </select>
                         </li>
@@ -230,10 +234,11 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                     </label>)}
                     {!heat.judges.length && <p className="text-sm text-fg-muted">Nobody can score this heat until you select a judge.</p>}
                   </fieldset>
+                  {config.plan && heat.status === "running" && heat.slots.some(slot => results.get(slot.kidId)?.score === null) && <p className="text-sm text-fg-muted">Check missing scores before finishing. Any surfer with no scored run will receive zero for this heat.</p>}
                   <footer className="mt-auto flex flex-wrap gap-2">
                     {heat.status === "scheduled" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "running")}>Start heat</button>}
                     {heat.status === "running" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "done")}>Finish + post result</button>}
-                    {heat.status !== "scheduled" && !state.waves.some((wave) => wave.heatId === heat.id) && <button type="button" className={smallButton} disabled={busy} onClick={() => void setStatus(heat, "scheduled")}>Reset</button>}
+                    {!config.plan && heat.status !== "scheduled" && !state.waves.some((wave) => wave.heatId === heat.id) && <button type="button" className={smallButton} disabled={busy} onClick={() => void setStatus(heat, "scheduled")}>Reset</button>}
                   </footer>
                 </article>
               );
@@ -246,7 +251,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
             <h3 className={panelTitle}>Not in {round === "final" ? "the final" : `round ${round}`} <span className={mono}>{spare.length}</span></h3>
             <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {spare.map((kid) => (
-                <li key={kid.id} className={slotRow} draggable={!busy} data-dragging={dragging === kid.id}
+                <li key={kid.id} className={slotRow} draggable={!busy && round !== "final"} data-dragging={dragging === kid.id}
                   onDragStart={(event) => { event.dataTransfer.effectAllowed = "move"; setDragging(kid.id); }} onDragEnd={() => { setDragging(null); setDropTarget(null); }}>
                   <Avatar kid={kid} />
                   <div className="min-w-0 flex-1">
@@ -282,9 +287,9 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
         <section className={`${panel} overflow-x-auto`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className={panelTitle}>Leaderboard</h2>
-            <p className={mono}>best 2 runs averaged · 5 stars maximum · final separate</p>
+            <p className={mono}>{config.plan ? "Qualifying: average of completed rounds · final places shown separately" : "best 2 runs averaged · 5 stars maximum · final separate"}</p>
           </div>
-          <Leaderboard rows={state.standings} rounds={config.rounds} />
+          <Leaderboard rows={state.standings} rounds={config.rounds} guided={!!config.plan} />
         </section>
 
         <div className="grid content-start gap-8">

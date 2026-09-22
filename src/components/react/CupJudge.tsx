@@ -1,3 +1,4 @@
+import { cupTime, type TimetableRow } from "../../lib/cup-planner";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { best2, byRunningOrder, heatSecondsLeft, formatScore, heatLabel, heatShort, rashieLabel, MAX_WAVES, WAVE_SCORES, type HeatVolunteer, type Heat, type Rashie, type Wave } from "../../lib/comp";
 import { errorNotice, heatTab, judgeAvatar, judgeAvatarEmpty, linkButton, mono, monoPlain, notice as noticeClass, pill, rashieBlock, scoreKey, scorePad, statusPill, surferBand, surferCard, waveChip, waveChipBest } from "../../lib/comp-ui";
@@ -10,7 +11,7 @@ import SignOutButton from "./SignOutButton";
 // face, tap a score per wave as it happens. Only this judge's own scores are
 // shown here; the public board below combines ratings of the same run.
 type Kid = { id: string; name: string; age: number | null; photoVersion: string | null };
-type JudgeState = { serverNow: string; profile: ParentProfile; volunteers: HeatVolunteer[]; judge: { email: string; name: string; organiser: boolean }; config: { rounds: number; heatSize: number }; kids: Record<string, Kid>; heats: Heat[]; waves: Wave[] };
+type JudgeState = { timetable?: { rows: TimetableRow[] } | null; serverNow: string; profile: ParentProfile; volunteers: HeatVolunteer[]; judge: { email: string; name: string; organiser: boolean }; config: { rounds: number; heatSize: number }; kids: Record<string, Kid>; heats: Heat[]; waves: Wave[] };
 const criteria = [
   ["Paddle & commit", "Go for the wave. Don't pull back."],
   ["Pop-up", "Get to your feet. No knees, no cap."],
@@ -125,6 +126,7 @@ export default function CupJudge() {
         <section className="grid gap-4">
           <header className="flex flex-wrap items-center gap-3">
             <h2 className="font-display text-2xl font-bold leading-tight [font-variation-settings:'wdth'_110] sm:text-3xl">{heatLabel(heat)}</h2>
+            {state.timetable?.rows.filter(row => row.heatId === heat.id).map(row => <p key={row.key} className={mono}>Timetable: {cupTime(row.start)}–{cupTime(row.end)} · Mauritius</p>)}
             <span className={`${pill} ${statusPill[heat.status]}`}>{heat.status === "running" ? "● in the water" : heat.status}</span>
             {heat.status === "running" && <HeatCountdown heat={heat} now={now} />}
             <p className={`${mono} basis-full`}>Agree on run numbers with the other judges. Rate each ride from 1–5 stars. Judges are averaged per run; the best two runs count. With only one scored run, that run is the average.</p>

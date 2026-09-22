@@ -1494,7 +1494,7 @@ export const site = {
         accent: "coral",
         tag: "Who",
         title: "Age 7+. Friends + family welcome.",
-        text: "Kids from 7 up surf the heats — no divisions, every surfer gets their own score. Parents, siblings, grandparents, friends: everyone's welcome on the sand.",
+        text: "Kids from 7 up get three rounds and a placement final — nobody is eliminated. Opening heats are shuffled; later groups follow scores. Parents, siblings, grandparents, friends: everyone's welcome on the sand.",
       },
       {
         photo: "painted-boards",

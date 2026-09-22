@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { cupPlanSchema, type CupPlan } from "./cup-plan-config";
 
 // Cup day: the heat draw, the judges' scores and the leaderboard. Pure logic
 // shared by the server (src/lib/server/comp.ts), the organiser board, the
@@ -13,7 +14,7 @@ export type HeatStage = "round" | "final";
 export type HeatStatus = "scheduled" | "running" | "done";
 export const heatStatuses: HeatStatus[] = ["scheduled", "running", "done"];
 
-export type CupConfig = { edition: string; rounds: number; heatSize: number; finalSize: number; live: boolean; version: number };
+export type CupConfig = { edition: string; rounds: number; heatSize: number; finalSize: number; live: boolean; version: number; plan?: CupPlan | null; finalReview?: { order: string[]; reason: string } | null };
 export type Entrant = { id: string; name: string; age: number | null; member: boolean; photoVersion: string | null };
 export type Slot = { kidId: string; colour: Rashie };
 export type Heat = { id: string; stage: HeatStage; round: number; number: number; status: HeatStatus; startedAt: string | null; finishedAt: string | null; slots: Slot[]; judges: string[]; durationMinutes: number; endsAt: string | null };
@@ -26,12 +27,12 @@ export const WAVE_SCORES = [1, 2, 3, 4, 5];
 export const MAX_WAVES = 15;
 
 export const heatLabel = (heat: Pick<Heat, "stage" | "round" | "number">) =>
-  heat.stage === "final" ? "The Final" : `Round ${heat.round} · Heat ${heat.number}`;
+  heat.stage === "final" ? (heat.number === 1 ? "The Final" : `Placement final ${heat.number}`) : `Round ${heat.round} · Heat ${heat.number}`;
 export const heatShort = (heat: Pick<Heat, "stage" | "round" | "number">) =>
-  heat.stage === "final" ? "Final" : `R${heat.round}·H${heat.number}`;
+  heat.stage === "final" ? (heat.number === 1 ? "Final" : `Final ${heat.number}`) : `R${heat.round}·H${heat.number}`;
 // Heats in the order they run: round by round, the final last.
 export const byRunningOrder = (a: Heat, b: Heat) =>
-  Number(a.stage === "final") - Number(b.stage === "final") || a.round - b.round || a.number - b.number;
+  Number(a.stage === "final") - Number(b.stage === "final") || a.round - b.round || (a.stage === "final" ? b.number - a.number : a.number - b.number);
 export const heatRound = (heat: Pick<Heat, "stage" | "round">) => (heat.stage === "final" ? 0 : heat.round);
 
 // ---------- The draw ----------
@@ -145,10 +146,10 @@ export function heatResults(heat: Heat, waves: Wave[]): Map<string, HeatResult> 
   return results;
 }
 
-export type Standing = { kidId: string; name: string; age: number | null; rounds: (number | null)[]; total: number; best: number; heats: number; final: number | null; rank: number };
+export type Standing = { kidId: string; name: string; age: number | null; rounds: (number | null)[]; total: number; best: number; heats: number; final: number | null; finalPlace?: number | null; finalGroup?: number; rank: number };
 
 /** Best two runs across qualifying heats; the final is scored separately. */
-export function standings(config: Pick<CupConfig, "rounds">, entrants: Entrant[], heats: Heat[], waves: Wave[]): Standing[] {
+export function standings(config: Pick<CupConfig, "rounds" | "plan">, entrants: Entrant[], heats: Heat[], waves: Wave[]): Standing[] {
   const rows = new Map<string, Standing>(
     entrants.map((kid) => [kid.id, { kidId: kid.id, name: kid.name, age: kid.age, rounds: Array.from({ length: config.rounds }, () => null), total: 0, best: 0, heats: 0, final: null, rank: 0 }]),
   );
@@ -159,17 +160,27 @@ export function standings(config: Pick<CupConfig, "rounds">, entrants: Entrant[]
       const result = results.get(slot.kidId);
       if (!row || !result) continue;
       if (heat.stage === "final") { row.final = result.score; continue; }
+      if (config.plan && heat.status !== "done") continue;
       row.heats++;
-      if (heat.round >= 1 && heat.round <= config.rounds && result.score !== null) row.rounds[heat.round - 1] = Math.max(row.rounds[heat.round - 1] ?? 0, result.score);
+      if (heat.round >= 1 && heat.round <= config.rounds && (result.score !== null || config.plan)) row.rounds[heat.round - 1] = Math.max(row.rounds[heat.round - 1] ?? 0, result.score ?? 0);
     }
   }
   const ranked = [...rows.values()].map((row) => {
-    const qualifying = new Set(heats.filter((heat) => heat.stage === "round" && heat.slots.some((slot) => slot.kidId === row.kidId)).map((heat) => heat.id));
+    const qualifying = new Set(heats.filter((heat) => heat.stage === "round" && (!config.plan || heat.status === "done") && heat.slots.some((slot) => slot.kidId === row.kidId)).map((heat) => heat.id));
     const scores = runScores(waves.filter((wave) => wave.kidId === row.kidId && qualifying.has(wave.heatId)));
-    return { ...row, total: round2(best2(scores)), best: Math.max(0, ...scores) };
+    const completed = row.rounds.filter((score): score is number => score !== null);
+    return { ...row, total: config.plan ? round2(completed.reduce((sum, score) => sum + score, 0) / (completed.length || 1)) : round2(best2(scores)), best: Math.max(0, ...scores) };
   });
   ranked.sort((a, b) => b.total - a.total || b.best - a.best || a.name.localeCompare(b.name));
   ranked.forEach((row, index) => { row.rank = index > 0 && ranked[index - 1].total === row.total && ranked[index - 1].best === row.best ? ranked[index - 1].rank : index + 1; });
+  if (config.plan) for (const heat of heats.filter(h => h.stage === "final")) {
+    const group = ranked.filter(row => heat.slots.some(slot => slot.kidId === row.kidId));
+    group.sort((a, b) => (b.final ?? 0) - (a.final ?? 0) || b.total - a.total || b.best - a.best);
+    for (const [i, row] of group.entries()) {
+      row.finalGroup = heat.number;
+      row.finalPlace = heat.status !== "done" ? null : i > 0 && (group[i - 1].final ?? 0) === (row.final ?? 0) && group[i - 1].total === row.total && group[i - 1].best === row.best ? group[i - 1].finalPlace : (heat.number - 1) * 4 + i + 1;
+    }
+  }
   return ranked;
 }
 
@@ -183,6 +194,7 @@ export const configPatchSchema = z.object({
   heatSize: z.int().min(2).max(4).optional(),
   finalSize: z.int().min(2).max(4).optional(),
   live: z.boolean().optional(),
+  plan: cupPlanSchema.optional(),
   version: z.int().min(1),
 }).strict();
 export const drawSchema = z.object({ round: z.int().min(1).max(6) }).strict();
@@ -193,6 +205,7 @@ export const slotMoveSchema = z.object({
   round: z.int().min(0).max(6),
   heatId: uuid.nullable(),
   colour: z.enum(RASHIES).optional(),
+  swapKidId: uuid.optional(),
 }).strict();
 export const heatPatchSchema = z.union([z.object({ status: z.enum(heatStatuses) }).strict(), z.object({ durationMinutes: z.int().min(1).max(60) }).strict()]);
 export type HeatVolunteer = { heatId: string; email: string; status: "pending" | "approved" | "declined" };

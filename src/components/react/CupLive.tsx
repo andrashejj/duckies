@@ -1,3 +1,4 @@
+import { cupTime } from "../../lib/cup-planner";
 import { useEffect, useState } from "react";
 import { formatScore, rashieLabel, type HeatStatus, type Rashie, type Standing, type TickerItem } from "../../lib/comp";
 import { liveTicker, mono, panel, panelTitle, pill, podium, rankBubble, rashieBlock, statusPill } from "../../lib/comp-ui";
@@ -7,10 +8,10 @@ import { Leaderboard } from "./CupLeaderboard";
 // The public live board: the ticker, who is in the water, the leaderboard and
 // every heat's result. Polls the live feed; shows a teaser until the
 // organisers switch the board on.
-type PublicHeat = { id: string; stage: "round" | "final"; round: number; number: number; label: string; status: HeatStatus; startedAt: string | null; endsAt: string | null; durationMinutes: number; surfers: { name: string; colour: Rashie; score: number | null }[] };
+type PublicHeat = { id: string; stage: "round" | "final"; round: number; number: number; label: string; status: HeatStatus; startedAt: string | null; endsAt: string | null; durationMinutes: number; surfers: { name: string; colour: Rashie; score: number | null; place?: number | null }[] };
 type Live =
   | { live: false; name: string }
-  | { live: true; name: string; updatedAt: string; rounds: number; running: PublicHeat[]; upNext: PublicHeat[]; ticker: TickerItem[]; leaderboard: Omit<Standing, "kidId">[]; final: PublicHeat | null; heats: PublicHeat[] };
+  | { live: true; guided?: boolean; timetable?: { finish: string; spareMinutes: number; rows: { key: string; label: string; start: string; end: string; status: string; surfers: { name: string; colour: Rashie }[] }[] } | null; name: string; updatedAt: string; rounds: number; running: PublicHeat[]; upNext: PublicHeat[]; ticker: TickerItem[]; leaderboard: Omit<Standing, "kidId">[]; final: PublicHeat | null; heats: PublicHeat[] };
 
 export default function CupLive({ dateLabel, warnings = true }: { dateLabel: string; warnings?: boolean }) {
   const [data, setData] = useState<Live | null>(null);
@@ -99,7 +100,7 @@ export default function CupLive({ dateLabel, warnings = true }: { dateLabel: str
             <ol className="grid gap-2">
               {data.final.surfers.map((surfer, index) => (
                 <li key={surfer.colour} className="flex items-center gap-3 rounded-xl border-2 border-edge bg-surface px-3 py-2">
-                  <span className={`${rankBubble} ${surfer.score !== null ? podium[index + 1] ?? "" : "opacity-50"}`}>{index + 1}</span>
+                  <span className={`${rankBubble} ${data.guided ? surfer.place ? podium[surfer.place] ?? "" : "opacity-50" : surfer.score !== null ? podium[index + 1] ?? "" : "opacity-50"}`}>{data.guided ? surfer.place ?? "—" : index + 1}</span>
                   <span className={`h-6 w-6 rounded-full border-2 border-edge ${rashieBlock[surfer.colour]}`} aria-label={`${rashieLabel[surfer.colour]} rashie`} />
                   <span className="flex-1 font-display text-lg font-bold [font-variation-settings:'wdth'_108]">{surfer.name}</span>
                   <span className="font-display text-xl font-extrabold">{formatScore(surfer.score)}</span>
@@ -112,11 +113,16 @@ export default function CupLive({ dateLabel, warnings = true }: { dateLabel: str
         <section className={`${panel} overflow-x-auto`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className={`${panelTitle} text-2xl sm:text-3xl`}>Leaderboard</h2>
-            <p className={mono}>best 2 runs averaged · 5 stars maximum · final separate</p>
+            <p className={mono}>{data.guided ? "Qualifying: average of completed rounds · final places shown separately" : "best 2 runs averaged · 5 stars maximum · final separate"}</p>
           </div>
-          <Leaderboard rows={data.leaderboard} rounds={data.rounds} publicView />
+          <Leaderboard rows={data.leaderboard} rounds={data.rounds} guided={data.guided} publicView />
         </section>
 
+        {data.timetable && <section className={`${panel} grid gap-4`} aria-label="Heat timetable">
+          <h2 className={panelTitle}>Heat timetable</h2><p className="text-sm text-fg-muted">Mauritius time · estimated finish {cupTime(data.timetable.finish)}. Three rounds and a placement final for every surfer. Later pairings follow the completed results.</p>
+          {data.timetable.spareMinutes < 0 && <p role="status">Running approximately {-data.timetable.spareMinutes} minutes beyond the planned finish.</p>}
+          <ol className="grid gap-3">{data.timetable.rows.map(row => <li key={row.key} className="grid gap-1 border-b border-line pb-3 sm:grid-cols-[8rem_1fr_2fr]"><span className="font-mono text-sm">{cupTime(row.start)}–{cupTime(row.end)}</span><strong>{row.label}</strong><span className="text-sm">{row.surfers.length ? row.surfers.map(s => `${s.name} (${s.colour})`).join(' · ') : 'Pairings to follow'}</span></li>)}</ol>
+        </section>}
         {results.length > 0 && (
           <section className="grid gap-3">
             <h2 className={`${panelTitle} text-2xl`}>Heat tableau</h2>

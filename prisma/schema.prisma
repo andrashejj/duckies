@@ -391,6 +391,8 @@ model ClubSignedWaiver {
 // One row per Cup edition: how the day is drawn and whether the leaderboard
 // is public yet. Seeded by migration for cup-vol-2.
 model CupEvent {
+  plan Json?
+  final_review Json?
   edition    String      @id
   rounds     Int         @default(2)
   heat_size  Int         @default(4)

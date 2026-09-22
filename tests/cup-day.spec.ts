@@ -44,7 +44,7 @@ test.beforeEach(async () => {
   await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,cup_heat,cup_judge,cup_ticker,club_parent_profile CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ($1,'organiser')", [organiser]);
   await db.query("INSERT INTO club_semester (id,label,starts_on,ends_on,child_fee_mur,family_fee_mur) VALUES ($1,'Sunset Duckies Cup Vol. 02','2026-10-16','2026-10-16',1000,1000) ON CONFLICT (id) DO NOTHING", [CUP_TERM]);
-  await db.query("INSERT INTO cup_event (edition) VALUES ($1) ON CONFLICT (edition) DO UPDATE SET rounds=2, heat_size=4, final_size=4, live=false, version=1", [CUP_TERM]);
+  await db.query("INSERT INTO cup_event (edition) VALUES ($1) ON CONFLICT (edition) DO UPDATE SET rounds=2, heat_size=4, final_size=4, live=false, version=1, plan=NULL, final_review=NULL", [CUP_TERM]);
 });
 test.afterAll(async () => { await db.end(); });
 
@@ -323,7 +323,7 @@ test("the organiser board draws, drags a kid between heats, runs a heat and goes
   // Phones use the menu instead: send Ana to heat 2, give her the green rashie.
   await heat1.getByLabel("Move Ana").selectOption({ label: "→ R1·H2" });
   const heat2 = page.getByRole("article").filter({ hasText: "Round 1 · Heat 2" });
-  await expect(heat2.getByRole("listitem").filter({ hasText: "Ana" })).toBeVisible();
+  await expect(heat2.getByRole("listitem").filter({ has: page.getByText("Ana", { exact: true }) })).toBeVisible();
   await expect(heat2).toContainText("4/4");
   await expect(heat2.getByLabel("Ana's rashie")).toHaveValue("green");
   await heat2.getByRole("button", { name: "Start heat" }).click();

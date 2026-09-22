@@ -1,3 +1,4 @@
+import { boundaryTies, cupTimetable, progressiveDraw, roundReadiness, type CupPlan } from "../cup-planner";
 import type { APIRoute } from "astro";
 import type pg from "pg";
 import { CUP_LABEL, CUP_TERM, publicName } from "../registration/cup";
@@ -71,12 +72,12 @@ type Db = pg.Pool | pg.PoolClient;
 async function serverTime(db: Db): Promise<string> {
   return (await db.query<{ now: Date }>("SELECT clock_timestamp() AS now")).rows[0].now.toISOString();
 }
-type ConfigRow = { edition: string; rounds: number; heat_size: number; final_size: number; live: boolean; version: number };
+type ConfigRow = { edition: string; rounds: number; heat_size: number; final_size: number; live: boolean; version: number; plan: CupPlan | null; final_review: CupConfig["finalReview"] };
 type HeatRow = { id: string; stage: "round" | "final"; round: number; number: number; status: HeatStatus; started_at: Date | null; finished_at: Date | null; judges: string[]; duration_minutes: number; ends_at: Date | null };
 type SlotRow = { heat_id: string; kid_id: string; colour: Rashie };
 type WaveRow = { id: string; heat_id: string; kid_id: string; judge_email: string; wave: number; score: string };
 
-const configFromRow = (row: ConfigRow): CupConfig => ({ edition: row.edition, rounds: row.rounds, heatSize: row.heat_size, finalSize: row.final_size, live: row.live, version: row.version });
+const configFromRow = (row: ConfigRow): CupConfig => ({ edition: row.edition, rounds: row.rounds, heatSize: row.heat_size, finalSize: row.final_size, live: row.live, version: row.version, plan: row.plan, finalReview: row.final_review });
 const waveFromRow = (row: WaveRow): Wave => ({ id: row.id, heatId: row.heat_id, kidId: row.kid_id, judge: row.judge_email, wave: row.wave, score: Number(row.score) });
 
 export async function readConfig(db: Db = getDatabase(), edition = CUP_TERM, lock = false): Promise<CupConfig> {
@@ -153,7 +154,7 @@ export async function loadJudgeState(judge: JudgeAccess, edition = CUP_TERM) {
   ]);
   const assignedKids = new Set(heats.filter((heat) => heat.judges.includes(judge.email)).flatMap((heat) => heat.slots.map((slot) => slot.kidId)));
   const kids = Object.fromEntries(entrants.map((kid) => [kid.id, { id: kid.id, name: kid.name, age: kid.age, photoVersion: assignedKids.has(kid.id) ? kid.photoVersion : null }]));
-  return { serverNow: await serverTime(db), profile, volunteers, judge: { ...judge, name: profile.name || judge.name }, config: { rounds: config.rounds, heatSize: config.heatSize }, kids,
+  return { serverNow: await serverTime(db), profile, volunteers, judge: { ...judge, name: profile.name || judge.name }, config: { rounds: config.rounds, heatSize: config.heatSize }, timetable: cupTimetable(config, entrants.length, heats), kids,
     heats: heats.map((heat) => ({ ...heat, judges: heat.judges.filter((email) => email === judge.email) })), waves };
 }
 
@@ -164,23 +165,23 @@ export async function loadLive(edition = CUP_TERM) {
   const config = await readConfig(db, edition);
   if (!config.live) return { live: false as const, name: CUP_LABEL };
   const [entrants, heats, waves, ticker] = await Promise.all([readEntrants(db, edition), readHeats(db, edition), readWaves(db, edition), readTicker(db, edition, 12)]);
-  const names = new Map(entrants.map((kid) => [kid.id, kid.name]));
+  const names = new Map(entrants.map((kid) => [kid.id, publicName(kid.name)]));
   const board = standings(config, entrants, heats, waves);
   const publicHeat = (heat: Heat) => {
     const results = heatResults(heat, waves);
     return {
       id: heat.id, stage: heat.stage, round: heat.round, number: heat.number, label: heatLabel(heat), status: heat.status, startedAt: heat.startedAt, endsAt: heat.endsAt, durationMinutes: heat.durationMinutes,
-      surfers: heat.slots.map((slot) => ({ name: names.get(slot.kidId) ?? "?", colour: slot.colour, score: results.get(slot.kidId)?.score ?? null })),
+      surfers: heat.slots.map((slot) => ({ name: names.get(slot.kidId) ?? "?", colour: slot.colour, score: results.get(slot.kidId)?.score ?? null, ...(config.plan ? { place: board.find(row => row.kidId === slot.kidId)?.finalPlace ?? null } : {}) })),
     };
   };
   const running = heats.filter((heat) => heat.status === "running").map(publicHeat);
   const upNext = heats.filter((heat) => heat.status === "scheduled").slice(0, 2).map(publicHeat);
-  const finalHeat = heats.find((heat) => heat.stage === "final");
+  const finalHeat = heats.find((heat) => heat.stage === "final" && heat.number === 1);
   const final = finalHeat ? publicHeat(finalHeat) : null;
   return {
-    live: true as const, name: CUP_LABEL, updatedAt: await serverTime(db), rounds: config.rounds,
+    live: true as const, guided: !!config.plan, timetable: (() => { const table = cupTimetable(config, entrants.length, heats); return table && { ...table, rows: table.rows.map(({ slots, ...row }) => ({ ...row, surfers: slots.map(slot => ({ name: names.get(slot.kidId) ?? "?", colour: slot.colour })) })) }; })(), name: CUP_LABEL, updatedAt: await serverTime(db), rounds: config.rounds,
     running, upNext, ticker,
-    leaderboard: board.map(({ kidId: _kidId, ...row }) => row),
+    leaderboard: board.map(({ kidId: _kidId, ...row }) => ({ ...row, name: publicName(row.name) })),
     final: final && { ...final, surfers: [...final.surfers].sort((a, b) => (b.score ?? -1) - (a.score ?? -1)) },
     heats: heats.map(publicHeat),
   };
@@ -227,12 +228,15 @@ async function transaction<T>(work: (client: pg.PoolClient) => Promise<T>): Prom
 const wavesIn = async (client: pg.PoolClient, where: string, params: unknown[]) =>
   (await client.query(`SELECT 1 FROM cup_wave w JOIN cup_heat h ON h.id=w.heat_id WHERE ${where} LIMIT 1`, params)).rowCount !== 0;
 
-export async function updateConfig(patch: { rounds?: number; heatSize?: number; finalSize?: number; live?: boolean }, version: number, edition = CUP_TERM) {
+export async function updateConfig(patch: { rounds?: number; heatSize?: number; finalSize?: number; live?: boolean; plan?: CupPlan }, version: number, edition = CUP_TERM) {
   return transaction(async (client) => {
+    const current = await readConfig(client, edition, true);
+    if (patch.plan && (await readHeats(client, edition)).length) throw new CompError("Set the format and timetable before drawing heats. Delete unstarted draws first.", 409);
+    if ((current.plan || patch.plan) && ((patch.rounds !== undefined && patch.rounds !== 3) || (patch.heatSize !== undefined && patch.heatSize !== 4) || (patch.finalSize !== undefined && patch.finalSize !== 4))) throw new CompError("The guided format gives every child three rounds and a placement final, with up to four per heat.", 409);
     const { rowCount, rows } = await client.query<ConfigRow>(
-      `UPDATE cup_event SET rounds=COALESCE($3,rounds), heat_size=COALESCE($4,heat_size), final_size=COALESCE($5,final_size), live=COALESCE($6,live), version=version+1, updated_at=now()
+      `UPDATE cup_event SET rounds=COALESCE($3,rounds), heat_size=COALESCE($4,heat_size), final_size=COALESCE($5,final_size), live=COALESCE($6,live), plan=COALESCE($7::jsonb,plan), version=version+1, updated_at=now()
       WHERE edition=$1 AND version=$2 RETURNING *`,
-      [edition, version, patch.rounds ?? null, patch.heatSize ?? null, patch.finalSize ?? null, patch.live ?? null],
+      [edition, version, patch.plan ? 3 : patch.rounds ?? null, patch.plan ? 4 : patch.heatSize ?? null, patch.plan ? 4 : patch.finalSize ?? null, patch.live ?? null, patch.plan ? JSON.stringify(patch.plan) : null],
     );
     if (!rowCount) throw new CompError("The settings changed in another window. Reload the board and try again.", 409);
     // Rounds beyond the new count would be orphaned; refuse rather than drop drawn heats.
@@ -242,9 +246,9 @@ export async function updateConfig(patch: { rounds?: number; heatSize?: number; 
   });
 }
 
-async function insertHeats(client: pg.PoolClient, edition: string, stage: "round" | "final", round: number, heats: Slot[][]) {
+async function insertHeats(client: pg.PoolClient, edition: string, stage: "round" | "final", round: number, heats: Slot[][], minutes = 10) {
   for (const [index, slots] of heats.entries()) {
-    const { rows } = await client.query("INSERT INTO cup_heat (edition, stage, round, number) VALUES ($1,$2,$3,$4) RETURNING id", [edition, stage, round, index + 1]);
+    const { rows } = await client.query("INSERT INTO cup_heat (edition, stage, round, number, duration_minutes) VALUES ($1,$2,$3,$4,$5) RETURNING id", [edition, stage, round, index + 1, minutes]);
     for (const slot of slots) await client.query("INSERT INTO cup_heat_slot (heat_id, kid_id, colour) VALUES ($1,$2,$3)", [rows[0].id, slot.kidId, slot.colour]);
   }
 }
@@ -257,19 +261,49 @@ export async function drawRoundInDb(round: number, edition = CUP_TERM) {
     if (await wavesIn(client, "h.edition=$1 AND h.stage='round' AND h.round=$2", [edition, round])) throw new CompError("Judges have already scored this round. Move kids by hand instead of redrawing.", 409);
     const entrants = await readEntrants(client, edition);
     if (!entrants.length) throw new CompError("Nobody has registered for the Cup yet.", 409);
-    const previous = (await readHeats(client, edition)).filter((heat) => heat.stage === "round" && heat.round < round);
+    const allHeats = await readHeats(client, edition);
+    if (config.plan) {
+      if (round === 1 && (cupTimetable(config, entrants.length, [])?.spareMinutes ?? 0) < 0) throw new CompError("This draw will run past the finish time. Adjust timing or the entry count before drawing.", 409);
+      if (entrants.length < 2) throw new CompError("Register at least two surfers before drawing.", 409);
+      const issue = roundReadiness(entrants, allHeats, round - 1);
+      if (issue) throw new CompError(issue, 409);
+      if (allHeats.some(h => h.stage === "final" || h.round > round || (h.round === round && h.status !== "scheduled"))) throw new CompError("This round has started or a later draw depends on it. Keep the completed draw.", 409);
+    }
+    const previous = allHeats.filter((heat) => heat.stage === "round" && heat.round < round);
+    const waves = config.plan ? await readWaves(client, edition) : [];
+    const slots = config.plan ? progressiveDraw(entrants, round, previous, standings(config, entrants, previous, waves), config.plan) : drawRound(entrants, round, config.heatSize, previous);
     await client.query("DELETE FROM cup_heat WHERE edition=$1 AND stage='round' AND round=$2", [edition, round]);
-    await insertHeats(client, edition, "round", round, drawRound(entrants, round, config.heatSize, previous));
+    await insertHeats(client, edition, "round", round, slots, config.plan?.heatMinutes);
   });
 }
 
 /** Builds the final from the leaderboard as it stands. */
-export async function drawFinalInDb(edition = CUP_TERM) {
+export async function drawFinalInDb(edition = CUP_TERM, review?: { order: string[]; reason: string }) {
   return transaction(async (client) => {
     const config = await readConfig(client, edition, true);
     if (await wavesIn(client, "h.edition=$1 AND h.stage='final'", [edition])) throw new CompError("Judges have already scored the final.", 409);
     const [entrants, heats, waves] = await Promise.all([readEntrants(client, edition), readHeats(client, edition), readWaves(client, edition)]);
-    const slots = drawFinal(standings(config, entrants, heats.filter((heat) => heat.stage === "round"), waves), config.finalSize);
+    let ranking = standings(config, entrants, heats.filter((heat) => heat.stage === "round"), waves);
+    if (config.plan) {
+      const issue = roundReadiness(entrants, heats, config.rounds);
+      if (issue) throw new CompError(issue, 409);
+      if (heats.some(h => h.stage === "final" && h.status !== "scheduled")) throw new CompError("The finals have started. Their groups are locked.", 409);
+      if (boundaryTies(ranking).length && !review) throw new CompError("A tie crosses a final-group boundary. Review the tied surfers and record a surf-off or head-judge decision before building finals.", 409);
+      if (review) {
+        if (review.order.length !== ranking.length || new Set(review.order).size !== ranking.length || review.order.some(id => !ranking.some(row => row.kidId === id))) throw new CompError("The tie review must include every surfer exactly once.", 400);
+        const ordered = review.order.map(id => ranking.find(row => row.kidId === id)!);
+        if (ordered.some((row, i) => i > 0 && ordered[i - 1].rank > row.rank)) throw new CompError("Only equally ranked surfers can exchange places in a tie review.", 409);
+        ranking = ordered;
+      }
+      const groups: Slot[][] = [];
+      for (let i = 0; i < ranking.length; i += 4) groups.push(drawFinal(ranking.slice(i, i + 4), 4));
+      if (!groups.length) throw new CompError("No surfers are ready for finals.", 409);
+      await client.query("DELETE FROM cup_heat WHERE edition=$1 AND stage='final'", [edition]);
+      await insertHeats(client, edition, "final", 0, groups, config.plan.heatMinutes);
+      await client.query("UPDATE cup_event SET final_review=$2::jsonb WHERE edition=$1", [edition, review ? JSON.stringify(review) : null]);
+      return;
+    }
+    const slots = drawFinal(ranking, config.finalSize);
     if (!slots.length) throw new CompError("Score a round first — the final takes the top of the leaderboard.", 409);
     await client.query("DELETE FROM cup_heat WHERE edition=$1 AND stage='final'", [edition]);
     await insertHeats(client, edition, "final", 0, [slots]);
@@ -278,15 +312,21 @@ export async function drawFinalInDb(edition = CUP_TERM) {
 
 export async function deleteRoundInDb(round: number | "final", edition = CUP_TERM) {
   return transaction(async (client) => {
-    await readConfig(client, edition, true);
+    const config = await readConfig(client, edition, true);
+    if (config.plan) {
+      const heats = await readHeats(client, edition);
+      if (heats.some(h => (round === "final" ? h.stage === "final" : h.stage === "round" && h.round === round) && h.status !== "scheduled")) throw new CompError("Started heats cannot be deleted.", 409);
+      if (round !== "final" && heats.some(h => h.stage === "final" || h.round > round)) throw new CompError("Delete later unstarted draws first.", 409);
+    }
     const [stage, number] = round === "final" ? ["final", 0] : ["round", round];
     if (await wavesIn(client, "h.edition=$1 AND h.stage=$2 AND h.round=$3", [edition, stage, number])) throw new CompError("Judges have already scored these heats; they stay.", 409);
     await client.query("DELETE FROM cup_heat WHERE edition=$1 AND stage=$2 AND round=$3", [edition, stage, number]);
+    if (config.plan) await client.query("UPDATE cup_event SET final_review=NULL WHERE edition=$1", [edition]);
   });
 }
 
 /** Puts a kid in a heat (out of any other heat of that round), changes their colour, or takes them out (heatId null). */
-export async function moveSlot(input: { kidId: string; stage: "round" | "final"; round: number; heatId: string | null; colour?: Rashie }, edition = CUP_TERM) {
+export async function moveSlot(input: { kidId: string; stage: "round" | "final"; round: number; heatId: string | null; colour?: Rashie; swapKidId?: string }, edition = CUP_TERM) {
   return transaction(async (client) => {
     const config = await readConfig(client, edition, true);
     const round = input.stage === "final" ? 0 : input.round;
@@ -296,6 +336,23 @@ export async function moveSlot(input: { kidId: string; stage: "round" | "final";
       "SELECT s.heat_id, s.colour FROM cup_heat_slot s JOIN cup_heat h ON h.id=s.heat_id WHERE h.edition=$1 AND h.stage=$2 AND h.round=$3 AND s.kid_id=$4 FOR UPDATE OF s",
       [edition, input.stage, round, input.kidId],
     );
+    const allHeats = await readHeats(client, edition);
+    if (config.plan) {
+      const affected = new Set([...current.rows.map(row => row.heat_id), input.heatId]);
+      if (allHeats.some(h => affected.has(h.id) && h.status !== "scheduled")) throw new CompError("Only unstarted heats can be edited.", 409);
+      if (input.stage === "round" && allHeats.some(h => h.stage === "final" || h.round > round)) throw new CompError("A later draw already depends on this round.", 409);
+      if (input.stage === "final" && (!current.rows.some(row => row.heat_id === input.heatId) || input.swapKidId)) throw new CompError("Final groups follow qualifying scores. Rebuild the finals with a tie review to change a boundary tie.", 409);
+    }
+    if (input.swapKidId) {
+      const from = current.rows[0];
+      const target = allHeats.find(h => h.id === input.heatId && h.stage === input.stage && h.round === round);
+      const other = target?.slots.find(slot => slot.kidId === input.swapKidId);
+      if (!from || !target || !other || from.heat_id === target.id) throw new CompError("Choose two surfers in different heats of the same round.", 400);
+      if (await wavesIn(client, "(w.heat_id=$1 AND w.kid_id=$2) OR (w.heat_id=$3 AND w.kid_id=$4)", [from.heat_id, input.kidId, target.id, other.kidId])) throw new CompError("Scored surfers cannot swap heats.", 409);
+      await client.query("DELETE FROM cup_heat_slot WHERE (heat_id=$1 AND kid_id=$2) OR (heat_id=$3 AND kid_id=$4)", [from.heat_id, input.kidId, target.id, other.kidId]);
+      await client.query("INSERT INTO cup_heat_slot(heat_id,kid_id,colour) VALUES($1,$2,$3),($4,$5,$6)", [from.heat_id, other.kidId, from.colour, target.id, input.kidId, other.colour]);
+      return;
+    }
     const leaving = current.rows.filter((row) => row.heat_id !== input.heatId);
     for (const row of leaving) {
       if (await wavesIn(client, "w.heat_id=$1 AND w.kid_id=$2", [row.heat_id, input.kidId])) throw new CompError("This kid already has scores in that heat. Delete the scores first.", 409);
@@ -345,7 +402,8 @@ export async function expireHeats(edition = CUP_TERM) {
 
 export async function setHeatDuration(heatId: string, minutes: number, edition = CUP_TERM) {
   await transaction(async (client) => {
-    await readConfig(client, edition, true);
+    const config = await readConfig(client, edition, true);
+    if (config.plan) throw new CompError("Guided heats use one duration so every child gets equal water time. Set it before drawing.", 409);
     const result = await client.query("UPDATE cup_heat SET duration_minutes=$3 WHERE id=$1 AND edition=$2 AND status='scheduled'", [heatId, edition, minutes]);
     if (!result.rowCount) throw new CompError("Set the duration before starting this heat.", 409);
   });
@@ -355,10 +413,25 @@ export async function setHeatDuration(heatId: string, minutes: number, edition =
 export async function setHeatStatus(heatId: string, status: HeatStatus, edition = CUP_TERM) {
   await expireHeats(edition);
   return transaction(async (client) => {
-    await readConfig(client, edition, true);
-    const before = (await readHeats(client, edition)).find((heat) => heat.id === heatId);
+    const config = await readConfig(client, edition, true);
+    const allHeats = await readHeats(client, edition);
+    const before = allHeats.find((heat) => heat.id === heatId);
     if (!before) throw new CompError("Heat not found.", 404);
     if (before.status === status) return;
+    if (config.plan) {
+      if (status === "scheduled") throw new CompError("Started guided heats cannot be reset.", 409);
+      if (status === "done" && before.status !== "running") throw new CompError("Start the heat before finishing it.", 409);
+      if (status === "running") {
+        if (allHeats.some(h => h.status === "running")) throw new CompError("Finish the heat in the water first.", 409);
+        if (allHeats.filter(h => byRunningOrder(h, before) < 0).some(h => h.status !== "done")) throw new CompError("Run the heats in timetable order.", 409);
+        if (!before.slots.length || !before.judges.length) throw new CompError("Assign surfers and at least one judge before starting.", 409);
+        const entrants = await readEntrants(client, edition);
+        const issue = roundReadiness(entrants, allHeats, before.stage === "final" ? config.rounds : before.round - 1);
+        if (issue) throw new CompError(issue, 409);
+        const group = allHeats.filter(h => h.stage === before.stage && h.round === before.round);
+        if (entrants.some(kid => group.flatMap(h => h.slots).filter(slot => slot.kidId === kid.id).length !== 1)) throw new CompError("Every registered child needs one slot in this round. Fix missing or duplicate surfers before starting.", 409);
+      }
+    }
     if (status === "running" && before.status !== "scheduled") throw new CompError("This heat has finished.", 409);
     if (status === "scheduled" && await wavesIn(client, "h.id=$1", [heatId])) throw new CompError("A scored heat cannot be reset.", 409);
     await client.query(`UPDATE cup_heat SET status=$3,

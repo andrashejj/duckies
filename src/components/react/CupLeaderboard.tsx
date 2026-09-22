@@ -3,15 +3,15 @@ import { boardTable, mono, podium, rankBubble } from "../../lib/comp-ui";
 
 // The leaderboard table, shared by the organiser board and the public live
 // page: rank, surfer, a column per round, the total, and the final apart.
-export function Leaderboard({ rows, rounds, publicView = false }: { rows: (Omit<Standing, "kidId"> & { kidId?: string })[]; rounds: number; publicView?: boolean }) {
+export function Leaderboard({ rows, rounds, publicView = false, guided = false }: { rows: (Omit<Standing, "kidId"> & { kidId?: string })[]; rounds: number; publicView?: boolean; guided?: boolean }) {
   if (!rows.length) return <p className={`${mono} mt-4`}>Nobody in the draw yet.</p>;
   return (
     <table className={`${boardTable} mt-4`}>
       <thead>
         <tr>
-          <th scope="col">#</th><th scope="col">Surfer</th><th scope="col" className="max-sm:hidden">Age</th>
+          <th scope="col">{guided ? "Qual." : "#"}</th><th scope="col">Surfer</th><th scope="col" className="max-sm:hidden">Age</th>
           {Array.from({ length: rounds }, (_, i) => <th key={i} scope="col" className="text-right">R{i + 1}</th>)}
-          <th scope="col" className="text-right">Best 2 avg ★</th><th scope="col" className="text-right">Final</th>
+          <th scope="col" className="text-right">{guided ? "Round avg ★" : "Best 2 avg ★"}</th><th scope="col" className="text-right">Final</th>{guided && <th scope="col" className="text-right">Place</th>}
         </tr>
       </thead>
       <tbody>
@@ -23,6 +23,7 @@ export function Leaderboard({ rows, rounds, publicView = false }: { rows: (Omit<
             {row.rounds.map((score, index) => <td key={index} className="text-right font-mono">{formatScore(score)}</td>)}
             <td className="text-right font-display text-[1.05rem] font-extrabold">{formatScore(row.total)}</td>
             <td className="text-right font-mono">{row.final === null ? (publicView ? "" : "—") : formatScore(row.final)}</td>
+            {guided && <td className="text-right font-mono">{row.finalPlace ?? "—"}</td>}
           </tr>
         ))}
       </tbody>
