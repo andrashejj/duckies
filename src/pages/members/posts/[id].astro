@@ -12,4 +12,4 @@ try{
   if(!data)Astro.response.status=404;
 }catch{Astro.response.status=503;}
 ---
-<BaseLayout title="A club moment · Sunset Duckies" variant="journal"><section class="social-single"><a class="journal-back" href="/members">← Back to the club</a>{data?<SocialFeed client:load initialPosts={data.feed.posts} next={null} person={data.person}/>:<h1 class="social-section-title">{Astro.response.status===404?'This moment is no longer available.':'Could not load this moment. Please try again.'}</h1>}</section></BaseLayout>
+<BaseLayout title="A club moment · Sunset Duckies" variant="journal"><section class="social-single"><a class="journal-back" href="/members">← Back to My Feed</a>{data?<SocialFeed client:load initialPosts={data.feed.posts} next={null} person={data.person}/>:<h1 class="social-section-title">{Astro.response.status===404?'This moment is no longer available.':'Could not load this moment. Please try again.'}</h1>}</section></BaseLayout>

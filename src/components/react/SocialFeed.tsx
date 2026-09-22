@@ -31,8 +31,8 @@ function PostCard({initial,onRemove,onPhoto}:{initial:SocialPost;onRemove:()=>vo
       <div className="social-post-actions">
         <button disabled={busy||!ready} className={post.liked?'is-liked':''} aria-label={post.liked?'Unlike post':'Like post'} aria-pressed={post.liked} onClick={()=>void act(async()=>{await api(endpoint,json('PUT',{liked:!post.liked}));await refresh();})}><Heart filled={post.liked}/><span>{post.likes||''}</span></button>
         <button aria-label="Comments" aria-expanded={open} disabled={busy||!ready} onClick={()=>void act(async()=>{if(!open)await refresh();setOpen(!open);})}><CommentIcon/><span>{post.comments||''}</span></button>
-        {post.canShare&&<button className="social-copy" data-public-share={`post:${post.id}`}>Share publicly</button>}
-        <button disabled={!ready} className="social-copy" onClick={()=>void act(async()=>{await navigator.clipboard.writeText(`${location.origin}/members/posts/${post.id}`);setCopied(true);})}>{copied?'Link copied':'Copy club link'}</button>
+        <div className="social-share-actions">{post.canShare&&<button className="social-copy" data-public-share={`post:${post.id}`}>Share publicly</button>}
+        <button disabled={!ready} className="social-copy" onClick={()=>void act(async()=>{await navigator.clipboard.writeText(`${location.origin}/members/posts/${post.id}`);setCopied(true);})}>{copied?'Link copied':'Copy club link'}</button></div>
       </div>
       {open&&<section className="social-comments" aria-label="Post comments">
         {comments.length===0&&<p className="social-muted">Start the conversation.</p>}
@@ -68,7 +68,7 @@ export default function SocialFeed({initialPosts,next:initialNext,person,author,
     }catch(e){setError(e instanceof Error?e.message:'Could not share this. Please try again.');}finally{setBusy(false);}
   }
   return <>
-    {compose&&<details className="club-compose"><summary>Share a moment</summary><form className="social-composer" onSubmit={event=>{event.preventDefault();void publish();}}>
+    {compose&&<details className="club-compose"><summary><span className="social-avatar" aria-hidden="true">{person.name.slice(0,1)}</span><span>Share a moment<span className="club-compose-hint">A photo, a small win, a note for the crew</span></span><span className="club-compose-plus" aria-hidden="true">＋</span></summary><form className="social-composer" onSubmit={event=>{event.preventDefault();void publish();}}>
       <div className="social-compose-top"><span className="social-avatar" aria-hidden="true">{person.name.slice(0,1)}</span><div><label htmlFor="post-body">Share a moment</label><p>Only inside the club</p></div></div>
       <textarea disabled={!ready} id="post-body" aria-label="Your post" placeholder="Good waves? A first stand-up? Tell the crew…" maxLength={file?280:2000} value={body} onChange={e=>setBody(e.target.value)} rows={3}/>
       {preview&&<div className="social-preview"><img src={preview} alt="Photo to share"/><button type="button" onClick={()=>{setFile(null);if(fileInput.current)fileInput.current.value='';}}>Remove photo</button></div>}

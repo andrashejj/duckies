@@ -15,7 +15,7 @@ try{
 ---
 <BaseLayout title={data?`${data.person.name} · Sunset Duckies`:'Member · Sunset Duckies'} variant="journal">
   <section class="social-personal">
-    <a href="/members/lineup" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />The crew</a>
+    <a href="/members/lineup" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />Members</a>
     {!data?<h1 class="social-section-title">{Astro.response.status===404?'Member not found.':'Profile unavailable. Please try again.'}</h1>:<>
       <header class="social-member-header"><span class="journal-avatar"><span class="journal-avatar-inner">{data.person.name.slice(0,1)}</span></span><div><h1>{data.person.name}</h1><span class="club-role" data-kind="parent">{data.person.isParent ? "Parent" : "Member"}</span><p>{data.person.active?'Part of the Sunset Duckies crew':'Memories from the club'}</p>{data.person.id===session.user.id&&<a class="journal-button" href="/members/me">Our photos & moments</a>}</div></header>
       <div class="social-own-posts"><SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} author={data.person.id}/></div>

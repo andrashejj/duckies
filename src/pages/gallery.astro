@@ -13,7 +13,7 @@ import PhotoTagger from "../components/PhotoTagger.astro";
 import { photoKids, photoTags } from "../lib/server/photo-profiles";
 import { bodyCopy, mediaFrame } from "../lib/ui";
 
-const title = `${gallery.name} — ${site.name}`;
+const title = `Club Gallery · ${site.name}`;
 const description = gallery.tagline;
 const photoCount = gallery.sections.reduce((n, section) => n + section.photos.length, 0);
 
@@ -35,10 +35,10 @@ const sharedAlt = (u: GalleryUpload) => u.caption ?? u.note ?? "Photo added by a
 
 <BaseLayout variant="journal" title={title} description={description} image="/media/og-home.jpg" imageAlt="The Sunset Duckies lined up behind their colourful boards on Tamarin beach at sunset." imageWidth={1200} imageHeight={630}>
   <header class="social-page-header mx-auto max-w-5xl px-4 pt-10">
-    <div><h1>Photos</h1><p>{photoCount + shared.length} photos · {gallery.clips.length} clips · just for the club</p></div><a href="/gallery/share" class="journal-button journal-button-primary">Share photos</a>
+    <div><h1>Club Gallery</h1><p>{photoCount + shared.length} photos · {gallery.clips.length} clips · just for the club</p></div><a href="/gallery/share" class="journal-button journal-button-primary">Share photos</a>
   </header>
   <div class="mx-auto max-w-5xl px-4">
-    <div class="club-useful-links"><a href="/members/me">Our photos & moments</a><a href="/members/lineup">Find a duckie</a></div>
+    <div class="club-useful-links"><a href="/members/me">Our photos & moments</a><a href="/members/lineup">Find a member</a></div>
     {selectedKid&&<p class="mt-4 text-sm">Choose a photo, tap <strong>Tag +</strong>, then add <strong>{selectedKid.name}</strong>.</p>}
     {taggingError&&<p role="status">Photo tags are temporarily unavailable. Please reload to try again.</p>}
     <label class="photo-album-picker">Jump to an album

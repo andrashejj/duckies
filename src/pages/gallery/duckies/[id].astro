@@ -20,7 +20,7 @@ const sharedCount = data?.photos.filter(photo => data!.tags[photo.key].length > 
 ---
 <BaseLayout title={title} description="A duckie's photo journal, shared inside the club." variant="journal">
   <section class="journal-shell">
-    <a href="/members/lineup" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />The crew</a>
+    <a href="/members/lineup" class="journal-back"><PhotoIcon name="back" class="h-4 w-4" />Members</a>
     {!data ? <h1 class="my-12 px-4 text-2xl">{Astro.response.status === 404 ? "Duckie not found." : "Photo profile unavailable. Please try again."}</h1> : <>
       <header class="journal-profile">
         <div class="journal-avatar"><div class="journal-avatar-inner">{data.kid.profilePhoto ? <img src={data.kid.profilePhoto} alt={`${data.kid.name}'s profile photo`} width="150" height="150" /> : <span aria-hidden="true">{data.kid.name.slice(0,1)}</span>}</div></div>

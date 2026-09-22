@@ -29,7 +29,7 @@ test('active members share text and photos, like, comment and remove only permit
   await signIn(page.request,parent);await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);
   await other.post('/api/social/posts',send({body:'Lovely little waves this morning. See you Friday!'}));
   await page.goto('/members');
-  await expect(page.getByRole('heading',{name:'The club',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'My Feed',exact:true})).toBeVisible();
   await page.locator('.club-compose > summary').click();
   await page.getByLabel('Your post').fill('First stand-up today!');
   await page.getByRole('button',{name:'Share',exact:true}).click();
@@ -210,5 +210,5 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await expect(page).toHaveURL(`/gallery/duckies/${kid}`);
   await expect(page.getByRole('heading',{name:'Lara Test',exact:true})).toBeVisible();
   await expect(page.locator('.journal-identity .club-role')).toHaveText('Duckie');
-  await expect(page.getByRole('navigation',{name:'Mobile member navigation'}).getByRole('link',{name:'Photos',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(page.getByRole('navigation',{name:'Mobile member navigation'}).getByRole('link',{name:'Members',exact:true})).toHaveAttribute('aria-current','page');
 });

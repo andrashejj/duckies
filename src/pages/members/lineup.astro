@@ -17,9 +17,9 @@ try {
   data = { directory };
 } catch { Astro.response.status = 503; }
 ---
-<BaseLayout title="The crew · Sunset Duckies" variant="journal">
+<BaseLayout title="Members · Sunset Duckies" variant="journal">
   <section class="club-home">
-    <header class="social-page-header"><div><h1>The crew</h1><p>Find a parent or duckie.</p></div><a href="/members" class="journal-button">Back to Club</a></header>
+    <header class="social-page-header"><div><h1>Members</h1><p>Find a parent or duckie.</p></div><span class="social-private">Members only</span></header>
     {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <>
       <section aria-label="Club members" class="club-directory-section">
         <label class="club-search">Find someone<input type="search" placeholder="Search by name…" data-club-search /></label>

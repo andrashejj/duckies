@@ -14,24 +14,39 @@ try {
   data = { feed, person: person!, kids: kids.filter(k => k.canManage) };
 } catch { Astro.response.status = 503; }
 ---
-<BaseLayout title="The club · Sunset Duckies" variant="journal">
-  <section class="club-home club-home-simple">
-    <header class="social-page-header"><div><h1>The club</h1><p>See you in the water.</p></div><span class="social-private">Members only</span></header>
-    <section class="club-session" aria-labelledby="session-title">
-      <p class="club-session-eyebrow">Our weekly surf</p>
-      <h2 id="session-title">Monday & Friday <span>4–6pm</span></h2>
-      <p>Tamarin Bay · Bring your board and a wetsuit or rashie. One parent from each family stays in the water for the full session.</p>
-      <a href={site.whatsappUrl} target="_blank" rel="noreferrer">Check the latest surf call on WhatsApp ↗</a>
-    </section>
-    {cupComing && <a href="/sunset-duckies-cup-vol-2" class="club-event-link"><span><strong>{site.cupVol2.name} · {site.cupVol2.edition}</strong><span>{site.cupVol2.dateLabel}</span></span><span aria-hidden="true">→</span></a>}
-    <div class="club-useful-links" aria-label="Around the club">
-      <a href="/members/lineup">Meet the crew</a>
-      <a href="/training-materials">Surf tips</a>
-      {!cupComing && <a href="/sunset-duckies-cup-vol-2">The Cup</a>}
+<BaseLayout title="My Feed · Sunset Duckies" variant="journal">
+  <section class="club-home club-feed-home">
+    <header class="social-page-header"><div><h1>My Feed</h1><p>Good waves, small wins and life with the crew.</p></div><span class="social-private">Members only</span></header>
+    <div class="club-feed-layout">
+      <aside class="club-noticeboard" aria-label="Club information">
+        <details class="club-at-bay" open data-club-info>
+          <summary><span>At the bay<span>Monday & Friday · 4–6pm</span></span><span class="club-info-toggle" aria-hidden="true">＋</span></summary>
+          <div class="club-info-body">
+            <section class="club-session" aria-labelledby="session-title">
+              <p class="club-session-eyebrow">Our weekly surf</p>
+              <h2 id="session-title">Monday & Friday</h2>
+              <p class="club-session-time">4–6pm <span>· Tamarin Bay</span></p>
+              <p>Bring your board and a wetsuit or rashie. One parent from each family stays in the water for the full session.</p>
+              <a href={site.whatsappUrl} target="_blank" rel="noreferrer">Latest surf call on WhatsApp ↗</a>
+            </section>
+            <section class="club-next-event" aria-labelledby="cup-title">
+              <p class="club-session-eyebrow">{cupComing ? 'Next up' : 'From the club'}</p>
+              <a href="/sunset-duckies-cup-vol-2"><h2 id="cup-title">Sunset Duckies Cup <span>{site.cupVol2.edition}</span></h2><p>{site.cupVol2.dateLabel}</p><span class="club-event-more">{cupComing ? 'See the programme' : 'Revisit the Cup'} <span aria-hidden="true">→</span></span></a>
+            </section>
+            <a class="club-surf-tips" href="/training-materials">Surf tips & training <span aria-hidden="true">↗</span></a>
+          </div>
+        </details>
+      </aside>
+      <section class="club-feed-column" aria-label="Crew moments">
+        {!data ? <p role="alert" class="social-error">The feed is temporarily unavailable. Please reload to try again.</p> : <SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} compose kids={data.kids} />}
+      </section>
     </div>
-    {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <section class="club-moments" aria-labelledby="club-moments-heading">
-      <h2 id="club-moments-heading">From the crew</h2>
-      <SocialFeed client:load initialPosts={data.feed.posts} next={data.feed.next} person={data.person} compose kids={data.kids} />
-    </section>}
   </section>
 </BaseLayout>
+<script>
+  const info = document.querySelector<HTMLDetailsElement>('[data-club-info]');
+  const compact = window.matchMedia('(max-width: 1100px)');
+  function setInfoLayout() { if (info) info.open = !compact.matches; }
+  setInfoLayout();
+  compact.addEventListener('change', setInfoLayout);
+</script>

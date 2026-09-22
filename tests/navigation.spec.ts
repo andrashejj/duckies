@@ -13,6 +13,8 @@ test.afterAll(async () => { await db.end(); });
 test("signed-in members find their own profile from the public header and save it on a dedicated page", async ({ page }) => {
   const errors: string[] = []; page.on("pageerror", e => errors.push(e.message));
   await signIn(page.request, "parent@example.com");
+  await db.query('UPDATE "user" SET name=$1 WHERE email=$2', ['Maya Parent', 'parent@example.com']);
+  await db.query(`INSERT INTO club_post(author_id,body) SELECT id,$1 FROM "user" WHERE email=$2`, ["First wave all the way to the beach! Thanks to everyone who cheered Lara on.", 'parent@example.com']);
   await page.goto("/");
   await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/members");
   const publicNav = page.getByRole("navigation", { name: "Club navigation", exact: true });
@@ -28,18 +30,38 @@ test("signed-in members find their own profile from the public header and save i
   await page.locator("[data-session-entry]").click();
   await expect(page).toHaveURL(/\/members$/);
   const nav = page.getByRole("navigation", { name: "Mobile member navigation" });
-  await expect(nav.getByRole("link")).toHaveText(["Club", "Photos", "Family"]);
-  await expect(nav.getByRole("link", { name: "Club", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link")).toHaveText(["My Feed", "Club Gallery", "Members", "My Family"]);
+  await expect(nav.getByRole("link", { name: "My Feed", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(page.getByLabel("Your post")).toBeHidden();
-  for (const width of [320, 390]) {
+  await expect(page.getByRole("button", { name: "Like post", exact: true }).first()).toBeEnabled();
+  for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(nav).toBeInViewport();
+    const visibleNav = width <= 768 ? nav : page.getByRole('navigation', { name: 'Member navigation', exact: true });
+    await expect(visibleNav).toBeInViewport();
+    await expect(visibleNav.locator('[aria-current="page"]')).toHaveCount(1);
+    const info = page.locator('[data-club-info]');
+    await expect(info).toHaveJSProperty('open', width > 1100);
+    await expect(page.locator('.club-compose')).toBeInViewport();
+    await expect(page.locator('[data-post]').first()).toBeInViewport();
+    await page.screenshot({ path: `test-results/member-feed-${width}.png`, fullPage: true });
   }
-  await page.screenshot({ path: "test-results/simple-club-mobile.png", fullPage: true });
-  await nav.getByRole("link", { name: "Photos", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Photos", exact: true })).toBeVisible();
-  await expect(nav.getByRole("link", { name: "Photos", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await page.screenshot({ path: 'test-results/member-feed-dark-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('[data-club-info] > summary').click();
+  await expect(page.getByRole('link', { name: 'Latest surf call on WhatsApp' })).toBeVisible();
+  await page.locator('[data-club-info] > summary').click();
+  await page.screenshot({ path: 'test-results/member-feed-dark-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'Switch to light mode' }).click();
+  await nav.getByRole('link', { name: 'Members', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Members', exact: true })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Members', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('region', { name: 'Club members' }).getByRole('link').filter({ hasText: 'Maya Parent' }).click();
+  await expect(nav.getByRole('link', { name: 'Members', exact: true })).toHaveAttribute('aria-current', 'page');
+  await nav.getByRole("link", { name: "Club Gallery", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Club Gallery", exact: true })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Club Gallery", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("link", { name: "Share photos", exact: true })).toBeVisible();
   await page.screenshot({ path: "test-results/simple-photos-mobile.png" });
   await page.getByLabel("Jump to an album").selectOption("clips");
@@ -47,8 +69,8 @@ test("signed-in members find their own profile from the public header and save i
   await expect(page.locator("#clips")).toBeFocused();
   await page.getByRole("link", { name: "Our photos & moments", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Our photos & moments", exact: true })).toBeVisible();
-  await nav.getByRole("link", { name: "Family", exact: true }).click();
-  await expect(nav.getByRole("link", { name: "Family", exact: true })).toHaveAttribute("aria-current", "page");
+  await nav.getByRole("link", { name: "My Family", exact: true }).click();
+  await expect(nav.getByRole("link", { name: "My Family", exact: true })).toHaveAttribute("aria-current", "page");
   await page.getByRole("link", { name: "Your contact details" }).click();
   await expect(page).toHaveURL(/\/account\/profile$/);
   await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
@@ -71,7 +93,7 @@ test("signed-in members find their own profile from the public header and save i
   await page.getByRole("button", { name: "Switch to dark mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.screenshot({ path: "test-results/my-profile-dark.png", fullPage: true });
-  await nav.getByRole("link", { name: "Family", exact: true }).click();
+  await nav.getByRole("link", { name: "My Family", exact: true }).click();
   await expect(page.getByRole("link", { name: "Edit my profile" })).toBeVisible();
   await expect(page.locator("[data-guardian]")).toContainText("Maya Parent");
   await page.getByRole("button", { name: "Sign out", exact: true }).click();

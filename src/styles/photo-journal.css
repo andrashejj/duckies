@@ -1,7 +1,7 @@
 /* Quiet photo-app surfaces, scoped away from the club's poster-style pages. */
 html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .theme-journal a, .theme-journal button { -webkit-tap-highlight-color: transparent; }
-.theme-journal :is(a, button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.theme-journal :is(a, button, select, summary, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .journal-main { margin-left: 220px; min-height: 100dvh; }
 .journal-sidebar { position: fixed; inset: 0 auto 0 0; width: 220px; padding: 38px 22px 26px; border-right: 1px solid var(--line); display: flex; flex-direction: column; z-index: 30; background: var(--canvas); }
 .journal-wordmark { display: flex; align-items: center; gap: 10px; }
@@ -157,25 +157,30 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .social-tag-select select { min-width: 0; max-width: 70%; background: var(--surface-2); border-radius: 5px; padding: 7px 12px; }
 .social-consent { display: flex; align-items: start; gap: 8px; font-size: 12px; margin-bottom: 15px; }
 .social-consent input { margin-top: 3px; accent-color: var(--accent); }
-.social-post { border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 26px; }
-.social-post-head { display: flex; align-items: start; justify-content: space-between; padding: 12px 0 14px; }
-.social-post-head>div { position: relative; padding-bottom: 3px; }
-.social-post-head .social-person { align-items: start; line-height: 20px; }
-.social-post-date { position: absolute; left: 51px; bottom: 0; white-space: nowrap; font-size: 10px; color: var(--fg-muted); }
+.social-post { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); margin-bottom: 20px; }
+.social-post-content { padding: 0 20px 12px; }
+.social-post-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; padding: 18px 20px 14px; }
+.social-post-head>div { position: relative; min-width: 0; min-height: 44px; padding-left: 51px; }
+.social-post-head .social-person > span:last-child { overflow-wrap: anywhere; }
+.social-post-head .social-person { line-height: 20px; }
+.social-post-head .social-avatar { position: absolute; left: 0; top: 0; }
+.social-post-date { display: inline-block; margin-top: 3px; font-size: 11px; color: var(--fg-muted); }
 .social-menu { position: relative; }
-.social-menu summary { cursor: pointer; list-style: none; padding: 9px; letter-spacing: 1px; }
+.social-menu summary { cursor: pointer; list-style: none; display: grid; place-items: center; width: 44px; min-height: 44px; letter-spacing: 1px; }
 .social-menu summary::-webkit-details-marker { display: none; }
 .social-menu button { position: absolute; right: 0; z-index: 3; width: 150px; background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: 8px; font-size: 12px; text-align: left; cursor: pointer; }
 .social-post-photo { display: block; width: 100%; background: var(--surface-2); border-radius: 3px; overflow: hidden; cursor: zoom-in; }
 .social-post-photo img { width: 100%; max-height: 740px; object-fit: contain; }
 .social-caption { font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; padding-top: 15px; }
-.social-text-post { font-size: 23px; line-height: 1.5; letter-spacing: -.02em; padding: 17px 0 25px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.social-text-post { font-size: 18px; line-height: 1.65; padding: 8px 0 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .social-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .social-tags a { border-radius: 4px; background: var(--surface-2); padding: 4px 8px; font-size: 11px; }
-.social-post-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 15px 0 4px; }
-.social-post-actions button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; cursor: pointer; font-size: 12px; }
+.social-post-actions { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid var(--line); }
+.social-post-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 44px; min-height: 44px; cursor: pointer; font-size: 12px; }
 .social-post-actions .is-liked { color: var(--accent); }
-.social-post-actions .social-copy { margin-left: auto; font-size: 11px; color: var(--fg-muted); }
+.social-share-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-left: auto; }
+.social-post-actions .social-copy { font-size: 12px; color: var(--fg-muted); }
+.social-post-actions button:hover { color: var(--accent-text); }
 .social-comments { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 15px; }
 .social-comment { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
 .social-comment>div { min-width: 0; }
@@ -227,7 +232,8 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
   .social-composer { margin: 0 12px 22px; padding: 16px; }
   .social-post-head,.social-post-content { padding-left: 16px; padding-right: 16px; }
   .social-post-photo { border-radius: 0; }
-  .social-text-post { font-size: 21px; }
+  .social-text-post { font-size: 17px; }
+  .social-share-actions { gap: 4px 12px; }
   .social-personal { padding: 26px 0 40px; }
   .social-personal>.social-page-header .journal-button { flex: none; }
   .social-personal-tabs { padding-inline: 16px; gap: 18px; }
@@ -299,8 +305,6 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 .club-person-info p { margin-top: 8px; font-size: 12px; color: var(--fg-muted); }
 .club-role { display: inline-flex; align-items: center; border-radius: 4px; padding: 3px 7px; font-size: 10px; font-weight: 600; line-height: 1.3; background: var(--surface-2); color: var(--fg); }
 .club-role[data-kind=duckie] { background: var(--accent); color: var(--accent-fg); }
-.club-moments { max-width: 620px; margin: 44px auto 0; border-top: 1px solid var(--line); padding-top: 26px; }
-.club-moments>h2 { font-size: 22px; font-weight: 600; margin-bottom: 20px; }
 .family-page { max-width: 1000px; margin: auto; padding: 32px 36px 64px; }
 .family-page .social-page-header { margin: 0 0 28px; }
 .family-self, .family-section-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
@@ -342,7 +346,6 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
   .club-person-info { margin-top: 12px; }
   .club-person-info h2 { font-size: 14px; }
   .club-person-info p { font-size: 11px; }
-  .club-moments .social-composer { margin-inline: 0; }
   .family-page .social-page-header { flex-wrap: wrap; }
   .family-page .social-page-header .journal-button { flex: none; }
   .family-parent-identity { flex-wrap: wrap; }
@@ -352,27 +355,67 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 
 .family-points { margin: 0 20px 16px; padding: 12px; border-radius: 8px; background: var(--surface-2); }
 
-/* Three destinations; task-specific actions stay with their content. */
+/* Four destinations, with club information beside the feed. */
 .journal-button { min-height: 44px; }
 .journal-desktop-nav a[aria-current], .journal-mobile-nav a[aria-current] { background: var(--surface-2); color: var(--accent-text); }
 .journal-mobile-nav a { min-height: 48px; flex: 1; border-radius: 9px; }
-.journal-mobile-nav span { font-size: 12px; }
+.journal-mobile-nav span { font-size: 11px; white-space: nowrap; }
+.journal-desktop-nav a { gap: 12px; white-space: nowrap; }
+.journal-desktop-nav svg { flex-shrink: 0; }
 .journal-mobile-nav a[aria-current] span { color: var(--accent-text); font-weight: 700; }
-.club-home-simple { max-width: 760px; }
-.club-session { padding: 24px; border-radius: 12px; background: var(--surface-2); border-left: 4px solid var(--accent); }
-.club-session-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-muted); }
-.club-session h2 { font-family: var(--font-display); font-size: 26px; line-height: 1.25; font-weight: 700; margin-block: 10px; }
-.club-session h2 span { display: block; color: var(--accent-text); }
-.club-session > p:not(.club-session-eyebrow) { font-size: 14px; line-height: 1.65; }
-.club-session a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; font-weight: 650; text-decoration: underline; text-underline-offset: 4px; margin-top: 10px; }
-.club-event-link { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.club-event-link > span > span { display: block; margin-top: 4px; font-size: 12px; color: var(--fg-muted); }
+.club-feed-home { max-width: 1024px; }
+.club-feed-layout { display: grid; grid-template-columns: minmax(0, 640px) minmax(230px, 280px); align-items: start; gap: 32px; }
+.club-feed-column { grid-column: 1; grid-row: 1; min-width: 0; }
+.club-noticeboard { grid-column: 2; grid-row: 1; min-width: 0; }
+.club-at-bay { border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.club-at-bay > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; list-style: none; font-size: 15px; font-weight: 650; cursor: pointer; }
+.club-at-bay > summary::-webkit-details-marker { display: none; }
+.club-at-bay > summary > span:first-child > span { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; color: var(--fg-muted); }
+.club-info-toggle { font-size: 22px; font-weight: 400; }
+.club-at-bay[open] .club-info-toggle { transform: rotate(45deg); }
+.club-info-body { padding: 0 20px; }
+.club-session { padding: 20px 0; border-top: 1px solid var(--line); }
+.club-session-eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-muted); }
+.club-session h2 { font-size: 19px; line-height: 1.3; font-weight: 650; margin-top: 10px; }
+.club-session .club-session-time { margin: 5px 0 14px; color: var(--accent-text); font-size: 16px; font-weight: 600; }
+.club-session-time span { font-size: 12px; color: var(--fg-muted); font-weight: 400; }
+.club-session > p { font-size: 13px; line-height: 1.65; }
+.club-session a { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; margin-top: 8px; }
+.club-next-event { padding: 20px 0; border-top: 1px solid var(--line); }
+.club-next-event a { display: block; }
+.club-next-event h2 { margin-top: 10px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.club-next-event h2 span { display: block; font-size: 13px; color: var(--accent-text); }
+.club-next-event a > p { margin-top: 8px; color: var(--fg-muted); font-size: 12px; }
+.club-event-more { display: flex; justify-content: space-between; align-items: center; min-height: 44px; margin-top: 6px; font-size: 12px; font-weight: 600; }
+.club-next-event a:hover .club-event-more { text-decoration: underline; text-underline-offset: 4px; }
+.club-surf-tips { display: flex; align-items: center; justify-content: space-between; min-height: 60px; border-top: 1px solid var(--line); font-size: 13px; }
 .club-useful-links { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-block: 12px; }
 .club-useful-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
-.club-home-simple .club-moments { margin-top: 20px; border: 0; padding-top: 0; }
-.club-compose { border-block: 1px solid var(--line); margin-bottom: 24px; }
-.club-compose > summary { min-height: 48px; padding: 14px 0; font-size: 14px; font-weight: 650; cursor: pointer; }
-.club-compose .social-composer { margin-top: 8px; }
+.club-compose { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); margin-bottom: 24px; }
+.club-compose > summary { display: flex; align-items: center; gap: 12px; min-height: 84px; padding: 16px 20px; list-style: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+.club-compose > summary::-webkit-details-marker { display: none; }
+.club-compose-hint { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; color: var(--fg-muted); }
+.club-compose-plus { margin-left: auto; color: var(--accent-text); font-size: 24px; font-weight: 400; }
+.club-compose[open] .club-compose-plus { transform: rotate(45deg); }
+.club-compose .social-composer { border: 0; border-top: 1px solid var(--line); border-radius: 0; margin: 0; }
+@media (max-width: 1100px) {
+  .club-feed-layout { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin-inline: auto; }
+  .club-feed-column, .club-noticeboard { width: 100%; }
+  .club-feed-home > .social-page-header { max-width: 640px; margin-inline: auto; }
+  .club-at-bay > summary { padding-block: 12px; }
+}
+@media (max-width: 768px) {
+  .club-feed-home { padding-inline: 16px; }
+  .club-feed-home > .social-page-header { margin-bottom: 20px; }
+  .club-feed-home .social-page-header p { max-width: 250px; line-height: 1.6; }
+  .club-compose > summary { padding-inline: 16px; }
+  .club-compose-hint { max-width: 175px; line-height: 1.5; }
+  .club-compose-plus { font-size: 20px; }
+  .club-feed-home .social-post-head, .club-feed-home .social-post-content { padding-inline: 16px; }
+}
+@media (max-width: 380px) {
+  .social-share-actions { flex-basis: 100%; margin-left: 0; }
+}
 .family-account-links { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 24px; }
 .family-account-links h2 { font-size: 19px; font-weight: 650; }
 .family-link-list { display: grid; margin-top: 12px; }
@@ -383,6 +426,5 @@ html.theme-journal { background: var(--canvas); font-synthesis: none; }
 @media (max-width: 768px) {
   .journal-main { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
   html.theme-journal { scroll-padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
-  .club-session { padding: 18px; }
   .theme-journal :is(input:not([type=checkbox]):not([type=radio]), textarea, select) { font-size: 16px; }
 }

@@ -158,6 +158,7 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await page.getByRole('tab',{name:'With friends'}).focus();
   await page.keyboard.press('ArrowLeft');
   await expect(page.getByRole('tab',{name:'Photos',exact:true})).toHaveAttribute('aria-selected','true');
+  await expect(page.getByRole('navigation',{name:'Member navigation',exact:true}).getByRole('link',{name:'Members',exact:true})).toHaveAttribute('aria-current','page');
   await page.getByRole('button',{name:/Open photo:/}).first().click();
   const firstPhoto = await viewer.locator('[data-viewer-image]').getAttribute('src');
   await page.keyboard.press('ArrowRight');
@@ -172,8 +173,8 @@ test("mobile photo grid and upload entry work; archived duckies are excluded",as
   await page.getByRole('button',{name:'Switch to dark mode'}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.screenshot({path:'test-results/duckie-photo-profile-dark.png',fullPage:true});
-  await page.getByRole('main').getByRole('link',{name:'The crew',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'The crew',exact:true})).toBeVisible();
+  await page.getByRole('main').getByRole('link',{name:'Members',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Members',exact:true})).toBeVisible();
   await expect(page.getByRole('navigation',{name:'Mobile member navigation'})).toBeInViewport();
   await page.evaluate(()=>document.fonts.ready);
   await page.locator('.journal-directory-cover img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
