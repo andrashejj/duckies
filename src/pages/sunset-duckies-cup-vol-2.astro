@@ -14,7 +14,7 @@ import { textButton } from "../lib/members-ui";
 
 const cup = site.cupVol2;
 const title = `${cup.name} — Vol. 02 | ${site.name}`;
-const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Meet the crew at the beach at 12:00 and start the build-up. First heat 14:00, bonfire 18:30. Music, BBQ, age 7+, no divisions — every surfer gets their own score. Bring your own board. Register on the page.`;
+const description = `Sunset Duckies Cup Vol. 02 — Friday 16 October 2026 at Tamarin Bay. Free for club members, Rs 1,000 for non-members. Meet at 14:00, first heat 15:00, heats finish 17:30, winners’ ceremony 18:00, then bonfire. BBQ throughout. Music, age 7+, no divisions — every surfer gets their own score. Bring your own board. Register on the page.`;
 // The two ways in, as equal-height pills: a title plus the one fact that decides it (free vs. Rs 1,000).
 const toggle = "flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-full border-2 border-edge bg-surface px-4 py-3 text-center text-fg transition peer-checked:bg-highlight peer-checked:text-highlight-fg peer-checked:shadow-sticker-sm peer-focus-visible:ring-4 peer-focus-visible:ring-accent/40";
 const toggleTitle = "font-display text-[0.95rem] font-bold leading-tight [font-variation-settings:'wdth'_108]";
@@ -106,7 +106,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
     <div class="mx-auto grid max-w-7xl grid-cols-2 gap-0 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">
       <div class="flex flex-col items-start gap-1 py-6 pr-6 border-r-2 border-ink-950/25">
         <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">16 Oct</p>
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">Friday · from 12:00</p>
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ink-950/80">Friday · from 14:00</p>
       </div>
       <div class="flex flex-col items-start gap-1 py-6 pr-6 lg:border-r-2 lg:border-ink-950/25">
         <p class="font-display text-3xl font-extrabold leading-none [font-variation-settings:'wdth'_118] md:text-4xl">{cup.memberFeeLabel}</p>
@@ -171,7 +171,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
         <div>
           <Kicker>The plan for the day</Kicker>
           <SectionTitle size="none" class="mt-4 text-[clamp(1.9rem,3.5vw,3rem)]">
-            12:00 to the <Underline>bonfire</Underline>.
+            14:00 to the <Underline>bonfire</Underline>.
           </SectionTitle>
         </div>
         <p class="max-w-sm font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
@@ -343,7 +343,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
             Friday <Underline>16 October</Underline>.
           </SectionTitle>
           <p class={`mt-4 max-w-2xl ${bodyCopy}`}>
-            Tamarin Bay, from 12:00 until the bonfire dies down. Bring a board, bring the family, bring something for the grill.
+            Tamarin Bay, from 14:00 until the bonfire dies down. Bring a board, bring the family, bring something for the grill.
           </p>
           <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-fg/65">
             {cup.dateLabel} · {cup.location}
@@ -483,7 +483,7 @@ const plan = "grid h-full cursor-pointer content-start gap-1 rounded-2xl border-
           const { response, data } = await api(`/api/cup/kids/${kid.id}`, "POST");
           if (!response.ok) throw new Error(data.error ?? "Couldn't register. Try again in a sec.");
           status.textContent = data.status === "member"
-            ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, from 12:00.`
+            ? `🔒 ${data.kidName} is locked in — free, you're a member. See you Friday 16 October, from 14:00.`
             : `${data.kidName} is on the list! We don't see this semester's fee yet — sort it with Andras and the Cup is free; otherwise it's Rs 1,000 on the day.`;
           lineupChanged();
           await loadKids();

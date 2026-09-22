@@ -43,7 +43,7 @@ export default function CupLive({ dateLabel, warnings = true }: { dateLabel: str
       <section className={`${panel} mx-auto max-w-2xl text-center`}>
         <p className={mono}>{dateLabel}</p>
         <h2 className={`${panelTitle} mt-3 text-3xl`}>The board lights up on the day.</h2>
-        <p className="mt-3 text-fg-muted">Heats, scores and the leaderboard land here live from Tamarin Bay, updated wave by wave. Bookmark it — first heat at 14:00.</p>
+        <p className="mt-3 text-fg-muted">Heats, scores and the leaderboard land here live from Tamarin Bay, updated wave by wave. Bookmark it — meet at 14:00, first heat at 15:00. Heats finish at 17:30, winners’ ceremony at 18:00, then bonfire. BBQ throughout.</p>
       </section>
     );
   }
@@ -86,7 +86,7 @@ export default function CupLive({ dateLabel, warnings = true }: { dateLabel: str
               </ul>
             </article>
           )) : (
-            <p className={`${panel} text-fg-muted`}>No heat in the water right now. First heat at 14:00 — the BBQ keeps rolling in between.</p>
+            <p className={`${panel} text-fg-muted`}>No heat in the water right now. First heat at 15:00 — the BBQ keeps rolling throughout.</p>
           )}
         </section>
 
