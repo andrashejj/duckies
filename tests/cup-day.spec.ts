@@ -5,7 +5,7 @@ import { signIn, sendCode } from "./auth-helpers";
 import { CUP_TERM } from "../src/lib/registration/cup";
 import { best2, heatResults, drawRound, heatSizes, standings, type Entrant, type Heat, type Wave } from "../src/lib/comp";
 
-// Cup day: the draw, judging by email, the leaderboard and the public feed.
+// Cup day: the draw, judging with selected profiles, the leaderboard and the public feed.
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
 const organiser = "organiser@example.com";
@@ -35,7 +35,6 @@ const board = async (request: APIRequestContext) => (await (await request.get("/
 const heatsOf = (state: Board, round: number) => state.heats.filter((heat) => heat.stage === "round" && heat.round === round);
 
 async function assign(request: APIRequestContext, heatId: string, emails = [organiser]) {
-  for (const email of emails) expect((await request.post("/api/admin/cup/judges", post({ email, name: email === organiser ? "Organiser" : "Judy" }))).status()).toBe(201);
   expect((await request.put(`/api/admin/cup/heats/${heatId}/judges`, post({ judges: emails }))).status()).toBe(200);
   expect((await request.patch(`/api/admin/cup/heats/${heatId}`, post({ status: "running" }))).status()).toBe(200);
 }
@@ -43,10 +42,53 @@ async function assign(request: APIRequestContext, heatId: string, emails = [orga
 test.beforeEach(async () => {
   await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,cup_heat,cup_judge,cup_ticker,club_parent_profile CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES ($1,'organiser')", [organiser]);
+  await db.query("INSERT INTO club_parent_profile(email,name,phone) VALUES($1,'Organiser',''),($2,'Judy','')", [organiser, judgeEmail]);
   await db.query("INSERT INTO club_semester (id,label,starts_on,ends_on,child_fee_mur,family_fee_mur) VALUES ($1,'Sunset Duckies Cup Vol. 02','2026-10-16','2026-10-16',1000,1000) ON CONFLICT (id) DO NOTHING", [CUP_TERM]);
   await db.query("INSERT INTO cup_event (edition) VALUES ($1) ON CONFLICT (edition) DO UPDATE SET rounds=2, heat_size=4, final_size=4, live=false, version=1, plan=NULL, final_review=NULL", [CUP_TERM]);
 });
 test.afterAll(async () => { await db.end(); });
+
+test("parents and volunteers are selected directly on a heat, with no email invitation", async ({ page, playwright }) => {
+  const guardian = { name: "Ada Parent", email: "ada@example.com", phone: "+230 5000 1111" };
+  const ids = await seedKids(guardian);
+  await signIn(page.request, organiser);
+  const state = await (await page.request.post("/api/admin/cup/rounds", post({ round: 1 }))).json() as Board;
+  const heat = state.heats[0];
+  await db.query("INSERT INTO cup_heat_volunteer(heat_id,email) VALUES($1,$2)", [heat.id, judgeEmail]);
+  // Neither the old endpoint nor direct heat assignment can add arbitrary people.
+  expect((await page.request.post("/api/admin/cup/judges", post({ email: "unknown@example.com" }))).status()).toBe(400);
+  expect((await page.request.post("/api/admin/cup/judges", post({ email: guardian.email, name: "Fake name" }))).status()).toBe(400);
+  expect((await page.request.put(`/api/admin/cup/heats/${heat.id}/judges`, post({ judges: [guardian.email, "unknown@example.com"] }))).status()).toBe(400);
+  expect((await board(page.request)).judges).toHaveLength(0);
+  expect((await board(page.request)).heats[0].judges).toHaveLength(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/admin/cup");
+  const card = page.getByRole("article").filter({ has: page.getByRole("heading", { name: "Round 1 · Heat 1", exact: true }) });
+  await card.getByText("Choose judges", { exact: true }).click();
+  await card.getByRole("searchbox", { name: "Find a parent or volunteer" }).fill("Ana");
+  await expect(card.getByText("Parent of Ana", { exact: true })).toBeVisible();
+  await card.getByRole("checkbox", { name: "Select Ada Parent", exact: true }).click();
+  await expect(page.getByText("Heat judges saved.")).toBeVisible();
+  await card.getByRole("searchbox").fill("Judy");
+  await expect(card.getByText("Volunteered for this heat", { exact: true })).toBeVisible();
+  await card.getByRole("checkbox", { name: "Select Judy", exact: true }).click();
+  await expect.poll(async () => (await board(page.request)).heats[0].judges).toEqual([guardian.email, judgeEmail]);
+  expect((await board(page.request)).judges).toEqual(expect.arrayContaining([{ email: guardian.email, name: guardian.name }, { email: judgeEmail, name: "Judy" }]));
+  expect((await db.query("SELECT status,reviewed_by FROM cup_heat_volunteer WHERE heat_id=$1 AND email=$2", [heat.id, judgeEmail])).rows[0]).toEqual({ status: "approved", reviewed_by: organiser });
+  await expect(page.getByLabel("Judge's email")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Invite", exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/cup-judge-picker-mobile.png", fullPage: true });
+
+  const judge = await playwright.request.newContext({ baseURL: origin });
+  try {
+    await signIn(judge, guardian.email);
+    expect((await page.request.patch(`/api/admin/cup/heats/${heat.id}`, post({ status: "running" }))).status()).toBe(200);
+    expect((await judge.post("/api/cup/judge/waves", post({ heatId: heat.id, kidId: ids.Ana, score: 4 }))).status()).toBe(201);
+    expect((await judge.post("/api/cup/judge/waves", post({ heatId: state.heats[1].id, kidId: ids.Eli, score: 4 }))).status()).toBe(403);
+  } finally { await judge.dispose(); }
+});
 
 test("the draw: even heats, round 1 by age, later rounds shuffled with everyone once per round", () => {
   expect(heatSizes(14, 4)).toEqual([4, 4, 3, 3]);
@@ -131,7 +173,7 @@ test("organisers draw rounds, move kids and change rashies; scored heats stay pu
   expect((await request.patch("/api/admin/cup", post({ heatSize: 9, version: state.config.version }))).status()).toBe(400);
 });
 
-test("judges are invited by email, sign in without membership, score only their own waves; best two average onto the board", async ({ request, playwright }) => {
+test("judges are selected from profiles, sign in without membership, score only their own waves; best two average onto the board", async ({ request, playwright }) => {
   const ids = await seedKids();
   await signIn(request, organiser);
   let state = (await (await request.post("/api/admin/cup/rounds", post({ round: 1 }))).json()) as Board;
@@ -140,12 +182,12 @@ test("judges are invited by email, sign in without membership, score only their 
   const judge = await playwright.request.newContext({ baseURL: origin });
   const stranger = await playwright.request.newContext({ baseURL: origin });
   try {
-    // Not invited: no code is sent, and the sheet is closed.
+    // Not selected: no code is sent, and the sheet is closed.
     expect(await sendCode(stranger, "nobody@example.com")).toBeUndefined();
-    expect((await request.post("/api/admin/cup/judges", post({ email: "not an email", name: "X" }))).status()).toBe(400);
-    const invited = await request.post("/api/admin/cup/judges", post({ email: "Judge@Example.com ", name: "Judy" }));
-    expect(invited.status()).toBe(201);
-    expect((await invited.json()).judges).toEqual([{ email: judgeEmail, name: "Judy" }]);
+    expect((await request.post("/api/admin/cup/judges", post({ email: "not an email" }))).status()).toBe(400);
+    const selected = await request.post("/api/admin/cup/judges", post({ email: "Judge@Example.com " }));
+    expect(selected.status()).toBe(201);
+    expect((await selected.json()).judges).toEqual([{ email: judgeEmail, name: "Judy" }]);
     await signIn(judge, judgeEmail);
     expect((await judge.get("/api/kids")).status()).toBe(401);
     expect((await judge.get("/api/admin/cup")).status()).toBe(403);
@@ -192,7 +234,7 @@ test("judges are invited by email, sign in without membership, score only their 
     expect((await judge.delete(`/api/cup/judge/waves/${first.id}`, { headers: { origin } })).status()).toBe(403);
     expect((await (await judge.get("/api/cup/judge")).json()).heats.every((entry: Heat) => !entry.judges.includes(judgeEmail))).toBe(true);
     expect((await board(request)).standings.find((row) => row.name === "Ana")?.total).toBe(4);
-    // Uninvited again: the sheet closes on the next request even with a live session.
+    // Removed again: the sheet closes on the next request even with a live session.
     expect((await request.delete(`/api/admin/cup/judges/${encodeURIComponent(judgeEmail)}`, { headers: { origin } })).status()).toBe(200);
     expect((await judge.get("/api/cup/judge")).status()).toBe(200);
     expect((await judge.get("/cup/judge")).status()).toBe(200);
@@ -264,7 +306,7 @@ test("the judge sheet and the live board render on a phone", async ({ page, play
   try {
     await signIn(admin, organiser);
     await admin.post("/api/admin/cup/rounds", post({ round: 1 }));
-    await admin.post("/api/admin/cup/judges", post({ email: judgeEmail, name: "Judy" }));
+    await admin.post("/api/admin/cup/judges", post({ email: judgeEmail }));
     const state = await board(admin);
     await assign(admin, heatsOf(state, 1)[1].id, [judgeEmail]);
     await admin.patch(`/api/admin/cup/heats/${heatsOf(state, 1)[1].id}`, post({ status: "running" }));
@@ -300,9 +342,8 @@ test("the judge sheet and the live board render on a phone", async ({ page, play
 
 test("the organiser board draws, drags a kid between heats, runs a heat and goes live", async ({ page }) => {
   await seedKids();
-  await page.setViewportSize({ width: 1380, height: 900 });
+  await page.setViewportSize({ width: 1380, height: 1200 });
   await signIn(page.request, organiser);
-  await page.request.post("/api/admin/cup/judges", post({ email: organiser, name: "Organiser" }));
   await page.goto("/admin/cup");
   await expect(page.getByRole("heading", { name: "10 kids in the draw" })).toBeVisible({ timeout: 30000 });
   await page.getByRole("button", { name: "Draw round 1" }).click();
@@ -311,15 +352,18 @@ test("the organiser board draws, drags a kid between heats, runs a heat and goes
   const heat3 = page.getByRole("article").filter({ hasText: "Round 1 · Heat 3" });
   await expect(heat1).toContainText("4/4");
   await expect(heat3).toContainText("3/4");
-  await heat1.getByRole("checkbox", { name: "Organiser" }).click();
-  await expect(heat1.getByRole("checkbox", { name: "Organiser" })).toBeChecked();
+  await heat1.getByText("Choose judges", { exact: true }).click();
+  await heat1.getByRole("checkbox", { name: "Select Organiser", exact: true }).click();
+  await expect(heat1.getByRole("checkbox", { name: "Select Organiser", exact: true })).toBeChecked();
   await expect(page.getByText("Heat judges saved.")).toBeVisible();
   expect((await board(page.request)).heats[0].judges).toEqual([organiser]);
+  await heat1.getByText("Choose judges", { exact: true }).click();
   // Drag Dev out of the full heat 1 into heat 3.
-  await heat1.getByRole("listitem").filter({ hasText: "Dev" }).dragTo(heat3);
+  await heat1.getByRole("heading", { name: "Round 1 · Heat 1", exact: true }).scrollIntoViewIfNeeded();
+  await heat1.getByRole("listitem").filter({ has: page.getByText("Dev", { exact: true }) }).dragTo(heat3);
   await expect(heat1).toContainText("3/4");
   await expect(heat3).toContainText("4/4");
-  await expect(heat3.getByRole("listitem").filter({ hasText: "Dev" })).toContainText("10 yrs");
+  await expect(heat3.getByRole("listitem").filter({ has: page.getByText("Dev", { exact: true }) })).toContainText("10 yrs");
   // Phones use the menu instead: send Ana to heat 2, give her the green rashie.
   await heat1.getByLabel("Move Ana").selectOption({ label: "→ R1·H2" });
   const heat2 = page.getByRole("article").filter({ hasText: "Round 1 · Heat 2" });

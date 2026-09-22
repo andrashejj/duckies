@@ -213,7 +213,6 @@ export const volunteerReviewSchema = z.object({ email: z.string().trim().pipe(z.
 export const heatJudgesSchema = z.object({ judges: z.array(z.string().trim().pipe(z.email().max(254)).transform((email) => email.toLowerCase())).max(30) }).strict();
 export const judgeSchema = z.object({
   email: z.string().trim().pipe(z.email().max(254)).transform((value) => value.toLowerCase()),
-  name: z.string().trim().min(1).max(80),
 }).strict();
 export const tickerSchema = z.object({ message: z.string().trim().min(1).max(200) }).strict();
 export const waveCreateSchema = z.object({ heatId: uuid, kidId: uuid, wave: z.int().min(1).max(MAX_WAVES).optional(), score: z.int().min(1).max(5) }).strict();

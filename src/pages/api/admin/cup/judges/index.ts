@@ -4,10 +4,10 @@ import { addJudge, compRoute, readCompBody, readJudges } from "../../../../../li
 import { json } from "../../../../../lib/server/http";
 export const prerender = false;
 
-// Invites a judge by email; adding the same email again just renames them.
+// Select an existing parent or volunteer; their profile supplies the name.
 export const POST: APIRoute = compRoute(async ({ request, locals }) => {
   const parsed = judgeSchema.safeParse(await readCompBody(request));
-  if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "Enter an email and a name." }, 400);
-  await addJudge(parsed.data, locals.session?.user.email ?? "organiser");
+  if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "Select a parent or volunteer." }, 400);
+  await addJudge(parsed.data.email, locals.session?.user.email ?? "organiser");
   return json({ judges: await readJudges() }, 201);
 });

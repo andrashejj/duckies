@@ -35,6 +35,6 @@ export async function canSignIn(email: string) {
   if((await getDatabase().query("SELECT 1 FROM branding_access WHERE email=$1",[email])).rowCount!==0)return true;
   // Current legal guardians can sign in to their family and volunteer.
   if ((await getDatabase().query("SELECT 1 FROM club_current_guardian WHERE email=$1 LIMIT 1", [email])).rowCount) return true;
-  // Cup judges are invited by email; they need no club membership to score.
+  // Selected Cup judges can sign in with their existing profile email without club membership.
   return (await getDatabase().query("SELECT 1 FROM cup_judge WHERE email=$1 LIMIT 1",[email])).rowCount!==0;
 }

@@ -51,7 +51,7 @@ export async function cupAccess(request: Request): Promise<JudgeAccess> {
   const member = await findMember(email);
   return { email, name: session.user.name, organiser: member?.role === "organiser" };
 }
-/** Who is judging: an invited judge for this edition, or an organiser. */
+/** Who is judging: a selected judge for this edition, or an organiser. */
 export async function judgeAccess(request: Request, edition = CUP_TERM): Promise<JudgeAccess> {
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (!session?.user.emailVerified) throw new CompError("Please sign in.", 401);
@@ -61,7 +61,7 @@ export async function judgeAccess(request: Request, edition = CUP_TERM): Promise
     getDatabase().query<{ name: string }>("SELECT name FROM cup_judge WHERE edition=$1 AND email=$2", [edition, email]),
   ]);
   const organiser = member?.role === "organiser";
-  if (!judge.rows[0] && !organiser) throw new CompError("Judging needs an invitation from the club. Ask Andras to add your email.", 403);
+  if (!judge.rows[0] && !organiser) throw new CompError("Ask an organiser to select you from the parents and volunteers for your heat.", 403);
   return { email, name: judge.rows[0]?.name ?? session.user.name, organiser };
 }
 export function requireCompOrigin(request: Request) { if (!sameOrigin(request)) throw new CompError("Invalid request origin.", 403); }
@@ -477,20 +477,32 @@ export async function reviewVolunteer(heatId: string, email: string, decision: "
   });
 }
 
-export async function addJudge(judge: Judge, actor: string, edition = CUP_TERM) {
-  await getDatabase().query(
-    "INSERT INTO cup_judge (edition, email, name, created_by) VALUES ($1,$2,$3,$4) ON CONFLICT (edition, email) DO UPDATE SET name=EXCLUDED.name",
-    [edition, judge.email, judge.name, actor],
-  );
+async function selectJudges(client: pg.PoolClient, emails: string[], actor: string, edition: string) {
+  const people = new Map((await readParentProfiles(undefined, client)).map(person => [person.email, person]));
+  for (const email of emails) {
+    const person = people.get(email);
+    if (!person) throw new CompError("Select judges from the parents and volunteers directory.", 400);
+    if (!person.name.trim()) throw new CompError("This person needs to save their profile name before judging.", 400);
+    await client.query(
+      "INSERT INTO cup_judge(edition,email,name,created_by) VALUES($1,$2,$3,$4) ON CONFLICT(edition,email) DO UPDATE SET name=EXCLUDED.name",
+      [edition, person.email, person.name, actor],
+    );
+  }
 }
-export async function setHeatJudges(heatId: string, judges: string[], edition = CUP_TERM) {
+export async function addJudge(email: string, actor: string, edition = CUP_TERM) {
+  await transaction(async client => {
+    await readConfig(client, edition, true);
+    await selectJudges(client, [email], actor, edition);
+  });
+}
+export async function setHeatJudges(heatId: string, judges: string[], actor: string, edition = CUP_TERM) {
   await transaction(async (client) => {
     await readConfig(client, edition, true);
-    const invited = new Set((await readJudges(client, edition)).map((judge) => judge.email));
-    if (judges.some((email) => !invited.has(email))) throw new CompError("Invite each judge before selecting them for a heat.", 400);
-    const { rowCount } = await client.query("UPDATE cup_heat SET judges=$3 WHERE id=$1 AND edition=$2 AND status<>'done' AND (status='scheduled' OR ends_at>clock_timestamp())", [heatId, edition, [...new Set(judges)]]);
+    judges = [...new Set(judges)];
+    const { rowCount } = await client.query("UPDATE cup_heat SET judges=$3 WHERE id=$1 AND edition=$2 AND status<>'done' AND (status='scheduled' OR ends_at>clock_timestamp())", [heatId, edition, judges]);
     if (!rowCount) throw new CompError("This heat is no longer open for judge selection.", 409);
-    await client.query("UPDATE cup_heat_volunteer SET status=CASE WHEN email=ANY($2::text[]) THEN 'approved' WHEN status='approved' THEN 'declined' ELSE status END WHERE heat_id=$1", [heatId, judges]);
+    await selectJudges(client, judges, actor, edition);
+    await client.query("UPDATE cup_heat_volunteer SET status=CASE WHEN email=ANY($2::text[]) THEN 'approved' WHEN status='approved' THEN 'declined' ELSE status END,reviewed_by=$3 WHERE heat_id=$1", [heatId, judges, actor]);
   });
 }
 export async function removeJudge(email: string, edition = CUP_TERM) {

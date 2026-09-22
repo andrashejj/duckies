@@ -443,7 +443,7 @@ model CupHeatSlot {
   @@map("cup_heat_slot")
 }
 
-// Judges sign in with the club's email code; they need no club membership.
+// Selected parents and volunteers sign in with their existing profile email.
 model CupJudge {
   edition    String
   email      String

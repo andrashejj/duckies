@@ -3,7 +3,7 @@ import { compRoute, readJudges, removeJudge } from "../../../../../lib/server/co
 import { json } from "../../../../../lib/server/http";
 export const prerender = false;
 
-// Uninvites a judge. Their scores stay; their sign-in stops working unless they are a member or customer.
+// Remove judge access. Saved scores stay and other account access is unchanged.
 export const DELETE: APIRoute = compRoute(async ({ params }) => {
   await removeJudge(decodeURIComponent(params.email ?? ""));
   return json({ judges: await readJudges() });

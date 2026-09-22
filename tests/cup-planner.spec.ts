@@ -65,6 +65,7 @@ test.describe('guided planner API and UI', () => {
   test.beforeEach(async () => {
     await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,cup_heat,cup_judge,cup_ticker,club_parent_profile CASCADE');
     await db.query("INSERT INTO club_member(email,role) VALUES($1,'organiser')", [email]);
+    await db.query("INSERT INTO club_parent_profile(email,name,phone) VALUES($1,'Organiser','')", [email]);
     await db.query("UPDATE cup_event SET plan=NULL,final_review=NULL,rounds=2,heat_size=4,final_size=4,live=false,version=1 WHERE edition='cup-vol-2'");
     for (let i = 1; i <= 12; i++) {
       const kid = await db.query('INSERT INTO club_kid(name) VALUES($1) RETURNING id', [`Surfer ${String(i).padStart(2, '0')}`]);
@@ -87,13 +88,12 @@ test.describe('guided planner API and UI', () => {
     expect(board.heats[1].slots.some(s => s.kidId === one.kidId)).toBe(true);
     expect(board.heats.map(h => h.slots.length)).toEqual([4,4,4]);
     expect((await request.patch('/api/admin/cup', post({ plan: DEFAULT_CUP_PLAN, version: board.config.version }))).status()).toBe(409);
-    await request.post('/api/admin/cup/judges', post({ email, name: 'Judge' }));
     for (let round = 1; round <= 3; round++) {
       if (round > 1) expect((await request.post('/api/admin/cup/rounds', post({ round }))).status()).toBe(201);
       board = await state(request);
       const group = board.heats.filter(h => h.stage === 'round' && h.round === round);
       for (const heat of group) {
-        await request.put(`/api/admin/cup/heats/${heat.id}/judges`, post({ judges: [email] }));
+        expect((await request.put(`/api/admin/cup/heats/${heat.id}/judges`, post({ judges: [email] }))).status()).toBe(200);
         expect((await request.patch(`/api/admin/cup/heats/${heat.id}`, post({ status: 'running' }))).status()).toBe(200);
         if (round === 1 && heat.id === a.id) {
           expect((await request.patch(`/api/admin/cup/heats/${b.id}`, post({ status: 'running' }))).status()).toBe(409);

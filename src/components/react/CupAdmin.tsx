@@ -1,3 +1,4 @@
+import HeatJudgePicker from "./HeatJudgePicker";
 import CupPlanner from "./CupPlanner";
 import { boundaryTies, roundReadiness } from "../../lib/cup-planner";
 import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
@@ -15,7 +16,7 @@ import { HeatCountdown, HeatWarnings, useCompetitionClock } from "./CupClock";
 import { Leaderboard } from "./CupLeaderboard";
 
 // The organiser's cup board: draw the rounds, move kids between heats, run the
-// heats, invite judges, watch the leaderboard and feed the public ticker. One
+// heats, select judges, watch the leaderboard and feed the public ticker. One
 // GET builds the whole picture; every write returns it again.
 type RoundKey = number | "final";
 const api = async (url: string, method = "GET", body?: unknown) => {
@@ -224,16 +225,9 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                       </div>;
                     })}
                   </div>}
-                  <fieldset className="grid gap-2 border-t border-line pt-3" disabled={busy || heat.status === "done" || (heat.status === "running" && !heatSecondsLeft(heat, now))}>
-                    <legend className={mono}>Judges for this heat</legend>
-                    {state.judges.map((judge) => <label key={judge.email} className="flex min-h-11 items-center gap-2 text-sm">
-                      <input type="checkbox" checked={heat.judges.includes(judge.email)} onChange={(event) => {
-                        const judges = event.target.checked ? [...heat.judges, judge.email] : heat.judges.filter((email) => email !== judge.email);
-                        void act(() => api(`/api/admin/cup/heats/${heat.id}/judges`, "PUT", { judges }), "Heat judges saved.");
-                      }} />{judge.name}
-                    </label>)}
-                    {!heat.judges.length && <p className="text-sm text-fg-muted">Nobody can score this heat until you select a judge.</p>}
-                  </fieldset>
+                  <HeatJudgePicker heat={heat} parents={state.parents} volunteers={state.volunteers}
+                    disabled={busy || heat.status === "done" || (heat.status === "running" && !heatSecondsLeft(heat, now))}
+                    onChange={judges => void act(() => api(`/api/admin/cup/heats/${heat.id}/judges`, "PUT", { judges }), "Heat judges saved.")} />
                   {config.plan && heat.status === "running" && heat.slots.some(slot => results.get(slot.kidId)?.score === null) && <p className="text-sm text-fg-muted">Check missing scores before finishing. Any surfer with no scored run will receive zero for this heat.</p>}
                   <footer className="mt-auto flex flex-wrap gap-2">
                     {heat.status === "scheduled" && <button type="button" className={primaryButton} disabled={busy} onClick={() => void setStatus(heat, "running")}>Start heat</button>}
@@ -296,7 +290,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
           {/* Judges */}
           <section className={`${panel} grid gap-4`}>
             <h2 className={panelTitle}>Judges <span className={mono}>{state.judges.length}</span></h2>
-            <p className="text-sm text-fg-muted">Parents can volunteer from the miniapp; approve their request on the heat card above. You can also invite judges by email. Judges sign in at <a className="underline" href="/login?next=%2Fcup%2Fjudge">/login</a> with the email you add here — no club membership needed. Select judges on each heat above. Organisers must also be invited and selected. Saved ratings stay if a judge is removed.</p>
+            <p className="text-sm text-fg-muted">Choose parents and volunteers directly on each heat above, or approve a volunteer request. Selected judges use their existing profile to <a className="underline" href={judgeHref}>open the judge sheet</a>. No email invitation is needed. Saved ratings stay if a judge is removed.</p>
             <ul className="grid gap-2">
               {state.judges.map((judge) => (
                 <li key={judge.email} className={`${slotRow} justify-between`}>
@@ -304,16 +298,9 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                   <button type="button" className={linkButton} disabled={busy} onClick={() => void act(() => api(`/api/admin/cup/judges/${encodeURIComponent(judge.email)}`, "DELETE"), `${judge.name} removed.`)}>Remove</button>
                 </li>
               ))}
-              {!state.judges.length && <li className={`${mono} py-1`}>No judges invited yet.</li>}
+              {!state.judges.length && <li className={`${mono} py-1`}>No judges selected yet. Choose people on a heat above.</li>}
             </ul>
-            <form className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]" onSubmit={(event: SubmitEvent<HTMLFormElement>) => {
-              event.preventDefault(); const form = event.currentTarget; const data = new FormData(form);
-              void act(() => api("/api/admin/cup/judges", "POST", { email: data.get("email"), name: data.get("name") }), "Judge invited.").then(() => form.reset());
-            }}>
-              <input className={input} name="email" type="email" required maxLength={254} placeholder="judge@example.com" autoComplete="off" aria-label="Judge's email" />
-              <input className={input} name="name" required maxLength={80} placeholder="Name on the sheet" autoComplete="off" aria-label="Judge's name" />
-              <button type="submit" className={primaryButton} disabled={busy}>Invite</button>
-            </form>
+
           </section>
 
           {/* Ticker */}
