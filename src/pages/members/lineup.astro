@@ -15,7 +15,8 @@ try {
     ...crew.map(person => ({ id: `parent:${person.id}`, name: person.name, role: person.isParent ? 'Parent' : 'Member', href: `/members/people/${encodeURIComponent(person.id)}`, photos: [] as typeof photos, portrait: avatarUrl(person), own: person.id === actor.userId, kid: false })),
     ...kids.map(kid => ({ id: `kid:${kid.id}`, name: kid.name, role: 'Duckie', href: `/gallery/duckies/${kid.id}`, photos: photos.filter(photo => tags[photo.key]?.some(tag => tag.id === kid.id)), portrait: kid.profilePhoto, own: kid.canManage, kid: true })),
   ].sort((a, b) => a.name.localeCompare(b.name, 'en'));
-  data = { directory };
+  const counts = { all: directory.length, parent: directory.filter(person => !person.kid).length, duckie: directory.filter(person => person.kid).length };
+  data = { directory, counts };
 } catch { Astro.response.status = 503; }
 ---
 <BaseLayout title="Members · Sunset Duckies" variant="journal">
@@ -23,9 +24,15 @@ try {
     <header class="social-page-header"><div><h1>Members</h1><p>Find a parent or duckie.</p></div><span class="social-private">Members only</span></header>
     {!data ? <p role="alert" class="social-error">The club is temporarily unavailable. Please reload to try again.</p> : <>
       <section aria-label="Club members" class="club-directory-section">
-        <label class="club-search">Find someone<input type="search" placeholder="Search by name…" data-club-search /></label>
+        <div class="club-filters">
+          <label class="club-search">Find someone<input type="search" placeholder="Search by name…" data-club-search /></label>
+          <div class="club-kinds" role="group" aria-label="Show">
+            {([['all','Everyone'],['parent','Parents'],['duckie','Duckies']] as const).map(([kind, label], index) =>
+              <button type="button" data-club-kind={kind} aria-pressed={index === 0}>{label}<span>{data.counts[kind]}</span></button>)}
+          </div>
+        </div>
         <div class="club-directory">
-          {data.directory.map(person => <a href={person.href} class="club-person-card" data-club-person={person.name.toLocaleLowerCase()}>
+          {data.directory.map(person => <a href={person.href} class="club-person-card" data-club-person={person.name.toLocaleLowerCase()} data-club-person-kind={person.kid ? 'duckie' : 'parent'}>
             <div class="club-person-photo journal-directory-cover">
               {person.photos.length ? <img src={person.photos[0].thumb} alt="" loading="lazy" width="240" height="240" class="col-span-2" /> : person.portrait ? <img src={person.portrait} alt={`${person.name}'s profile photo`} loading="lazy" width="240" height="240" class="col-span-2" /> : <span aria-hidden="true" class="club-person-initial">{person.name.slice(0, 1)}</span>}
             </div>
@@ -42,10 +49,19 @@ try {
 </BaseLayout>
 <script>
   const search = document.querySelector<HTMLInputElement>('[data-club-search]');
+  const kinds = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-club-kind]'));
   const people = Array.from(document.querySelectorAll<HTMLElement>('[data-club-person]'));
-  search?.addEventListener('input', () => {
-    const query = search.value.trim().toLocaleLowerCase();
-    for (const person of people) person.hidden = !person.dataset.clubPerson!.includes(query);
+  let kind = 'all';
+  function apply() {
+    const query = search?.value.trim().toLocaleLowerCase() ?? '';
+    for (const person of people)
+      person.hidden = !person.dataset.clubPerson!.includes(query) || (kind !== 'all' && person.dataset.clubPersonKind !== kind);
     document.querySelector<HTMLElement>('[data-club-empty]')!.hidden = people.some(person => !person.hidden);
+  }
+  search?.addEventListener('input', apply);
+  for (const button of kinds) button.addEventListener('click', () => {
+    kind = button.dataset.clubKind!;
+    for (const other of kinds) other.setAttribute('aria-pressed', String(other === button));
+    apply();
   });
 </script>

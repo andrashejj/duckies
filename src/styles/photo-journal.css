@@ -294,7 +294,13 @@ img.social-avatar { object-fit: cover; }
 
 /* One club directory, with the same person labels on the private family page. */
 .club-home { max-width: 1100px; margin: auto; padding: 32px 36px 70px; }
-.club-search { display: grid; gap: 7px; max-width: 320px; font-size: 13px; font-weight: 550; margin-bottom: 22px; }
+.club-filters { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px 20px; margin-bottom: 22px; }
+.club-search { display: grid; gap: 7px; width: 320px; max-width: 100%; font-size: 13px; font-weight: 550; }
+.club-kinds { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+.club-kinds button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 13px; border-radius: 6px; font-size: 13px; font-weight: 600; color: var(--fg-muted); cursor: pointer; transition: background .15s, color .15s; }
+.club-kinds button span { font-size: 11px; font-weight: 550; font-variant-numeric: tabular-nums; opacity: .7; }
+.club-kinds button:hover { color: var(--fg); }
+.club-kinds button[aria-pressed="true"] { background: var(--surface-2); color: var(--fg); }
 .club-search input { width: 100%; min-height: 44px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-weight: 400; }
 .club-directory { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
 .club-person-card { min-width: 0; display: flex; align-items: center; gap: 13px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
@@ -349,6 +355,9 @@ img.social-avatar { object-fit: cover; }
 @media(max-width:768px) {
   .club-home,.family-page { padding: 24px 18px 40px; }
   .club-home .social-page-header { margin-inline: 0; }
+  .club-filters { display: grid; }
+  .club-kinds { justify-content: space-between; }
+  .club-kinds button { flex: 1; justify-content: center; padding-inline: 8px; }
   .club-directory { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
   .club-person-card { display: block; padding: 13px; }
   .club-person-info { margin-top: 12px; }

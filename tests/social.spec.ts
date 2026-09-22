@@ -199,6 +199,20 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await page.getByLabel('Find someone').fill('no such member');
   await expect(directory.getByRole('status')).toHaveText('No one matches that name.');
   await page.getByLabel('Find someone').fill('');
+  // The quick filter narrows the one list, and stacks with the search.
+  const show=page.getByRole('group',{name:'Show'});
+  await expect(show.getByRole('button',{name:'Everyone 4'})).toHaveAttribute('aria-pressed','true');
+  await show.getByRole('button',{name:'Parents 3'}).click();
+  await expect(directory.locator('[data-club-person]:visible')).toHaveCount(3);
+  await expect(directory.getByRole('link',{name:/Lara Test Duckie/})).toBeHidden();
+  await show.getByRole('button',{name:'Duckies 1'}).click();
+  await expect(directory.locator('[data-club-person]:visible')).toHaveCount(1);
+  await expect(directory.getByRole('link',{name:/Lara Test Duckie/})).toBeVisible();
+  await page.getByLabel('Find someone').fill('maya');
+  await expect(directory.getByRole('status')).toHaveText('No one matches that name.');
+  await page.getByLabel('Find someone').fill('');
+  await show.getByRole('button',{name:'Everyone 4'}).click();
+  await expect(directory.locator('[data-club-person]:visible')).toHaveCount(4);
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
