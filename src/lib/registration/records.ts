@@ -7,6 +7,7 @@ import {
   sign,
   verify,
 } from "node:crypto";
+import type { Pool, PoolClient } from "pg";
 import { getDatabase } from "../server/db";
 import { correctedBirthDateSql } from "./birth-date-corrections";
 import { waiver, WAIVER_VERSION } from "./policy";
@@ -307,6 +308,7 @@ export async function completeRegistration(
         [guardian.email, link.id]);
     }
     await db.query("DELETE FROM club_registration_parent_photo WHERE link_id=$1", [link.id]);
+    await grantGuardianMembership(db, kidIds);
     // A sibling added to a cup form comes to the cup too.
     if (isCupTerm(link.term))
       await db.query(
@@ -391,6 +393,18 @@ export type OrganiserKid = {
 // semester paid. Shared by the roster and the cup so they never disagree.
 export const memberPaidSql = (kid: string, currentTerm: string) =>
   `EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=${kid}) AND COALESCE((SELECT status='paid' FROM club_payment_event WHERE kid_id=${kid} AND term=${currentTerm} ORDER BY recorded_at DESC, id DESC LIMIT 1), false)`;
+// A member kid's legal guardians are club members. Every write that can make
+// that true (a signed registration, the fee recorded, a guardian added) syncs
+// these kids' guardians; membership only ends by hand or with the last shared
+// duckie (see changeGuardian). Signing alone is not enough: /join is public.
+export async function grantGuardianMembership(db: Pool | PoolClient, kidIds: string[]) {
+  await db.query(
+    `INSERT INTO club_member (email, role) SELECT DISTINCT g.email, 'member' FROM club_current_guardian g
+    WHERE g.kid_id=ANY($1::uuid[]) AND ${memberPaidSql("g.kid_id", "(SELECT id FROM club_semester WHERE is_current)")}
+    ON CONFLICT (email) DO NOTHING`,
+    [kidIds],
+  );
+}
 export async function organiserRoster(term: string, currentTerm: string): Promise<OrganiserKid[]> {
   const { rows } = await getDatabase().query(
     `SELECT k.*, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version, w.term AS waiver_term, w.id AS waiver_id, w.signed_at, w.snapshot->'registration' AS registration, ${correctedBirthDateSql("w")} AS effective_dob,

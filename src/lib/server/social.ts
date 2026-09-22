@@ -15,6 +15,17 @@ const inClub = `EXISTS(SELECT 1 FROM club_member m WHERE m.email=lower(u.email))
 // Who shows up in the club: current members, and past members whose posts are still up.
 const knownPerson = `(${inClub} OR EXISTS(SELECT 1 FROM club_post p WHERE p.author_id=u.id AND p.hidden_at IS NULL))`;
 const person = `jsonb_build_object('id',u.id,'name',${name},'active',${inClub},'photoVersion',${photoVersion})`;
+// A member who has never signed in has no account row, so the directory and
+// their profile page key on the membership itself. The digest is an identifier,
+// not a secret: it keeps an address out of a members-only URL, and it survives
+// a URL round trip unescaped so every route sees the id the page wrote.
+const membershipId = (email: string) => `'m-'||md5(${email})`;
+export const isMembershipId = (id: string) => /^m-[0-9a-f]{32}$/.test(id);
+const memberId = `COALESCE(u.id,${membershipId("m.email")})`;
+const memberSource = `FROM club_member m LEFT JOIN "user" u ON lower(u.email)=m.email AND u."emailVerified"=true
+  LEFT JOIN club_parent_profile pp ON pp.email=m.email`;
+const memberFields = `${memberId} AS id,${name} AS name,true AS active,${photoVersion} AS "photoVersion",
+  EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=m.email) AS "isParent"`;
 
 // Lock membership for the whole write. Revocation waits, snapshots the completed
 // write, then removes access; a write starting after revocation fails here.
@@ -52,12 +63,13 @@ export async function listPosts(actor:SocialActor,options:{author?:string;before
   return {posts:rows.slice(0,20),next:rows.length>20?rows[19].id:null};
 }
 export async function people() {
-  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,true AS active,${photoVersion} AS "photoVersion",
-    EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent" FROM "user" u
-    JOIN club_member m ON m.email=lower(u.email) LEFT JOIN club_parent_profile pp ON pp.email=m.email
-    WHERE u."emailVerified"=true ORDER BY lower(${name}),u.id`)).rows;
+  return (await getDatabase().query<SocialPerson & { isParent: boolean }>(
+    `SELECT ${memberFields} ${memberSource} ORDER BY lower(${name}),m.email`)).rows;
 }
 export async function socialPerson(id:string) {
+  // An old link keeps working once its owner signs in: they answer by their account.
+  if (isMembershipId(id)) return (await getDatabase().query<SocialPerson & { isParent: boolean }>(
+    `SELECT ${memberFields} ${memberSource} WHERE ${membershipId("m.email")}=$1`,[id])).rows[0]??null;
   return (await getDatabase().query<SocialPerson & { isParent: boolean }>(`SELECT u.id,${name} AS name,${inClub} AS active,${photoVersion} AS "photoVersion",
     EXISTS(SELECT 1 FROM club_current_guardian g WHERE g.email=lower(u.email)) AS "isParent"
     FROM "user" u LEFT JOIN club_parent_profile pp ON pp.email=lower(u.email)
@@ -65,6 +77,8 @@ export async function socialPerson(id:string) {
 }
 // The photo behind a member's avatar. Same audience as their profile page.
 export async function avatarImage(id:string) {
+  if (isMembershipId(id)) return (await getDatabase().query<{image:Buffer}>(`SELECT pp.image FROM club_member m
+    JOIN club_parent_profile pp ON pp.email=m.email WHERE ${membershipId("m.email")}=$1 AND pp.image IS NOT NULL`,[id])).rows[0]?.image??null;
   return (await getDatabase().query<{image:Buffer}>(`SELECT pp.image FROM "user" u JOIN club_parent_profile pp ON pp.email=lower(u.email)
     WHERE u.id=$1 AND pp.image IS NOT NULL AND ${knownPerson}`,[id])).rows[0]?.image??null;
 }

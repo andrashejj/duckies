@@ -212,6 +212,26 @@ test('one club directory combines parents and duckies, keeps role labels accurat
   await expect(page.locator('.journal-identity .club-role')).toHaveText('Duckie');
   await expect(page.getByRole('navigation',{name:'Mobile member navigation'}).getByRole('link',{name:'Members',exact:true})).toHaveAttribute('aria-current','page');
 });
+test('a member who has never signed in is listed, with a reachable profile and photo',async({page})=>{
+  const guardian='never-signed-in@example.com';
+  await db.query("INSERT INTO club_member(email,role) VALUES($1,'member')",[guardian]);
+  await db.query("INSERT INTO club_guardian_access(kid_id,email,name,relationship,phone,updated_by) VALUES($1,$2,'Jean-Pierre Test','Father','+230 5555 2222',$2)",[kid,guardian]);
+  await db.query("INSERT INTO club_parent_profile(email,name,phone,image,photo_updated_at) VALUES($1,'Jean-Pierre Test','+230 5555 2222',$2,now()) ON CONFLICT(email) DO UPDATE SET name=EXCLUDED.name,image=EXCLUDED.image,photo_updated_at=EXCLUDED.photo_updated_at",[guardian,await readFile('src/assets/gallery/standing-tall.webp')]);
+  await signIn(page.request,parent);
+  await page.goto('/members/lineup');
+  const directory=page.getByRole('region',{name:'Club members'});
+  const card=directory.getByRole('link',{name:/Jean-Pierre Test/});
+  await expect(card).toBeVisible();
+  // Their card and profile key on the membership, never on their address.
+  const href=(await card.getAttribute('href'))!;
+  expect(href).toMatch(/^\/members\/people\/m-[0-9a-f]{32}$/);
+  expect(await directory.innerHTML()).not.toContain(guardian);
+  await card.click();
+  await expect(page.getByRole('heading',{name:'Jean-Pierre Test',exact:true})).toBeVisible();
+  await expect(page.locator('.social-member-header .club-role')).toHaveText('Parent');
+  const photo=page.locator('.social-member-header img');
+  expect((await page.request.get((await photo.getAttribute('src'))!)).headers()['content-type']).toBe('image/webp');
+});
 test('a parent photo appears on their posts, profile and directory card, and the avatar route is members-only', async ({page,playwright})=>{
   await signIn(page.request,parent);
   await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);

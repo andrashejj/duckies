@@ -3,7 +3,7 @@ import {
   readBody,
   safeRoute,
 } from "../../../../lib/registration/http";
-import { RegistrationError } from "../../../../lib/registration/records";
+import { RegistrationError, grantGuardianMembership } from "../../../../lib/registration/records";
 import {
   paymentSchema,
   canManagePayments,
@@ -32,5 +32,7 @@ export const POST = safeRoute(async ({ request, params }) => {
     [params.id, p.term, p.status, p.amountMur, p.note, member.email],
   );
   if (!result.rowCount) throw new RegistrationError("Duckie not found.", 404);
+  // The fee is what makes the family members; their guardians join the club with it.
+  await grantGuardianMembership(getDatabase(), [params.id!]);
   return json({ success: true }, 201);
 });

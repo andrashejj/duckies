@@ -167,13 +167,13 @@ export function kidOverview(
   );
   section.append(facts);
   section.append(link("Manage parents & legal guardians", `/admin/kids/${kid.id}/guardians`));
-  // Sign-in access is approved by hand, guardian by guardian. Payment never
-  // grants it on its own.
+  // Guardians join the club with the fee; membership is only ever taken away
+  // (or granted early) by hand, guardian by guardian.
   if (kid.familyGuardians.length) {
     const access = document.createElement("div");
     access.className = duckieBox;
     access.append(text("h3", "Club membership access"));
-    access.append(text("p", "All linked guardians can sign in to their own family. Club approval also opens the full lineup and gallery; the family can use the shop."));
+    access.append(text("p", "All linked guardians can sign in to their own family, and become club members once the registration is signed and the semester paid. Membership opens the full lineup and gallery; the family can use the shop."));
     for (const guardian of kid.familyGuardians) {
       const email = guardian.email.toLowerCase();
       const approved = (kid.approvedGuardians ?? []).includes(email);

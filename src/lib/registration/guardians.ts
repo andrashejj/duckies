@@ -1,5 +1,5 @@
 import { getDatabase } from "../server/db";
-import { RegistrationError } from "./records";
+import { RegistrationError, grantGuardianMembership } from "./records";
 import type { z } from "zod";
 import { guardianSchema } from "./schema";
 export type FamilyGuardian = z.infer<typeof guardianSchema> & { kidId: string; photoVersion: string | null };
@@ -38,6 +38,10 @@ export async function changeGuardian(actor: string, kidIds: string[], guardian: 
         phone=EXCLUDED.phone,revoked_at=EXCLUDED.revoked_at,updated_by=EXCLUDED.updated_by,updated_at=now()`,
         [id,guardian.email,details.name,details.relationship,details.phone,remove,actor]);
     }
+    // Club membership follows the family: a new guardian of a member kid joins,
+    // and leaving the last shared duckie ends it (organisers are managed by hand).
+    if (remove) await db.query("DELETE FROM club_member WHERE email=$1 AND role='member' AND NOT EXISTS(SELECT 1 FROM club_current_guardian WHERE email=$1)", [guardian.email]);
+    else await grantGuardianMembership(db, kidIds);
     await db.query("COMMIT");
     return { added };
   } catch (error) { await db.query("ROLLBACK"); throw error; }

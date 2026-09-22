@@ -9,7 +9,7 @@ import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const origin = "http://127.0.0.1:4329";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const prisma = createPrismaClient();
-const parent = "parent@example.com", second = "second@example.com", adminEmail = "organiser@example.com";
+const parent = "parent@example.com", second = "second@example.com", adminEmail = "organiser@example.com", owner = "andras@hejj.xyz";
 const details = (email = second) => ({ name: "Second Parent", email, phone: "+230 5555 4567", relationship: "Mother" });
 const post = (data?: unknown) => ({ headers: { origin }, data });
 async function invitations(email: string) {
@@ -119,6 +119,39 @@ test("adding a guardian shares only chosen kids and their orders; changes preser
   expect((await co.post("/api/reserve",post({}))).status()).toBe(403);
   expect((await db.query("SELECT id,payload_sha256,pdf_sha256 FROM club_signed_waiver ORDER BY id")).rows).toEqual(before);
   await co.dispose();
+});
+
+test("guardians of a paid-up duckie are club members on their own; leaving the last shared duckie ends it",async({playwright})=>{
+  const id=await kid("Paid Duckie",true);
+  // Signed but unpaid is family access only: /join is public, so signing alone never opens the club.
+  const co=await playwright.request.newContext({baseURL:origin});await signIn(co,second);
+  expect(await (await co.get("/api/session")).json()).toMatchObject({member:false,family:true});
+  expect((await co.get("/members/lineup")).status()).toBe(403);
+  await db.query("INSERT INTO club_member(email,role) VALUES($1,'organiser')",[owner]);
+  const andras=await playwright.request.newContext({baseURL:origin});await signIn(andras,owner);
+  expect((await andras.post(`/api/kids/${id}/payment`,post({term:"2026-S2",status:"paid",amountMur:null,note:"Cash"}))).status()).toBe(201);
+  expect(await (await co.get("/api/session")).json()).toMatchObject({member:true,family:true,home:"/members"});
+  expect((await co.get("/members/lineup")).status()).toBe(200);
+  const roster=await (await admin.get("/api/kids")).json();
+  expect(roster.kids.find((k:{id:string})=>k.id===id).approvedGuardians.sort()).toEqual([parent,second]);
+  // A guardian added to a member kid joins straight away.
+  expect((await co.post("/api/family/guardians",post({kidIds:[id],guardian:details("third@example.com"),confirm:true}))).status()).toBe(201);
+  expect((await db.query("SELECT role FROM club_member WHERE email='third@example.com'")).rows).toEqual([{role:"member"}]);
+  // Removed from the last shared duckie, the club goes with the family; a fresh registration change brings it back.
+  expect((await admin.delete("/api/family/guardians",post({kidIds:[id],email:second}))).status()).toBe(200);
+  expect((await db.query("SELECT 1 FROM club_member WHERE email=$1",[second])).rowCount).toBe(0);
+  expect((await db.query("SELECT departure_known FROM club_member_archive WHERE email=$1",[second])).rows).toEqual([{departure_known:true}]);
+  expect(await (await co.get("/api/session")).json()).toMatchObject({member:false,family:false});
+  expect((await co.get("/members/lineup")).status()).toBe(403);
+  expect((await admin.post("/api/family/guardians",post({kidIds:[id],guardian:details(),confirm:true}))).status()).toBe(201);
+  expect(await (await co.get("/api/session")).json()).toMatchObject({member:true,family:true});
+  // The back-fill grants today's paid-up families but leaves a membership an organiser ended by hand.
+  expect((await admin.delete(`/api/members?email=${encodeURIComponent(second)}`,post())).status()).toBe(200);
+  await db.query("DELETE FROM club_member WHERE email='third@example.com'");
+  await db.query("DELETE FROM club_member_archive WHERE email='third@example.com'");
+  await db.query(await readFile("prisma/migrations/20260922120000_guardians_are_members/migration.sql","utf8"));
+  expect((await db.query("SELECT email FROM club_member WHERE email IN ($1,'third@example.com') ORDER BY email",[second])).rows).toEqual([{email:"third@example.com"}]);
+  await co.dispose();await andras.dispose();
 });
 
 test("admin can link pending kids; family writes reject outsiders, missing consent, forged requests and partial batches",async({request,playwright})=>{
