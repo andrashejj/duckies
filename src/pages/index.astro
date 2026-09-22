@@ -5,18 +5,66 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
+import { eyebrowBadge } from "../lib/ui";
 const posts = [...blog.posts].sort((a, b) => b.dateISO.localeCompare(a.dateISO)).slice(0, 2);
 const title = `${site.name} | Kids surfing in Tamarin Bay`;
 ---
 <BaseLayout title={title} description={site.description} image="/media/og-home.jpg" imageAlt="The Sunset Duckies with their boards at Tamarin Bay." imageWidth={1200} imageHeight={630}>
-  <section class="surf-home-hero">
-    <img src="/media/og-home.jpg" alt="The Sunset Duckies lined up with their colourful boards on the beach." width="1200" height="630" fetchpriority="high" />
-    <div class="surf-home-intro">
-      <p class="surf-home-eyebrow">Tamarin Bay, Mauritius · Kids’ surf club</p>
-      <h1>More waves.<br/><em>More friends.</em></h1>
-      <p>A small crew of kids, parents in the water, and a couple of afternoons a week to get better at surfing together.</p>
-      <Cta href="#how-to-join">Come for a surf</Cta>
-      <p class="surf-home-rhythm">Monday + Friday · 4–6pm</p>
+  <section class="relative isolate overflow-hidden bg-ink-950">
+    <div class="absolute inset-0 -z-10">
+      <img
+        data-hero-image
+        src="/media/hero-loop-poster.webp"
+        alt="Sunrise over Tamarin Bay, the lineup waiting in silhouette."
+        width="1024" height="576"
+        fetchpriority="high" loading="eager"
+        class="h-full w-full object-cover object-center max-sm:h-[360px]"
+      />
+      <video
+        data-hero-video
+        class="absolute inset-0 h-full w-full object-cover object-center opacity-0 transition-opacity duration-700 max-sm:h-[360px] motion-reduce:hidden"
+        muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"
+      >
+        <source src="/media/hero-loop.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-linear-to-r from-ink-950/65 to-ink-950/12 to-65% max-sm:hidden"></div>
+      <div class="absolute inset-0 bg-linear-to-t from-ink-950/72 to-transparent to-75% max-sm:hidden"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-transparent from-[220px] to-ink-950 to-[360px] sm:hidden"></div>
+    </div>
+
+    <div class="relative mx-auto flex min-h-[82vh] max-w-7xl flex-col justify-end px-4 pb-14 pt-28 max-sm:pt-[320px] sm:px-6 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-24 lg:pt-36">
+      <div data-float class="mb-6">
+        <span class={eyebrowBadge}>
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-coral-500"></span>
+          Monday + Friday · 4–6pm
+        </span>
+      </div>
+
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end lg:gap-10">
+        <div data-float class="max-w-5xl space-y-6">
+          <h1 class="font-display text-[clamp(3rem,8.5vw,7.25rem)] font-semibold leading-[0.88] tracking-[-0.045em] text-white [font-variation-settings:'wdth'_112,'opsz'_96]">
+            <span class="block">Salty hair,</span>
+            <span class="block">
+              <span class="font-accent font-medium italic text-sun-500">real</span>
+              grit.
+            </span>
+            <span class="block">No <span class="bg-sun-500 px-1 text-ink-950">cap</span>.</span>
+          </h1>
+          <p class="max-w-2xl text-base leading-7 text-white/88 sm:text-lg sm:leading-8 md:text-xl md:leading-9">
+            {site.name} is a surf club for kids in Tamarin. Two sessions a week, kids training
+            together, paddling out and riding home into the sunset.
+          </p>
+        </div>
+
+        <div data-float class="flex flex-col gap-3">
+          <Cta href="#how-to-join" class="w-full">Start here · how to join</Cta>
+          <Cta href={site.whatsappUrl} variant="secondary" target="_blank" rel="noreferrer" class="w-full">Slide into WhatsApp</Cta>
+          <a data-account-link class="py-2 text-center text-sm font-semibold text-white underline underline-offset-4" href="/account">Member area</a>
+          <p class="mt-1 text-center font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/65">
+            Mon + Fri · 4-6pm · Tamarin Bay
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -84,3 +132,22 @@ const title = `${site.name} | Kids surfing in Tamarin Bay`;
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Sunrise loop behind the hero: the poster stays put and the video fades in once it is
+  // actually playing. Skipped entirely for reduced-motion and data-saver visitors, so it
+  // is never even fetched for them (preload="none").
+  const heroVideo = document.querySelector<HTMLVideoElement>("[data-hero-video]");
+  const wantsMotion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const savesData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
+  if (heroVideo && wantsMotion && !savesData) {
+    const play = () => heroVideo.play().catch(() => {});
+    heroVideo.addEventListener("playing", () => heroVideo.classList.remove("opacity-0"), { once: true });
+    // Browsers pause muted autoplay in background tabs; pick it up when the tab is shown.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && heroVideo.paused) play();
+    });
+    play();
+  }
+</script>

@@ -38,10 +38,12 @@ export const GET = safeRoute(async ({ request, clientAddress }) => {
     [link.id],
   );
   const signed = rows[0];
+  const photo = await getDatabase().query("SELECT 1 FROM club_kid_photo WHERE kid_id=$1", [link.kid_id]);
   // Joining the club from the Cup page: membership covers the Cup, and the form says so.
   const cupEntry = await getDatabase().query("SELECT 1 FROM club_cup_entry WHERE kid_id=$1 AND edition=$2", [link.kid_id, CUP_TERM]);
   return json({
     childName: link.name,
+    hasPhoto: Boolean(photo.rowCount),
     term: link.term,
     termLabel: link.term_label,
     cup: isCupTerm(link.term),

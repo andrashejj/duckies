@@ -217,6 +217,13 @@ export async function completeRegistration(
     for (const [index, child] of children.entries()) {
       const { kidId: _claimed, slot, ...childFields } = child;
       const registration = { ...shared, ...childFields };
+      const photo = await db.query(
+        `SELECT 1 FROM club_registration_photo WHERE link_id=$1 AND slot=$2
+         UNION ALL SELECT 1 FROM club_kid_photo WHERE kid_id=$3`,
+        [link.id, slot, kidIds[index]],
+      );
+      if (!photo.rowCount)
+        throw new RegistrationError(`Add a profile photo for ${child.childName} before signing.`);
       // Membership is training, so a semester needs a rhythm; a cup entry has none.
       if (isCupTerm(link.term)) delete registration.sessionsPerWeek;
       else if (!registration.sessionsPerWeek)

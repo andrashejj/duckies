@@ -1,7 +1,7 @@
 import { test, expect, type APIRequestContext, type PlaywrightWorkerArgs } from "@playwright/test";
 import pg from "pg";
 import { signIn } from "./auth-helpers";
-import { submission } from "./registration-helpers";
+import { submission, stageProfilePhoto } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 import { CUP_TERM } from "../src/lib/registration/cup";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
@@ -27,6 +27,7 @@ let guest: APIRequestContext;
 async function registeredKid(request: APIRequestContext, name = "Zoë T.", email = guardian) {
   const kidId = (await (await request.post("/api/kids", post({ name }))).json()).kid.id as string;
   const link = await (await request.post(`/api/kids/${kidId}/link`, { headers: { origin } })).json();
+  await stageProfilePhoto(guest, linkHeaders(link.url));
   expect((await guest.post("/api/registration", { headers: linkHeaders(link.url), data: submission(payload(undefined, email)) })).status()).toBe(201);
   return kidId;
 }
@@ -105,6 +106,7 @@ test("anyone joins the club as pending: a self-issued link, the signed form, and
   expect(data.status).toBe("form");
   const info = await (await guest.get("/api/registration", { headers: linkHeaders(data.url) })).json();
   expect(info).toMatchObject({ cup: false, paid: false, term: "2026-S2", childName: "Noa New", childFeeMur: 3000, familyFeeMur: 5000 });
+  await stageProfilePhoto(guest, linkHeaders(data.url));
   expect((await guest.post("/api/registration", { headers: linkHeaders(data.url), data: submission(payload("Noa New")) })).status()).toBe(201);
   expect((await (await guest.post("/api/club/join", post(entry))).json()).status).toBe("signed");
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
@@ -142,6 +144,7 @@ test("a cup-only kid gets a private link, signs the club form without a training
   expect(again.status).toBe("form");
   expect((await guest.get("/api/registration", { headers })).status()).toBe(404);
   const { sessionsPerWeek, ...noRhythm } = payload("Mila Test");
+  await stageProfilePhoto(guest, linkHeaders(again.url));
   expect((await guest.post("/api/registration", { headers: linkHeaders(again.url), data: submission(noRhythm) })).status()).toBe(201);
   expect((await (await guest.post("/api/cup/register", post(entry))).json()).status).toBe("signed");
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
@@ -354,6 +357,7 @@ test("a signed-in family registers an existing kid and adds a sibling to the clu
   await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("Test Guardian");
   await expect(page.getByLabel("Email · guardian 1", { exact: true })).toHaveValue(guardian);
   await expect(page.getByLabel("Phone · guardian 1", { exact: true })).toHaveValue(guardianPhone);
+  await stageProfilePhoto(page.request, linkHeaders(signup.url));
   expect((await page.request.post("/api/registration", { headers: linkHeaders(signup.url), data: submission(payload("Taylor")) })).status()).toBe(201);
   await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
   await expect(form.locator("[data-kid-list]")).toContainText("Robyn");

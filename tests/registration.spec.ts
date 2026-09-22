@@ -5,7 +5,7 @@ import pg from "pg";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
 import { signIn } from "./auth-helpers";
-import { submission } from "./registration-helpers";
+import { submission, stageProfilePhoto, chooseProfilePhoto } from "./registration-helpers";
 import { correctBirthDate } from "../src/lib/registration/birth-date-corrections";
 import { getDatabase } from "../src/lib/server/db";
 import { readEntrants } from "../src/lib/server/comp";
@@ -66,6 +66,7 @@ async function issue(request: APIRequestContext) {
   const token = new URLSearchParams(new URL(data.url).hash.slice(1)).get(
     "token",
   )!;
+  await stageProfilePhoto(request, { origin, authorization: `Bearer ${token}` });
   return {
     ...data,
     token,
@@ -235,6 +236,8 @@ test("mandatory acknowledgements, explicit media choice, legal guardian and cons
   }
   for (const patch of [
     { media: undefined },
+    { signerName: "" },
+    { signerName: undefined },
     { signerName: "Someone else" },
     { dateOfBirth: "2100-01-01" },
     { version: "outdated" },
@@ -260,6 +263,45 @@ test("mandatory acknowledgements, explicit media choice, legal guardian and cons
     ).status(),
   ).toBe(403);
   expect((await db.query("SELECT * FROM club_signed_waiver")).rowCount).toBe(0);
+});
+
+test("every child needs a profile photo before any signed records are saved", async ({ request }) => {
+  const invitation = await issue(request);
+  const headers = invitation.headers;
+  expect((await request.delete("/api/registration/photo?slot=0", { headers })).status()).toBe(200);
+  const data = submission(payload(), { ...payload(), childName: "Sibling Surfer" });
+  const send = () => request.post("/api/registration", { headers, data });
+  const missingFirst = await send();
+  expect(missingFirst.status()).toBe(400);
+  expect((await missingFirst.json()).error).toContain("Add a profile photo for Zoë Test Surfer");
+  await stageProfilePhoto(request, headers);
+  // A photo in a different slot cannot satisfy the sibling's requirement.
+  await stageProfilePhoto(request, headers, 2);
+  const missingSibling = await send();
+  expect(missingSibling.status()).toBe(400);
+  expect((await missingSibling.json()).error).toContain("Add a profile photo for Sibling Surfer");
+  expect((await db.query("SELECT * FROM club_signed_waiver")).rowCount).toBe(0);
+  expect((await db.query("SELECT * FROM club_kid")).rowCount).toBe(1);
+  expect((await db.query("SELECT completed_at FROM club_registration_link")).rows[0].completed_at).toBeNull();
+  await stageProfilePhoto(request, headers, 1);
+  const signed = await send();
+  expect(signed.status()).toBe(201);
+  expect((await db.query("SELECT * FROM club_signed_waiver")).rowCount).toBe(2);
+  expect((await db.query("SELECT * FROM club_kid_photo")).rowCount).toBe(2);
+  // Re-signing keeps the saved photos; deleting one makes it required again.
+  const group = await signed.json();
+  const correction = { ...data, supersedes: group.id, children: data.children.map((child, index) => ({ ...child, kidId: group.children[index].kidId })) };
+  const kept = await request.post("/api/registration", { headers, data: correction });
+  expect(kept.status()).toBe(201);
+  correction.supersedes = (await kept.json()).id;
+  await db.query("DELETE FROM club_kid_photo WHERE kid_id=$1", [group.children[1].kidId]);
+  expect((await request.post("/api/registration", { headers, data: correction })).status()).toBe(400);
+  expect((await db.query("SELECT * FROM club_signed_waiver")).rowCount).toBe(4);
+  const renewal = await issue(request);
+  const info = await (await request.get("/api/registration", { headers: renewal.headers })).json();
+  expect(info.hasPhoto).toBe(true);
+  await request.delete("/api/registration/photo?slot=0", { headers: renewal.headers });
+  expect((await complete(request, renewal.headers)).status()).toBe(201);
 });
 
 test("ordinary members cannot read contacts, medical information, payments or signed documents", async ({
@@ -487,6 +529,21 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   const submit = page.locator("#submit-registration");
   const rhythm = page.getByLabel("Training rhythm", { exact: true });
   await submit.click();
+  const childPhoto = page.getByLabel("Profile photo (required)", { exact: true });
+  await expect(childPhoto).toBeFocused();
+  await expect(childPhoto).toHaveAccessibleDescription("Add a profile photo for this child before signing.");
+  expect(submissions).toBe(0);
+  await page.screenshot({ path: "test-results/registration-photo-required-mobile.png" });
+  await childPhoto.setInputFiles({ name: "broken.png", mimeType: "image/png", buffer: Buffer.from("not an image") });
+  await expect(page.locator('[data-child] [data-photo-status]')).toHaveText("Use a JPEG, PNG or WebP photo.");
+  await expect(childPhoto).toHaveAttribute("required", "");
+  await expect(childPhoto).toHaveValue("");
+  await chooseProfilePhoto(page.locator("[data-child]"));
+  await page.getByRole("button", { name: "Remove selected photo", exact: true }).click();
+  await expect(page.locator('[data-child] [data-photo-status]')).toHaveText("Photo removed.");
+  await expect(childPhoto).toHaveAttribute("required", "");
+  await chooseProfilePhoto(page.locator("[data-child]"));
+  await submit.click();
   await expect(rhythm).toBeFocused();
   await expect(rhythm).toBeInViewport();
   await expect(rhythm).toHaveAttribute("aria-invalid", "true");
@@ -520,7 +577,7 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
   await expect(consent).toBeInViewport();
   await consent.check();
   await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
-  const parentPhoto = page.getByLabel("Profile photo · guardian 1 (optional)", { exact: true });
+  const parentPhoto = page.getByLabel("Profile photo · guardian 1 (recommended)", { exact: true });
   await parentPhoto.setInputFiles({ name: "parent.png", mimeType: "image/png", buffer: await sharp({ create: { width: 32, height: 32, channels: 3, background: "#e9a366" } }).png().toBuffer() });
   await expect(page.locator('[data-guardian] [data-photo-status]')).toContainText("Photo uploaded.");
   await expect(email).toHaveAttribute("readonly", "");
@@ -634,6 +691,7 @@ test("a family fills in every child on one form and signs the waiver once for al
   async function fillChildren(children: string[], from = 0) {
     for (const [index, name] of children.entries()) {
       const at = from + index + 1;
+      await chooseProfilePhoto(page.locator("[data-child]").nth(at - 1));
       await page.getByLabel(`Child’s full name · duckie ${at}`, { exact: true }).fill(name);
       await page.getByLabel(`Date of birth · duckie ${at}`, { exact: true }).fill(`201${5 + index}-05-04`);
       await page.getByLabel(`Training rhythm · duckie ${at}`, { exact: true }).selectOption(index === 1 ? "1" : "2");
@@ -724,6 +782,7 @@ test("the signed page leads back to a fresh sign-up that remembers the family", 
   await join.getByRole("button", { name: "Start the registration" }).click();
   await page.waitForURL(/\/register#token=/);
   await expect(page.locator("#registration-form")).toBeVisible();
+  await chooseProfilePhoto(page.locator("[data-child]"));
   await page.getByLabel("Child’s full name", { exact: true }).fill("Elder Sibling");
   await page.getByLabel("Date of birth", { exact: true }).fill("2016-05-04");
   await page.getByLabel("Training rhythm", { exact: true }).selectOption("1");
@@ -756,6 +815,7 @@ test("younger children can sign up with parent guidance and a private organiser 
   await expect(page.locator("#registration-form")).toBeVisible();
   const birthday = page.getByLabel("Date of birth", { exact: true });
   const warning = page.locator("[data-age-warning]");
+  await chooseProfilePhoto(page.locator("[data-child]"));
   const youngerBirthday = new Date();
   youngerBirthday.setUTCFullYear(youngerBirthday.getUTCFullYear() - 6);
   const dob = youngerBirthday.toISOString().slice(0, 10);

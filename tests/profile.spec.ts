@@ -2,7 +2,7 @@ import { test, expect, type APIRequestContext } from "@playwright/test";
 import pg from "pg";
 import sharp from "sharp";
 import { signIn } from "./auth-helpers";
-import { submission } from "./registration-helpers";
+import { submission, stageProfilePhoto } from "./registration-helpers";
 import { readFile } from "node:fs/promises";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 
@@ -33,6 +33,7 @@ let guest: APIRequestContext;
 async function registeredKid(request: APIRequestContext, name: string, email: string) {
   const kidId = (await (await request.post("/api/kids", post({ name }))).json()).kid.id as string;
   const link = await (await request.post(`/api/kids/${kidId}/link`, post())).json();
+  await stageProfilePhoto(guest, linkHeaders(link.url));
   expect((await guest.post("/api/registration", { headers: linkHeaders(link.url), data: submission(payload(name, email)) })).status()).toBe(201);
   return kidId;
 }
@@ -54,6 +55,7 @@ test.afterAll(async () => { await db.end(); });
 test("the family page and its API are shut to anonymous, forged and unrelated sign-ins", async ({ request, playwright }) => {
   await signIn(request, organiser);
   const mine = await registeredKid(request, "Zoë T.", guardian);
+  const originalPhoto = (await db.query("SELECT image FROM club_kid_photo WHERE kid_id=$1", [mine])).rows[0].image;
 
   const anonymous: Record<string, string>[] = [{}, { cookie: "duckies.session_token=fake" }];
   for (const headers of anonymous) {
@@ -83,7 +85,7 @@ test("the family page and its API are shut to anonymous, forged and unrelated si
   expect((await guest.get(`/api/waivers/${waiverId}`)).status()).toBe(401);
   // Nothing was written by any of it.
   expect((await db.query("SELECT contact_name FROM club_kid WHERE id=$1", [mine])).rows[0].contact_name).toBeNull();
-  expect((await db.query("SELECT count(*)::int AS n FROM club_kid_photo")).rows[0].n).toBe(0);
+  expect((await db.query("SELECT image FROM club_kid_photo WHERE kid_id=$1", [mine])).rows[0].image).toEqual(originalPhoto);
   await other.dispose();
 });
 
@@ -198,6 +200,7 @@ test("a guardian keeps their own details current, and corrects a signed record b
   expect(sent.text).toContain(form.url);
 
   // Signing it again adds a record; the club keeps both, newest first.
+  await stageProfilePhoto(guest, linkHeaders(form.url));
   expect((await guest.post("/api/registration", { headers: linkHeaders(form.url), data: submission({ ...payload("Zoë T.", guardian), medicalNotes: "No allergies after all" }) })).status()).toBe(201);
   const profile = await (await family.get("/api/family")).json();
   expect(profile.kids[0].registration.medicalNotes).toBe("No allergies after all");

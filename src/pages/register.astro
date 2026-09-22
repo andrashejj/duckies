@@ -31,6 +31,11 @@ const panel = `${registrationPanel} ${memberForm}`;
       <p class="mt-6">Spotted a mistake — a date of birth, a phone number, the photo? Forgot a brother or sister? You can correct the details, add another duckie and sign again while this link is valid. The corrected version replaces the earlier one; the club keeps both.</p>
       <button id="edit-registration" class={`mt-3 ${textButton}`} type="button">Edit details, add a duckie, sign again</button>
       <div class="mt-7 border-t-2 border-dashed border-edge pt-6">
+        <SectionTitle size="none" class="text-2xl">Your guardian profiles</SectionTitle>
+        <p class="mt-2">The guardians listed on this form are linked to your duckies. Each guardian can sign in with their own email to view the family and keep their name, phone number and profile photo up to date.</p>
+        <Cta href="/account/profile" variant="secondary" class="mt-4">Open my guardian profile</Cta>
+      </div>
+      <div class="mt-7 border-t-2 border-dashed border-edge pt-6">
         <SectionTitle size="none" class="text-2xl">Once this link expires</SectionTitle>
         <p id="another-child-copy" class="mt-2" data-club={`A duckie who comes along later starts a fresh form of their own — and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} still covers a whole family for the semester. Your name and number carry over, so it takes about two minutes.`} data-cup="A child who comes along later starts a fresh entry of their own. Your name and number carry over, so it takes about two minutes.">A duckie who comes along later starts a fresh form of their own.</p>
         <Cta id="register-another" href="/join" variant="secondary" class="mt-4">Register another child</Cta>
@@ -67,8 +72,9 @@ const panel = `${registrationPanel} ${memberForm}`;
         <p id="children-status" class={memberStatus} role="status" aria-live="polite"></p>
       </div>
       <fieldset class={panel}>
-        <legend>02 · Legal guardians</legend>
-        <p>The first guardian listed signs this form, for every child listed above. You can add other legal guardians below.</p>
+        <legend>02 · Guardian profiles</legend>
+        <p>Add a profile for each legal guardian involved with your duckies. Their full name, relationship, phone number and own email address are required. The first guardian listed signs for every child on this form.</p>
+        <p>A clear photo of each guardian helps the organisers recognise your family at the beach. Photos are recommended; you can add or update them later.</p>
         <div id="guardians" class={memberForm}></div>
         <button id="add-guardian" type="button" class={`justify-self-start ${textButton}`}>Add another legal guardian</button>
       </fieldset>
@@ -119,8 +125,8 @@ const panel = `${registrationPanel} ${memberForm}`;
       <fieldset class={panel} data-child>
         <legend data-child-legend>01 · The surfer</legend>
         <label data-label="childName">Child’s full name<input data-field="childName" required maxlength="80" autocomplete="off" /></label>
-        <label data-label="photo">Profile photo (optional)<input data-field="photo" type="file" accept="image/jpeg,image/png,image/webp" /></label>
-        <p class="text-sm">A recognisable photo for club organisers. It stays private and does not grant permission for social media. JPEG, PNG or WebP up to 4 MB / 20 megapixels. The photo is saved to the profile when you sign.</p>
+        <label data-label="photo">Profile photo (required)<input data-field="photo" type="file" accept="image/jpeg,image/png,image/webp" required /></label>
+        <p class="text-sm">Every child needs a recognisable profile photo for club organisers before registration can be completed. It stays private and does not grant permission for social media. JPEG, PNG or WebP up to 4 MB / 20 megapixels. The photo is saved to the profile when you sign.</p>
         <img data-photo-preview hidden width="128" height="128" alt="Selected profile photo" class={largeAvatar} />
         <button data-remove-photo type="button" class={textButton} hidden>Remove selected photo</button>
         <p data-photo-status role="status"></p>
@@ -184,13 +190,13 @@ const panel = `${registrationPanel} ${memberForm}`;
       const input = document.createElement("input"); input.name = `guardian-${index}-${key}`; input.dataset.field = key; input.type = type; input.required = true; input.maxLength = max; input.value = values?.[key] ?? "";
       label.append(input); block.append(label);
     }
-    const photoLabel = document.createElement("label"); photoLabel.textContent = `Profile photo · guardian ${index + 1} (optional)`;
+    const photoLabel = document.createElement("label"); photoLabel.textContent = `Profile photo · guardian ${index + 1} (recommended)`;
     const photo = document.createElement("input"); photo.type = "file"; photo.accept = "image/jpeg,image/png,image/webp"; photo.dataset.field = "photo";
     photoLabel.append(photo); block.append(photoLabel);
     const preview = document.createElement("img"); preview.dataset.photoPreview = ""; preview.hidden = true; preview.alt = `Guardian ${index + 1} photo preview`; preview.className = "h-20 w-20 rounded-full object-cover"; block.append(preview);
     const removePhoto = document.createElement("button"); removePhoto.type = "button"; removePhoto.dataset.removePhoto = ""; removePhoto.className = textButton; removePhoto.textContent = "Remove photo"; removePhoto.hidden = true; block.append(removePhoto);
     const photoStatus = document.createElement("p"); photoStatus.dataset.photoStatus = ""; photoStatus.setAttribute("role", "status"); photoStatus.className = "text-sm";
-    photoStatus.textContent = "Private to you and organisers. JPEG, PNG or WebP, up to 4 MB. Enter your email first. Existing profiles can be updated after signing in."; block.append(photoStatus);
+    photoStatus.textContent = "Choose a clear photo where we can recognise this guardian. Shared with your family and club organisers, not posted publicly. JPEG, PNG or WebP, up to 4 MB. Enter their email first. Existing profiles can be updated after signing in."; block.append(photoStatus);
     photo.addEventListener("change", () => void uploadPhoto(block));
     removePhoto.addEventListener("click", () => void uploadPhoto(block, true));
     if (index > 0) { const remove = document.createElement("button"); remove.type = "button"; remove.className = textButton; remove.textContent = "Remove this guardian"; remove.onclick = async () => { if (photoBusy) return; await uploadPhoto(block, true); if (!preview.hidden) return; block.remove(); addButton.disabled = false; }; block.append(remove); }
@@ -343,9 +349,7 @@ const panel = `${registrationPanel} ${memberForm}`;
     children.replaceChildren();
     for (const child of signedGroup.children) {
       const block = addChildBlock(child.registration, child.kidId);
-      if (block && child.hasPhoto)
-        block.querySelector<HTMLElement>("[data-photo-status]")!.textContent =
-          "A profile photo is already on file. Choose a new one to replace it, or leave this empty to keep it.";
+      if (block && child.hasPhoto) keepExistingPhoto(block);
     }
     if (!childBlocks().length) addChildBlock();
     guardians.replaceChildren(); (r.guardians ?? []).forEach(g => addGuardian(g)); if (!guardians.children.length) addGuardian();
@@ -411,6 +415,7 @@ const panel = `${registrationPanel} ${memberForm}`;
       // The invited child opens the form; the family adds their siblings to it.
       children.replaceChildren();
       const firstChild = addChildBlock()!;
+      if (data.hasPhoto) keepExistingPhoto(firstChild);
       childField(firstChild, "childName").value = data.childName;
       document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} and any brothers or sisters · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
       if (data.completedAt) { completed(Boolean(data.canDownload)); editButton.hidden = !signed; return; }
@@ -463,6 +468,12 @@ const panel = `${registrationPanel} ${memberForm}`;
   document.querySelector("#download-waiver")!.addEventListener("click",()=>void download()); document.querySelector("#download-audit")!.addEventListener("click",()=>void download(true));
   // Staged against this child's slot, so each duckie's photo lands on their
   // own profile when the guardian signs.
+  function keepExistingPhoto(block: HTMLElement) {
+    block.dataset.hasPhoto = "true";
+    childField(block, "photo").required = false;
+    block.querySelector<HTMLElement>("[data-photo-status]")!.textContent =
+      "A profile photo is already on file. Choose a new one to replace it, or leave this empty to keep it.";
+  }
   async function uploadPhoto(block: HTMLElement, remove=false) {
     const photoInput = block.querySelector<HTMLInputElement>('[data-field="photo"]')!;
     const photoStatus = block.querySelector<HTMLElement>("[data-photo-status]")!;
@@ -480,7 +491,12 @@ const panel = `${registrationPanel} ${memberForm}`;
     try { const response=await fetch(photoUrl, {method:remove?"DELETE":"PUT",headers:{...headers,...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
       if(photoPreview.dataset.blob)URL.revokeObjectURL(photoPreview.dataset.blob); photoPreview.dataset.blob=remove?"":URL.createObjectURL(file!); photoPreview.src=photoPreview.dataset.blob; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":(parentEmail ? "Photo uploaded. Sign below to save it. Remove the photo first to change this email." : "Photo uploaded. Sign below to save it with the profile."); if(remove)photoInput.value="";
     }catch(e){photoStatus.textContent=e instanceof Error?e.message:"Photo upload failed. Please try again.";photoInput.value="";}
-    finally{if(parentEmail)parentEmail.readOnly=!photoPreview.hidden;photoBusy--;photoInput.disabled=false;removePhoto.disabled=false;submit.disabled=photoBusy>0;}
+    finally {
+      if (parentEmail) parentEmail.readOnly = !photoPreview.hidden;
+      else photoInput.required = block.dataset.hasPhoto !== "true" && photoPreview.hidden;
+      photoBusy--; photoInput.disabled = false; removePhoto.disabled = false; submit.disabled = photoBusy > 0;
+      photoInput.dispatchEvent(new Event("input", { bubbles: true }));
+    }
   }
   void load();
 </script>

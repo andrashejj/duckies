@@ -421,15 +421,7 @@ html.theme-journal[data-theme="dark"] {
 /* Public site: one introduction, the essentials, and stories from the beach. */
 .skip-link { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 12px 18px; background: var(--surface); color: var(--fg); border: 2px solid var(--accent); transform: translateY(-160%); }
 .skip-link:focus { transform: translateY(0); }
-.surf-home-hero { display: grid; grid-template-columns: 1.1fr 1fr; background: var(--color-ink-950); color: var(--color-cream); }
-.surf-home-hero > img { width: 100%; height: 100%; min-height: 540px; object-fit: cover; }
-.surf-home-intro { padding: clamp(28px,5vw,80px); align-self: center; }
 .surf-home-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-.surf-home-intro h1 { margin: 24px 0; font-family: var(--font-display); font-size: clamp(42px,5.2vw,76px); font-weight: 750; letter-spacing: -.05em; line-height: .98; }
-.surf-home-intro h1 em { font-family: var(--font-accent); color: var(--color-sun-500); font-weight: 500; }
-.surf-home-intro > p:not(.surf-home-eyebrow) { max-width: 34rem; font-size: 17px; line-height: 1.7; }
-.surf-home-intro > a { margin-top: 24px; }
-.surf-home-intro .surf-home-rhythm { margin-top: 18px; font-size: 14px; }
 .surf-home-section { max-width: 1200px; margin-inline: auto; padding: 64px 32px; }
 .surf-home-section p { line-height: 1.75; }
 .surf-home-join { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
@@ -461,12 +453,6 @@ html.theme-journal[data-theme="dark"] {
 :where(a,button,summary,select,input,textarea):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 :where(section[id],div[id]) { scroll-margin-top: 90px; }
 @media (max-width: 768px) {
-  .surf-home-hero { display: flex; flex-direction: column; }
-  .surf-home-hero > img { min-height: 0; height: auto; aspect-ratio: 2/1; object-fit: cover; }
-  .surf-home-intro { padding: 24px 22px 30px; align-self: stretch; }
-  .surf-home-intro h1 { margin-block: 16px; }
-  .surf-home-intro > p:not(.surf-home-eyebrow) { font-size: 15px; }
-  .surf-home-intro .surf-home-rhythm { font-size: 13px; }
   .surf-home-section { padding: 38px 22px; }
   .surf-home-join, .surf-home-session > div { grid-template-columns: 1fr; gap: 32px; }
   .surf-home-essentials, .surf-home-event { padding-left: 18px; }

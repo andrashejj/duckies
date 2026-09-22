@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import pg from "pg";
 import { createPrismaClient } from "../src/lib/prisma-factory";
 import { signIn, codeFor } from "./auth-helpers";
-import { submission } from "./registration-helpers";
+import { submission, stageProfilePhoto } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 const origin = "http://127.0.0.1:4329";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
@@ -21,6 +21,7 @@ let admin: APIRequestContext, guest: APIRequestContext, productId: string;
 async function kid(name: string, extra = false) {
   const id = (await (await admin.post("/api/kids", post({ name }))).json()).kid.id;
   const link = await (await admin.post(`/api/kids/${id}/link`, post())).json();
+  await stageProfilePhoto(guest, { origin, authorization: `Bearer ${new URLSearchParams(new URL(link.url).hash.slice(1)).get("token")}` });
   const result = await guest.post("/api/registration", { headers: { origin, authorization: `Bearer ${new URLSearchParams(new URL(link.url).hash.slice(1)).get("token")}` }, data: submission({
     version: WAIVER_VERSION, childName:name,dateOfBirth:"2017-10-01", sessionsPerWeek:"2",
     guardians:[{name:"First Parent",email:parent,phone:"+230 5555 1234",relationship:"Father"},...(extra ? [details()] : [])],

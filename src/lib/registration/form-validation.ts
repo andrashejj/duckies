@@ -21,6 +21,7 @@ export function registrationValidation(form: HTMLFormElement, summary: HTMLEleme
 
   function message(control: Control) {
     if (control.validity.valueMissing) {
+      if (control.type === "file") return "Add a profile photo for this child before signing.";
       if (control.type === "checkbox") return "Tick this box to continue.";
       if (control.type === "radio") return "Choose yes or no for photos and video.";
       if (control instanceof HTMLSelectElement) return "Choose a training rhythm.";
