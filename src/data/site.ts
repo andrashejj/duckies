@@ -1487,7 +1487,7 @@ export const site = {
         accent: "teal",
         tag: "How much",
         title: "Free for duckies. Rs 1,000 otherwise.",
-        text: "Club members surf for free. Not a member (yet)? Rs 1,000 entry — sort it with Andras on WhatsApp or on the day.",
+        text: "Club members surf for free. Not a member (yet)? Rs 1,000 entry — sort it with Andras on WhatsApp or on the day. We want local kids on the line-up too: if the fee is too steep, message Andras directly and we'll work it out.",
       },
       {
         photo: "crew-and-boards",
@@ -1532,6 +1532,9 @@ export const site = {
         "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Pick the Cup alone or a semester membership with it, then fill in the one registration form + waiver (≈5 min, no login).",
       footnote:
         "Siblings? Add them all on the same form — one signature covers every kid. Friends + family don't need to register, just come along. Spots stay pending until Andras confirms the fee — members skip that part.",
+      // Local families shouldn't sit it out over money.
+      communityNote:
+        "We want the Tamarin community on the line-up, not just club families. If Rs 1,000 is too much for your family, message Andras directly and we'll find a way.",
       memberLabel: "Already a Sunset Duckie",
       memberSub: "club member · surfs free",
       guestLabel: "Not a member (yet)",
