@@ -21,6 +21,21 @@ export const statusPill: Record<"scheduled" | "running" | "done", string> = {
 };
 export const pill = "inline-flex items-center gap-1.5 rounded-full border-[1.5px] px-2.5 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em]";
 
+// Club access on the parents directory. Approved membership is the organiser's
+// manual tick; a guardian without it still reaches their own family.
+export const accessPill: Record<"organiser" | "member" | "family" | "none", string> = {
+  organiser: "border-edge bg-accent text-accent-fg",
+  member: "border-teal-500 bg-sticker-teal text-fg",
+  family: "border-line bg-surface text-fg-muted",
+  none: "border-line bg-surface text-fg-muted",
+};
+export const accessLabel: Record<"organiser" | "member" | "family" | "none", string> = {
+  organiser: "Organiser",
+  member: "Club member",
+  family: "Family access",
+  none: "No access yet",
+};
+
 export const panel = "rounded-sticker border-2 border-edge bg-surface p-5 shadow-sticker-sm sm:p-6";
 export const panelTitle = "font-display text-xl font-bold leading-tight text-fg [font-variation-settings:'wdth'_110] sm:text-2xl";
 export const mono = "font-mono text-[0.66rem] uppercase tracking-[0.16em] text-fg/65";

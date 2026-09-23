@@ -9,7 +9,7 @@ const parents = await readParentProfiles();
   <header class="mb-8 max-w-2xl">
     <p class="font-mono text-xs uppercase tracking-widest text-accent-text">The grown-ups behind the duckies</p>
     <h1 class="mt-3 font-display text-4xl font-extrabold sm:text-5xl">Parents & guardians</h1>
-    <p class="mt-3 text-fg-muted">Registration details, familiar faces and their duckies. Private to organisers. New registrations appear automatically.</p>
+    <p class="mt-3 text-fg-muted">Registration details, familiar faces, their duckies and who the club has approved for membership. Private to organisers. New registrations appear automatically.</p>
   </header>
   <ParentsTable client:load initialParents={parents} />
 </AdminLayout>
