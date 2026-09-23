@@ -200,6 +200,16 @@ export async function completeRegistration(
         continue;
       }
       if (index === 0 && !supersedes) {
+        // A family signing up from the public site names their own duckie,
+        // often with a first name alone; the form is where the full name
+        // arrives, so the roster takes it from their first signature. A name
+        // the club typed itself stays the club's — those are deliberately
+        // short — and so does one already carried by a signed registration.
+        await db.query(
+          `UPDATE club_kid SET name=$2 WHERE id=$1 AND created_by IS NULL
+          AND NOT EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=$1)`,
+          [link.kid_id, child.childName],
+        );
         kidIds.push(link.kid_id);
         continue;
       }

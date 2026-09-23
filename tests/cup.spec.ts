@@ -170,6 +170,22 @@ test("a new family can join the club from the Cup page: on the cup list, and the
   expect((await (await guest.get("/api/registration", { headers: linkHeaders(plain.url) })).json()).cupIncluded).toBe(false);
 });
 
+test("the roster takes a duckie's full name from the family's first signature, but never renames one the club typed", async ({ request }) => {
+  await signIn(request, organiser);
+  // The club's own roster names are deliberately short: a signature carrying a
+  // longer one on the same child leaves "Zoë T." alone.
+  await registeredKid(request, "Zoë T.");
+  expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NOT NULL")).rows).toEqual([{ name: "Zoë T." }]);
+  // A family names their own duckie on the public sign-up, often with a first
+  // name alone; the full name arrives with the form they sign.
+  const started = await (await guest.post("/api/cup/register", post({ kidName: "Teo", contactName: "Justyna N", contactPhone: "+230 5700 2577", join: true }))).json();
+  expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NULL")).rows).toEqual([{ name: "Teo" }]);
+  const headers = linkHeaders(started.url);
+  await stageProfilePhoto(guest, headers);
+  expect((await guest.post("/api/registration", { headers, data: submission(payload("Teo Niescierowicz", "justyna@example.com")) })).status()).toBe(201);
+  expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NULL")).rows).toEqual([{ name: "Teo Niescierowicz" }]);
+});
+
 test("the public lineup lists who is in, in sign-up order, by first name and initial only", async ({ request, playwright }) => {
   await signIn(request, organiser);
   const kidId = await registeredKid(request, "Zoë Test Surfer");
