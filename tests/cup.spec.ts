@@ -1,7 +1,7 @@
 import { test, expect, type APIRequestContext, type PlaywrightWorkerArgs } from "@playwright/test";
 import pg from "pg";
 import { signIn } from "./auth-helpers";
-import { submission, stageProfilePhoto } from "./registration-helpers";
+import { chooseProfilePhoto, submission, stageProfilePhoto } from "./registration-helpers";
 import { WAIVER_VERSION } from "../src/lib/registration/policy";
 import { CUP_TERM } from "../src/lib/registration/cup";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
@@ -10,10 +10,10 @@ const owner = "andras@hejj.xyz";
 const organiser = "organiser@example.com";
 const guardian = "guardian@example.com";
 const guardianPhone = "+230 5555 1234";
-function payload(childName = "Zoë Test Surfer", email = guardian) {
+function payload(childName = "Zoë Test Surfer", email = guardian, phone = guardianPhone) {
   return {
     version: WAIVER_VERSION, childName, dateOfBirth: "2017-10-01",
-    guardians: [{ name: "Test Guardian", relationship: "Father", phone: guardianPhone, email }],
+    guardians: [{ name: "Test Guardian", relationship: "Father", phone, email }],
     emergencyName: "Emergency Person", emergencyRelationship: "Aunt", emergencyPhone: "+230 5555 9999",
     medicalNotes: "", sessionsPerWeek: "2", media: "yes", parentInWater: true, swimming: true, reef: true, gear: true,
     waiverAccepted: true, electronicConsent: true, signerName: "Test Guardian", signature: [],
@@ -22,6 +22,19 @@ function payload(childName = "Zoë Test Surfer", email = guardian) {
 const linkHeaders = (url: string) => ({ origin, authorization: `Bearer ${new URLSearchParams(new URL(url).hash.slice(1)).get("token")!}` });
 const post = (data: Record<string, unknown>) => ({ headers: { origin }, data });
 let guest: APIRequestContext;
+// The public form: a draft of its own, a photo per child, then the signature
+// with the family's one choice — the club, the Cup, or both.
+async function draft(context = guest) {
+  const response = await context.post("/api/registration/draft", { headers: { origin } });
+  expect(response.status()).toBe(201);
+  return linkHeaders((await response.json()).url);
+}
+async function signDraft(plan: "club" | "cup" | "both" | undefined, ...children: Record<string, any>[]) {
+  const headers = await draft();
+  for (const slot of children.keys()) await stageProfilePhoto(guest, headers, slot);
+  const response = await guest.post("/api/registration", { headers, data: { ...submission(...children), ...(plan ? { plan } : {}) } });
+  return { response, headers };
+}
 // A kid the organiser added whose guardian signed the semester registration —
 // a club family, paid or not.
 async function registeredKid(request: APIRequestContext, name = "Zoë T.", email = guardian) {
@@ -55,36 +68,39 @@ for (const [type, title, cupOnly, cupIncluded] of [
   ["cup", "Cup entry only", true, false],
   ["both", "Club membership + Cup", false, true],
 ] as const) {
-  test(`shared registration starts blank and opens the ${type} form`, async ({ page }) => {
+  test(`the public form opens blank, and choosing ${type} shapes it`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/register", { waitUntil: "domcontentloaded" });
-    const start = page.locator("#registration-start");
-    await expect(start).toBeVisible();
-    await expect(start.locator("input:checked")).toHaveCount(0);
-    for (const name of ["kidName", "contactName", "contactPhone"])
-      await expect(start.locator(`[name="${name}"]`)).toHaveValue("");
-    await start.locator(`[value="${type}"]`).check();
-    await start.getByLabel("First child’s name").fill("Shared Link Surfer");
-    await start.getByLabel("Parent / guardian").fill("Shared Link Parent");
-    await start.getByLabel("WhatsApp number").fill("+230 5999 8877");
-    await start.getByRole("button", { name: "Continue to family details" }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
-    await expect(start).toBeHidden();
+    const plan = page.locator("#registration-plan");
+    await expect(plan).toBeVisible();
+    await expect(plan.locator("input:checked")).toHaveCount(0);
     await expect(page.locator("#registration-form")).toBeVisible();
-    await expect(page.locator("#registration-scope")).toContainText(cupOnly ? "Cup only" : cupIncluded ? "membership and your Cup entry" : "register separately");
+    await expect(page.getByLabel("Child’s full name")).toHaveValue("");
+    await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("");
+    await expect(page.locator("#invitation-label")).toBeHidden();
+    await plan.locator(`[value="${type}"]`).check();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+    await expect(page.locator("#registration-scope")).toContainText(cupOnly ? "Cup only" : cupIncluded ? "membership and your Cup entry" : "Cup page");
     await expect(page.locator("#cup-covers")).toBeVisible({ visible: cupOnly });
     await expect(page.locator("#membership-covers")).toBeVisible({ visible: !cupOnly });
     await expect(page.locator("#cup-included")).toBeVisible({ visible: cupIncluded });
     await expect(page.getByLabel("Training rhythm", { exact: true })).toBeVisible({ visible: !cupOnly });
     await expect(page.locator("#submit-registration")).toContainText(cupOnly ? "Cup entry" : "club membership");
-    const info = await (await guest.get("/api/registration", { headers: linkHeaders(page.url()) })).json();
-    expect(info).toMatchObject({ cup: cupOnly, cupIncluded, term: cupOnly ? CUP_TERM : "2026-S2" });
+    // Visiting stores nothing; the first photo opens a draft, kept in the address bar.
+    expect((await db.query("SELECT count(*)::int AS n FROM club_registration_link")).rows[0].n).toBe(0);
+    await chooseProfilePhoto(page.locator("[data-child]").first());
+    await expect(page).toHaveURL(/#token=/);
+    expect(await (await guest.get("/api/registration", { headers: linkHeaders(page.url()) })).json()).toMatchObject({ draft: true });
+    expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    // A link that names the choice arrives with it made.
+    await page.goto(`/register?plan=${type}`, { waitUntil: "domcontentloaded" });
+    await expect(plan.locator(`[value="${type}"]`)).toBeChecked();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
     // Sharing the bare link again must not carry over the previous family's details.
     await page.goto("/register", { waitUntil: "domcontentloaded" });
-    await expect(start).toBeVisible();
-    for (const name of ["kidName", "contactName", "contactPhone"])
-      await expect(start.locator(`[name="${name}"]`)).toHaveValue("");
+    await expect(plan.locator("input:checked")).toHaveCount(0);
+    await expect(page.getByLabel("Child’s full name")).toHaveValue("");
   });
 }
 
@@ -97,23 +113,31 @@ test("the cup term is a regular term with the entry fee, never the current semes
   expect(roster.semesters.find((s: { id: string }) => s.id === CUP_TERM)).toMatchObject({ childFeeMur: 1000, isCurrent: false });
 });
 
-test("anyone joins the club as pending: a self-issued link, the signed form, and payment left to Andras", async ({ request, playwright }) => {
-  const entry = { kidName: "Noa New", contactName: "Parent New", contactPhone: "+230 5900 3344" };
-  expect((await guest.post("/api/club/join", { data: entry })).status()).toBe(403);
-  const result = await guest.post("/api/club/join", post(entry));
-  expect(result.status()).toBe(201);
-  const data = await result.json();
-  expect(data.status).toBe("form");
-  const info = await (await guest.get("/api/registration", { headers: linkHeaders(data.url) })).json();
-  expect(info).toMatchObject({ cup: false, paid: false, term: "2026-S2", childName: "Noa New", childFeeMur: 3000, familyFeeMur: 5000 });
-  await stageProfilePhoto(guest, linkHeaders(data.url));
-  expect((await guest.post("/api/registration", { headers: linkHeaders(data.url), data: submission(payload("Noa New")) })).status()).toBe(201);
-  expect((await (await guest.post("/api/club/join", post(entry))).json()).status).toBe("signed");
+test("anyone joins the club from the public form: nothing on the roster until they sign, then pending until Andras records the fee", async ({ request, playwright }) => {
+  expect((await guest.post("/api/registration/draft")).status()).toBe(403);
+  const headers = await draft();
+  expect(await (await guest.get("/api/registration", { headers })).json()).toMatchObject({ draft: true, maxChildren: 6, version: WAIVER_VERSION });
+  await stageProfilePhoto(guest, headers);
+  expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(0);
+  // The form has to say what it is for.
+  const missing = await guest.post("/api/registration", { headers, data: submission(payload("Noa New")) });
+  expect(missing.status()).toBe(400);
+  expect((await missing.json()).error).toContain("Choose club membership, the Cup, or both");
+  expect((await guest.post("/api/registration", { headers, data: { ...submission(payload("Noa New")), plan: "club" } })).status()).toBe(201);
+  const info = await (await guest.get("/api/registration", { headers })).json();
+  expect(info).toMatchObject({ cup: false, cupIncluded: false, paid: false, term: "2026-S2", childName: "Noa New", childFeeMur: 3000, familyFeeMur: 5000 });
+  expect(info.completedAt).toBeTruthy();
+  expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(0);
+  // The same family on a fresh public form is sent to sign in instead of signing twice.
+  const again = await signDraft("club", payload("Noa New"));
+  expect(again.response.status()).toBe(400);
+  expect((await again.response.json()).error).toContain("already registered with the club");
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
   await signIn(request, organiser);
   let kid = (await (await request.get("/api/kids")).json()).kids[0];
-  expect(kid).toMatchObject({ name: "Noa New", payment: null, memberPaid: false, approvedGuardians: [] });
+  expect(kid).toMatchObject({ name: "Noa New", contactName: "Test Guardian", contactPhone: guardianPhone, payment: null, memberPaid: false, approvedGuardians: [] });
   expect(kid.waiverId).toBeTruthy();
+  expect(kid.link.completedAt).toBeTruthy();
   // Only Andras confirms the payment; that is what makes the kid a member.
   expect((await request.post(`/api/kids/${kid.id}/payment`, post({ term: "2026-S2", status: "paid", amountMur: 3000, note: "Cash" }))).status()).toBe(403);
   await pay(playwright, kid.id);
@@ -121,73 +145,57 @@ test("anyone joins the club as pending: a self-issued link, the signed form, and
   expect(kid.memberPaid).toBe(true);
 });
 
-test("sign-ups are rate limited per address", async () => {
-  const bad = { kidName: "Spam", contactName: "Spam", contactPhone: "nope" };
-  for (let i = 0; i < 8; i++) expect((await guest.post("/api/club/join", post(bad))).status()).toBe(400);
-  expect((await guest.post("/api/cup/register", post(bad))).status()).toBe(429);
-  expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(0);
+test("public drafts are rate limited per address", async () => {
+  for (let i = 0; i < 8; i++) await draft();
+  expect((await guest.post("/api/registration/draft", { headers: { origin } })).status()).toBe(429);
 });
 
-test("a cup-only kid gets a private link, signs the club form without a training rhythm and shows up flagged", async ({ request }) => {
-  const entry = { kidName: "Mila Test", contactName: "Parent Test", contactPhone: "+230 5900 1122" };
-  expect((await guest.post("/api/cup/register", { data: entry })).status()).toBe(403);
-  expect((await guest.post("/api/cup/register", post({ ...entry, contactPhone: "nope" }))).status()).toBe(400);
-  const result = await guest.post("/api/cup/register", post(entry));
-  expect(result.status()).toBe(201);
-  const data = await result.json();
-  expect(data.status).toBe("form");
-  const headers = linkHeaders(data.url);
-  const info = await (await guest.get("/api/registration", { headers })).json();
-  expect(info).toMatchObject({ cup: true, term: CUP_TERM, termLabel: "Sunset Duckies Cup Vol. 02", childName: "Mila Test" });
-  // A second submit before signing re-issues the link instead of adding a kid; the first link is gone.
-  const again = await (await guest.post("/api/cup/register", post(entry))).json();
-  expect(again.status).toBe("form");
-  expect((await guest.get("/api/registration", { headers })).status()).toBe(404);
-  const { sessionsPerWeek, ...noRhythm } = payload("Mila Test");
-  await stageProfilePhoto(guest, linkHeaders(again.url));
-  expect((await guest.post("/api/registration", { headers: linkHeaders(again.url), data: submission(noRhythm) })).status()).toBe(201);
-  expect((await (await guest.post("/api/cup/register", post(entry))).json()).status).toBe("signed");
-  expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
+test("a cup-only family signs the same form without a training rhythm and shows up flagged", async ({ request }) => {
+  const { sessionsPerWeek, ...noRhythm } = payload("Mila Test", "mila@example.com", "+230 5900 1122");
+  const { response, headers } = await signDraft("cup", noRhythm);
+  expect(response.status()).toBe(201);
+  expect(await (await guest.get("/api/registration", { headers })).json()).toMatchObject({ cup: true, term: CUP_TERM, termLabel: "Sunset Duckies Cup Vol. 02", childName: "Mila Test" });
   const record = (await db.query("SELECT snapshot FROM club_signed_waiver")).rows[0].snapshot;
   expect(record.term).toBe(CUP_TERM);
+  expect(record.evidence.method).toBe("public-form-electronic-signature");
   expect(record.registration.sessionsPerWeek).toBeUndefined();
   await signIn(request, organiser);
   const roster = await (await request.get(`/api/kids?term=${CUP_TERM}`)).json();
   expect(roster.termLabel).toBe("Sunset Duckies Cup Vol. 02");
-  expect(roster.kids[0]).toMatchObject({ name: "Mila Test", cup: { edition: CUP_TERM, member: false, plan: "cup", contactName: "Parent Test", contactPhone: "+230 5900 1122" }, payment: null, memberPaid: false });
+  expect(roster.kids[0]).toMatchObject({ name: "Mila Test", cup: { edition: CUP_TERM, member: false, plan: "cup", contactName: "Test Guardian", contactPhone: "+230 5900 1122" }, payment: null, memberPaid: false });
   expect(roster.kids[0].waiverId).toBeTruthy();
 });
 
-test("a new family can join the club from the Cup page: on the cup list, and the semester form says the Cup is included", async () => {
-  const entry = { kidName: "Kai Joiner", contactName: "Parent Joiner", contactPhone: "+230 5900 5566" };
-  const data = await (await guest.post("/api/cup/register", post({ ...entry, join: true }))).json();
-  expect(data.status).toBe("form");
-  const info = await (await guest.get("/api/registration", { headers: linkHeaders(data.url) })).json();
-  expect(info).toMatchObject({ cup: false, cupIncluded: true, term: "2026-S2", childName: "Kai Joiner", childFeeMur: 3000 });
-  // Entry is not free yet, but the roster must not read them as a cup-only
-  // family: they asked to join the club, and that choice is recorded.
-  expect((await db.query("SELECT member, plan FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows).toEqual([{ member: false, plan: "club" }]);
-  // The plain club path knows nothing about the Cup.
-  const plain = await (await guest.post("/api/club/join", post({ kidName: "Ana Plain", contactName: "Parent Plain", contactPhone: "+230 5900 7788" }))).json();
-  expect((await (await guest.get("/api/registration", { headers: linkHeaders(plain.url) })).json()).cupIncluded).toBe(false);
+test("a family joining the club and the Cup signs the semester form, and every child on it comes to the Cup", async () => {
+  const phone = "+230 5900 5566";
+  const { response, headers } = await signDraft("both", payload("Kai Joiner", "kai@example.com", phone), payload("Lou Joiner", "kai@example.com", phone));
+  expect(response.status()).toBe(201);
+  expect(await (await guest.get("/api/registration", { headers })).json()).toMatchObject({ cup: false, cupIncluded: true, term: "2026-S2", childName: "Kai Joiner", childFeeMur: 3000 });
+  expect((await db.query("SELECT k.name, c.member, c.plan FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id WHERE edition=$1 ORDER BY k.name", [CUP_TERM])).rows)
+    .toEqual([{ name: "Kai Joiner", member: false, plan: "club" }, { name: "Lou Joiner", member: false, plan: "club" }]);
+  expect((await db.query("SELECT DISTINCT term FROM club_signed_waiver")).rows).toEqual([{ term: "2026-S2" }]);
+  // The plain club form knows nothing about the Cup.
+  const plain = await signDraft("club", payload("Ana Plain", "ana@example.com", "+230 5900 7788"));
+  expect((await (await guest.get("/api/registration", { headers: plain.headers })).json()).cupIncluded).toBe(false);
+  expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(2);
 });
 
-test("the roster tells a family joining the club apart from a cup-only entry, before either signs", async ({ request, page }) => {
+test("the roster tells a family who joined the club apart from a cup-only entry", async ({ request, page }) => {
   await signIn(request, organiser);
   await page.context().addCookies((await request.storageState()).cookies);
-  // Same form, two different answers to "Just the Cup, or the whole semester?".
-  await guest.post("/api/cup/register", post({ kidName: "Kai Joiner", contactName: "Parent Joiner", contactPhone: "+230 5900 5566", join: true }));
-  await guest.post("/api/cup/register", post({ kidName: "Nina Visitor", contactName: "Parent Visitor", contactPhone: "+230 5900 9900" }));
+  await signDraft("both", payload("Kai Joiner", "kai@example.com", "+230 5900 5566"));
+  await signDraft("cup", payload("Nina Visitor", "nina@example.com", "+230 5900 9900"));
   expect((await db.query("SELECT k.name, c.plan FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id ORDER BY k.name")).rows)
     .toEqual([{ name: "Kai Joiner", plan: "club" }, { name: "Nina Visitor", plan: "cup" }]);
   await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
   const joining = page.locator(".duckie-profile").filter({ hasText: "Kai Joiner" });
   await joining.locator(".duckie-summary").click();
-  await expect(joining).toContainText("Joining the club · membership registration not signed yet · free entry once the semester is paid");
+  await expect(joining).toContainText("Club registration on file, semester unpaid");
   await expect(joining).not.toContainText("Cup-only");
   const visitor = page.locator(".duckie-profile").filter({ hasText: "Nina Visitor" });
   await visitor.locator(".duckie-summary").click();
-  await expect(visitor).toContainText("Cup-only · Rs 1000 entry · cup form not signed yet");
+  await expect(visitor).toContainText("Cup-only · Rs 1000 entry ·");
+  await expect(visitor).not.toContainText("cup form not signed yet");
 });
 
 test("the roster takes a duckie's full name from the family's first signature, but never renames one the club typed", async ({ request }) => {
@@ -196,14 +204,29 @@ test("the roster takes a duckie's full name from the family's first signature, b
   // longer one on the same child leaves "Zoë T." alone.
   await registeredKid(request, "Zoë T.");
   expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NOT NULL")).rows).toEqual([{ name: "Zoë T." }]);
-  // A family names their own duckie on the public sign-up, often with a first
-  // name alone; the full name arrives with the form they sign.
-  const started = await (await guest.post("/api/cup/register", post({ kidName: "Teo", contactName: "Justyna N", contactPhone: "+230 5700 2577", join: true }))).json();
-  expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NULL")).rows).toEqual([{ name: "Teo" }]);
-  const headers = linkHeaders(started.url);
-  await stageProfilePhoto(guest, headers);
-  expect((await guest.post("/api/registration", { headers, data: submission(payload("Teo Niescierowicz", "justyna@example.com")) })).status()).toBe(201);
-  expect((await db.query("SELECT name FROM club_kid WHERE created_by IS NULL")).rows).toEqual([{ name: "Teo Niescierowicz" }]);
+  // A family the club only knows by first name and WhatsApp number — here from
+  // the old short sign-up — signs the public form with the full name.
+  const { rows: [teo] } = await db.query("INSERT INTO club_kid (name, contact_name, contact_phone) VALUES ('Teo','Justyna N','+230 5700 2577') RETURNING id");
+  await db.query("INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone) VALUES ($1,$2,false,'club','Justyna N','+230 5700 2577')", [teo.id, CUP_TERM]);
+  const invitation = await (await request.post(`/api/kids/${teo.id}/link`, { headers: { origin } })).json();
+  const { response } = await signDraft("both", payload("Teo Niescierowicz", "justyna@example.com", "+23057002577"));
+  expect(response.status()).toBe(201);
+  // The same duckie, not a second one: renamed, signed, still on the Cup list,
+  // and the invitation the club had sent is answered.
+  expect((await db.query("SELECT id, name FROM club_kid WHERE created_by IS NULL")).rows).toEqual([{ id: teo.id, name: "Teo Niescierowicz" }]);
+  expect((await db.query("SELECT kid_id FROM club_signed_waiver WHERE term='2026-S2' AND kid_id=$1", [teo.id])).rowCount).toBe(1);
+  expect((await db.query("SELECT plan FROM club_cup_entry WHERE kid_id=$1", [teo.id])).rows).toEqual([{ plan: "club" }]);
+  expect((await guest.get("/api/registration", { headers: linkHeaders(invitation.url) })).status()).toBe(404);
+});
+
+test("the public form picks up a pending duckie the club already recorded a fee for, and the guardian becomes a member", async ({ request, playwright }) => {
+  await signIn(request, organiser);
+  const { rows: [teo] } = await db.query("INSERT INTO club_kid (name, contact_name, contact_phone) VALUES ('Teo','Justyna N','+230 5700 2577') RETURNING id");
+  await pay(playwright, teo.id);
+  expect((await signDraft("club", payload("Teo", "justyna@example.com", "5700 2577"))).response.status()).toBe(201);
+  const kid = (await (await request.get("/api/kids")).json()).kids.find((k: { id: string }) => k.id === teo.id);
+  expect(kid).toMatchObject({ memberPaid: true, approvedGuardians: ["justyna@example.com"] });
+  expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
 });
 
 test("the public lineup lists who is in, in sign-up order, by first name and initial only", async ({ request, playwright }) => {
@@ -211,14 +234,14 @@ test("the public lineup lists who is in, in sign-up order, by first name and ini
   const kidId = await registeredKid(request, "Zoë Test Surfer");
   expect((await guest.get("/api/cup/lineup")).status()).toBe(200);
   expect((await (await guest.get("/api/cup/lineup")).json()).surfers).toEqual([]);
-  await guest.post("/api/cup/register", post({ kidName: "Mila Test Wildcard", contactName: "Parent Test", contactPhone: "+230 5900 1122" }));
+  await signDraft("cup", payload("Mila Test Wildcard", "mila@example.com", "+230 5900 1122"));
   expect((await request.post("/api/members", post({ email: guardian }))).status()).toBe(201);
   const family = await playwright.request.newContext({ baseURL: origin });
   await signIn(family, guardian);
   expect((await family.post(`/api/cup/kids/${kidId}`, { headers: { origin } })).status()).toBe(201);
   const { surfers } = await (await guest.get("/api/cup/lineup")).json();
   expect(surfers).toEqual([
-    { number: 1, name: "Mila W.", age: null, member: false, heat: null },
+    { number: 1, name: "Mila W.", age: expect.any(Number), member: false, heat: null },
     { number: 2, name: "Zoë S.", age: expect.any(Number), member: true, heat: null },
   ]);
   await family.dispose();
@@ -230,10 +253,10 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   await signIn(request, organiser);
   const kidId = await registeredKid(request);
   await registeredKid(request, "Somebody Else", "other@example.com");
-  // The guest form recognises a club family and sends them to sign in.
-  const asGuest = await guest.post("/api/cup/register", post({ kidName: "zoë t.", contactName: "Test Guardian", contactPhone: "5555-1234" }));
-  expect(asGuest.status()).toBe(201);
-  expect((await asGuest.json()).status).toBe("member");
+  // The public form recognises a club family and sends them to sign in.
+  const asGuest = await signDraft("cup", payload("zoë t.", guardian, "5555-1234"));
+  expect(asGuest.response.status()).toBe(400);
+  expect((await asGuest.response.json()).error).toContain("Sign in with the guardian email");
   expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(0);
   // Nobody signs in until an organiser approves the guardian's email (the
   // members suite covers that unapproved addresses get no code).
@@ -282,7 +305,7 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   expect((await request.delete(`/api/members?email=${encodeURIComponent(owner)}`, { headers: { origin } })).status()).toBe(409);
 });
 
-test("the cup page: members are sent to sign in and pick their kids; a new family is sent to the form", async ({ request, page }) => {
+test("the cup page: members are sent to sign in and pick their kids; a new family is sent to the registration form", async ({ request, page }) => {
   await signIn(request, organiser);
   const kidId = await registeredKid(request);
   await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
@@ -290,7 +313,7 @@ test("the cup page: members are sent to sign in and pick their kids; a new famil
   await expect(form).toBeVisible();
   const signInLink = form.getByRole("link", { name: "Sign in to register" });
   await expect(signInLink).toHaveAttribute("href", "/login?next=%2Fsunset-duckies-cup-vol-2%23register");
-  await expect(form.getByLabel("Kid's name")).toBeHidden();
+  await expect(form.getByRole("link", { name: /Just the Cup/ })).toBeHidden();
   // Signed in with an email no kid is registered under: a way out in each direction.
   await signIn(page.request, "member@example.com");
   await page.reload({ waitUntil: "domcontentloaded" });
@@ -298,7 +321,7 @@ test("the cup page: members are sent to sign in and pick their kids; a new famil
   const noKids = form.locator("[data-no-kids]");
   await expect(noKids).toContainText("No duckies under this email.");
   await noKids.getByRole("button", { name: "Register your kid" }).click();
-  await expect(form.getByLabel("Kid's name")).toBeFocused();
+  await expect(form.getByRole("link", { name: /Just the Cup/ })).toBeFocused();
   await expect(form.getByRole("radio", { name: /Not a member/ })).toBeChecked();
   await form.getByText("Already a Sunset Duckie", { exact: true }).click();
   await expect(noKids).toBeVisible();
@@ -324,36 +347,25 @@ test("the cup page: members are sent to sign in and pick their kids; a new famil
   await expect(card.first()).toContainText("Duckie");
   await expect(page.locator("[data-lineup-count]")).toHaveText("1 surfer locked in · spots open until the day");
   await expect(page.locator("[data-lineup-you]")).toContainText("02");
-  // A new family switches to the short form and continues to the cup registration.
+  // A new family picks the Cup alone, or the club with it, and lands on the one form.
   await form.getByText("Not a member (yet)", { exact: true }).click();
-  await form.getByLabel("Kid's name").fill("Nobody Here");
-  await form.getByLabel("Parent / guardian").fill("A Parent");
-  await form.getByLabel("WhatsApp number").fill("+230 5999 8877");
-  await expect(form.getByRole("radio", { name: /Just the Cup/ })).toBeChecked();
-  await form.getByRole("button", { name: "Count us in" }).click();
-  await expect(form.locator("[data-cup-status]")).toContainText("Nobody Here is on the list");
-  await page.waitForURL(/\/register#token=/);
+  await form.getByRole("link", { name: /Just the Cup/ }).click();
+  await page.waitForURL(/\/register\?plan=cup$/);
+  await expect(page.locator('#registration-plan [value="cup"]')).toBeChecked();
   await expect(page.locator("#registration-intro")).toContainText("Sunset Duckies Cup Vol. 02");
   await expect(page.locator("#cup-covers")).toBeVisible();
   await expect(page.locator("#membership-covers")).toBeHidden();
   await expect(page.getByLabel("Training rhythm", { exact: true })).toBeHidden();
-  await expect(page.getByLabel("Child’s full name")).toHaveValue("Nobody Here");
-  // Joining the club at the same time: the semester form, with the Cup included.
   await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
   await form.getByText("Not a member (yet)", { exact: true }).click();
-  await form.getByText("Join the club too", { exact: true }).click();
-  await expect(form.getByRole("button", { name: "Join the club + Cup" })).toBeVisible();
-  await form.getByLabel("Kid's name").fill("Kai Joiner");
-  await form.getByLabel("Parent / guardian").fill("A Parent");
-  await form.getByLabel("WhatsApp number").fill("+230 5999 6655");
-  await form.getByRole("button", { name: "Join the club + Cup" }).click();
-  await expect(form.locator("[data-cup-status]")).toContainText("membership covers the Cup");
-  await page.waitForURL(/\/register#token=/);
+  await form.getByRole("link", { name: /Join the club too/ }).click();
+  await page.waitForURL(/\/register\?plan=both$/);
   await expect(page.locator("#membership-covers")).toBeVisible();
   await expect(page.locator("#cup-included")).toBeVisible();
   await expect(page.getByLabel("Training rhythm", { exact: true })).toBeVisible();
-  await expect(page.locator("#invitation-label")).toContainText("September 2026 semester");
-  expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows[0].n).toBe(3);
+  await expect(page.locator("#registration-scope")).toContainText("September 2026 semester");
+  // Nobody new is on the list until a form is signed.
+  expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows[0].n).toBe(1);
 });
 
 test("a signed-in family registers an existing kid and adds a sibling to the club and Cup without switching paths", async ({ request, page }) => {
@@ -367,34 +379,19 @@ test("a signed-in family registers an existing kid and adds a sibling to the clu
   const form = page.locator("[data-cup-register][data-ready]");
   await form.getByRole("button", { name: "Count Robyn in" }).click();
   await expect(form.getByRole("button", { name: "Locked in" })).toBeDisabled();
-  const add = form.getByRole("button", { name: "Add sibling", exact: true });
-  await add.click();
-  await expect(form.getByRole("radio", { name: /Already a Sunset Duckie/ })).toBeChecked();
-  await expect(form.getByRole("button", { name: "Locked in" })).toBeVisible();
-  await expect(form.getByLabel("Kid's name")).toBeFocused();
-  await expect(form.getByLabel("Parent / guardian")).toHaveValue("Test Guardian");
-  await expect(form.getByLabel("WhatsApp number")).toHaveValue(guardianPhone);
-  await expect(form.getByRole("radio", { name: /Just the Cup/ })).toBeHidden();
-  await form.getByRole("button", { name: "Cancel adding sibling" }).click();
-  await expect(form.getByLabel("Kid's name")).toBeHidden();
-  await expect(add).toBeFocused();
-  await add.click();
-  await form.getByLabel("Kid's name").fill("Taylor");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.screenshot({ path: test.info().outputPath("add-sibling-mobile.png") });
-  const responsePromise = page.waitForResponse(r => r.url().endsWith("/api/cup/register") && r.request().method() === "POST");
-  await form.getByRole("button", { name: "Add sibling to club + Cup" }).click();
-  const response = await responsePromise;
-  expect(response.status()).toBe(201);
-  const signup = await response.json();
-  await page.waitForURL(/\/register#token=/);
+  // A sibling joins the club and the Cup on the one form, with this guardian carried over.
+  await form.getByRole("link", { name: "Add a sibling to the club + Cup" }).click();
+  await page.waitForURL(/\/register\?plan=both$/);
+  await expect(page.locator('#registration-plan [value="both"]')).toBeChecked();
   await expect(page.locator("#cup-included")).toBeVisible();
-  await expect(page.getByLabel("Child’s full name")).toHaveValue("Taylor");
   await expect(page.getByLabel("Full name · guardian 1", { exact: true })).toHaveValue("Test Guardian");
   await expect(page.getByLabel("Email · guardian 1", { exact: true })).toHaveValue(guardian);
   await expect(page.getByLabel("Phone · guardian 1", { exact: true })).toHaveValue(guardianPhone);
-  await stageProfilePhoto(page.request, linkHeaders(signup.url));
-  expect((await page.request.post("/api/registration", { headers: linkHeaders(signup.url), data: submission(payload("Taylor")) })).status()).toBe(201);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("add-sibling-mobile.png") });
+  await chooseProfilePhoto(page.locator("[data-child]").first());
+  await expect(page).toHaveURL(/#token=/);
+  expect((await page.request.post("/api/registration", { headers: linkHeaders(page.url()), data: { ...submission(payload("Taylor")), plan: "both" } })).status()).toBe(201);
   await page.goto("/sunset-duckies-cup-vol-2#register", { waitUntil: "domcontentloaded" });
   await expect(form.locator("[data-kid-list]")).toContainText("Robyn");
   await expect(form.locator("[data-kid-list]")).toContainText("Taylor");
@@ -406,20 +403,4 @@ test("a signed-in family registers an existing kid and adds a sibling to the clu
   const taylor = (await db.query("SELECT w.term, w.snapshot->'registration'->'guardians'->0->>'email' AS email FROM club_signed_waiver w WHERE kid_id=$1", [entries[1].kid_id])).rows;
   expect(taylor).toEqual([{ term: "2026-S2", email: guardian }]);
   expect((await db.query("SELECT count(*)::int AS n FROM club_payment_event WHERE kid_id=$1", [entries[1].kid_id])).rows[0].n).toBe(0);
-});
-
-test("the join page sends a family straight to a pending registration", async ({ page }) => {
-  await page.goto("/join", { waitUntil: "domcontentloaded" });
-  const form = page.locator("[data-join][data-ready]");
-  await expect(form).toBeVisible();
-  await form.getByLabel("Kid's name").fill("Joiner Kid");
-  await form.getByLabel("Parent / guardian").fill("Joiner Parent");
-  await form.getByLabel("WhatsApp number").fill("+230 5777 6655");
-  await form.getByRole("button", { name: "Start the registration" }).click();
-  await expect(form.locator("[data-join-status]")).toContainText("Joiner Kid is on the list as pending");
-  await page.waitForURL(/\/register#token=/);
-  await expect(page.locator("#registration-intro")).toContainText("confirmed once the semester fee is paid — Rs 3,000 for one child or Rs 5,000 for a family");
-  await expect(page.locator("#membership-covers")).toBeVisible();
-  await expect(page.getByLabel("Training rhythm", { exact: true })).toBeVisible();
-  await expect(page.getByLabel("Child’s full name")).toHaveValue("Joiner Kid");
 });

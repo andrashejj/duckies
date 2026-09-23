@@ -301,17 +301,18 @@ model ClubPaymentEvent {
 
 model ClubRegistrationLink {
   id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  kid_id                  String                   @db.Uuid
+  // Both null on a public draft until the family signs.
+  kid_id                  String?                  @db.Uuid
   token_hash              String                   @unique
-  term                    String
+  term                    String?
   created_by              String?
   created_at              DateTime                 @default(now()) @db.Timestamptz(6)
   expires_at              DateTime                 @db.Timestamptz(6)
   revoked_at              DateTime?                @db.Timestamptz(6)
   completed_at            DateTime?                @db.Timestamptz(6)
   user                    User?                    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  club_kid                ClubKid                 @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  club_semester           ClubSemester            @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_kid                ClubKid?                @relation(fields: [kid_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club_semester           ClubSemester?           @relation(fields: [term], references: [id], onDelete: NoAction, onUpdate: NoAction)
   club_registration_photo ClubRegistrationPhoto[]
   parent_photos ClubRegistrationParentPhoto[]
   club_signed_waiver      ClubSignedWaiver[]

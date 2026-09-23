@@ -1,29 +1,7 @@
 import { getDatabase } from "../server/db";
 import { CUP_TERM } from "./cup";
 import { memberPaidSql, RegistrationError } from "./records";
-import type { SignupInput } from "./schema";
 import { getSemester } from "./semesters";
-import { findOrCreateKid, formFor, hasSigned, openSemester, type Signup } from "./signup";
-
-// A new family: the kid is created with a cup entry and the family continues
-// to the registration form — the cup's own, or the semester's when they join
-// the club at the same time (membership covers the Cup, so that is the one
-// form they sign). A family whose kid already has a signed club registration
-// is sent to sign in instead — no form needed.
-export async function registerCupGuest(input: SignupInput, join = false): Promise<Signup> {
-  const term = join ? (await openSemester()).id : CUP_TERM;
-  const kid = await findOrCreateKid(input);
-  if (kid.signed && !(await hasSigned(kid.id, CUP_TERM))) return { status: "member", kidName: kid.name };
-  // Record what they asked for, so the roster never reads a family joining the
-  // club as a cup-only entry. A second sign-up re-issues the link for the term
-  // they picked this time, so the stored plan follows it rather than the first.
-  await getDatabase().query(
-    `INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone) VALUES ($1,$2,false,$3,$4,$5)
-    ON CONFLICT (kid_id, edition) DO UPDATE SET plan=EXCLUDED.plan`,
-    [kid.id, CUP_TERM, join ? "club" : "cup", input.contactName, input.contactPhone],
-  );
-  return formFor(kid, term);
-}
 
 export type GuardianKid = {
   id: string;

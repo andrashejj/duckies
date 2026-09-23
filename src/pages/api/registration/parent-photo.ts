@@ -26,7 +26,7 @@ const update = safeRoute(async ({ request, url, clientAddress }) => {
   try {
     await db.query("BEGIN");
     const { rows } = await db.query(
-      `SELECT l.id FROM club_registration_link l JOIN club_kid k ON k.id=l.kid_id WHERE l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now() AND k.archived_at IS NULL FOR UPDATE OF l`,
+      `SELECT l.id FROM club_registration_link l LEFT JOIN club_kid k ON k.id=l.kid_id WHERE l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now() AND (l.kid_id IS NULL OR k.archived_at IS NULL) FOR UPDATE OF l`,
       [hash],
     );
     if (!rows[0])

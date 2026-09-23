@@ -11,9 +11,9 @@ import type { Pool, PoolClient } from "pg";
 import { getDatabase } from "../server/db";
 import { correctedBirthDateSql } from "./birth-date-corrections";
 import { waiver, WAIVER_VERSION } from "./policy";
-import { ageAt, submissionSchema, type RegistrationInput } from "./schema";
-import { getSemester } from "./semesters";
-import { isCupTerm } from "./cup";
+import { ageAt, submissionSchema, type RegistrationInput, type RegistrationPlan } from "./schema";
+import { getSemester, semesters } from "./semesters";
+import { CUP_TERM, isCupTerm } from "./cup";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
 export const sha256 = (value: string | Buffer) =>
   createHash("sha256").update(value).digest("hex");
@@ -49,9 +49,9 @@ export async function isPaid(kidId: string, term: string) {
   );
   return rows[0]?.status === "paid";
 }
-// Registration comes before payment: organisers issue links from the roster,
-// and the public join / cup forms issue their own (no user). The kid stays
-// pending until Andras records the fee.
+// Registration comes before payment: organisers issue links from the roster
+// and guardians from their family page. The kid stays pending until Andras
+// records the fee. Families starting from the public form get a draft instead.
 export async function issueLink(
   kidId: string,
   userId: string | null,
@@ -77,16 +77,27 @@ export async function issueLink(
       [kidId, sha256(token), semester.id, userId],
     );
     await db.query("COMMIT");
-    return {
-      url: `${new URL(process.env.BETTER_AUTH_URL!).origin}/register#token=${token}`,
-      expiresAt: rows[0].expires_at,
-    };
+    return { url: linkUrl(token), expiresAt: rows[0].expires_at };
   } catch (error) {
     await db.query("ROLLBACK");
     throw error;
   } finally {
     db.release();
   }
+}
+const linkUrl = (token: string) =>
+  `${new URL(process.env.BETTER_AUTH_URL!).origin}/register#token=${token}`;
+// The public form: a link for no kid and no term yet. Photos stage against it
+// while the family fills the form in; signing decides who and what it is for,
+// so a family that walks away leaves nothing on the roster.
+export async function startDraft() {
+  key(); // Never open a form whose signature cannot be stored.
+  const token = randomBytes(32).toString("base64url");
+  const { rows } = await getDatabase().query(
+    "INSERT INTO club_registration_link (token_hash, expires_at) VALUES ($1, now() + interval '14 days') RETURNING expires_at",
+    [sha256(token)],
+  );
+  return { token, url: linkUrl(token), expiresAt: rows[0].expires_at };
 }
 export function bearer(request: Request) {
   const token =
@@ -100,8 +111,8 @@ export function bearer(request: Request) {
 }
 export async function linkInfo(hash: string) {
   const { rows } = await getDatabase().query(
-    `SELECT l.*, k.name, s.label AS term_label,s.child_fee_mur,s.family_fee_mur FROM club_registration_link l JOIN club_kid k ON k.id = l.kid_id JOIN club_semester s ON s.id=l.term
-    WHERE token_hash = $1 AND revoked_at IS NULL AND expires_at > now() AND k.archived_at IS NULL`,
+    `SELECT l.*, k.name, s.label AS term_label,s.child_fee_mur,s.family_fee_mur FROM club_registration_link l LEFT JOIN club_kid k ON k.id = l.kid_id LEFT JOIN club_semester s ON s.id=l.term
+    WHERE token_hash = $1 AND revoked_at IS NULL AND expires_at > now() AND (l.kid_id IS NULL OR k.archived_at IS NULL)`,
     [hash],
   );
   if (!rows[0])
@@ -124,6 +135,41 @@ export async function signedGroup(linkId: string) {
   );
   return rows;
 }
+// The term a draft signs for: the Cup, or the semester open right now.
+async function draftTerm(plan: RegistrationPlan | undefined) {
+  if (!plan)
+    throw new RegistrationError("Choose club membership, the Cup, or both at the top of the form.");
+  if (plan === "cup") return CUP_TERM;
+  const current = (await semesters()).find((semester) => semester.isCurrent);
+  if (!current)
+    throw new RegistrationError("Club registration is not open right now. Message the club on WhatsApp.", 503);
+  return current.id;
+}
+// Phone numbers arrive in every format a family types; the trailing digits
+// survive "+230", spaces and dashes alike.
+const phoneTail = (column: string) => `right(regexp_replace(${column}, '\\D', '', 'g'), 7)`;
+// A kid already on the roster under this name — or the first name the club
+// knows them by — reachable on one of the guardians' numbers.
+async function rosterMatch(
+  db: PoolClient,
+  childName: string,
+  guardians: { phone: string }[],
+  taken: string[],
+) {
+  const tails = guardians.map((guardian) => guardian.phone.replace(/\D/g, "").slice(-7));
+  const { rows } = await db.query(
+    `SELECT k.id, EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=k.id) AS signed FROM club_kid k
+    WHERE k.archived_at IS NULL AND NOT (k.id = ANY($3::uuid[]))
+      AND (lower(k.name)=lower($1) OR left(lower($1), length(k.name)+1)=lower(k.name)||' ')
+      AND (${phoneTail("coalesce(k.contact_phone,'')")}=ANY($2)
+        OR EXISTS (SELECT 1 FROM club_cup_entry c WHERE c.kid_id=k.id AND ${phoneTail("c.contact_phone")}=ANY($2))
+        OR EXISTS (SELECT 1 FROM club_signed_waiver w, jsonb_array_elements(w.snapshot->'registration'->'guardians') g WHERE w.kid_id=k.id AND ${phoneTail("g->>'phone'")}=ANY($2)))
+    ORDER BY lower(k.name)=lower($1) DESC, k.created_at, k.id LIMIT 1
+    FOR UPDATE OF k`,
+    [childName.replace(/\s+/g, " "), tails, taken],
+  );
+  return (rows[0] as { id: string; signed: boolean } | undefined) ?? null;
+}
 export async function completeRegistration(
   hash: string,
   raw: unknown,
@@ -145,11 +191,14 @@ export async function completeRegistration(
     );
     if (!found.rowCount)
       throw new RegistrationError("This link is invalid or has expired.", 404);
-    const kid = await db.query(
-      "SELECT id, contact_name, contact_phone FROM club_kid WHERE id=$1 AND archived_at IS NULL FOR UPDATE",
-      [found.rows[0].kid_id],
-    );
-    if (!kid.rowCount)
+    const invited: string | null = found.rows[0].kid_id;
+    const kid = invited
+      ? await db.query(
+          "SELECT id, contact_name, contact_phone FROM club_kid WHERE id=$1 AND archived_at IS NULL FOR UPDATE",
+          [invited],
+        )
+      : null;
+    if (kid && !kid.rowCount)
       throw new RegistrationError("This link is invalid or has expired.", 404);
     const links = await db.query(
       "SELECT * FROM club_registration_link WHERE token_hash=$1 AND revoked_at IS NULL AND expires_at > now() FOR UPDATE",
@@ -158,6 +207,15 @@ export async function completeRegistration(
     const link = links.rows[0];
     if (!link)
       throw new RegistrationError("This link is invalid or has expired.", 404);
+    // Another tab signed this draft while we waited for the lock.
+    if (link.kid_id !== invited)
+      throw new RegistrationError(
+        "This form has already been signed. Reload the page to edit the signed details.",
+        409,
+      );
+    // A draft from the public form: the family's choice sets the term.
+    const draft = !invited;
+    const term: string = draft ? await draftTerm(parsed.data.plan) : link.term;
     // A completed link can only be re-signed as an explicit correction of the
     // signing it produced, so a replayed first submission still fails.
     const previous = await db.query(
@@ -167,7 +225,7 @@ export async function completeRegistration(
       FOR UPDATE`,
       [link.id],
     );
-    const { supersedes, children, ...shared } = parsed.data;
+    const { supersedes, children, plan, ...shared } = parsed.data;
     if (link.completed_at && supersedes !== previous.rows[0]?.signing_group)
       throw new RegistrationError(
         "This form has already been signed. Reload the page to edit the signed details.",
@@ -189,28 +247,42 @@ export async function completeRegistration(
       );
     if (!supersedes && claimed.length)
       throw new RegistrationError("There is no signed record to correct yet.");
-    // The first block always belongs to the kid the club invited; further
+    // On an invitation the first block is the kid the club invited; further
     // children join the same family, on the same link and the same signature.
-    const contactName = kid.rows[0].contact_name ?? shared.guardians[0].name;
-    const contactPhone = kid.rows[0].contact_phone ?? shared.guardians[0].phone;
+    const contactName = kid?.rows[0].contact_name ?? shared.guardians[0].name;
+    const contactPhone = kid?.rows[0].contact_phone ?? shared.guardians[0].phone;
     const kidIds: string[] = [];
     for (const [index, child] of children.entries()) {
       if (child.kidId) {
         kidIds.push(child.kidId);
         continue;
       }
-      if (index === 0 && !supersedes) {
-        // A family signing up from the public site names their own duckie,
-        // often with a first name alone; the form is where the full name
-        // arrives, so the roster takes it from their first signature. A name
-        // the club typed itself stays the club's — those are deliberately
-        // short — and so does one already carried by a signed registration.
+      if (index === 0 && invited && !supersedes) {
+        // The club often knows a duckie by first name alone; the form is
+        // where the full name arrives, so the roster takes it from the first
+        // signature. A name the club typed itself stays the club's — those
+        // are deliberately short — and so does one already carried by a
+        // signed registration.
         await db.query(
           `UPDATE club_kid SET name=$2 WHERE id=$1 AND created_by IS NULL
           AND NOT EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=$1)`,
-          [link.kid_id, child.childName],
+          [invited, child.childName],
         );
-        kidIds.push(link.kid_id);
+        kidIds.push(invited);
+        continue;
+      }
+      // A family signing the public form may already be on the roster — the
+      // club added them after a WhatsApp chat, or recorded their fee. Pick
+      // that duckie up by name and a guardian's number instead of adding a
+      // second one.
+      const matched = draft ? await rosterMatch(db, child.childName, shared.guardians, kidIds) : null;
+      if (matched?.signed)
+        throw new RegistrationError(
+          `${child.childName} is already registered with the club. Sign in with the guardian email on their registration to renew or correct it — or message the club on WhatsApp.`,
+        );
+      if (matched) {
+        await db.query("UPDATE club_kid SET name=$2 WHERE id=$1 AND created_by IS NULL", [matched.id, child.childName]);
+        kidIds.push(matched.id);
         continue;
       }
       const added = await db.query(
@@ -236,7 +308,7 @@ export async function completeRegistration(
       if (!photo.rowCount)
         throw new RegistrationError(`Add a profile photo for ${child.childName} before signing.`);
       // Membership is training, so a semester needs a rhythm; a cup entry has none.
-      if (isCupTerm(link.term)) delete registration.sessionsPerWeek;
+      if (isCupTerm(term)) delete registration.sessionsPerWeek;
       else if (!registration.sessionsPerWeek)
         throw new RegistrationError(
           `Choose a training rhythm for ${child.childName}.`,
@@ -244,13 +316,13 @@ export async function completeRegistration(
       const snapshot: SignedSnapshot = {
         id: randomUUID(),
         kidId: kidIds[index],
-        term: link.term,
+        term,
         signedAt,
         version: WAIVER_VERSION,
         registration,
         policy: waiver,
         evidence: {
-          method: "private-link-electronic-signature",
+          method: draft ? "public-form-electronic-signature" : "private-link-electronic-signature",
           linkId: link.id,
           ...(supersedes ? { supersedes } : {}),
           issuedAt: link.created_at.toISOString(),
@@ -283,7 +355,7 @@ export async function completeRegistration(
           snapshot.id,
           kidIds[index],
           link.id,
-          link.term,
+          term,
           signingGroup,
           index,
           signedAt,
@@ -319,16 +391,33 @@ export async function completeRegistration(
     }
     await db.query("DELETE FROM club_registration_parent_photo WHERE link_id=$1", [link.id]);
     await grantGuardianMembership(db, kidIds);
-    // A sibling added to a cup form comes to the cup too.
-    if (isCupTerm(link.term))
+    // Who comes to the Cup: every child on a Cup form or on a family's
+    // "club + Cup" form, and a sibling signed alongside a duckie already on
+    // the list. A family's own choice replaces what an earlier entry said.
+    const cupPlan = isCupTerm(term)
+      ? "cup"
+      : draft
+        ? plan === "both" ? "club" : null
+        : (await db.query("SELECT 1 FROM club_cup_entry WHERE kid_id=$1 AND edition=$2", [invited, CUP_TERM])).rowCount
+          ? "club"
+          : null;
+    if (cupPlan)
       await db.query(
         `INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone)
-        SELECT unnest($1::uuid[]), $2, false, 'cup', $3, $4 ON CONFLICT (kid_id, edition) DO NOTHING`,
-        [kidIds, link.term, contactName, contactPhone],
+        SELECT unnest($1::uuid[]), $2, false, $3, $4, $5
+        ON CONFLICT (kid_id, edition) DO UPDATE SET plan=EXCLUDED.plan WHERE $6::boolean`,
+        [kidIds, CUP_TERM, cupPlan, contactName, contactPhone, draft],
       );
+    // A signed draft becomes an ordinary link for its first child, so
+    // corrections, the download and the roster read it like any other.
     await db.query(
-      "UPDATE club_registration_link SET completed_at=$1 WHERE id=$2",
-      [signedAt, link.id],
+      "UPDATE club_registration_link SET completed_at=$1, kid_id=COALESCE(kid_id,$3), term=COALESCE(term,$4) WHERE id=$2",
+      [signedAt, link.id, kidIds[0], term],
+    );
+    // Any other invitation still open for these children is answered now.
+    await db.query(
+      "UPDATE club_registration_link SET revoked_at=now() WHERE kid_id=ANY($1::uuid[]) AND term=$2 AND id<>$3 AND revoked_at IS NULL AND completed_at IS NULL",
+      [kidIds, term, link.id],
     );
     await db.query("DELETE FROM club_registration_photo WHERE link_id=$1", [
       link.id,
@@ -408,7 +497,7 @@ export const memberPaidSql = (kid: string, currentTerm: string) =>
 // A member kid's legal guardians are club members. Every write that can make
 // that true (a signed registration, the fee recorded, a guardian added) syncs
 // these kids' guardians; membership only ends by hand or with the last shared
-// duckie (see changeGuardian). Signing alone is not enough: /join is public.
+// duckie (see changeGuardian). Signing alone is not enough: /register is public.
 export async function grantGuardianMembership(db: Pool | PoolClient, kidIds: string[]) {
   await db.query(
     `INSERT INTO club_member (email, role) SELECT DISTINCT g.email, 'member' FROM club_current_guardian g

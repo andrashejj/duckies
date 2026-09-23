@@ -329,7 +329,7 @@ export default function FamilyDeck({ profile }: { profile: FamilyProfile }) {
 
       {family.kids.length === 0 ? (
         <p className={cn("mt-8 max-w-2xl", noteCopy)}>
-          No duckies are registered under <span className="font-mono">{family.email}</span> yet. Ask the other parent to add your email under Parents & legal guardians on their family page, or ask the club to link you. New to the club? Start at <a className={textButton} href="/join">join the club</a>.
+          No duckies are registered under <span className="font-mono">{family.email}</span> yet. Ask the other parent to add your email under Parents & legal guardians on their family page, or ask the club to link you. New to the club? <a className={textButton} href="/register">Register your duckie</a>.
         </p>
       ) : (
         <>

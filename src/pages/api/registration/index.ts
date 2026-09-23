@@ -25,6 +25,9 @@ export const prerender = false;
 export const GET = safeRoute(async ({ request, clientAddress }) => {
   await registrationRateLimit(clientAddress);
   const link = await linkInfo(bearer(request));
+  // A public draft carries nothing yet: the family is still filling it in.
+  if (!link.kid_id)
+    return json({ draft: true, expiresAt: link.expires_at, maxChildren: MAX_CHILDREN, version: WAIVER_VERSION });
   // Only what this very link signed comes back for editing: a fresh link never
   // prefills from earlier records, so it cannot leak another guardian's details.
   // One signing covers the whole family, so all of its children come back.

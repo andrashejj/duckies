@@ -181,7 +181,9 @@ export async function waiverPdf(snapshot: SignedSnapshot, payloadHash: string) {
     9,
   );
   paragraph(
-    `Signing link issued ${snapshot.evidence.issuedAt}. Identity assurance: possession of a private invitation link and self-declared guardian details.`,
+    snapshot.evidence.method === "public-form-electronic-signature"
+      ? `Registration form opened ${snapshot.evidence.issuedAt} on the club's public website. Identity assurance: self-declared guardian details.`
+      : `Signing link issued ${snapshot.evidence.issuedAt}. Identity assurance: possession of a private invitation link and self-declared guardian details.`,
     9,
   );
   // One family, one signing: each child's record says who else it covered.

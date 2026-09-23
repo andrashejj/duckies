@@ -23,7 +23,7 @@ export function registrationValidation(form: HTMLFormElement, summary: HTMLEleme
     if (control.validity.valueMissing) {
       if (control.type === "file") return "Add a profile photo for this child before signing.";
       if (control.type === "checkbox") return "Tick this box to continue.";
-      if (control.type === "radio") return "Choose yes or no for photos and video.";
+      if (control.type === "radio") return control.name === "plan" ? "Choose club membership, the Cup, or both." : "Choose yes or no for photos and video.";
       if (control instanceof HTMLSelectElement) return "Choose a training rhythm.";
       return "Please fill in this field.";
     }

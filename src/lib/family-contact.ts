@@ -1,6 +1,7 @@
-// Carry the parent's contact details from signup to the waiver, and forward
-// when they return to add another child. Each new child still needs a signed
-// registration, even when the family already has kids in the club.
+// Carry the first guardian's details to the next registration form — a
+// sibling's, or one opened from the Cup page by a signed-in guardian. Each new
+// child still needs a signed registration, even when the family already has
+// kids in the club.
 //
 // Session storage only: same tab, same browser, gone when it closes. It never
 // leaves the device on its own, and holds nothing about the child.
@@ -26,17 +27,4 @@ export function recallFamily(): FamilyContact | null {
   } catch {
     return null;
   }
-}
-
-// Prefills a sign-up form's parent fields from the remembered family, and says
-// whether anything was filled in — the caller decides what to tell the family.
-export function prefillFamily(form: HTMLFormElement) {
-  const contact = recallFamily();
-  if (!contact) return null;
-  const name = form.elements.namedItem("contactName") as HTMLInputElement | null;
-  const phone = form.elements.namedItem("contactPhone") as HTMLInputElement | null;
-  if (!name || !phone) return null;
-  name.value = contact.contactName;
-  phone.value = contact.contactPhone;
-  return contact;
 }

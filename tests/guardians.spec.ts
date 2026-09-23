@@ -123,7 +123,7 @@ test("adding a guardian shares only chosen kids and their orders; changes preser
 
 test("guardians of a paid-up duckie are club members on their own; leaving the last shared duckie ends it",async({playwright})=>{
   const id=await kid("Paid Duckie",true);
-  // Signed but unpaid is family access only: /join is public, so signing alone never opens the club.
+  // Signed but unpaid is family access only: /register is public, so signing alone never opens the club.
   const co=await playwright.request.newContext({baseURL:origin});await signIn(co,second);
   expect(await (await co.get("/api/session")).json()).toMatchObject({member:false,family:true});
   expect((await co.get("/members/lineup")).status()).toBe(403);

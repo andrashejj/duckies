@@ -75,7 +75,7 @@ const title = `${site.name} | Kids surfing in Tamarin Bay`;
       <p class="mt-5">Message us before your first session. We’ll talk about your child’s swimming and what to bring, then get their registration and waiver sorted.</p>
       <p class="mt-4">The first session is free. After that, membership is {site.membership.feeLabelLong}.</p>
       <div class="mt-6"><Cta href={site.whatsappUrl} target="_blank" rel="noreferrer">Say hello on WhatsApp</Cta></div>
-      <a href="/join" class="surf-home-text-link">Already spoken to us? Register your duckie →</a>
+      <a href="/register" class="surf-home-text-link">Already spoken to us? Register your duckie →</a>
     </div>
     <div id="how-it-works" class="surf-home-essentials">
       <h2>Before you paddle out</h2>
@@ -88,7 +88,7 @@ const title = `${site.name} | Kids surfing in Tamarin Bay`;
       <details class="surf-home-details"><summary>Fees, sessions & the waiver</summary>
         <p>{site.membership.fundingNote} Pay the semester fee to Andras after your free first session; he confirms your membership.</p>
         <ul>{site.howToJoin.waiverSummary.map(line => <li>{line}</li>)}</ul>
-        <a href="/join" class="surf-home-text-link">Registration & full waiver →</a>
+        <a href="/register" class="surf-home-text-link">Registration & full waiver →</a>
       </details>
     </div>
   </section>

@@ -1529,9 +1529,9 @@ export const site = {
     form: {
       title: "Lock in your spot.",
       intro:
-        "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Name + number, pick the Cup alone or a semester membership with it, then we send you straight to the registration + waiver (≈5 min, no login).",
+        "Members: sign in with the email on your club registration and tick who's coming — no form, your club waiver already covers the Cup, and it's free while the semester fee is paid. New to us? Pick the Cup alone or a semester membership with it, then fill in the one registration form + waiver (≈5 min, no login).",
       footnote:
-        "Siblings? Each kid gets their own entry. Friends + family don't need to register, just come along. Spots stay pending until Andras confirms the fee — members skip that part.",
+        "Siblings? Add them all on the same form — one signature covers every kid. Friends + family don't need to register, just come along. Spots stay pending until Andras confirms the fee — members skip that part.",
       memberLabel: "Already a Sunset Duckie",
       memberSub: "club member · surfs free",
       guestLabel: "Not a member (yet)",
@@ -1539,18 +1539,17 @@ export const site = {
       // Signed in, but no kid is registered under that email.
       noKidsTitle: "No duckies under this email.",
       noKidsText:
-        "We match kids to the guardian email on their club registration. Registered under another address — yours or the other parent's? Sign in with that one. New to the club? Choose Cup-only entry or semester membership below, no login needed.",
+        "We match kids to the guardian email on their club registration. Registered under another address — yours or the other parent's? Sign in with that one. New to the club? Choose Cup-only entry or semester membership, no login needed.",
       memberHint:
         "Sign in with the email on your club registration and we bring you back here to tick who's coming. Your waiver already covers the Cup — no form.",
       guestHint:
-        "We put your kid on the list, then send you straight to the registration form + waiver (≈5 min, no login). Andras confirms the spot once the fee is paid.",
+        "One form for the whole family: every kid, the guardians, the waiver and your signature (≈5 min, no login). Your kids are on the list as soon as you sign; Andras confirms the spot once the fee is paid.",
       // The Cup alone, or the club with it — the one choice a new family makes.
       planLabel: "Just the Cup, or the whole semester?",
       plans: [
         { value: "cup", title: "Just the Cup", price: "Rs 1,000 per child", text: "One afternoon of heats on 16 October. No training, no membership.", submitLabel: "Count us in" },
-        { value: "club", title: "Join the club too", price: "Rs 3,000 per child · Rs 5,000 per family", text: "Per semester, including regular training and free Cup entry. Add siblings on the registration form.", submitLabel: "Join the club + Cup" },
+        { value: "both", title: "Join the club too", price: "Rs 3,000 per child · Rs 5,000 per family", text: "Per semester, including regular training and free Cup entry. Add siblings on the same form.", submitLabel: "Join the club + Cup" },
       ],
-      submitLabel: "Count us in",
     },
   },
   clubRules: {
@@ -1621,11 +1620,11 @@ export const site = {
         tag: "Step 02 · register online",
         title: "Register your duckie + sign the waiver.",
         body:
-          "One short form, no login: your child's details, legal guardians, an emergency contact, the club waiver and your signature. It takes about five minutes and your duckie is on the list as pending straight away. The short version of the waiver is below.",
+          "One short form, no login: your child's details, legal guardians, an emergency contact, the club waiver and your signature. It takes about five minutes, and your duckie is on the list as pending as soon as you sign. The short version of the waiver is below.",
         actions: [
           {
             label: "Register your duckie",
-            href: "/join",
+            href: "/register",
             variant: "primary",
             external: false,
           },

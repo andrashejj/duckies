@@ -92,6 +92,9 @@ export const registrationSchema = z
   .strict()
   .refine(...signerIsFirstGuardian);
 export type RegistrationInput = z.infer<typeof registrationSchema>;
+// The one choice on the public form: the club, the Cup alone, or both.
+export const registrationPlan = z.enum(["club", "cup", "both"]);
+export type RegistrationPlan = z.infer<typeof registrationPlan>;
 // How many duckies one family can put on a single form.
 export const MAX_CHILDREN = 6;
 // What the form posts: every child, and the one signature that covers them.
@@ -126,23 +129,14 @@ export const submissionSchema = z
       ),
     // The signing this one corrects, identified by the group it produced.
     supersedes: z.uuid().optional(),
+    // What a family signing the public form chose. An invitation already
+    // carries its term, so only a draft needs it.
+    plan: registrationPlan.optional(),
   })
   .strict()
   .refine(...signerIsFirstGuardian);
 export type SubmissionInput = z.infer<typeof submissionSchema>;
 export type ChildInput = SubmissionInput["children"][number];
-// The short public sign-up (join the club, or a cup-only entry): who is
-// coming and how to reach the family. The full details come with the form.
-export const signupSchema = z
-  .object({
-    kidName: text(80),
-    contactName: text(120),
-    contactPhone: phone,
-  })
-  .strict();
-export type SignupInput = z.infer<typeof signupSchema>;
-// The cup sign-up adds one choice: the Cup alone, or club membership with it.
-export const cupSignupSchema = signupSchema.extend({ join: z.boolean().default(false) }).strict();
 // What a guardian keeps current themselves: the name the club greets them by,
 // and how it reaches them about one child. Signed details are never edited in
 // place — those are corrected by signing the form again.

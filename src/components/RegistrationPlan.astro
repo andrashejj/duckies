@@ -1,0 +1,28 @@
+---
+import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
+import type { Semester } from "../lib/registration/semesters";
+import { memberForm, registrationCheck, registrationPanel, textButton } from "../lib/members-ui";
+// The one choice on the public form. Everything else on the form is the same
+// for the club and the Cup; this only decides the term it is signed for.
+interface Props { semester: Semester | null }
+const { semester } = Astro.props;
+const fee = (value: number) => value.toLocaleString("en-US");
+const choice = `${registrationCheck} rounded-xl border-2 border-edge p-4 has-checked:border-teal-600 has-checked:bg-teal-600/10 has-disabled:opacity-60`;
+---
+
+<fieldset id="registration-plan" hidden class={`${registrationPanel} ${memberForm}`}>
+  <legend>What are you registering for?</legend>
+  <label class={choice}>
+    <input type="radio" name="plan" value="club" required disabled={!semester} {...(semester ? {} : { "data-closed": "" })} />
+    <span><strong class="block font-display text-xl">Club membership</strong><span class="block mt-1 text-sm font-normal">{semester ? `${semester.label} · regular Monday and Friday training, 4–6pm. Rs ${fee(semester.childFeeMur)} for one child or Rs ${fee(semester.familyFeeMur)} for a family.` : "Club registration is closed right now. Message the club on WhatsApp."}</span></span>
+  </label>
+  <label class={choice}>
+    <input type="radio" name="plan" value="cup" required />
+    <span><strong class="block font-display text-xl">Cup entry only</strong><span class="block mt-1 text-sm font-normal">{CUP_LABEL} · Friday 16 October 2026. Rs {fee(CUP_ENTRY_FEE_MUR)} per child for non-members. One event; regular club training is not included.</span></span>
+  </label>
+  <label class={choice}>
+    <input type="radio" name="plan" value="both" required disabled={!semester} {...(semester ? {} : { "data-closed": "" })} />
+    <span><strong class="block font-display text-xl">Club membership + Cup</strong><span class="block mt-1 text-sm font-normal">Join regular training and enter the Cup. The semester membership fee covers the Cup entry.</span></span>
+  </label>
+  <p class="text-sm">Already a club member? <a href="/login?next=%2Fmembers%2Fprofile" class={textButton}>Sign in</a> to renew for a new semester or to correct your details, and <a href="/sunset-duckies-cup-vol-2#register" class={textButton}>tick your duckies in on the Cup page</a> — no new form needed.</p>
+</fieldset>

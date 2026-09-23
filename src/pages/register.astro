@@ -6,11 +6,14 @@ import { CUP_ENTRY_FEE_MUR, CUP_LABEL } from "../lib/registration/cup";
 import Cta from "../components/ui/Cta.astro";
 import Kicker from "../components/ui/Kicker.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
-import RegistrationStart from "../components/RegistrationStart.astro";
+import RegistrationPlan from "../components/RegistrationPlan.astro";
+import { semesters } from "../lib/registration/semesters";
 import { site } from "../data/site";
 import { bodyCopy } from "../lib/ui";
 import { largeAvatar, memberForm, memberStatus, registrationCheck, registrationGrid, registrationPage, registrationPanel, registrationSheet, signaturePad, textButton } from "../lib/members-ui";
 const panel = `${registrationPanel} ${memberForm}`;
+// The semester a family can join from the public form, if one is open.
+const semester = (await semesters()).find((term) => term.isCurrent) ?? null;
 ---
 <!doctype html>
 <html lang="en">
@@ -21,8 +24,7 @@ const panel = `${registrationPanel} ${memberForm}`;
     <SectionTitle as="h1" id="registration-title" class="mt-6">Club membership <span class="font-accent italic">or Cup?</span></SectionTitle>
     <p id="registration-intro" data-paid="One form for the whole family: add every duckie, then sign once for all of them. Your membership is paid, so this completes the registration. A parent or legal guardian can fill it in and sign without an account." data-pending="One form for the whole family: add every duckie, then sign once for all of them. Fill it in and sign now; each place is confirmed once the semester fee is paid — Rs {child} for one child or Rs {family} for a family — and Andras marks it in the club records. A parent or legal guardian can fill it in and sign without an account." data-cup={`One form for the whole family: add every child coming, then sign once for all of them. This completes their entry for the ${CUP_LABEL}. A parent or legal guardian can fill it in and sign without an account.`} class={`mt-4 ${bodyCopy}`}>One form for the whole family: add every duckie, then sign once for all of them. A parent or legal guardian can fill it in and sign without an account.</p>
     <p id="registration-status" class={memberStatus} role="status" aria-live="polite"></p>
-    <RegistrationStart />
-    <noscript><p class="mt-4">Please enable JavaScript to choose your registration and complete the form.</p></noscript>
+    <noscript><p class="mt-4">Please enable JavaScript to complete the registration form.</p></noscript>
     <p id="registration-scope" hidden class={`${registrationPanel} border-teal-600 bg-teal-600/10 font-semibold`}></p>
     <section id="signed-result" hidden class={registrationPanel}>
       <SectionTitle size="none" class="text-2xl">Signed and safely stored.</SectionTitle>
@@ -37,12 +39,13 @@ const panel = `${registrationPanel} ${memberForm}`;
       </div>
       <div class="mt-7 border-t-2 border-dashed border-edge pt-6">
         <SectionTitle size="none" class="text-2xl">Once this link expires</SectionTitle>
-        <p id="another-child-copy" class="mt-2" data-club={`A duckie who comes along later starts a fresh form of their own — and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} still covers a whole family for the semester. Your name and number carry over, so it takes about two minutes.`} data-cup="A child who comes along later starts a fresh entry of their own. Your name and number carry over, so it takes about two minutes.">A duckie who comes along later starts a fresh form of their own.</p>
-        <Cta id="register-another" href="/join" variant="secondary" class="mt-4">Register another child</Cta>
+        <p id="another-child-copy" class="mt-2" data-club={`A duckie who comes along later starts a fresh form of their own — and Rs ${site.membership.familyFeeMur.toLocaleString("en-US")} still covers a whole family for the semester. The first guardian's details carry over in this browser tab.`} data-cup="A child who comes along later starts a fresh entry of their own. The first guardian's details carry over in this browser tab.">A duckie who comes along later starts a fresh form of their own.</p>
+        <Cta id="register-another" href="/register" variant="secondary" class="mt-4">Register another child</Cta>
       </div>
     </section>
-    <form id="registration-form" data-waiver-version={WAIVER_VERSION} class={`${memberForm} [&_[aria-invalid=true]]:border-alert! [&_[aria-invalid=true]]:outline-alert!`} hidden>
+    <form id="registration-form" data-waiver-version={WAIVER_VERSION} data-semester-label={semester?.label ?? ""} data-child-fee={semester?.childFeeMur ?? 0} data-family-fee={semester?.familyFeeMur ?? 0} class={`${memberForm} [&_[aria-invalid=true]]:border-alert! [&_[aria-invalid=true]]:outline-alert!`} hidden>
       <p id="invitation-label" class={registrationPanel}></p>
+      <RegistrationPlan semester={semester} />
       <section id="cup-covers" hidden class={registrationPanel}>
         <h2 class="font-display text-2xl">What you're signing up for</h2>
         <ul class="mt-3 list-disc space-y-2 pl-5">
@@ -151,12 +154,16 @@ const panel = `${registrationPanel} ${memberForm}`;
   import { guardianFields, textButton } from "../lib/members-ui";
   import { ageAt } from "../lib/registration/age";
   import { RECOMMENDED_AGE } from "../lib/registration/policy";
+  import { CUP_LABEL } from "../lib/registration/cup";
   import { registrationValidation } from "../lib/registration/form-validation";
   type Guardian = { name: string; relationship: string; phone: string; email: string };
   type Registration = Record<string, any> & { guardians: Guardian[] };
   type SignedChild = { kidId: string; registration: Registration; hasPhoto: boolean };
   type Signed = { id: string; registration: Registration; children: SignedChild[] } | null;
-  const token = new URLSearchParams(location.hash.slice(1)).get("token") ?? "";
+  // An invitation arrives with its token; the public form mints a draft token
+  // the first time it needs one (a photo, or the signature).
+  let token = new URLSearchParams(location.hash.slice(1)).get("token") ?? "";
+  let draft = !token;
   const form = document.querySelector<HTMLFormElement>("#registration-form")!;
   const status = document.querySelector<HTMLElement>("#registration-status")!;
   const submitStatus = document.querySelector<HTMLElement>("#submit-status")!;
@@ -165,9 +172,10 @@ const panel = `${registrationPanel} ${memberForm}`;
   const editButton = document.querySelector<HTMLButtonElement>("#edit-registration")!;
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
   const validation = registrationValidation(form, document.querySelector<HTMLElement>("#validation-summary")!);
-  let version = "";
+  let version = form.dataset.waiverVersion ?? "";
   let cup = false;
   let registrationLabel = "registration";
+  let formPlan = "club";
   let signed: Signed = null;
   let supersedes = "";
   let signature: [number, number][][] = [];
@@ -175,7 +183,22 @@ const panel = `${registrationPanel} ${memberForm}`;
   let submitting = false;
   let photoBusy = 0;
   let maxChildren = 6;
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = () => ({ Authorization: `Bearer ${token}` });
+  const planField = document.querySelector<HTMLFieldSetElement>("#registration-plan")!;
+  const chosenPlan = () => (form.elements.namedItem("plan") as RadioNodeList).value as "" | "club" | "cup" | "both";
+  let drafting: Promise<void> | null = null;
+  // Kept in the address bar, so a reload finds the photos already staged.
+  function ensureDraft() {
+    if (token) return Promise.resolve();
+    drafting ??= (async () => {
+      const response = await fetch("/api/registration/draft", { method: "POST" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Couldn't open the form. Please try again.");
+      token = data.token;
+      history.replaceState(null, "", `${location.pathname}${location.search}#token=${token}`);
+    })().finally(() => { drafting = null; });
+    return drafting;
+  }
   // Age is guidance, not a registration gate. Only future birthdays are invalid.
   const latestBirthdayValue = new Date().toISOString().slice(0, 10);
   const guardians = document.querySelector<HTMLElement>("#guardians")!;
@@ -323,10 +346,9 @@ const panel = `${registrationPanel} ${memberForm}`;
     rhythm.classList.toggle("contents", !cup);
     (block.querySelector('[data-field="sessionsPerWeek"]') as HTMLSelectElement).required = !cup;
   }
-  // A cup entry sends the next sibling back to the cup form; a semester
-  // registration starts the next one at the club's join form.
+  // The next sibling starts a fresh form for the same thing.
   function offerAnotherChild() {
-    document.querySelector<HTMLAnchorElement>("#register-another")!.href = cup ? "/sunset-duckies-cup-vol-2#register" : "/join";
+    document.querySelector<HTMLAnchorElement>("#register-another")!.href = `/register?plan=${formPlan}`;
     const copy = document.querySelector<HTMLElement>("#another-child-copy")!;
     copy.textContent = cup ? copy.dataset.cup! : copy.dataset.club!;
   }
@@ -372,52 +394,90 @@ const panel = `${registrationPanel} ${memberForm}`;
     form.scrollIntoView({ behavior: "smooth" });
   }
   editButton.addEventListener("click", edit);
+  type Scope = { cup: boolean; cupIncluded: boolean; termLabel: string; paid: boolean; childFeeMur: number; familyFeeMur: number };
+  // Title, fees, what is covered and the training rhythm all follow what the
+  // form is for: the Cup, the club, or both.
+  function present(scope: Scope | null) {
+    cup = Boolean(scope?.cup);
+    formPlan = cup ? "cup" : scope?.cupIncluded ? "both" : "club";
+    registrationLabel = !scope ? "registration" : cup ? "Cup entry" : scope.cupIncluded ? "club membership + Cup" : "club membership";
+    const title = !scope ? "Club membership or Cup?" : cup ? "Cup entry only" : scope.cupIncluded ? "Club membership + Cup" : "Club membership";
+    document.querySelector<HTMLElement>("#registration-title")!.textContent = title;
+    document.title = `${title} | Sunset Duckies`;
+    const scopeNote = document.querySelector<HTMLElement>("#registration-scope")!;
+    scopeNote.hidden = !scope;
+    if (scope)
+      scopeNote.textContent = cup
+        ? `${scope.termLabel} · This form is for the Cup only. Club membership and regular training are not included.`
+        : scope.cupIncluded
+          ? `${scope.termLabel} · This form covers club membership and your Cup entry. The semester membership fee covers both.`
+          : `${scope.termLabel} · This form is for club membership and regular training. To enter the Cup, tick your duckies in on the Cup page once you've signed.`;
+    submit.textContent = `Sign and submit ${registrationLabel}`;
+    const intro = document.querySelector<HTMLElement>("#registration-intro")!;
+    const fee = (value: number) => value.toLocaleString("en-US");
+    intro.textContent = !scope
+      ? "One form for the whole family, for the club, the Cup or both: add every duckie, then sign once for all of them. A parent or legal guardian can fill it in and sign without an account."
+      : cup ? intro.dataset.cup! : scope.paid ? intro.dataset.paid! : intro.dataset.pending!.replace("{child}", fee(scope.childFeeMur)).replace("{family}", fee(scope.familyFeeMur));
+    document.querySelector<HTMLElement>("#cup-covers")!.hidden = !scope || !cup;
+    document.querySelector<HTMLElement>("#membership-covers")!.hidden = !scope || cup;
+    document.querySelector<HTMLElement>("#cup-included")!.hidden = !scope?.cupIncluded;
+    const siblings = document.querySelector<HTMLElement>("#siblings-copy")!;
+    siblings.textContent = cup ? siblings.dataset.cup! : siblings.dataset.club!;
+    childBlocks().forEach(applyTerm);
+  }
+  function presentPlan() {
+    const plan = chosenPlan();
+    present(plan ? {
+      cup: plan === "cup",
+      cupIncluded: plan === "both",
+      termLabel: plan === "cup" ? CUP_LABEL : form.dataset.semesterLabel!,
+      paid: false,
+      childFeeMur: Number(form.dataset.childFee),
+      familyFeeMur: Number(form.dataset.familyFee),
+    } : null);
+  }
+  planField.addEventListener("change", presentPlan);
+  // The public form: blank, with the one choice on top. A link from the Cup
+  // page or a sibling's "register another child" arrives with it made.
+  function openDraft() {
+    draft = true;
+    planField.hidden = false;
+    for (const input of planField.querySelectorAll("input")) input.disabled = input.hasAttribute("data-closed");
+    const preset = planField.querySelector<HTMLInputElement>(`input[value="${new URLSearchParams(location.search).get("plan")}"]`);
+    if (preset && !preset.disabled) preset.checked = true;
+    document.querySelector<HTMLElement>("#invitation-label")!.hidden = true;
+    if (!childBlocks().length) addChildBlock();
+    presentPlan();
+    status.textContent = ""; form.hidden = false;
+  }
   async function load() {
-    if (!token) {
-      document.querySelector<HTMLElement>("#registration-intro")!.textContent = "Choose club membership, Cup entry, or both. Start with a blank form below — no invitation link or account needed.";
-      document.querySelector<HTMLFormElement>("#registration-start")!.hidden = false;
-      return;
-    }
+    if (!token) return openDraft();
     document.querySelector<HTMLElement>("#registration-title")!.textContent = "Your registration";
     status.textContent = "Opening your private invitation…";
     try {
-      const response = await fetch("/api/registration", { headers, cache: "no-store" }); const data = await response.json();
+      const response = await fetch("/api/registration", { headers: headers(), cache: "no-store" }); const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       version = form.dataset.waiverVersion ?? "";
       if (data.version !== version) throw new Error("The waiver has changed. Refresh this page before signing.");
-      signed = data.signed;
       maxChildren = Number(data.maxChildren) || maxChildren;
-      // The signing guardian, kept for the next child's sign-up form.
+      if (data.draft) return openDraft();
+      draft = false;
+      planField.hidden = true;
+      for (const input of planField.querySelectorAll("input")) input.disabled = true;
+      signed = data.signed;
+      // The signing guardian, kept for the next child's form.
       const signer = signed?.registration?.guardians?.[0];
       if (signer) rememberFamily({ contactName: signer.name, contactPhone: signer.phone, contactEmail: signer.email });
-      // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
-      cup = Boolean(data.cup);
-      registrationLabel = cup ? "Cup entry" : data.cupIncluded ? "club membership + Cup" : "club membership";
-      const title = cup ? "Cup entry only" : data.cupIncluded ? "Club membership + Cup" : "Club membership";
-      document.querySelector<HTMLElement>("#registration-title")!.textContent = title;
-      document.title = `${title} | Sunset Duckies`;
-      const scope = document.querySelector<HTMLElement>("#registration-scope")!;
-      scope.textContent = cup
-        ? `${data.termLabel} · This form is for the Cup only. Club membership and regular training are not included.`
-        : data.cupIncluded
-          ? `${data.termLabel} · This form covers club membership and your Cup entry. The semester membership fee covers both.`
-          : `${data.termLabel} · This form is for club membership and regular training. To enter the Cup, register separately on the Cup page.`;
-      scope.hidden = false;
-      submit.textContent = `Sign and submit ${registrationLabel}`;
-      const intro = document.querySelector<HTMLElement>("#registration-intro")!;
-      const fee = (value: number) => value.toLocaleString("en-US");
-      intro.textContent = cup ? intro.dataset.cup! : data.paid ? intro.dataset.paid! : intro.dataset.pending!.replace("{child}", fee(data.childFeeMur)).replace("{family}", fee(data.familyFeeMur));
-      document.querySelector<HTMLElement>("#cup-covers")!.hidden = !cup;
-      document.querySelector<HTMLElement>("#membership-covers")!.hidden = cup;
-      document.querySelector<HTMLElement>("#cup-included")!.hidden = !data.cupIncluded;
-      const siblings = document.querySelector<HTMLElement>("#siblings-copy")!;
-      siblings.textContent = cup ? siblings.dataset.cup! : siblings.dataset.club!;
       // The invited child opens the form; the family adds their siblings to it.
       children.replaceChildren();
       const firstChild = addChildBlock()!;
       if (data.hasPhoto) keepExistingPhoto(firstChild);
       childField(firstChild, "childName").value = data.childName;
-      document.querySelector("#invitation-label")!.textContent = `Invitation for ${data.childName} and any brothers or sisters · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
+      // A cup link signs the same waiver, but there is no membership or training rhythm to choose.
+      present(data);
+      const label = document.querySelector<HTMLElement>("#invitation-label")!;
+      label.hidden = false;
+      label.textContent = `Invitation for ${data.childName} and any brothers or sisters · ${data.termLabel}. Expires ${new Date(data.expiresAt).toLocaleDateString()}.`;
       if (data.completedAt) { completed(Boolean(data.canDownload)); editButton.hidden = !signed; return; }
       status.textContent=""; form.hidden=false;
     } catch (error) {
@@ -447,12 +507,14 @@ const panel = `${registrationPanel} ${memberForm}`;
     }));
     body.guardians = Array.from(document.querySelectorAll("[data-guardian]")).map(block => Object.fromEntries(Array.from(block.querySelectorAll<HTMLInputElement>("input[data-field]:not([type=file])")).map(input => [input.dataset.field, input.value])));
     if (supersedes) body.supersedes = supersedes;
+    if (draft) body.plan = chosenPlan();
     const count = childBlocks().length;
     submitStatus.textContent = count > 1
       ? `Saving signed registrations for all ${count} duckies… this can take a few seconds.`
       : "Saving your signed registration… this can take a few seconds.";
     try {
-      const response = await fetch("/api/registration", { method:"POST", headers:{ ...headers, "Content-Type":"application/json" }, body:JSON.stringify(body) }); const data=await response.json();
+      await ensureDraft();
+      const response = await fetch("/api/registration", { method:"POST", headers:{ ...headers(), "Content-Type":"application/json" }, body:JSON.stringify(body) }); const data=await response.json();
       if (response.status===409) { await load(); return; }
       if (!response.ok) throw new Error(data.error);
       submitStatus.textContent=""; await load();
@@ -460,7 +522,7 @@ const panel = `${registrationPanel} ${memberForm}`;
     finally { submitting=false; submit.disabled=false; submit.textContent = `Sign and submit ${registrationLabel}`; }
   });
   async function download(audit=false) {
-    try { const response = await fetch(`/api/registration/document${audit ? "?format=audit" : ""}`, { headers, cache:"no-store" });
+    try { const response = await fetch(`/api/registration/document${audit ? "?format=audit" : ""}`, { headers: headers(), cache:"no-store" });
       if (!response.ok) throw new Error((await response.json()).error);
       const url=URL.createObjectURL(await response.blob()); const a=document.createElement("a"); a.href=url; a.download=`sunset-duckies-signed-waiver.${audit ? "json" : "pdf"}`; a.click(); setTimeout(()=>URL.revokeObjectURL(url),10000);
     } catch(error) { status.textContent=error instanceof Error ? error.message : "Download failed."; }
@@ -488,7 +550,7 @@ const panel = `${registrationPanel} ${memberForm}`;
     photoBusy++; photoInput.disabled=true; removePhoto.disabled=true; submit.disabled=true;
     photoStatus.textContent=remove ? "Removing photo…" : "Uploading photo…";
     const photoUrl = parentEmail ? `/api/registration/parent-photo?email=${encodeURIComponent(parentEmail.value.trim().toLowerCase())}` : `/api/registration/photo?slot=${block.dataset.slot}`;
-    try { const response=await fetch(photoUrl, {method:remove?"DELETE":"PUT",headers:{...headers,...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
+    try { await ensureDraft(); const response=await fetch(photoUrl, {method:remove?"DELETE":"PUT",headers:{...headers(),...(file&&!remove?{"Content-Type":file.type}:{})},...(remove?{}:{body:file})}); const data=await response.json(); if(!response.ok)throw new Error(data.error);
       if(photoPreview.dataset.blob)URL.revokeObjectURL(photoPreview.dataset.blob); photoPreview.dataset.blob=remove?"":URL.createObjectURL(file!); photoPreview.src=photoPreview.dataset.blob; photoPreview.hidden=remove; removePhoto.hidden=remove; photoStatus.textContent=remove?"Photo removed.":(parentEmail ? "Photo uploaded. Sign below to save it. Remove the photo first to change this email." : "Photo uploaded. Sign below to save it with the profile."); if(remove)photoInput.value="";
     }catch(e){photoStatus.textContent=e instanceof Error?e.message:"Photo upload failed. Please try again.";photoInput.value="";}
     finally {

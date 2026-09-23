@@ -77,7 +77,7 @@ export const registrationRateLimit = (ip: string) =>
 // open for that duckie, so it gets a small budget of its own.
 export const formLinkRateLimit = (ip: string) =>
   rateLimit("family-form", ip, 5, "10 minutes", "That's a few forms in a row. Try again in ten minutes, or message the club on WhatsApp.");
-// Anonymous sign-ups create kids and links, so they get a much smaller budget.
+// Anonymous drafts of the public form are rows too, so they get a much smaller budget.
 export const signupRateLimit = (ip: string) =>
   rateLimit("signup", ip, 8, "10 minutes", "That's a lot of sign-ups from here. Take a breather and try again in ten minutes.");
 
