@@ -154,7 +154,7 @@ test("a cup-only kid gets a private link, signs the club form without a training
   await signIn(request, organiser);
   const roster = await (await request.get(`/api/kids?term=${CUP_TERM}`)).json();
   expect(roster.termLabel).toBe("Sunset Duckies Cup Vol. 02");
-  expect(roster.kids[0]).toMatchObject({ name: "Mila Test", cup: { edition: CUP_TERM, member: false, contactName: "Parent Test", contactPhone: "+230 5900 1122" }, payment: null, memberPaid: false });
+  expect(roster.kids[0]).toMatchObject({ name: "Mila Test", cup: { edition: CUP_TERM, member: false, plan: "cup", contactName: "Parent Test", contactPhone: "+230 5900 1122" }, payment: null, memberPaid: false });
   expect(roster.kids[0].waiverId).toBeTruthy();
 });
 
@@ -164,10 +164,30 @@ test("a new family can join the club from the Cup page: on the cup list, and the
   expect(data.status).toBe("form");
   const info = await (await guest.get("/api/registration", { headers: linkHeaders(data.url) })).json();
   expect(info).toMatchObject({ cup: false, cupIncluded: true, term: "2026-S2", childName: "Kai Joiner", childFeeMur: 3000 });
-  expect((await db.query("SELECT member FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows).toEqual([{ member: false }]);
+  // Entry is not free yet, but the roster must not read them as a cup-only
+  // family: they asked to join the club, and that choice is recorded.
+  expect((await db.query("SELECT member, plan FROM club_cup_entry WHERE edition=$1", [CUP_TERM])).rows).toEqual([{ member: false, plan: "club" }]);
   // The plain club path knows nothing about the Cup.
   const plain = await (await guest.post("/api/club/join", post({ kidName: "Ana Plain", contactName: "Parent Plain", contactPhone: "+230 5900 7788" }))).json();
   expect((await (await guest.get("/api/registration", { headers: linkHeaders(plain.url) })).json()).cupIncluded).toBe(false);
+});
+
+test("the roster tells a family joining the club apart from a cup-only entry, before either signs", async ({ request, page }) => {
+  await signIn(request, organiser);
+  await page.context().addCookies((await request.storageState()).cookies);
+  // Same form, two different answers to "Just the Cup, or the whole semester?".
+  await guest.post("/api/cup/register", post({ kidName: "Kai Joiner", contactName: "Parent Joiner", contactPhone: "+230 5900 5566", join: true }));
+  await guest.post("/api/cup/register", post({ kidName: "Nina Visitor", contactName: "Parent Visitor", contactPhone: "+230 5900 9900" }));
+  expect((await db.query("SELECT k.name, c.plan FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id ORDER BY k.name")).rows)
+    .toEqual([{ name: "Kai Joiner", plan: "club" }, { name: "Nina Visitor", plan: "cup" }]);
+  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  const joining = page.locator(".duckie-profile").filter({ hasText: "Kai Joiner" });
+  await joining.locator(".duckie-summary").click();
+  await expect(joining).toContainText("Joining the club · membership registration not signed yet · free entry once the semester is paid");
+  await expect(joining).not.toContainText("Cup-only");
+  const visitor = page.locator(".duckie-profile").filter({ hasText: "Nina Visitor" });
+  await visitor.locator(".duckie-summary").click();
+  await expect(visitor).toContainText("Cup-only · Rs 1000 entry · cup form not signed yet");
 });
 
 test("the roster takes a duckie's full name from the family's first signature, but never renames one the club typed", async ({ request }) => {
@@ -295,7 +315,7 @@ test("the cup page: members are sent to sign in and pick their kids; a new famil
   await page.getByRole("button", { name: "Count Zoë in" }).click();
   await expect(page.locator("[data-cup-status]")).toContainText("Zoë T. is on the list! We don't see this semester's fee yet");
   await expect(page.getByRole("button", { name: "Locked in" })).toBeDisabled();
-  expect((await db.query("SELECT member FROM club_cup_entry WHERE kid_id=$1", [kidId])).rows[0].member).toBe(true);
+  expect((await db.query("SELECT member, plan FROM club_cup_entry WHERE kid_id=$1", [kidId])).rows[0]).toEqual({ member: true, plan: "club" });
   // The lineup card shows up without a reload.
   await page.locator("#lineup").scrollIntoViewIfNeeded();
   const card = page.locator("[data-lineup-card]");

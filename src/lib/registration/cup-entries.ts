@@ -14,9 +14,13 @@ export async function registerCupGuest(input: SignupInput, join = false): Promis
   const term = join ? (await openSemester()).id : CUP_TERM;
   const kid = await findOrCreateKid(input);
   if (kid.signed && !(await hasSigned(kid.id, CUP_TERM))) return { status: "member", kidName: kid.name };
+  // Record what they asked for, so the roster never reads a family joining the
+  // club as a cup-only entry. A second sign-up re-issues the link for the term
+  // they picked this time, so the stored plan follows it rather than the first.
   await getDatabase().query(
-    "INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone) VALUES ($1,$2,false,$3,$4) ON CONFLICT (kid_id, edition) DO NOTHING",
-    [kid.id, CUP_TERM, input.contactName, input.contactPhone],
+    `INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone) VALUES ($1,$2,false,$3,$4,$5)
+    ON CONFLICT (kid_id, edition) DO UPDATE SET plan=EXCLUDED.plan`,
+    [kid.id, CUP_TERM, join ? "club" : "cup", input.contactName, input.contactPhone],
   );
   return formFor(kid, term);
 }
@@ -62,11 +66,11 @@ export async function registerGuardianKid(email: string, kidId: string) {
   const kid = (await guardianKids(email)).find((k) => k.id === kidId);
   if (!kid) throw new RegistrationError("That kid is not on a club registration under this email.", 404);
   await getDatabase().query(
-    `INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone)
-    SELECT $1, $2, true, COALESCE(p.name,g.name), COALESCE(p.phone,g.phone)
+    `INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone)
+    SELECT $1, $2, true, 'club', COALESCE(p.name,g.name), COALESCE(p.phone,g.phone)
     FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email
     WHERE g.kid_id=$1 AND g.email=$3
-    ON CONFLICT (kid_id, edition) DO UPDATE SET member=true, contact_name=EXCLUDED.contact_name, contact_phone=EXCLUDED.contact_phone`,
+    ON CONFLICT (kid_id, edition) DO UPDATE SET member=true, plan='club', contact_name=EXCLUDED.contact_name, contact_phone=EXCLUDED.contact_phone`,
     [kidId, CUP_TERM, email],
   );
   return { status: kid.member ? "member" : "pending", kidName: kid.name } as const;

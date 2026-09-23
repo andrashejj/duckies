@@ -145,13 +145,17 @@ export function kidOverview(
           ? "Club member · free entry"
           : kid.cup.member || (kid.waiverTerm && !isCupTerm(kid.waiverTerm))
             ? `Club registration on file, semester unpaid · Rs ${CUP_ENTRY_FEE_MUR} entry unless the semester is paid first`
-            : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry${kid.waiverTerm && isCupTerm(kid.waiverTerm) ? "" : " · cup form not signed yet"}`
+            // The family asked to join the club, so this is not a Rs 1,000 cup
+            // entry — it is a membership waiting on its form and its fee.
+            : kid.cup.plan === "club"
+              ? "Joining the club · membership registration not signed yet · free entry once the semester is paid"
+              : `Cup-only · Rs ${CUP_ENTRY_FEE_MUR} entry${kid.waiverTerm && isCupTerm(kid.waiverTerm) ? "" : " · cup form not signed yet"}`
       } · registered ${new Date(kid.cup.createdAt).toLocaleDateString()} · ${kid.cup.contactName} · ${kid.cup.contactPhone}`,
     );
   if (kid.contactName || kid.contactPhone)
     fact(
       "Contact supplied to club",
-      `${kid.contactName ?? ""} · ${kid.contactPhone ?? ""} (guardian details awaiting confirmation)`,
+      `${kid.contactName ?? ""} · ${kid.contactPhone ?? ""}${r ? "" : " (guardian details awaiting confirmation)"}`,
     );
   fact(
     "Registration invitation",

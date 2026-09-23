@@ -168,7 +168,8 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
         chevron.setAttribute("aria-hidden", "true");
         identity.append(name);
         const cup = (kid as OrganiserKid).cup;
-        if (cup) { const flag = document.createElement("span"); flag.className = duckieFlag; flag.textContent = cup.member ? "Cup 02" : "Cup 02 · new"; flag.title = cup.member ? "Club member coming to the Cup Vol. 02" : "Cup-only entry (not a club member)"; identity.append(flag); }
+        // A family joining the club is not a cup-only entry, whatever is signed yet.
+        if (cup) { const flag = document.createElement("span"); flag.className = duckieFlag; flag.textContent = cup.member ? "Cup 02" : "Cup 02 · new"; flag.title = cup.member ? "Club member coming to the Cup Vol. 02" : cup.plan === "club" ? "Joining the club — membership not confirmed yet" : "Cup-only entry (not a club member)"; identity.append(flag); }
         identity.append(chevron);
         summary.append(identity, ...rosterCells(kid as OrganiserKid));
         profile.append(summary);

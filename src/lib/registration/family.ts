@@ -62,7 +62,7 @@ const kidColumns = `SELECT k.id, k.name, k.contact_name, k.contact_phone,
     FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$2 ORDER BY p.recorded_at DESC, p.id DESC LIMIT 1) AS payment,
   (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at)
     FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.expires_at > now() ORDER BY l.created_at DESC LIMIT 1) AS invitation,
-  (SELECT json_build_object('edition',c.edition,'member',c.member,'createdAt',c.created_at)
+  (SELECT json_build_object('edition',c.edition,'member',c.member,'plan',c.plan,'createdAt',c.created_at)
     FROM club_cup_entry c WHERE c.kid_id=k.id AND c.edition=$3 LIMIT 1) AS cup,
   ${memberPaidSql("k.id", "$2")} AS member_paid
   FROM club_kid k LEFT JOIN LATERAL (SELECT * FROM club_signed_waiver WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) w ON true

@@ -322,8 +322,8 @@ export async function completeRegistration(
     // A sibling added to a cup form comes to the cup too.
     if (isCupTerm(link.term))
       await db.query(
-        `INSERT INTO club_cup_entry (kid_id, edition, member, contact_name, contact_phone)
-        SELECT unnest($1::uuid[]), $2, false, $3, $4 ON CONFLICT (kid_id, edition) DO NOTHING`,
+        `INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone)
+        SELECT unnest($1::uuid[]), $2, false, 'cup', $3, $4 ON CONFLICT (kid_id, edition) DO NOTHING`,
         [kidIds, link.term, contactName, contactPhone],
       );
     await db.query(
@@ -394,6 +394,8 @@ export type OrganiserKid = {
   cup: {
     edition: string;
     member: boolean;
+    // What the family asked for at sign-up: the Cup alone, or club membership.
+    plan: "cup" | "club";
     contactName: string;
     contactPhone: string;
     createdAt: string;
@@ -421,7 +423,7 @@ export async function organiserRoster(term: string, currentTerm: string): Promis
     (SELECT json_build_object('dateOfBirth',c.date_of_birth,'previousDate',c.previous_date,'actorEmail',c.actor_email,'reason',c.reason,'recordedAt',c.recorded_at) FROM club_birth_date_correction c WHERE c.waiver_id=w.id AND c.kid_id=k.id ORDER BY c.recorded_at DESC,c.id DESC LIMIT 1) AS birth_date_correction,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
-    (SELECT json_build_object('edition',c.edition,'member',c.member,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
+    (SELECT json_build_object('edition',c.edition,'member',c.member,'plan',c.plan,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
     ${memberPaidSql("k.id", "$2")} AS member_paid,
     COALESCE((SELECT json_agg(m.email) FROM club_current_guardian g JOIN club_member m ON m.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS approved_guardians,
     COALESCE((SELECT json_agg(json_build_object('name',COALESCE(p.name,g.name),'email',g.email,'phone',COALESCE(p.phone,g.phone),'relationship',g.relationship)) FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS family_guardians

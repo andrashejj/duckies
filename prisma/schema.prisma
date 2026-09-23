@@ -249,6 +249,9 @@ model ClubCupEntry {
   kid_id        String   @db.Uuid
   edition       String
   member        Boolean
+  // What the family asked for at sign-up: "cup" alone, or "club" membership
+  // with it. `member` is whether entry is free because they are paid up.
+  plan          String   @default("cup")
   contact_name  String
   contact_phone String
   created_at    DateTime @default(now()) @db.Timestamptz(6)
