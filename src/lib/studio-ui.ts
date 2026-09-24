@@ -33,9 +33,10 @@ export const boardList = "[&>div]:flex [&>div]:justify-between [&>div]:gap-4 [&>
 export const boardNote = "text-[0.6rem] leading-[1.6] text-board-muted";
 export const chart = "mt-6 border-t border-board-line pt-4 [&_svg]:mt-[0.7rem] [&_svg]:block [&_svg]:w-full [&_svg]:overflow-visible [&_text]:font-mono [&_text]:text-[8px] [&_text]:fill-board-muted";
 
-// Business case sheet
-export const sheetRow = "grid grid-cols-[minmax(0,1fr)_minmax(170px,230px)] items-start gap-x-7 gap-y-4 @max-[600px]:grid-cols-1 @max-[600px]:gap-3";
+// Business case sheet. The group-data-[narrow]/sheet variants follow the
+// sheet's measured width (GranolaCaseSheet sets data-narrow under 600px).
+export const sheetRow = "grid grid-cols-[minmax(0,1fr)_minmax(170px,230px)] items-start gap-x-7 gap-y-4 group-data-[narrow]/sheet:grid-cols-1 group-data-[narrow]/sheet:gap-3";
 export const sheetInputs = "grid grid-cols-[repeat(auto-fit,minmax(min(100%,120px),1fr))] items-end gap-[0.85rem] min-w-0 [&_.g-field>span:first-child]:text-[0.62rem]";
-export const sheetAmount = "flex min-h-full flex-col gap-[0.3rem] border-l border-dashed border-edge pl-6 text-right @max-[600px]:flex-row @max-[600px]:flex-wrap @max-[600px]:items-baseline @max-[600px]:justify-between @max-[600px]:border-l-0 @max-[600px]:border-t @max-[600px]:border-dotted @max-[600px]:pt-[0.6rem] @max-[600px]:pl-0 @max-[600px]:text-left [&>span]:text-[0.68rem] [&>span]:leading-[1.4] [&>span]:text-fg-muted [&>span]:break-words [&>strong]:font-mono [&>strong]:text-[1.05rem] [&>strong]:font-medium [&>strong]:tabular-nums @max-[600px]:[&>strong]:text-right [&>small]:text-[0.6rem] [&>small]:leading-[1.5] [&>small]:text-fg-muted [&>small]:break-words @max-[600px]:[&>small]:w-full";
+export const sheetAmount = "flex min-h-full flex-col gap-[0.3rem] border-l border-dashed border-edge pl-6 text-right group-data-[narrow]/sheet:flex-row group-data-[narrow]/sheet:flex-wrap group-data-[narrow]/sheet:items-baseline group-data-[narrow]/sheet:justify-between group-data-[narrow]/sheet:border-l-0 group-data-[narrow]/sheet:border-t group-data-[narrow]/sheet:border-dotted group-data-[narrow]/sheet:pt-[0.6rem] group-data-[narrow]/sheet:pl-0 group-data-[narrow]/sheet:text-left [&>span]:text-[0.68rem] [&>span]:leading-[1.4] [&>span]:text-fg-muted [&>span]:break-words [&>strong]:font-mono [&>strong]:text-[1.05rem] [&>strong]:font-medium [&>strong]:tabular-nums group-data-[narrow]/sheet:[&>strong]:text-right [&>small]:text-[0.6rem] [&>small]:leading-[1.5] [&>small]:text-fg-muted [&>small]:break-words group-data-[narrow]/sheet:[&>small]:w-full";
 export const costLine = "before:text-fg-muted before:content-['−\\00a0']";
 export const sheetNote = "mt-[0.9rem] max-w-[70ch] text-[0.7rem] leading-[1.65] text-fg-muted";

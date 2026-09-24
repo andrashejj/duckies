@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { calculate, OtherCost, Recipe } from "../../lib/granola";
 import { Field, money, pretty } from "./GranolaField";
 import { addButton, control, costLine, editorSection, explain, field, removeButton, sectionTitle, sheetAmount, sheetInputs, sheetNote, sheetRow, slider } from "../../lib/studio-ui";
@@ -8,16 +9,26 @@ const basisLabel:Record<OtherCost["basis"],string>={pack:"per made pack",sold:"p
 // The whole month on one sheet: every operating assumption sits beside the
 // monthly line it drives, so the case can be read and edited in one place.
 export default function GranolaCaseSheet({recipe,result,change,cost}:{recipe:Recipe;result:Result|null;change:<K extends keyof Recipe>(key:K,value:Recipe[K])=>void;cost:(index:number,key:string,value:string|number)=>void}) {
+  // Under 600px of sheet the rows stack and the amounts move below their
+  // inputs. Measured rather than a size container: as one, Chromium dropped
+  // React-rendered rows from layout (see the ingredient list).
+  const sheet=useRef<HTMLElement>(null);
+  const [narrow,setNarrow]=useState(false);
+  useEffect(()=>{
+    const section=sheet.current;if(!section)return;
+    const observer=new ResizeObserver(([entry])=>setNarrow(entry.contentRect.width<600));
+    observer.observe(section);return()=>observer.disconnect();
+  },[]);
   const monthly=(value:number|undefined)=>result&&value!==undefined?money(value,2):"—";
   const row=`g-sheet-row ${sheetRow} border-t border-line py-4 first-of-type:border-t-0`;
   const amount=`g-sheet-amount ${sheetAmount}`;
   const group="pt-6 [&>h4]:mb-1 [&>h4]:font-display [&>h4]:text-[1.25rem] [&>h4]:font-medium [&>h4]:tracking-[-0.02em] [&>h4]:text-fg";
-  const costInputs=`${sheetInputs} grid-cols-[1.6fr_0.9fr_1fr_1.1fr_30px] gap-[0.6rem] @max-[600px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_30px] @max-[600px]:[grid-template-areas:'name_name_remove'_'amount_basis_basis'_'calc_calc_calc'] @max-[600px]:[&>:nth-child(1)]:[grid-area:name] @max-[600px]:[&>:nth-child(2)]:[grid-area:amount] @max-[600px]:[&>:nth-child(3)]:[grid-area:calc] @max-[600px]:[&>:nth-child(4)]:[grid-area:basis] @max-[600px]:[&>:nth-child(5)]:[grid-area:remove]`;
+  const costInputs=`${sheetInputs} grid-cols-[1.6fr_0.9fr_1fr_1.1fr_30px] gap-[0.6rem] group-data-[narrow]/sheet:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_30px] group-data-[narrow]/sheet:[grid-template-areas:'name_name_remove'_'amount_basis_basis'_'calc_calc_calc'] group-data-[narrow]/sheet:[&>:nth-child(1)]:[grid-area:name] group-data-[narrow]/sheet:[&>:nth-child(2)]:[grid-area:amount] group-data-[narrow]/sheet:[&>:nth-child(3)]:[grid-area:calc] group-data-[narrow]/sheet:[&>:nth-child(4)]:[grid-area:basis] group-data-[narrow]/sheet:[&>:nth-child(5)]:[grid-area:remove]`;
   const total="flex items-baseline justify-between gap-4 border-b border-line py-[0.9rem] [&>span]:text-[0.8rem] [&>strong]:font-mono [&>strong]:font-medium [&>strong]:tabular-nums";
-  return <section id="granola-business-sheet" className={`g-sheet @container ${editorSection}`} aria-label="Business case sheet">
+  return <section ref={sheet} id="granola-business-sheet" className={`g-sheet group/sheet ${editorSection}`} data-narrow={narrow||undefined} aria-label="Business case sheet">
     <div className={sectionTitle}><span>02 / THE BUSINESS CASE</span><b>One month of costs and sales</b></div>
     <p className={explain}>Every assumption behind the monthly result is here. Change a figure on the left and its line on the right updates at once. Ingredients follow the mix above; everything else is set on this sheet.</p>
-    <div className={`${sheetRow} mt-6 border-b-2 border-fg pb-[0.6rem] font-mono text-[0.6rem] tracking-[0.12em] text-fg-muted @max-[600px]:hidden [&>span:last-child]:text-right`} aria-hidden="true"><span>Assumptions</span><span>This month</span></div>
+    <div className={`${sheetRow} mt-6 border-b-2 border-fg pb-[0.6rem] font-mono text-[0.6rem] tracking-[0.12em] text-fg-muted group-data-[narrow]/sheet:hidden [&>span:last-child]:text-right`} aria-hidden="true"><span>Assumptions</span><span>This month</span></div>
 
     <div className={group}>
       <h4>Sales</h4>
@@ -25,7 +36,7 @@ export default function GranolaCaseSheet({recipe,result,change,cost}:{recipe:Rec
         <div className={sheetInputs}>
           <Field label="Selling price" value={recipe.price} suffix="Rs" onChange={v=>change("price",v)}/>
           <Field label="Packs produced monthly" value={recipe.monthlyPacks} onChange={v=>change("monthlyPacks",v)}/>
-          <label className={`${slider} col-span-2 gap-2 @max-[600px]:col-span-full [&>span]:text-[0.7rem]`}><span>Sell-through <strong>{recipe.sellThroughPercent}%</strong></span><input aria-label="Sell-through" type="range" min={0} max={100} value={recipe.sellThroughPercent} onChange={e=>change("sellThroughPercent",Number(e.target.value))}/></label>
+          <label className={`${slider} col-span-2 gap-2 group-data-[narrow]/sheet:col-span-full [&>span]:text-[0.7rem]`}><span>Sell-through <strong>{recipe.sellThroughPercent}%</strong></span><input aria-label="Sell-through" type="range" min={0} max={100} value={recipe.sellThroughPercent} onChange={e=>change("sellThroughPercent",Number(e.target.value))}/></label>
         </div>
         <div className={amount}><span>Sales revenue</span><strong>{monthly(result?.revenue)}</strong><small>{result?`${recipe.monthlyPacks} made · ${result.sold} sold at ${money(recipe.price)} · ${result.unsold} written off`:"Complete the recipe"}</small></div>
       </div>
@@ -54,7 +65,7 @@ export default function GranolaCaseSheet({recipe,result,change,cost}:{recipe:Rec
           <Field label="Packs per batch" value={recipe.batchPacks} min={1} onChange={v=>change("batchPacks",v)}/>
           <Field label="Paid hours per batch" value={recipe.batchHours} suffix="h" step={0.25} onChange={v=>change("batchHours",v)}/>
           <Field label="Loaded hourly cost" value={recipe.hourlyCost} suffix="Rs" onChange={v=>change("hourlyCost",v)}/>
-          <label className={`g-field ${field} col-span-2 @max-[600px]:col-span-full`}><span>Batch costing</span><select className={control} aria-label="Batch costing" value={recipe.batchCostMode??"proportional"} onChange={e=>change("batchCostMode",e.target.value as Recipe["batchCostMode"])}><option value="whole">Pay for each started batch</option><option value="proportional">Scale time and batch costs with volume</option></select></label>
+          <label className={`g-field ${field} col-span-2 group-data-[narrow]/sheet:col-span-full`}><span>Batch costing</span><select className={control} aria-label="Batch costing" value={recipe.batchCostMode??"proportional"} onChange={e=>change("batchCostMode",e.target.value as Recipe["batchCostMode"])}><option value="whole">Pay for each started batch</option><option value="proportional">Scale time and batch costs with volume</option></select></label>
         </div>
         <div className={amount}><span>Production labour</span><strong className={costLine}>{monthly(result?.monthlyLabour)}</strong><small>{result?`${pretty(result.batches)} batches · ${pretty(result.productionHours)} h × ${money(recipe.hourlyCost)}`:"—"}</small></div>
       </div>
