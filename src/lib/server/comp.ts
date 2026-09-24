@@ -69,7 +69,7 @@ export function requireCompOrigin(request: Request) { if (!sameOrigin(request)) 
 // ---------- Reads ----------
 
 type Db = pg.Pool | pg.PoolClient;
-async function serverTime(db: Db): Promise<string> {
+export async function serverTime(db: Db = getDatabase()): Promise<string> {
   return (await db.query<{ now: Date }>("SELECT clock_timestamp() AS now")).rows[0].now.toISOString();
 }
 type ConfigRow = { edition: string; rounds: number; heat_size: number; final_size: number; live: boolean; version: number; plan: CupPlan | null; final_review: CupConfig["finalReview"] };

@@ -3,6 +3,7 @@ import pg from "pg";
 import sharp from "sharp";
 import { signIn, sendCode } from "./auth-helpers";
 import { CUP_TERM } from "../src/lib/registration/cup";
+import { DEFAULT_CUP_PLAN } from "../src/lib/cup-planner";
 import { best2, heatResults, drawRound, heatSizes, standings, type Entrant, type Heat, type Wave } from "../src/lib/comp";
 
 // Cup day: the draw, judging with selected profiles, the leaderboard and the public feed.
@@ -544,4 +545,81 @@ test("parents volunteer, organisers approve their profile, and the timed heat cl
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await admin.screenshot({ path: "test-results/cup-volunteer-admin.png", fullPage: true });
   } finally { await adminContext.close(); await guest.dispose(); }
+});
+
+test("club members follow the lineup, the draw, the judges by name and the timetable before the board goes public, with their own duckies marked", async ({ page, playwright, request }) => {
+  const guardian = { name: "Ada Parent", email: "ada@example.com", phone: "+230 5000 1111" };
+  const ids = await seedKids(guardian);
+  await db.query("INSERT INTO club_member(email,role) VALUES ($1,'member')", [guardian.email]);
+  await signIn(request, organiser);
+  let state = await board(request);
+  expect((await request.patch("/api/admin/cup", post({ plan: DEFAULT_CUP_PLAN, version: state.config.version }))).status()).toBe(200);
+  state = await (await request.post("/api/admin/cup/rounds", post({ round: 1 }))).json();
+  const [first] = heatsOf(state, 1);
+  const anaHeat = heatsOf(state, 1).find((heat) => heat.slots.some((slot) => slot.kidId === ids.Ana))!;
+  expect((await request.put(`/api/admin/cup/heats/${anaHeat.id}/judges`, post({ judges: [organiser] }))).status()).toBe(200);
+  expect((await request.post("/api/admin/cup/ticker", post({ message: "Briefing at the flags at 14:30" }))).status()).toBe(201);
+  // The first heat runs and gets a score; the member sees the result, not the ratings.
+  await assign(request, first.id);
+  const scored = first.slots[0].kidId;
+  expect((await request.post("/api/cup/judge/waves", post({ heatId: first.id, kidId: scored, score: 4 }))).status()).toBe(201);
+
+  const judge = await playwright.request.newContext({ baseURL: origin });
+  const guest = await playwright.request.newContext({ baseURL: origin });
+  try {
+    // Signed-out, and a judge without membership, stay on the public pages.
+    expect((await guest.get("/api/members/cup")).status()).toBe(401);
+    expect((await guest.get("/members/cup", { maxRedirects: 0 })).status()).toBe(302);
+    expect((await request.post("/api/admin/cup/judges", post({ email: judgeEmail }))).status()).toBe(201);
+    await signIn(judge, judgeEmail);
+    expect((await judge.get("/api/members/cup")).status()).toBe(403);
+    expect((await judge.get("/members/cup", { maxRedirects: 0 })).status()).toBe(403);
+
+    await signIn(page.request, guardian.email);
+    const feed = await page.request.get("/api/members/cup");
+    expect(feed.status()).toBe(200);
+    const cup = await feed.json();
+    expect(cup.config).toMatchObject({ live: false, rounds: 3, plan: DEFAULT_CUP_PLAN });
+    expect(cup.entrants).toHaveLength(10);
+    expect(cup.entrants[0]).toEqual({ id: ids.Ana, name: "Ana", age: 7, member: true, number: 1, photo: null });
+    expect(cup.me).toEqual({ kids: [ids.Ana], judging: [], volunteering: [] });
+    expect(cup.heats).toHaveLength(3);
+    expect(cup.heats.find((heat: { id: string }) => heat.id === anaHeat.id).judges).toEqual(["Organiser"]);
+    expect(cup.heats[0].slots.find((slot: { kidId: string }) => slot.kidId === scored)).toMatchObject({ score: 4, waves: 1 });
+    expect(cup.heats[0].slots.every((slot: { colour: string }) => ["red", "yellow", "blue", "green"].includes(slot.colour))).toBe(true);
+    expect(cup.judges).toEqual(expect.arrayContaining(["Organiser", "Judy"]));
+    expect(cup.timetable.rows).toHaveLength(12);
+    expect(cup.timetable.rows[0]).toMatchObject({ heatId: first.id, status: "running" });
+    expect(cup.ticker.map((item: { message: string }) => item.message)).toEqual(["🌊 Round 1 · Heat 1 is in the water — " + first.slots.map((slot) => `${{ red: "🔴", yellow: "🟡", blue: "🔵", green: "🟢" }[slot.colour]} ${state.entrants.find((kid) => kid.id === slot.kidId)!.name}`).join(" · "), "Briefing at the flags at 14:30"]);
+    expect(cup.standings).toHaveLength(10);
+    // Names, colours and scores travel; emails, phones, ratings and photos of other kids do not.
+    const text = JSON.stringify(cup);
+    expect(text).not.toContain("@example.com");
+    expect(text).not.toContain(guardian.phone);
+    expect(text).not.toMatch(/judge_email|contact|phone|waves":\s*\[/);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/members/cup");
+    await expect(page.getByRole("heading", { name: "Cup day" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Cup", exact: true }).first()).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("heading", { name: "10 surfers in the draw" })).toBeVisible();
+    const own = page.locator("[data-own-kid]");
+    await expect(own).toHaveCount(1);
+    await expect(own).toContainText("Ana");
+    await expect(own).toContainText(`Round 1 · Heat ${anaHeat.number}`);
+    const card = page.getByRole("article", { name: `Round 1 · Heat ${anaHeat.number}`, exact: true });
+    await expect(card).toContainText("Judges: Organiser");
+    await expect(card.locator("[data-mine=true]")).toContainText("Ana");
+    await expect(page.getByRole("article", { name: "Round 1 · Heat 1", exact: true })).toContainText("4 ★ · 1 wave");
+    await expect(page.locator("[data-lineup] li").first()).toContainText("01");
+    await expect(page.locator("[data-lineup] li").first()).toContainText("yours");
+    await expect(page.getByText("Briefing at the flags at 14:30")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Heat timetable" })).toBeVisible();
+    // No controls: nothing to draw, start, move or score from here.
+    await expect(page.getByRole("button", { name: /Draw round|Start heat|Delete these heats|Finish/ })).toHaveCount(0);
+    await expect(page.getByLabel("Ana's rashie")).toHaveCount(0);
+    await expect(page.getByLabel("Move Ana")).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: "test-results/cup-members-mobile.png", fullPage: true });
+  } finally { await judge.dispose(); await guest.dispose(); }
 });

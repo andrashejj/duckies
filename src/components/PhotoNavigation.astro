@@ -8,11 +8,13 @@ const family = active || !!session?.family;
 const path = Astro.url.pathname;
 const membersPage = path === '/members/lineup' || path.startsWith('/members/people/') || path.startsWith('/gallery/duckies/');
 const photos = (path.startsWith('/gallery') && !membersPage) || path === '/members/me';
+const cupPage = path === '/members/cup';
 const familyPage = path.startsWith('/account') || path === '/members/profile' || path.startsWith('/orders') || path.startsWith('/shop');
 const nav = [
-  ...(active ? [{ href: '/members', label: 'My Feed', icon: 'home' as const, current: !photos && !familyPage && !membersPage }] : []),
+  ...(active ? [{ href: '/members', label: 'My Feed', icon: 'home' as const, current: !photos && !familyPage && !membersPage && !cupPage }] : []),
   ...(memories ? [{ href: active ? '/gallery' : '/members/me', label: active ? 'Club Gallery' : 'Memories', icon: 'camera' as const, current: photos }] : []),
   ...(active ? [{ href: '/members/lineup', label: 'Members', icon: 'users' as const, current: membersPage }] : []),
+  ...(active ? [{ href: '/members/cup', label: 'Cup', icon: 'trophy' as const, current: cupPage }] : []),
   { href: family ? '/members/profile' : '/account/profile', label: family ? 'My Family' : 'Account', icon: 'user' as const, current: familyPage },
 ];
 ---

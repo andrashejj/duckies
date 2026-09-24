@@ -1,0 +1,18 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CupMembers from '../../components/react/CupMembers';
+import { loadMemberCup } from '../../lib/server/cup-members';
+import { CUP_LABEL } from '../../lib/registration/cup';
+import { site } from '../../data/site';
+// The middleware lets only club members this far.
+const member = Astro.locals.session!.member!;
+let initial;
+try { initial = await loadMemberCup(member); } catch { Astro.response.status = 503; }
+---
+<BaseLayout title="Cup day · Sunset Duckies" variant="journal">
+  <section class="club-home">
+    <header class="social-page-header"><div><h1>Cup day</h1><p>{CUP_LABEL} · {site.cupVol2.dateLabel} · {site.cupVol2.location}. The lineup, the heats, the judges and the scores as the organisers set them.</p></div><span class="social-private">Members only</span></header>
+    {!initial ? <p role="alert" class="social-error">The Cup board is temporarily unavailable. Please reload to try again.</p> : <CupMembers client:load initial={initial} judgeHref="/cup/judge" liveHref="/sunset-duckies-cup-vol-2/live" cupHref="/sunset-duckies-cup-vol-2" />}
+  </section>
+</BaseLayout>

@@ -3,7 +3,7 @@ import { boardTable, mono, podium, rankBubble } from "../../lib/comp-ui";
 
 // The leaderboard table, shared by the organiser board and the public live
 // page: rank, surfer, a column per round, the total, and the final apart.
-export function Leaderboard({ rows, rounds, publicView = false, guided = false }: { rows: (Omit<Standing, "kidId"> & { kidId?: string })[]; rounds: number; publicView?: boolean; guided?: boolean }) {
+export function Leaderboard({ rows, rounds, publicView = false, guided = false, highlight }: { rows: (Omit<Standing, "kidId"> & { kidId?: string })[]; rounds: number; publicView?: boolean; guided?: boolean; highlight?: Set<string> }) {
   if (!rows.length) return <p className={`${mono} mt-4`}>Nobody in the draw yet.</p>;
   return (
     <table className={`${boardTable} mt-4`}>
@@ -16,7 +16,7 @@ export function Leaderboard({ rows, rounds, publicView = false, guided = false }
       </thead>
       <tbody>
         {rows.map((row) => (
-          <tr key={row.kidId ?? row.name} className={row.rank <= 3 && row.total > 0 ? "font-semibold" : ""}>
+          <tr key={row.kidId ?? row.name} className={`${row.rank <= 3 && row.total > 0 ? "font-semibold" : ""} ${row.kidId && highlight?.has(row.kidId) ? "bg-surface-2" : ""}`} data-mine={!!row.kidId && highlight?.has(row.kidId)}>
             <td><span className={`${rankBubble} ${row.total > 0 ? podium[row.rank] ?? "" : "opacity-50"}`}>{row.rank}</span></td>
             <td className="font-display text-[1rem] font-bold [font-variation-settings:'wdth'_108]">{row.name}</td>
             <td className="max-sm:hidden">{row.age ?? "—"}</td>
