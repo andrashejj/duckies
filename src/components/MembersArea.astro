@@ -168,8 +168,9 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
         chevron.setAttribute("aria-hidden", "true");
         identity.append(name);
         const cup = (kid as OrganiserKid).cup;
-        // A family joining the club is not a cup-only entry, whatever is signed yet.
-        if (cup) { const flag = document.createElement("span"); flag.className = duckieFlag; flag.textContent = cup.member ? "Cup 02" : "Cup 02 · new"; flag.title = cup.member ? "Club member coming to the Cup Vol. 02" : cup.plan === "club" ? "Joining the club — membership not confirmed yet" : "Cup-only entry (not a club member)"; identity.append(flag); }
+        // Where the entry stands on the fee, however the family entered: pending
+        // until the semester or the entry is paid, or Andras marks no payment needed.
+        if (cup) { const flag = document.createElement("span"); flag.className = duckieFlag; flag.textContent = cup.payment === "paid" ? "Cup 02" : cup.payment === "waived" ? "Cup 02 · no payment" : "Cup 02 · pending"; flag.title = cup.payment === "paid" ? "Coming to the Cup Vol. 02 · paid" : cup.payment === "waived" ? "No payment needed — a wildcard in the public lineup" : cup.plan === "club" ? "Payment pending — free entry once the semester is paid" : "Payment pending — Cup-only entry fee"; identity.append(flag); }
         identity.append(chevron);
         summary.append(identity, ...rosterCells(kid as OrganiserKid));
         profile.append(summary);

@@ -14,7 +14,7 @@ export function rosterSearch(kid: Kid, organiser: boolean) {
 }
 export function matchesRosterFilter(kid: OrganiserKid, filter: string) {
   switch (filter) {
-    case "unpaid": return kid.payment?.status !== "paid";
+    case "unpaid": return kid.payment?.status !== "paid" && kid.payment?.status !== "waived";
     case "unsigned": return !kid.waiverId;
     case "no-media": return kid.registration?.media !== "yes";
     case "water": return !kid.registration?.parentInWater;
@@ -37,12 +37,13 @@ function cell(label: string, value: string, tone?: keyof typeof rosterTone) {
 export function rosterCells(kid: OrganiserKid) {
   const r = kid.registration;
   const paid = kid.payment?.status === "paid";
+  const waived = kid.payment?.status === "waived";
   return [
     cell("Age", kid.age === null ? "—" : String(kid.age), kid.age !== null && kid.age < RECOMMENDED_AGE ? "alert" : undefined),
     cell("Legal guardians", kid.familyGuardians?.map(g => g.name).join(", ") || "Not supplied"),
     cell("Waiver", kid.waiverId ? "Signed" : "Not signed", kid.waiverId ? "ok" : "pending"),
     cell("Media", r?.media === "yes" ? "Yes" : r?.media === "no" ? "No consent" : "Pending", r?.media === "no" ? "alert" : r?.media === "yes" ? "ok" : "pending"),
     cell("Parent in water", r?.parentInWater ? "Confirmed" : "Pending", r?.parentInWater ? "ok" : "pending"),
-    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : kid.payment ? "Unpaid" : "Pending", paid ? "ok" : "pending"),
+    cell("Payment", paid ? `Paid${kid.payment.amountMur == null ? "" : ` · Rs ${kid.payment.amountMur}`}` : waived ? "No payment" : kid.payment ? "Unpaid" : "Pending", paid || waived ? "ok" : "pending"),
   ];
 }

@@ -13,6 +13,7 @@ import {
 } from "../../lib/comp-ui";
 import { ParentPhoto, ParentPhotoUpload } from "./ParentProfileEditor";
 import { HeatCountdown, HeatWarnings, useCompetitionClock } from "./CupClock";
+import { cupPaymentLabel } from "../../lib/registration/cup";
 import { Leaderboard } from "./CupLeaderboard";
 
 // The organiser's cup board: draw the rounds, move kids between heats, run the
@@ -99,7 +100,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
         <div className="grid gap-4">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
             <h2 className={panelTitle}>{state.entrants.length} kids in the draw</h2>
-            <p className={mono}>{ages.length ? `ages ${Math.min(...ages)}–${Math.max(...ages)}` : "no ages yet"} · {state.entrants.filter((kid) => !kid.member).length} cup-only · {state.entrants.filter((kid) => kid.age === null).length} without a signed form</p>
+            <p className={mono}>{ages.length ? `ages ${Math.min(...ages)}–${Math.max(...ages)}` : "no ages yet"} · {state.entrants.filter((kid) => kid.payment === "pending").length} payment pending · {state.entrants.filter((kid) => kid.payment === "waived").length} no payment · {state.entrants.filter((kid) => kid.age === null).length} without a signed form</p>
           </div>
           <div className="flex flex-wrap items-end gap-4">
             {([["rounds", "Rounds", [1, 2, 3, 4, 5, 6]], ["heatSize", "Kids per heat", [2, 3, 4]], ["finalSize", "In the final", [2, 3, 4]]] as const).map(([key, label, options]) => (
@@ -250,7 +251,7 @@ export default function CupAdmin({ liveHref, judgeHref }: { liveHref: string; ju
                   <Avatar kid={kid} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-display text-[0.98rem] font-bold [font-variation-settings:'wdth'_108]">{kid.name}</p>
-                    <p className={mono}>{kid.age ?? "?"} yrs{kid.member ? "" : " · cup-only"}</p>
+                    <p className={mono}>{kid.age ?? "?"} yrs{kid.payment === "paid" ? "" : ` · ${cupPaymentLabel[kid.payment].toLowerCase()}`}</p>
                   </div>
                   <select aria-label={`Add ${kid.name} to a heat`} className={`${select} max-w-[8rem] py-1 text-xs`} value="" disabled={busy} onChange={(event) => { if (event.target.value) void move(kid.id, round, event.target.value); }}>
                     <option value="">Add to…</option>

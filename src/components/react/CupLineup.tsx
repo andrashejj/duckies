@@ -7,7 +7,7 @@ import { lineupAccents, lineupBadge, lineupBand, lineupCard, lineupGhost, lineup
 // The Cup's lineup: one athlete card per registered surfer, in sign-up order,
 // straight from the registrations. Refetches when the form on the same page
 // locks someone in (it fires "cup:lineup"), so your card shows up right away.
-type Surfer = { number: number; name: string; age: number | null; member: boolean; heat: { label: string; colour: Rashie } | null };
+type Surfer = { number: number; name: string; age: number | null; wildcard: boolean; heat: { label: string; colour: Rashie } | null };
 type Lineup = { name: string; surfers: Surfer[] };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -53,7 +53,7 @@ export default function CupLineup({ registerHref = "#register" }: { registerHref
               <span className={lineupNumber} aria-hidden="true">{pad(surfer.number)}</span>
               <div className="flex items-start justify-between gap-2">
                 <span className={lineupTag}>No. {pad(surfer.number)}</span>
-                <span className={cn(lineupBadge, surfer.member ? accent.badge : "bg-cream")}>{surfer.member ? "Duckie" : "Wildcard"}</span>
+                <span className={cn(lineupBadge, surfer.wildcard ? "bg-cream" : accent.badge)}>{surfer.wildcard ? "Wildcard" : "Duckie"}</span>
               </div>
               <div className="flex flex-1 items-center justify-center py-2" aria-hidden="true">
                 <span className={lineupInitial}>{first[0]?.toUpperCase() ?? "?"}</span>

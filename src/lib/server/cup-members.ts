@@ -10,10 +10,11 @@ import { photoKids } from "./photo-profiles";
 // work from — the lineup, the draw, the heats, the judges, the scores and the
 // timetable — with none of the controls and none of the contact details.
 // Judges appear by name only; a photo shows only for the member's own
-// duckies, through the family route that already guards it.
+// duckies, through the family route that already guards it. Nobody's fee
+// travels: a kid with no payment needed is a wildcard, like on the public page.
 
 export type MemberAccess = { email: string; role: string };
-export type MemberEntrant = { id: string; name: string; age: number | null; member: boolean; number: number; photo: string | null };
+export type MemberEntrant = { id: string; name: string; age: number | null; wildcard: boolean; number: number; photo: string | null };
 export type MemberHeat = {
   id: string; stage: "round" | "final"; round: number; number: number; status: HeatStatus; startedAt: string | null; finishedAt: string | null; endsAt: string | null; durationMinutes: number;
   judges: string[]; slots: { kidId: string; colour: Rashie; score: number | null; waves: number }[];
@@ -52,7 +53,7 @@ export async function loadMemberCup(actor: MemberAccess, edition = CUP_TERM): Pr
     serverNow: await serverTime(db), name: CUP_LABEL,
     config: { rounds: config.rounds, heatSize: config.heatSize, finalSize: config.finalSize, live: config.live, plan: config.plan, finalReview: config.finalReview },
     entrants: entrants
-      .map((kid) => ({ id: kid.id, name: kid.name, age: kid.age, member: kid.member, number: numbers.get(kid.id) ?? 0, photo: photos.get(kid.id) ?? null }))
+      .map((kid) => ({ id: kid.id, name: kid.name, age: kid.age, wildcard: kid.payment === "waived", number: numbers.get(kid.id) ?? 0, photo: photos.get(kid.id) ?? null }))
       .sort((a, b) => a.number - b.number),
     heats: heats.map((heat) => {
       const results = heatResults(heat, waves);

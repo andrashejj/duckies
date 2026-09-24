@@ -11,7 +11,7 @@ const post = (data: unknown) => ({ headers: { origin }, data });
 const config = { edition: 'cup-vol-2', rounds: 3, heatSize: 4, finalSize: 4, live: false, version: 1, plan: DEFAULT_CUP_PLAN };
 const state = async (request: APIRequestContext): Promise<CompState> => (await request.get('/api/admin/cup')).json();
 const makeHeat = (id: string, round: number, slots: Heat['slots'], number = 1): Heat => ({ id, stage: 'round', round, number, status: 'done', startedAt: null, finishedAt: null, durationMinutes: 8, endsAt: null, slots, judges: [] });
-const entrants: Entrant[] = Array.from({ length: 12 }, (_, i) => ({ id: `k${i}`, name: `Surfer ${i}`, age: 10, member: true, photoVersion: null }));
+const entrants: Entrant[] = Array.from({ length: 12 }, (_, i) => ({ id: `k${i}`, name: `Surfer ${i}`, age: 10, payment: "paid" as const, photoVersion: null }));
 let randomSeed = 321;
 const random = () => { randomSeed = randomSeed * 16807 % 2147483647; return randomSeed / 2147483647; };
 

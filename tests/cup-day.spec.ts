@@ -96,7 +96,7 @@ test("the draw: even heats, round 1 by age, later rounds shuffled with everyone 
   expect(heatSizes(8, 4)).toEqual([4, 4]);
   expect(heatSizes(5, 4)).toEqual([3, 2]);
   expect(heatSizes(0, 4)).toEqual([]);
-  const entrants: Entrant[] = kids.map((kid, index) => ({ id: `k${index}`, name: kid.name, age: 7 + index, member: true, photoVersion: null }));
+  const entrants: Entrant[] = kids.map((kid, index) => ({ id: `k${index}`, name: kid.name, age: 7 + index, payment: "paid" as const, photoVersion: null }));
   const first = drawRound(entrants, 1, 4, []);
   expect(first.map((heat) => heat.map((slot) => slot.kidId))).toEqual([["k0", "k1", "k2", "k3"], ["k4", "k5", "k6"], ["k7", "k8", "k9"]]);
   expect(first[0].map((slot) => slot.colour)).toEqual(["red", "yellow", "blue", "green"]);
@@ -382,7 +382,7 @@ test("the organiser board draws, drags a kid between heats, runs a heat and goes
 });
 
 test("ratings combine by run before the best two are chosen, across qualifying heats only", () => {
-  const entrants: Entrant[] = ["Ana", "Ben", "Cleo"].map((name) => ({ id: name, name, age: 8, member: true, photoVersion: null }));
+  const entrants: Entrant[] = ["Ana", "Ben", "Cleo"].map((name) => ({ id: name, name, age: 8, payment: "paid" as const, photoVersion: null }));
   const h1: Heat = { id: "h1", stage: "round", round: 1, number: 1, status: "running", startedAt: null, finishedAt: null, durationMinutes: 10, endsAt: null, judges: ["a", "b"], slots: [{ kidId: "Ana", colour: "red" }, { kidId: "Ben", colour: "blue" }, { kidId: "Cleo", colour: "green" }] };
   const h2: Heat = { ...h1, id: "h2", round: 2 };
   const final: Heat = { ...h1, id: "final", stage: "final", round: 0 };
@@ -581,7 +581,7 @@ test("club members follow the lineup, the draw, the judges by name and the timet
     const cup = await feed.json();
     expect(cup.config).toMatchObject({ live: false, rounds: 3, plan: DEFAULT_CUP_PLAN });
     expect(cup.entrants).toHaveLength(10);
-    expect(cup.entrants[0]).toEqual({ id: ids.Ana, name: "Ana", age: 7, member: true, number: 1, photo: null });
+    expect(cup.entrants[0]).toEqual({ id: ids.Ana, name: "Ana", age: 7, wildcard: false, number: 1, photo: null });
     expect(cup.me).toEqual({ kids: [ids.Ana], judging: [], volunteering: [] });
     expect(cup.heats).toHaveLength(3);
     expect(cup.heats.find((heat: { id: string }) => heat.id === anaHeat.id).judges).toEqual(["Organiser"]);

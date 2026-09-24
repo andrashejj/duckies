@@ -63,7 +63,7 @@ export default function CupMembers({ initial, judgeHref, liveHref, cupHref }: Pr
   const upNext = heats.filter((heat) => heat.status === "scheduled").slice(0, 2);
   const showcase = running.length ? running : upNext;
   const ages = entrants.filter((kid) => kid.age !== null).map((kid) => kid.age!);
-  const wildcards = entrants.filter((kid) => !kid.member).length;
+  const wildcards = entrants.filter((kid) => kid.wildcard).length;
   const ownKids = entrants.filter((kid) => mine.has(kid.id));
   const judging = me.judging.map((id) => heats.find((heat) => heat.id === id)).filter((heat): heat is MemberHeat => !!heat);
   const pendingVolunteer = me.volunteering.some((request) => request.status === "pending");
@@ -156,7 +156,7 @@ export default function CupMembers({ initial, judgeHref, liveHref, cupHref }: Pr
       <section className={card} aria-labelledby="cup-lineup">
         <div className={cardLead}>
           <h2 id="cup-lineup" className={cardTitle}>Lineup</h2>
-          <p className={eyebrow}>in sign-up order · {entrants.length - wildcards} duckies · {wildcards} wildcards</p>
+          <p className={eyebrow}>in sign-up order · {entrants.length - wildcards} {entrants.length - wildcards === 1 ? "duckie" : "duckies"} · {wildcards} {wildcards === 1 ? "wildcard" : "wildcards"}</p>
         </div>
         {entrants.length ? (
           <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-lineup>
@@ -171,7 +171,7 @@ export default function CupMembers({ initial, judgeHref, liveHref, cupHref }: Pr
                     <p className="truncate text-[14px] font-semibold"><a className="hover:underline" href={`/gallery/duckies/${kid.id}`}>{kid.name}</a></p>
                     <p className={eyebrow}>{kid.age === null ? "age tbc" : `${kid.age} yrs`}{first && colour ? ` · ${heatShort(first)} · ${rashieLabel[colour]}` : ""}</p>
                   </div>
-                  {mine.has(kid.id) ? <span className={mineTag}>yours</span> : <span className="club-role" data-kind={kid.member ? "duckie" : undefined}>{kid.member ? "Duckie" : "Wildcard"}</span>}
+                  {mine.has(kid.id) ? <span className={mineTag}>yours</span> : <span className="club-role" data-kind={kid.wildcard ? undefined : "duckie"}>{kid.wildcard ? "Wildcard" : "Duckie"}</span>}
                 </li>
               );
             })}

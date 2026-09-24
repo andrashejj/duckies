@@ -47,7 +47,7 @@ const birthday = (iso: string) =>
 type Tone = { standing: Standing; label: string; note: string };
 function standingOf(kid: FamilyKid, termLabel: string): Tone {
   if (!kid.waiver) return { standing: "alert", label: "Not registered", note: "The registration and waiver still need signing." };
-  if (kid.member) return { standing: "ok", label: "Member", note: `Registered, and ${termLabel} is paid.` };
+  if (kid.member) return { standing: "ok", label: "Member", note: kid.payment?.status === "waived" ? `Registered, and no fee is due for ${termLabel}.` : `Registered, and ${termLabel} is paid.` };
   return { standing: "pending", label: "Pending", note: `Registered. The place is confirmed once ${termLabel} is paid.` };
 }
 
@@ -131,7 +131,7 @@ function History({ kid }: { kid: FamilyKid }) {
               <li key={`${payment.term}-${payment.recordedAt}-${index}`} className={logRow}>
                 <span className={logWhen}>{day(payment.recordedAt)} · {payment.termLabel}</span>
                 <span className="mt-1 block">
-                  {payment.status === "paid" ? "Paid" : "Marked unpaid"}
+                  {payment.status === "paid" ? "Paid" : payment.status === "waived" ? "No payment needed" : "Marked unpaid"}
                   {payment.amountMur === null ? "" : ` · Rs ${payment.amountMur}`}
                 </span>
               </li>
@@ -206,8 +206,8 @@ function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: s
       )}
       <div className={cn(passStub, "family-kid-row")}>
         <span>{termLabel}</span>
-        <span className={kid.payment?.status === "paid" ? "text-ok" : "text-caution"}>
-          {kid.payment?.status === "paid" ? `Paid${kid.payment.amountMur === null ? "" : ` · Rs ${kid.payment.amountMur}`}` : kid.payment ? "Fee outstanding" : "Fee not recorded yet"}
+        <span className={kid.payment?.status === "paid" || kid.payment?.status === "waived" ? "text-ok" : "text-caution"}>
+          {kid.payment?.status === "paid" ? `Paid${kid.payment.amountMur === null ? "" : ` · Rs ${kid.payment.amountMur}`}` : kid.payment?.status === "waived" ? "No payment needed" : kid.payment ? "Fee outstanding" : "Fee not recorded yet"}
         </span>
       </div>
       <div className={cn(passStub, "family-kid-row")}>

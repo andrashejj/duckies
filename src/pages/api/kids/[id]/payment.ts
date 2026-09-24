@@ -29,7 +29,8 @@ export const POST = safeRoute(async ({ request, params }) => {
   const result = await getDatabase().query(
     `INSERT INTO club_payment_event (kid_id,term,status,amount_mur,note,actor_email)
     SELECT id,$2,$3,$4,$5,$6 FROM club_kid WHERE id=$1 AND archived_at IS NULL RETURNING id`,
-    [params.id, p.term, p.status, p.amountMur, p.note, member.email],
+    // No payment needed has no amount.
+    [params.id, p.term, p.status, p.status === "waived" ? null : p.amountMur, p.note, member.email],
   );
   if (!result.rowCount) throw new RegistrationError("Duckie not found.", 404);
   // The fee is what makes the family members; their guardians join the club with it.

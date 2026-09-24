@@ -123,16 +123,20 @@ export function kidOverview(
   const paid = kid.payment?.status === "paid";
   fact(
     `Payment · ${semester.label}`,
-    kid.payment
+    kid.payment?.status === "waived"
+      ? `No payment needed · ${kid.payment.note}`
+      : kid.payment
       ? `${paid ? "Paid" : "Unpaid"}${kid.payment.amountMur === null ? " · amount not recorded" : ` · Rs ${kid.payment.amountMur}`} · ${kid.payment.note}`
       : "Pending · no payment recorded for this semester",
   );
-  // Membership is the signed registration plus the current semester paid —
-  // whatever term the roster is showing right now.
+  // Membership is the signed registration plus the current semester paid (or
+  // no payment needed) — whatever term the roster is showing right now.
   fact(
     "Membership",
     kid.memberPaid
-      ? "Member · registered and current semester paid"
+      ? semester.isCurrent && kid.payment?.status === "waived"
+        ? "Member · registered, no payment needed this semester"
+        : "Member · registered and current semester paid"
       : kid.waiverId
         ? "Pending · registered, current semester not paid"
         : "Pending · registration not signed yet",
@@ -141,8 +145,12 @@ export function kidOverview(
     fact(
       CUP_LABEL,
       `${
-        kid.memberPaid
+        kid.cup.payment === "waived"
+          ? "No payment needed · a wildcard in the public lineup"
+          : kid.memberPaid
           ? "Club member · free entry"
+          : kid.cup.payment === "paid"
+          ? "Entry paid"
           : kid.cup.member || (kid.waiverTerm && !isCupTerm(kid.waiverTerm))
             ? `Club registration on file, semester unpaid · Rs ${CUP_ENTRY_FEE_MUR} entry unless the semester is paid first`
             // The family asked to join the club, so this is not a Rs 1,000 cup
@@ -312,7 +320,7 @@ export function kidOverview(
           history.append(
             text(
               "p",
-              `${p.term} · ${p.status} · ${p.amount_mur === null ? "amount not recorded" : `Rs ${p.amount_mur}`} · ${p.note} · ${p.actor_email} · ${new Date(p.recorded_at).toLocaleString()}`,
+              `${p.term} · ${p.status === "waived" ? "no payment needed" : `${p.status} · ${p.amount_mur === null ? "amount not recorded" : `Rs ${p.amount_mur}`}`} · ${p.note} · ${p.actor_email} · ${new Date(p.recorded_at).toLocaleString()}`,
             ),
           );
       } catch (error) {
@@ -336,6 +344,7 @@ export function kidOverview(
     for (const [value, label] of [
       ["paid", "Paid"],
       ["unpaid", "Unpaid"],
+      ["waived", "No payment needed"],
     ]) {
       const option = document.createElement("option");
       option.value = value;
@@ -367,7 +376,7 @@ export function kidOverview(
       noteLabel,
       text(
         "p",
-        `Applies to ${semester.label}. Fees: Rs ${semester.childFeeMur} per child / Rs ${semester.familyFeeMur} per family. Amount is the total recorded for this child or the attributed family payment; explain shared payments in the note.`,
+        `Applies to ${semester.label}. Fees: Rs ${semester.childFeeMur} per child / Rs ${semester.familyFeeMur} per family. Amount is the total recorded for this child or the attributed family payment; explain shared payments in the note. No payment needed makes a Cup entrant a wildcard in the public lineup.`,
       ),
       text(
         "p",

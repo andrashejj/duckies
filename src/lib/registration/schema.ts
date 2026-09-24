@@ -151,7 +151,7 @@ export const emailSchema = z
 export const paymentSchema = z
   .object({
     term: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,39}$/),
-    status: z.enum(["paid", "unpaid"]),
+    status: z.enum(["paid", "unpaid", "waived"]),
     amountMur: z.number().min(0).max(1000000).multipleOf(0.01).nullable(),
     note: text(1000),
   })

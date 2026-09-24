@@ -13,7 +13,7 @@ import { correctedBirthDateSql } from "./birth-date-corrections";
 import { waiver, WAIVER_VERSION } from "./policy";
 import { ageAt, submissionSchema, type RegistrationInput, type RegistrationPlan } from "./schema";
 import { getSemester, semesters } from "./semesters";
-import { CUP_TERM, isCupTerm } from "./cup";
+import { CUP_TERM, isCupTerm, type CupPayment } from "./cup";
 import { waiverPdf, type SignedSnapshot } from "./pdf";
 export const sha256 = (value: string | Buffer) =>
   createHash("sha256").update(value).digest("hex");
@@ -504,15 +504,26 @@ export type OrganiserKid = {
     member: boolean;
     // What the family asked for at sign-up: the Cup alone, or club membership.
     plan: "cup" | "club";
+    payment: CupPayment;
     contactName: string;
     contactPhone: string;
     createdAt: string;
   } | null;
 };
+// The latest payment status a kid has on a term, or NULL if none is recorded.
+const paymentStatusSql = (kid: string, term: string) =>
+  `(SELECT status FROM club_payment_event WHERE kid_id=${kid} AND term=${term} ORDER BY recorded_at DESC, id DESC LIMIT 1)`;
 // Membership, as one SQL predicate: a signed registration and the current
-// semester paid. Shared by the roster and the cup so they never disagree.
+// semester settled — paid, or no payment needed. Shared by the roster and the
+// cup so they never disagree.
 export const memberPaidSql = (kid: string, currentTerm: string) =>
-  `EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=${kid}) AND COALESCE((SELECT status='paid' FROM club_payment_event WHERE kid_id=${kid} AND term=${currentTerm} ORDER BY recorded_at DESC, id DESC LIMIT 1), false)`;
+  `EXISTS (SELECT 1 FROM club_signed_waiver WHERE kid_id=${kid}) AND COALESCE(${paymentStatusSql(kid, currentTerm)} IN ('paid','waived'), false)`;
+// A Cup entrant's fee as a CupPayment: paid if the current semester or the
+// cup's own term is paid, waived if either is marked no payment needed, and
+// pending otherwise — however the family entered.
+export const cupPaymentSql = (kid: string, currentTerm: string) =>
+  `(SELECT CASE WHEN 'paid' IN (s, c) THEN 'paid' WHEN 'waived' IN (s, c) THEN 'waived' ELSE 'pending' END
+    FROM (SELECT ${paymentStatusSql(kid, currentTerm)} AS s, ${paymentStatusSql(kid, `'${CUP_TERM}'`)} AS c) p)`;
 // A member kid's legal guardians are club members. Every write that can make
 // that true (a signed registration, the fee recorded, a guardian added) syncs
 // these kids' guardians; membership only ends by hand or with the last shared
@@ -531,7 +542,7 @@ export async function organiserRoster(term: string, currentTerm: string): Promis
     (SELECT json_build_object('dateOfBirth',c.date_of_birth,'previousDate',c.previous_date,'actorEmail',c.actor_email,'reason',c.reason,'recordedAt',c.recorded_at) FROM club_birth_date_correction c WHERE c.waiver_id=w.id AND c.kid_id=k.id ORDER BY c.recorded_at DESC,c.id DESC LIMIT 1) AS birth_date_correction,
     (SELECT json_build_object('status',p.status,'amountMur',p.amount_mur,'note',p.note,'recordedAt',p.recorded_at) FROM club_payment_event p WHERE p.kid_id=k.id AND p.term=$1 ORDER BY recorded_at DESC, id DESC LIMIT 1) AS payment,
     (SELECT json_build_object('expiresAt',l.expires_at,'completedAt',l.completed_at) FROM club_registration_link l WHERE l.kid_id=k.id AND l.revoked_at IS NULL AND l.term=$1 ORDER BY created_at DESC LIMIT 1) AS link,
-    (SELECT json_build_object('edition',c.edition,'member',c.member,'plan',c.plan,'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
+    (SELECT json_build_object('edition',c.edition,'member',c.member,'plan',c.plan,'payment',${cupPaymentSql("k.id", "$2")},'contactName',c.contact_name,'contactPhone',c.contact_phone,'createdAt',c.created_at) FROM club_cup_entry c WHERE c.kid_id=k.id ORDER BY c.created_at DESC LIMIT 1) AS cup,
     ${memberPaidSql("k.id", "$2")} AS member_paid,
     COALESCE((SELECT json_agg(m.email) FROM club_current_guardian g JOIN club_member m ON m.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS approved_guardians,
     COALESCE((SELECT json_agg(json_build_object('name',COALESCE(p.name,g.name),'email',g.email,'phone',COALESCE(p.phone,g.phone),'relationship',g.relationship)) FROM club_current_guardian g LEFT JOIN club_parent_profile p ON p.email=g.email WHERE g.kid_id=k.id), '[]'::json) AS family_guardians

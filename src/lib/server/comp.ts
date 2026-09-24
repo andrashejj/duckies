@@ -2,7 +2,7 @@ import { boundaryTies, cupTimetable, progressiveDraw, roundReadiness, type CupPl
 import type { APIRoute } from "astro";
 import type pg from "pg";
 import { CUP_LABEL, CUP_TERM, publicName } from "../registration/cup";
-import { memberPaidSql, RegistrationError } from "../registration/records";
+import { cupPaymentSql, RegistrationError } from "../registration/records";
 import { correctedBirthDateSql } from "../registration/birth-date-corrections";
 import { ageAt } from "../registration/schema";
 import { getSemester } from "../registration/semesters";
@@ -86,16 +86,17 @@ export async function readConfig(db: Db = getDatabase(), edition = CUP_TERM, loc
   return configFromRow(rows[0]);
 }
 
-// Who is coming: every kid with a cup entry, age from their latest signed form.
+// Who is coming: every kid with a cup entry, age from their latest signed form,
+// and where they stand on the fee (the organisers' business only).
 export async function readEntrants(db: Db = getDatabase(), edition = CUP_TERM): Promise<Entrant[]> {
   const { rows } = await db.query(
-    `SELECT k.id, k.name, c.member, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version,
+    `SELECT k.id, k.name, ${cupPaymentSql("k.id", "(SELECT id FROM club_semester WHERE is_current)")} AS payment, (SELECT updated_at FROM club_kid_photo WHERE kid_id=k.id) AS photo_version,
       (SELECT ${correctedBirthDateSql("w")} FROM club_signed_waiver w WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
     FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id
     WHERE c.edition=$1 AND k.archived_at IS NULL ORDER BY lower(k.name), k.id`,
     [edition],
   );
-  return rows.map((row) => ({ id: row.id, name: row.name, member: row.member, age: row.dob ? ageAt(row.dob) : null, photoVersion: row.photo_version ? new Date(row.photo_version).toISOString() : null }));
+  return rows.map((row) => ({ id: row.id, name: row.name, payment: row.payment, age: row.dob ? ageAt(row.dob) : null, photoVersion: row.photo_version ? new Date(row.photo_version).toISOString() : null }));
 }
 
 export async function readHeats(db: Db = getDatabase(), edition = CUP_TERM): Promise<Heat[]> {
@@ -187,15 +188,16 @@ export async function loadLive(edition = CUP_TERM) {
   };
 }
 
-export type LineupSurfer = { number: number; name: string; age: number | null; member: boolean; heat: { label: string; colour: Rashie } | null };
+export type LineupSurfer = { number: number; name: string; age: number | null; wildcard: boolean; heat: { label: string; colour: Rashie } | null };
 /** The public lineup for the Cup page: who is in, in the order they signed up.
- *  Public names only; a heat and rashie colour once the board is live. */
+ *  Public names only, a wildcard where no payment is needed (never who has
+ *  paid), and a heat and rashie colour once the board is live. */
 export async function loadLineup(edition = CUP_TERM): Promise<{ name: string; surfers: LineupSurfer[] }> {
   const db = getDatabase();
   const semester = await getSemester();
   const [entries, event] = await Promise.all([
     db.query(
-      `SELECT k.id, k.name, c.member OR ${memberPaidSql("k.id", "$2")} AS member,
+      `SELECT k.id, k.name, ${cupPaymentSql("k.id", "$2")} = 'waived' AS wildcard,
         (SELECT ${correctedBirthDateSql("w")} FROM club_signed_waiver w WHERE kid_id=k.id ORDER BY signed_at DESC LIMIT 1) AS dob
       FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id
       WHERE c.edition=$1 AND k.archived_at IS NULL ORDER BY c.created_at, k.id`,
@@ -208,7 +210,7 @@ export async function loadLineup(edition = CUP_TERM): Promise<{ name: string; su
   return {
     name: CUP_LABEL,
     surfers: entries.rows.map((row, index) => ({
-      number: index + 1, name: publicName(row.name), age: row.dob ? ageAt(row.dob) : null, member: Boolean(row.member), heat: drawn.get(row.id) ?? null,
+      number: index + 1, name: publicName(row.name), age: row.dob ? ageAt(row.dob) : null, wildcard: Boolean(row.wildcard), heat: drawn.get(row.id) ?? null,
     })),
   };
 }

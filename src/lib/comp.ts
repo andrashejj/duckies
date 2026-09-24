@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cupPlanSchema, type CupPlan } from "./cup-plan-config";
+import type { CupPayment } from "./registration/cup";
 
 // Cup day: the heat draw, the judges' scores and the leaderboard. Pure logic
 // shared by the server (src/lib/server/comp.ts), the organiser board, the
@@ -15,7 +16,7 @@ export type HeatStatus = "scheduled" | "running" | "done";
 export const heatStatuses: HeatStatus[] = ["scheduled", "running", "done"];
 
 export type CupConfig = { edition: string; rounds: number; heatSize: number; finalSize: number; live: boolean; version: number; plan?: CupPlan | null; finalReview?: { order: string[]; reason: string } | null };
-export type Entrant = { id: string; name: string; age: number | null; member: boolean; photoVersion: string | null };
+export type Entrant = { id: string; name: string; age: number | null; payment: CupPayment; photoVersion: string | null };
 export type Slot = { kidId: string; colour: Rashie };
 export type Heat = { id: string; stage: HeatStage; round: number; number: number; status: HeatStatus; startedAt: string | null; finishedAt: string | null; slots: Slot[]; judges: string[]; durationMinutes: number; endsAt: string | null };
 export type Wave = { id: string; heatId: string; kidId: string; judge: string; wave: number; score: number };

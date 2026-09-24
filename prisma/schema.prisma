@@ -250,7 +250,8 @@ model ClubCupEntry {
   edition       String
   member        Boolean
   // What the family asked for at sign-up: "cup" alone, or "club" membership
-  // with it. `member` is whether entry is free because they are paid up.
+  // with it. `member` is whether they entered as a club family; where the fee
+  // stands now (paid, pending, or no payment needed) is cupPaymentSql.
   plan          String   @default("cup")
   contact_name  String
   contact_phone String

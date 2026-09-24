@@ -203,6 +203,58 @@ test("the roster tells a family who joined the club apart from a cup-only entry"
   await expect(visitor).not.toContainText("cup form not signed yet");
 });
 
+test("every cup entrant is payment pending until the fee is paid, and a wildcard only when Andras marks no payment needed", async ({ request, playwright, page }) => {
+  await db.query("INSERT INTO cup_event (edition) VALUES ($1) ON CONFLICT DO NOTHING", [CUP_TERM]);
+  await signIn(request, organiser);
+  // A returning duckie a guardian put on the list (the entry says member),
+  // a family joining the club and the Cup on the public form, and a cup-only visitor.
+  const zoe = await registeredKid(request, "Zoë Test Surfer");
+  await db.query("INSERT INTO club_cup_entry (kid_id, edition, member, plan, contact_name, contact_phone) VALUES ($1,$2,true,'club','Test Guardian',$3)", [zoe, CUP_TERM, guardianPhone]);
+  await signDraft("both", payload("Kai Joiner", "kai@example.com", "+230 5900 5566"), payload("Lou Joiner", "kai@example.com", "+230 5900 5566"));
+  await signDraft("cup", payload("Nina Visitor", "nina@example.com", "+230 5900 9900"));
+  const id = async (name: string) => (await db.query("SELECT id FROM club_kid WHERE name=$1", [name])).rows[0].id as string;
+  const [kai, lou, nina] = [await id("Kai Joiner"), await id("Lou Joiner"), await id("Nina Visitor")];
+  const organisers = async () => ((await (await request.get("/api/admin/cup")).json()).entrants as { name: string; payment: string }[])
+    .map(({ name, payment }) => [name, payment]).sort(([a], [b]) => a.localeCompare(b));
+  const wildcards = async () => ({
+    lineup: ((await (await guest.get("/api/cup/lineup")).json()).surfers as { name: string; wildcard: boolean }[]).filter((kid) => kid.wildcard).map((kid) => kid.name),
+    members: ((await (await request.get("/api/members/cup")).json()).entrants as { name: string; wildcard: boolean }[]).filter((kid) => kid.wildcard).map((kid) => kid.name),
+  });
+  expect(await organisers()).toEqual([["Kai Joiner", "pending"], ["Lou Joiner", "pending"], ["Nina Visitor", "pending"], ["Zoë Test Surfer", "pending"]]);
+  expect(await wildcards()).toEqual({ lineup: [], members: [] });
+
+  const andras = await playwright.request.newContext({ baseURL: origin });
+  await signIn(andras, owner);
+  const record = async (kidId: string, term: string, status: string) =>
+    expect((await andras.post(`/api/kids/${kidId}/payment`, post({ term, status, amountMur: 500, note: "Test" }))).status()).toBe(201);
+  await record(kai, "2026-S2", "paid");
+  await record(lou, "2026-S2", "waived");
+  await record(nina, CUP_TERM, "waived");
+  await andras.dispose();
+  // No payment needed carries no amount; on the semester it still makes a member.
+  expect((await db.query("SELECT amount_mur FROM club_payment_event WHERE status='waived'")).rows).toEqual([{ amount_mur: null }, { amount_mur: null }]);
+  const roster = (await (await request.get("/api/kids")).json()).kids as { name: string; memberPaid: boolean }[];
+  expect(roster.find((kid) => kid.name === "Lou Joiner")!.memberPaid).toBe(true);
+  expect(roster.find((kid) => kid.name === "Zoë Test Surfer")!.memberPaid).toBe(false);
+
+  // Organisers see where each fee stands; in public, and to other members, only who is a wildcard.
+  expect(await organisers()).toEqual([["Kai Joiner", "paid"], ["Lou Joiner", "waived"], ["Nina Visitor", "waived"], ["Zoë Test Surfer", "pending"]]);
+  expect(await wildcards()).toEqual({ lineup: ["Lou J.", "Nina V."], members: ["Lou Joiner", "Nina Visitor"] });
+  const lineup = JSON.stringify(await (await guest.get("/api/cup/lineup")).json());
+  expect(lineup).not.toMatch(/paid|pending|waived|payment/);
+
+  await page.context().addCookies((await request.storageState()).cookies);
+  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  const row = (name: string) => page.locator(".duckie-profile").filter({ hasText: name }).locator(".duckie-summary");
+  await expect(row("Kai Joiner")).toContainText("Cup 02");
+  await expect(row("Kai Joiner")).not.toContainText("Cup 02 ·");
+  await expect(row("Lou Joiner")).toContainText("Cup 02 · no payment");
+  await expect(row("Lou Joiner")).toContainText("No payment");
+  await expect(row("Nina Visitor")).toContainText("Cup 02 · no payment");
+  await expect(row("Zoë Test Surfer")).toContainText("Cup 02 · pending");
+  await expect(row("Zoë Test Surfer")).toContainText("Pending");
+});
+
 test("the roster takes a duckie's full name from the family's first signature, but never renames one the club typed", async ({ request }) => {
   await signIn(request, organiser);
   // The club's own roster names are deliberately short: a signature carrying a
@@ -286,8 +338,8 @@ test("the public lineup lists who is in, in sign-up order, by first name and ini
   expect((await family.post(`/api/cup/kids/${kidId}`, { headers: { origin } })).status()).toBe(201);
   const { surfers } = await (await guest.get("/api/cup/lineup")).json();
   expect(surfers).toEqual([
-    { number: 1, name: "Mila W.", age: expect.any(Number), member: false, heat: null },
-    { number: 2, name: "Zoë S.", age: expect.any(Number), member: true, heat: null },
+    { number: 1, name: "Mila W.", age: expect.any(Number), wildcard: false, heat: null },
+    { number: 2, name: "Zoë S.", age: expect.any(Number), wildcard: false, heat: null },
   ]);
   await family.dispose();
 });
