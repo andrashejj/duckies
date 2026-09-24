@@ -30,7 +30,7 @@ test("signed-in members find their own profile from the public header and save i
   await page.locator("[data-session-entry]").click();
   await expect(page).toHaveURL(/\/members$/);
   const nav = page.getByRole("navigation", { name: "Mobile member navigation" });
-  await expect(nav.getByRole("link")).toHaveText(["My Feed", "Club Gallery", "Members", "My Family"]);
+  await expect(nav.getByRole("link")).toHaveText(["My Feed", "Club Gallery", "Members", "Cup", "My Family"]);
   await expect(nav.getByRole("link", { name: "My Feed", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(page.getByLabel("Your post")).toBeHidden();
   await expect(page.getByRole("button", { name: "Like post", exact: true }).first()).toBeEnabled();

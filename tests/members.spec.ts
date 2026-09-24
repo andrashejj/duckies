@@ -11,7 +11,7 @@ const origin = "http://127.0.0.1:4329";
 
 
 test.beforeEach(async () => {
-  await db.query('TRUNCATE club_member_archive,club_kid, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
   await db.query("INSERT INTO club_member (email, role) VALUES ($1, 'organiser'), ($2, 'member')", [organiser, member]);
 });
 test.afterAll(async () => { await db.end(); });

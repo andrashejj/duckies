@@ -10,7 +10,7 @@ const post = (data: unknown) => ({ headers: { origin }, data });
 const photoKey = "curated:standing-tall";
 
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'member'),($2,'organiser'),($3,'member')", [parent,organiser,stranger]);
   const kids = (await db.query("INSERT INTO club_kid(name) VALUES('Lara Test'),('Milo Test') RETURNING id")).rows;
   mine = kids[0].id; other = kids[1].id;

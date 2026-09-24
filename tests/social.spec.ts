@@ -8,7 +8,7 @@ const parent='social-parent@example.com',friend='social-friend@example.com',orga
 const send=(data:unknown)=>({headers:{origin},data});
 let admin:APIRequestContext,other:APIRequestContext,kid:string;
 test.beforeEach(async({playwright})=>{
-  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit,gallery_upload CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES($1,'member'),($2,'member'),($3,'organiser')",[parent,friend,organiser]);
   kid=(await db.query("INSERT INTO club_kid(name) VALUES('Lara Test') RETURNING id")).rows[0].id;
   await db.query("INSERT INTO club_guardian_access(kid_id,email,name,relationship,phone,updated_by) VALUES($1,$2,'Maya','Parent','+230 5555 0000',$2)",[kid,parent]);

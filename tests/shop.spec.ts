@@ -31,7 +31,7 @@ async function order(request: APIRequestContext, email = "shopper@example.com") 
 }
 
 test.beforeEach(async ({ request }) => {
-  await db.query('TRUNCATE club_member_archive,club_kid, club_member, "user", "session", account, verification, "rateLimit", "Drop", "Product", "Order", shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid, club_member, "user", "session", account, verification, "rateLimit", "Drop", "Product", "Order", shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member (email, role) VALUES ($1, 'organiser'), ($2, 'member')", [organiser, member]);
   const drop = await prisma.drop.create({ data: { slug: "test-drop", name: "Test Drop", status: "LIVE" } });
   dropId = drop.id;

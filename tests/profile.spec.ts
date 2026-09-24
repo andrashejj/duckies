@@ -42,7 +42,7 @@ const pay = (kidId: string, term = "2026-S2") =>
   db.query("INSERT INTO club_payment_event (kid_id,term,status,amount_mur,note,actor_email) VALUES ($1,$2,'paid',3000,'Cash',$3)", [kidId, term, owner]);
 
 test.beforeEach(async ({ playwright }) => {
-  await db.query('TRUNCATE club_member_archive,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query(
     "INSERT INTO club_member(email,role) VALUES ($1,'organiser'),($2,'organiser'),($3,'member'),($4,'member')",
     [owner, organiser, guardian, stranger],
