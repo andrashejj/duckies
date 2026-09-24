@@ -128,11 +128,16 @@ test("anyone joins the club from the public form: nothing on the roster until th
   expect(info).toMatchObject({ cup: false, cupIncluded: false, paid: false, term: "2026-S2", childName: "Noa New", childFeeMur: 3000, familyFeeMur: 5000 });
   expect(info.completedAt).toBeTruthy();
   expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(0);
-  // The same family on a fresh public form is sent to sign in instead of signing twice.
+  // The same guardian on a fresh public form re-signs the same duckie — a
+  // renewal, not a second child — but nobody else can sign for them by name
+  // and number alone.
+  const stranger = await signDraft("club", payload("Noa New", "stranger@example.com"));
+  expect(stranger.response.status()).toBe(400);
+  expect((await stranger.response.json()).error).toContain("already registered with the club");
   const again = await signDraft("club", payload("Noa New"));
-  expect(again.response.status()).toBe(400);
-  expect((await again.response.json()).error).toContain("already registered with the club");
+  expect(again.response.status()).toBe(201);
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
+  expect((await db.query("SELECT count(*)::int AS n FROM club_signed_waiver")).rows[0].n).toBe(2);
   await signIn(request, organiser);
   let kid = (await (await request.get("/api/kids")).json()).kids[0];
   expect(kid).toMatchObject({ name: "Noa New", contactName: "Test Guardian", contactPhone: guardianPhone, payment: null, memberPaid: false, approvedGuardians: [] });
@@ -229,6 +234,46 @@ test("the public form picks up a pending duckie the club already recorded a fee 
   expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
 });
 
+// A family whose older duckie is already registered — last semester, or on a
+// form of their own — puts them on the new sibling's form. The guardian
+// signing is on the older registration, so both are signed and on the Cup
+// list; a name and a number alone, or a guardian the record does not know,
+// still cannot re-sign it.
+test("a returning duckie comes along on a sibling's public form when the signing guardian is already on their registration", async ({ request }) => {
+  await signIn(request, organiser);
+  await db.query("INSERT INTO club_semester (id,label,starts_on,ends_on,child_fee_mur,family_fee_mur) VALUES ('2026-S1','February 2026 semester','2026-02-01','2026-06-30',3000,5000) ON CONFLICT (id) DO NOTHING");
+  const phone = "+230 5811 2233";
+  const mother = { name: "Theola Parent", relationship: "Mother", phone, email: "theola@example.com" };
+  // The other parent shares the family number, so the form finds Marc either way.
+  const father = { name: "Other Parent", relationship: "Father", phone, email: "other.parent@example.com" };
+  const family = (childName: string, ...guardians: typeof mother[]) =>
+    ({ ...payload(childName, mother.email, phone), guardians, signerName: guardians[0].name });
+  // Marc signed for last semester through the club's invitation, by his mother.
+  const marc = (await (await request.post("/api/kids", post({ name: "Marc-Emmanuel" }))).json()).kid.id as string;
+  const link = await (await request.post(`/api/kids/${marc}/link?term=2026-S1`, { headers: { origin } })).json();
+  await stageProfilePhoto(guest, linkHeaders(link.url));
+  expect((await guest.post("/api/registration", { headers: linkHeaders(link.url), data: submission(family("Marc-Emmanuel Family", mother)) })).status()).toBe(201);
+  // The father, not on Marc's registration, cannot sign for him from the public form.
+  const byFather = await signDraft("both", family("Emma-Jayne Family", father), family("Marc-Emmanuel Family", father));
+  expect(byFather.response.status()).toBe(400);
+  expect((await byFather.response.json()).error).toContain("Marc-Emmanuel Family is already registered with the club. Sign in");
+  // Nor can the mother add him as a guardian through it.
+  const addingFather = await signDraft("both", family("Emma-Jayne Family", mother, father), family("Marc-Emmanuel Family", mother, father));
+  expect(addingFather.response.status()).toBe(400);
+  expect((await addingFather.response.json()).error).toContain("Other Parent is not on their registration yet");
+  expect((await db.query("SELECT count(*)::int AS n FROM club_kid")).rows[0].n).toBe(1);
+  // The mother signs for both: one new duckie, one renewed, both on the Cup list.
+  const { response } = await signDraft("both", family("Emma-Jayne Family", mother), family("Marc-Emmanuel Family", mother));
+  expect(response.status()).toBe(201);
+  expect((await db.query(`SELECT k.name, k.created_by IS NOT NULL AS club_named,
+      (SELECT string_agg(w.term, ',' ORDER BY w.signed_at) FROM club_signed_waiver w WHERE w.kid_id=k.id) AS terms,
+      (SELECT plan FROM club_cup_entry c WHERE c.kid_id=k.id AND c.edition=$1) AS cup
+    FROM club_kid k ORDER BY k.name`, [CUP_TERM])).rows).toEqual([
+    { name: "Emma-Jayne Family", club_named: false, terms: "2026-S2", cup: "club" },
+    { name: "Marc-Emmanuel", club_named: true, terms: "2026-S1,2026-S2", cup: "club" },
+  ]);
+});
+
 test("the public lineup lists who is in, in sign-up order, by first name and initial only", async ({ request, playwright }) => {
   await signIn(request, organiser);
   const kidId = await registeredKid(request, "Zoë Test Surfer");
@@ -253,8 +298,9 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   await signIn(request, organiser);
   const kidId = await registeredKid(request);
   await registeredKid(request, "Somebody Else", "other@example.com");
-  // The public form recognises a club family and sends them to sign in.
-  const asGuest = await signDraft("cup", payload("zoë t.", guardian, "5555-1234"));
+  // The public form recognises a club family; someone who is not on the
+  // duckie's registration is sent to sign in.
+  const asGuest = await signDraft("cup", payload("zoë t.", "other@example.com", "5555-1234"));
   expect(asGuest.response.status()).toBe(400);
   expect((await asGuest.response.json()).error).toContain("Sign in with the guardian email");
   expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(0);

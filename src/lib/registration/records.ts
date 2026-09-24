@@ -276,10 +276,29 @@ export async function completeRegistration(
       // that duckie up by name and a guardian's number instead of adding a
       // second one.
       const matched = draft ? await rosterMatch(db, child.childName, shared.guardians, kidIds) : null;
-      if (matched?.signed)
-        throw new RegistrationError(
-          `${child.childName} is already registered with the club. Sign in with the guardian email on their registration to renew or correct it — or message the club on WhatsApp.`,
-        );
+      if (matched?.signed) {
+        // A duckie the family registered before — last semester, for the Cup
+        // alone, or on a form of their own — comes along on a sibling's form.
+        // A name and a number are not enough to re-sign a signed record: the
+        // guardian signing must already be on it, and the public form never
+        // adds a guardian to one (that happens signed in, on the family page),
+        // so nobody gains access to a family by knowing who they are.
+        const current = (
+          await db.query("SELECT email FROM club_current_guardian WHERE kid_id=$1", [matched.id])
+        ).rows.map((row) => row.email as string);
+        if (!current.includes(shared.guardians[0].email))
+          throw new RegistrationError(
+            `${child.childName} is already registered with the club. Sign in with the guardian email on their registration to renew or correct it — or message the club on WhatsApp.`,
+          );
+        const added = shared.guardians.find((guardian) => !current.includes(guardian.email));
+        if (added)
+          throw new RegistrationError(
+            `${child.childName} is already registered with the club, and ${added.name} is not on their registration yet. Sign in with the guardian email on it to add a guardian — or message the club on WhatsApp.`,
+          );
+        // The name a signed registration carries stays; see the invited case.
+        kidIds.push(matched.id);
+        continue;
+      }
       if (matched) {
         await db.query("UPDATE club_kid SET name=$2 WHERE id=$1 AND created_by IS NULL", [matched.id, child.childName]);
         kidIds.push(matched.id);
