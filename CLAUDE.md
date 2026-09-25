@@ -8,6 +8,7 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 - `/` — home
 - `/training-materials` — training library
 - `/blog` — club logbook (posts live in `src/data/blog.ts`, e.g. `/blog/le-morne-reef-tour`)
+- `/members/training` — club training: the roll call (organisers and selected coaches mark it, members see it) and the club points leaderboard; `/coach` and `/admin/training` redirect here
 
 ## Commands
 - `pnpm install`

@@ -1,0 +1,5 @@
+---
+export const prerender = false;
+// The short link coaches were sent; the roll call lives in the club now.
+return Astro.redirect(`/members/training${Astro.url.search}`);
+---

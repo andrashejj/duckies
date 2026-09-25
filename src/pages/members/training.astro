@@ -1,0 +1,32 @@
+---
+export const prerender = false;
+import { z } from "zod";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ClubTraining from "../../components/react/ClubTraining";
+import { clubToday } from "../../lib/club-points";
+import { canManagePoints, pointRules, trainingBoard } from "../../lib/server/club-points";
+import { readCoaches, trainingAccess } from "../../lib/server/coaches";
+import { readParentProfiles } from "../../lib/server/parent-profiles";
+// Club members and selected coaches reach this far (see middleware). Everyone
+// sees the roll and the leaderboard; organisers and coaches call the roll, and
+// organisers also pick the coaches and see the point values.
+const email = Astro.locals.session!.user.email;
+const access = await trainingAccess(email);
+const today = clubToday();
+const chosen = z.iso.date().safeParse(Astro.url.searchParams.get("date"));
+let board, organiser = null;
+if (access) try {
+  board = await trainingBoard(chosen.success && chosen.data <= today ? chosen.data : today, email, access);
+  if (access === "organiser") {
+    const [rules, coaches, people] = await Promise.all([pointRules(), readCoaches(), readParentProfiles()]);
+    organiser = { rules, canEditRules: canManagePoints(email), coaches, people: people.filter(person => person.name.trim()).map(person => ({ email: person.email, name: person.name })) };
+  }
+} catch { Astro.response.status = 503; }
+else Astro.response.status = 403;
+---
+<BaseLayout title="Training · Sunset Duckies" variant="journal">
+  <section class="club-home">
+    <header class="social-page-header"><div><h1>Training</h1><p>Monday & Friday · 4–6pm · Tamarin Bay</p></div><span class="social-private">Members only</span></header>
+    {board ? <ClubTraining client:load initial={board} organiser={organiser} /> : <p role="alert" class="social-error">{access ? "Training is temporarily unavailable. Please reload to try again." : "Training is for club members."}</p>}
+  </section>
+</BaseLayout>
