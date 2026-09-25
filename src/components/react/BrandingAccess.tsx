@@ -2,12 +2,15 @@ import { useState } from "react";
 import { authClient } from "../../lib/auth-client";
 import type { BrandingStatus } from "../../lib/branding";
 import { bButton, bField, bLink, bPanel, bPanelTitle } from "../../lib/plan-ui";
+import { useHydrated } from "./useHydrated";
 
 export default function BrandingAccess({email:initialEmail,status,verified}:{email:string|null;status:BrandingStatus|null;verified:boolean}) {
   const [email,setEmail]=useState(initialEmail??"");
   const [name,setName]=useState("");const [reason,setReason]=useState("");
   const [step,setStep]=useState<"request"|"code">("request");const [code,setCode]=useState("");
   const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
+  // Until React takes over, the form would submit natively as a GET and drop what was typed.
+  const ready=useHydrated();
   async function submitRequest(){
     const r=await fetch("/api/branding/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:email.trim().toLowerCase(),name,reason})});
     const data=await r.json();if(!r.ok)throw new Error(data.error);return data;
@@ -28,15 +31,15 @@ export default function BrandingAccess({email:initialEmail,status,verified}:{ema
           const {error}=await authClient.signIn.emailOtp({email:email.trim().toLowerCase(),otp:code});if(error)throw new Error("That code didn’t work. Check it or request another.");
           await submitRequest();window.location.assign("/branding-plan");
         }
-      });}}>
+      });}}><fieldset disabled={!ready} className="contents">
         {step==="request"?<><label>Your name<input className={bField} autoComplete="name" required maxLength={80} value={name} onChange={e=>setName(e.target.value)}/></label>
           <label>Email address<input className={bField} type="email" autoComplete="email" required maxLength={254} readOnly={Boolean(initialEmail)} value={email} onChange={e=>setEmail(e.target.value)}/></label>
           <label>How would you like to contribute? <span>(optional)</span><textarea className={bField} maxLength={1000} rows={3} value={reason} onChange={e=>setReason(e.target.value)}/></label></>:
           <label>Six-digit code<input className={bField} autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required minLength={6} maxLength={6} value={code} onChange={e=>setCode(e.target.value)}/></label>}
         <button className={bButton} disabled={busy}>{busy?"One moment…":step==="code"?"Verify & request access":initialEmail?"Request access":"Request access"}</button>
         {step==="code"&&<button type="button" className={bLink} disabled={busy} onClick={()=>{setStep("request");setCode("");}}>Change email or resend code</button>}
-      </form></>}
+      </fieldset></form></>}
     <p role="status" aria-live="polite">{message}</p>
-    {initialEmail?<button className={bLink} onClick={()=>void run(async()=>{const {error}=await authClient.signOut();if(error)throw new Error("Could not sign out. Please retry.");window.location.assign("/branding-plan");})}>Sign out</button>:<p>Already approved? <a className={bLink} href="/login?next=%2Fbranding-plan">Sign in →</a></p>}
+    {initialEmail?<button className={bLink} disabled={!ready||busy} onClick={()=>void run(async()=>{const {error}=await authClient.signOut();if(error)throw new Error("Could not sign out. Please retry.");window.location.assign("/branding-plan");})}>Sign out</button>:<p>Already approved? <a className={bLink} href="/login?next=%2Fbranding-plan">Sign in →</a></p>}
   </div>;
 }
