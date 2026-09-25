@@ -7,7 +7,7 @@ const session = Astro.locals.session;
 const admin = mode === "admin";
 const path = Astro.url.pathname;
 const items = admin ? [
-  ["training", "Training & points", "/admin/training"],
+  ["training", "Training & points", "/members/training"],
   ["kids", "Duckies", "/admin/kids"], ["parents", "Parents", "/admin/parents"], ["cup", "Cup day", "/admin/cup"],
   ["dashboard", "Shop overview", "/admin"], ["orders", "Reservations", "/admin/orders"], ["drops", "Drops", "/admin/drops"],
   ["products", "Products", "/admin/products"], ["customers", "Customers", "/admin/customers"], ["gallery", "Gallery", "/admin/gallery"],
