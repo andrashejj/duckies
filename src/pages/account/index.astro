@@ -1,5 +1,5 @@
 ---
 export const prerender = false;
 const session = Astro.locals.session!;
-return Astro.redirect(session.member ? "/members" : session.archivedAt ? "/members/me" : session.family ? "/members/profile" : "/account/profile");
+return Astro.redirect(session.member ? "/members" : session.archivedAt ? "/members/me" : session.family ? "/members/profile" : session.coach ? "/members/training" : "/account/profile");
 ---

@@ -18,8 +18,8 @@ Site and member app for a volunteer-run, member-funded surf club for kids in Tam
 ## Routes
 Public pages are prerendered; anything needing a session sets `export const prerender = false`. `src/middleware.ts` does session, membership, admin and branding-access checks and `no-store` headers for private paths — check it when adding a private route.
 - Public: `/`, `/blog` (club logbook, posts in `src/data/blog.ts`), `/training-materials`, `/register`, `/sunset-duckies-cup`, `/sunset-duckies-cup-vol-2` (+ `/live` leaderboard), `/s/[token]` (public share links), `/login`
-- Members: `/members` (+ `lineup`, `me`, `profile` = My family, `people/[id]`, `posts/[id]`), `/gallery/*`, `/shop`, `/account/*`, `/orders/[id]`
-- Organisers: `/admin/*` (kids, parents, training, cup, gallery, drops, products, orders, customers); judges: `/cup/judge`
+- Members: `/members` (+ `lineup`, `me`, `profile` = My family, `people/[id]`, `posts/[id]`, `training` = the roll call and club points leaderboard, organisers and selected coaches mark it), `/gallery/*`, `/shop`, `/account/*`, `/orders/[id]`
+- Organisers: `/admin/*` (kids, parents, cup, gallery, drops, products, orders, customers); judges: `/cup/judge`; `/coach` and `/admin/training` redirect to `/members/training`
 - Branding workspace (approval-gated): `/branding-plan/*`, `/product-ideas`, `/templates/[name].html` (serves `src/private/branding/*.html`)
 - API: `src/pages/api/**` (`auth/[...all]` is Better Auth)
 

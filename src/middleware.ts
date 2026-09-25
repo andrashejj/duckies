@@ -19,6 +19,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const reservation = path === "/api/reserve";
   // The miniapp is public; scoring and private photos require a session.
   const judgePage = /^\/cup\/judge\/?$/.test(path);
+  // Club training, which selected coaches may open without club membership.
+  const trainingPage = /^\/members\/training\/?$/.test(path);
   const judge = /^\/api\/cup\/(judge|photo)(\/|$)/.test(path);
   const brandingPage=/^\/branding-plan(?:\/|$)/.test(path)||/^\/product-ideas\/?$/.test(path);
   const brandingTemplate=/^\/templates\/brand-[a-z-]+\.html\/?$/.test(path);
@@ -52,7 +54,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       const archivedAsset = archived && /^\/gallery\/(photo|asset)\//.test(path) && ["GET","HEAD"].includes(context.request.method);
       if (social && !context.locals.session?.member) return json({ error: "Sharing is for active club members." },403);
       if (archived && path === "/members") return context.redirect("/members/me");
-      if ((admin && !context.locals.isAdmin) || ((members || gallery) && !context.locals.session?.member && !(familyPage && context.locals.session?.family) && !(personalPage && archived) && !archivedAsset)) {
+      if ((admin && !context.locals.isAdmin) || ((members || gallery) && !context.locals.session?.member && !(familyPage && context.locals.session?.family) && !(trainingPage && context.locals.session?.coach) && !(personalPage && archived) && !archivedAsset)) {
         // Signed in but not a club member: the gallery is a membership perk, so point at how to join.
         if (gallery && !path.startsWith("/api/") && !path.startsWith("/gallery/photo/")) return context.redirect(archived ? "/members/me" : "/#how-to-join");
         return json({ ok: false, error: "You do not have access to this area." }, 403);

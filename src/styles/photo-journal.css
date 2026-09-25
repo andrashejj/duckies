@@ -372,10 +372,11 @@ img.social-avatar { object-fit: cover; }
 
 .family-points { margin: 0 20px 16px; padding: 12px; border-radius: 8px; background: var(--surface-2); }
 
-/* Four destinations, with club information beside the feed. */
+/* Member destinations, with club information beside the feed. */
 .journal-button { min-height: 44px; }
 .journal-desktop-nav a[aria-current], .journal-mobile-nav a[aria-current] { background: var(--surface-2); color: var(--accent-text); }
-.journal-mobile-nav a { min-height: 48px; flex: 1; border-radius: 9px; }
+/* Six destinations share the bar by label width, so 320px phones fit them all. */
+.journal-mobile-nav a { min-height: 48px; flex: 1 1 auto; min-width: 0; padding-inline: 2px; border-radius: 9px; }
 .journal-mobile-nav span { font-size: 11px; white-space: nowrap; }
 .journal-desktop-nav a { gap: 12px; white-space: nowrap; }
 .journal-desktop-nav svg { flex-shrink: 0; }

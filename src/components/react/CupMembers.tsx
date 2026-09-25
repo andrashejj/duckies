@@ -306,23 +306,6 @@ export default function CupMembers({ initial, judgeHref, liveHref, cupHref }: Pr
               ? <ul className="mt-3 flex flex-wrap gap-2" aria-label="Selected judges">{state.judges.map((name) => <li key={name} className="rounded-full border border-line px-3 py-1 text-[13px] font-semibold">{name}</li>)}</ul>
               : <p className={`${muted} mt-3`}>No judges selected yet.</p>}
           </section>
-
-          {/* The format */}
-          <section className={card} aria-labelledby="cup-format">
-            <h2 id="cup-format" className={cardTitle}>How the day works</h2>
-            {config.plan ? (
-              <ol className="mt-3 grid gap-2 text-[13px] leading-relaxed">
-                <li><strong>1 · Shuffle.</strong> Random opening heats; every registered child gets a slot.</li>
-                <li><strong>2 · Meet new surfers.</strong> {config.plan.seedAfter === 1 ? "Nearby scores start grouping, with as few repeats as possible." : "The field mixes again, avoiding repeat opponents."} Rashie colours rotate.</li>
-                <li><strong>3 · Surf near your level.</strong> Nearby qualifying scores group together. An easier group gives no extra points.</li>
-                <li><strong>4 · Finals for all.</strong> The three-round average sets the final groups. Lower groups surf first; the Cup final goes last.</li>
-              </ol>
-            ) : (
-              <p className={`${muted} mt-3`}>{config.rounds} qualifying {config.rounds === 1 ? "round" : "rounds"} in heats of up to {config.heatSize}, then a final for the top {config.finalSize}. Judges average each heat’s best two runs; five stars is the maximum.</p>
-            )}
-            <p className={`${muted} mt-3`}>Results are provisional until the organisers call them.</p>
-            {config.finalReview && <p className="mt-3 text-[13px]"><strong>Recorded tie decision:</strong> {config.finalReview.reason}</p>}
-          </section>
         </div>
       </div>
     </div>
