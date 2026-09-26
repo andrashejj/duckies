@@ -28,7 +28,7 @@ test.afterAll(async () => { await db.end(); });
 test("organisers pick coaches; coaches call the roll, members only read it, and removal ends calling at once", async ({ playwright }) => {
   const coachRequest = await playwright.request.newContext({ baseURL: origin }); await signIn(coachRequest, coach);
   expect((await board(coachRequest)).access).toBe("member");
-  expect((await coachRequest.patch("/api/training", post({ date: today, kidIds: [kids.alice], present: true }))).status()).toBe(403);
+  expect((await coachRequest.patch("/api/training", post({ date: today, sessionType: "sunset", kidIds: [kids.alice], present: true }))).status()).toBe(403);
   expect((await coachRequest.post("/api/admin/coaches", post({ email: coach }))).status()).toBe(403);
   expect((await organiserRequest.post("/api/admin/coaches", { headers: { origin: "https://evil.example" }, data: { email: coach } })).status()).toBe(403);
   expect((await organiserRequest.post("/api/admin/coaches", post({ email: "not-an-email" }))).status()).toBe(400);
@@ -42,13 +42,13 @@ test("organisers pick coaches; coaches call the roll, members only read it, and 
   const called = await board(coachRequest);
   expect(called).toMatchObject({ access: "coach", date: today, sessionPoints: 10 });
   expect(called.kids.map(kid => [kid.name, kid.guardians, kid.split])).toEqual([["Alice Duckie", "Alice Parent", null], ["Ben Duckie", "", null], ["Cleo Duckie", "", null]]);
-  expect((await coachRequest.patch("/api/training", post({ date: today, kidIds: [kids.alice, kids.ben], present: true }))).status()).toBe(200);
-  const after: TrainingBoard = await (await coachRequest.patch("/api/training", post({ date: today, kidIds: [kids.ben], present: false }))).json();
+  expect((await coachRequest.patch("/api/training", post({ date: today, sessionType: "sunset", kidIds: [kids.alice, kids.ben], present: true }))).status()).toBe(200);
+  const after: TrainingBoard = await (await coachRequest.patch("/api/training", post({ date: today, sessionType: "sunset", kidIds: [kids.ben], present: false }))).json();
   expect(after.kids.map(kid => [kid.status, kid.trainings, kid.points])).toEqual([["here", 1, 10], ["away", 0, 0], [null, 0, 0]]);
   expect((await db.query("SELECT DISTINCT recorded_by FROM club_attendance_event")).rows).toEqual([{ recorded_by: coach }]);
   expect((await board(organiserRequest)).kids[0].split).toEqual({ training: 10, granola: 0, cup: 0 });
-  expect((await coachRequest.put("/api/admin/point-rules", post({ training: 99, granola: 0, cup: 0 }))).status()).toBe(403);
-  expect((await coachRequest.patch("/api/training", post({ date: "2099-01-01", kidIds: [kids.alice], present: true }))).status()).toBe(400);
+  expect((await coachRequest.put("/api/admin/point-rules", post({ training: 99, sunrise: 0, granola: 0, cup: 0 }))).status()).toBe(403);
+  expect((await coachRequest.patch("/api/training", post({ date: "2099-01-01", sessionType: "sunset", kidIds: [kids.alice], present: true }))).status()).toBe(400);
 
   const removed = await organiserRequest.delete(`/api/admin/coaches/${encodeURIComponent(coach)}`, { headers: { origin } });
   expect(removed.status()).toBe(200); expect((await removed.json()).coaches).toEqual([]);
@@ -56,7 +56,7 @@ test("organisers pick coaches; coaches call the roll, members only read it, and 
   const reader = await board(coachRequest);
   expect(reader.access).toBe("member");
   expect(reader.kids.map(kid => kid.status)).toEqual(["here", "away", null]);
-  expect((await coachRequest.patch("/api/training", post({ date: today, kidIds: [kids.cleo], present: true }))).status()).toBe(403);
+  expect((await coachRequest.patch("/api/training", post({ date: today, sessionType: "sunset", kidIds: [kids.cleo], present: true }))).status()).toBe(403);
   expect((await organiserRequest.delete(`/api/admin/coaches/${encodeURIComponent(coach)}`, { headers: { origin } })).status()).toBe(404);
   await coachRequest.dispose();
 });
@@ -229,8 +229,9 @@ test("organisers pick coaches and see point values on the club training page", a
   expect((await db.query("SELECT email FROM club_coach")).rows).toEqual([{ email: trainer }]);
 
   const values = page.getByRole("region", { name: "Point values" });
-  await expect(values.getByLabel("Training attended")).toHaveValue("10");
-  await values.getByLabel("Training attended").fill("15");
+  await expect(values.getByLabel("Sunset Duckies attended")).toHaveValue("10");
+  await expect(values.getByLabel("Sunrise Duckies attended")).toHaveValue("5");
+  await values.getByLabel("Sunset Duckies attended").fill("15");
   await values.getByRole("button", { name: "Save point values" }).click();
   await expect(values.getByRole("status")).toContainText("Saved.");
   await expect(page.getByRole("region", { name: "Roll call" }).getByRole("button", { name: "Here: Alice Duckie" })).toContainText("+15 points");
