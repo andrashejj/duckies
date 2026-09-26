@@ -60,7 +60,7 @@ export default function TrainingOrganiser({ rules: initialRules, canEditRules, c
   function saveRules(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const next = Object.fromEntries(["training", "granola", "cup"].map(key => [key, Number(form.get(key))])) as PointRules;
+    const next = Object.fromEntries(["training", "sunrise", "granola", "cup"].map(key => [key, Number(form.get(key))])) as PointRules;
     void run("values", async () => {
       await send("/api/admin/point-rules", "PUT", next);
       setRules(next); onRulesSaved();
@@ -104,7 +104,7 @@ export default function TrainingOrganiser({ rules: initialRules, canEditRules, c
     <section className={card} aria-labelledby="training-values">
       <div className={cardLead}><h2 id="training-values" className={cardTitle}>Point values</h2><p className={eyebrow}>{canEditRules ? "new activities only" : "set by andras@hejj.xyz"}</p></div>
       <form key={JSON.stringify(rules)} onSubmit={saveRules}><fieldset disabled={!ready || busy || !canEditRules} className="mt-3 grid gap-3">
-        {([["training", "Training attended"], ["granola", "Per paid granola bag"], ["cup", "Cup participation"]] as const).map(([key, label]) =>
+        {([["training", "Sunset Duckies attended"], ["sunrise", "Sunrise Duckies attended"], ["granola", "Per granola bag reserved"], ["cup", "Cup participation"]] as const).map(([key, label]) =>
           <label key={key} className={cn(fieldLabel, "grid-cols-[minmax(0,1fr)_6rem] items-center")}>{label}<input className={cn(field, "text-right tabular-nums")} type="number" name={key} min="0" max="1000" step="1" required defaultValue={rules[key]} /></label>)}
         {canEditRules && <button type="submit" className={cn(primaryButton, "justify-self-start")}>Save point values</button>}
       </fieldset></form>

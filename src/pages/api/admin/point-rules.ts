@@ -5,7 +5,7 @@ import { savePointRules } from "../../../lib/server/club-points";
 import { json } from "../../../lib/server/http";
 export const prerender = false;
 const value = z.number().int().min(0).max(1000);
-const rules = z.object({ training: value, granola: value, cup: value }).strict();
+const rules = z.object({ training: value, sunrise: value, granola: value, cup: value }).strict();
 export const PUT = safeRoute(async ({ request }) => {
   const actor = await requireOrganiser(request, true);
   const parsed = rules.safeParse(await readBody(request));

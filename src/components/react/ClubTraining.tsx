@@ -1,6 +1,6 @@
 import { AnimatePresence, MotionConfig, motion, type Variants } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { canCallRoll, clubDayLabel, clubDayShort, type TrainingBoard, type TrainingKid } from "../../lib/club-points";
+import { canCallRoll, clubDayLabel, clubDayShort, SESSION_TYPES, type SessionType, type TrainingBoard, type TrainingKid } from "../../lib/club-points";
 import { cn } from "../../lib/cn";
 import { card, cardLead, cardTitle, eyebrow, mineTag, muted } from "../../lib/cup-members-ui";
 import {
@@ -54,6 +54,7 @@ export default function ClubTraining({ initial, organiser }: { initial: Training
   const ready = useHydrated();
   const [board, setBoard] = useState(initial);
   const [date, setDate] = useState(initial.date);
+  const [sessionType, setSessionType] = useState<SessionType>(initial.sessionType);
   // Taps not yet confirmed by the server, shown straight away.
   const [pending, setPending] = useState<Record<string, Mark>>({});
   const [saving, setSaving] = useState(0);
@@ -84,7 +85,7 @@ export default function ClubTraining({ initial, organiser }: { initial: Training
   const away = kids.filter(kid => kid.status === "away").length;
   const rest = kids.filter(kid => kid.status === null);
   const caller = canCallRoll(board.access);
-  const loaded = board.date === date;
+  const loaded = board.date === date && board.sessionType === sessionType;
   const canMark = ready && caller && loaded && date <= board.today;
   const current = kids.find(kid => kid.id === currentId) ?? null;
   const recent = board.sessions.filter(session => session.date !== board.today).slice(0, 4);
@@ -99,31 +100,36 @@ export default function ClubTraining({ initial, organiser }: { initial: Training
     setMode(next);
     try { localStorage.setItem(MODE_KEY, next); } catch { /* See above. */ }
   }
-  async function refresh(chosen: string) {
+  async function refresh(chosenDate: string, chosenType: SessionType) {
     const version = ++generation.current;
     try {
-      const next = await readResponse(await fetch(`/api/training?date=${chosen}`, { cache: "no-store" }));
+      const next = await readResponse(await fetch(`/api/training?date=${chosenDate}&sessionType=${chosenType}`, { cache: "no-store" }));
       if (version !== generation.current || inFlight.current) return;
       setBoard(next); setError("");
       if (reseat.current) { reseat.current = false; setDirection(0); setCurrentId(nextToCall(next.kids, null)); }
     } catch (err) { if (version === generation.current) setError(err instanceof Error ? err.message : "Couldn't load training."); }
   }
   useEffect(() => {
-    void refresh(date);
-    const timer = window.setInterval(() => { if (!inFlight.current && !document.hidden) void refresh(date); }, 20000);
-    const focus = () => { if (!inFlight.current) void refresh(date); };
+    void refresh(date, sessionType);
+    const timer = window.setInterval(() => { if (!inFlight.current && !document.hidden) void refresh(date, sessionType); }, 20000);
+    const focus = () => { if (!inFlight.current) void refresh(date, sessionType); };
     window.addEventListener("focus", focus);
     return () => { generation.current++; clearInterval(timer); window.removeEventListener("focus", focus); };
-  }, [date]);
+  }, [date, sessionType]);
   function chooseDate(value: string) {
     if (!value || value === date || inFlight.current) return;
     reseat.current = true; setDate(value); setPending({}); setMessage(""); setError("");
     const url = new URL(location.href); url.searchParams.set("date", value); history.replaceState(null, "", url);
   }
+  function chooseSessionType(value: SessionType) {
+    if (value === sessionType || inFlight.current) return;
+    reseat.current = true; setSessionType(value); setPending({}); setMessage(""); setError("");
+    const url = new URL(location.href); url.searchParams.set("sessionType", value); history.replaceState(null, "", url);
+  }
   function mark(targets: TrainingKid[], status: Mark) {
     if (!canMark || !targets.length) return;
     const ids = targets.map(kid => kid.id);
-    const body = JSON.stringify({ date, kidIds: ids, present: status === "here" });
+    const body = JSON.stringify({ date, sessionType, kidIds: ids, present: status === "here" });
     generation.current++; inFlight.current++; setSaving(inFlight.current); setError("");
     setPending(current => ({ ...current, ...Object.fromEntries(ids.map(id => [id, status])) }));
     setMessage(targets.length > 1 ? `${targets.length} duckies marked away.` : status === "here" ? `${targets[0].name} is here.${points ? ` +${points} points.` : ""}` : `${targets[0].name} is away.`);
@@ -184,12 +190,15 @@ export default function ClubTraining({ initial, organiser }: { initial: Training
           <h2 id="training-roll" className={cardTitle}>Roll call</h2>
           <p className={eyebrow}>{clubDayLabel(date)}{points ? ` · +${points} points each` : ""}</p>
         </div>
+        <div role="group" aria-label="Session" className={cn(segmented, "mt-3")}>
+          {SESSION_TYPES.map(({ value, label }) => <button key={value} type="button" className={segment} aria-pressed={sessionType === value} disabled={!ready || saving > 0} onClick={() => chooseSessionType(value)}>{label}</button>)}
+        </div>
         <div role="group" aria-label="Training day" className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           <button type="button" className={dayTab} aria-pressed={date === board.today} disabled={!ready || saving > 0} onClick={() => chooseDate(board.today)}>Today <span className={dayCount}>{clubDayShort(board.today)}</span></button>
           {recent.map(session => <button key={session.date} type="button" className={dayTab} aria-pressed={date === session.date} disabled={!ready || saving > 0} onClick={() => chooseDate(session.date)}>{clubDayShort(session.date)} <span className={dayCount}>{session.present} here</span></button>)}
           <input type="date" aria-label="Training date" className={dayPicker} value={date} max={board.today} disabled={!ready || saving > 0} onChange={event => chooseDate(event.target.value)} />
         </div>
-        {error && <div role="alert" className="mt-3 rounded-lg border border-coral-500/50 bg-coral-500/[0.06] px-3 py-2 text-[13px] text-fg">{error} <button type="button" className="cursor-pointer font-semibold underline underline-offset-4" onClick={() => void refresh(date)}>Reload</button></div>}
+        {error && <div role="alert" className="mt-3 rounded-lg border border-coral-500/50 bg-coral-500/[0.06] px-3 py-2 text-[13px] text-fg">{error} <button type="button" className="cursor-pointer font-semibold underline underline-offset-4" onClick={() => void refresh(date, sessionType)}>Reload</button></div>}
 
         {!caller ? <div className="mt-4">
           {!loaded ? <p className={muted}>Loading this training…</p> : here.length ? <>
@@ -275,7 +284,7 @@ export default function ClubTraining({ initial, organiser }: { initial: Training
       </section>
       <Leaderboard kids={kids} />
     </div>
-    {organiser && <TrainingOrganiser {...organiser} onRulesSaved={() => void refresh(date)} />}
+    {organiser && <TrainingOrganiser {...organiser} onRulesSaved={() => void refresh(date, sessionType)} />}
   </div></MotionConfig>;
 }
 

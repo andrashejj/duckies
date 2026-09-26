@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev --host",
-    "build": "prisma generate && astro build",
+    "build": "prisma generate && tsx scripts/vercel-migrate.ts && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check && tsc --noEmit",
