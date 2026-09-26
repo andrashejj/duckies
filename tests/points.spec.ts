@@ -124,7 +124,7 @@ test("new point values preserve previous training values; members see totals and
   expect(await (await request.get("/")).text()).not.toContain("Alice Duckie");
 });
 
-test("only paid granola earns points for selected kids; catalogue edits and retries cannot change or duplicate past awards", async ({ request }) => {
+test("granola earns points as soon as an order is placed; catalogue edits and retries cannot change or duplicate past awards", async ({ request }) => {
   await signIn(request,parent);
   const drop=await prisma.drop.create({data:{slug:"points-drop",name:"Points drop",status:"LIVE"}});
   const product=await prisma.product.create({data:{sku:"GRANOLA-TEST",slug:"test-granola",name:"Test granola",kind:"Bag",description:"Granola",priceCents:10000,category:"GRANOLA",sizes:[],dropId:drop.id}});
@@ -138,17 +138,21 @@ test("only paid granola earns points for selected kids; catalogue edits and retr
   const legacyLine = await prisma.orderItem.create({data:{orderId:first,productId:product.id,sku:product.sku,nameSnapshot:product.name,priceCentsSnapshot:10000,quantity:1,lineTotalCents:10000}});
   expect(legacyLine.granolaBags).toBe(1);
   await prisma.orderItem.delete({where:{id:legacyLine.id}});
-  expect((await points(ownerRequest,alice)).total).toBe(0);
+  // Points land the moment the order is placed, well before anyone marks it paid.
+  expect((await points(ownerRequest,alice)).granola).toBe(10);
+  expect((await points(ownerRequest,ben)).total).toBe(0);
   const paid=()=>ownerRequest.post(`/api/admin/orders/${first}/paid`,post({}));
   expect((await paid()).status()).toBe(200);expect((await paid()).status()).toBe(400);
   expect((await points(ownerRequest,alice)).granola).toBe(10);
-  expect((await points(ownerRequest,ben)).total).toBe(0);
   await ownerRequest.put("/api/admin/point-rules",post({training:10,sunrise:5,granola:8,cup:20}));
-  const second=await reserve();await ownerRequest.post(`/api/admin/orders/${second}/paid`,post({}));
+  const second=await reserve();
+  expect((await points(ownerRequest,alice)).granola).toBe(26);
+  await ownerRequest.post(`/api/admin/orders/${second}/paid`,post({}));
   expect((await points(ownerRequest,alice)).granola).toBe(26);
   await prisma.product.update({where:{id:product.id},data:{category:"APPAREL"}});
+  const third=await reserve();
   expect((await points(ownerRequest,alice)).granola).toBe(26);
-  const third=await reserve();await ownerRequest.post(`/api/admin/orders/${third}/paid`,post({}));
+  await ownerRequest.post(`/api/admin/orders/${third}/paid`,post({}));
   expect((await points(ownerRequest,alice)).granola).toBe(26);
   expect((await ownerRequest.post(`/api/admin/orders/${first}/transition`,post({to:"CANCELLED",sendEmail:false}))).status()).toBe(200);
   expect((await points(ownerRequest,alice)).granola).toBe(16);
