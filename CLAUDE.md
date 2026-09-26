@@ -44,7 +44,8 @@ Public pages are prerendered; anything needing a session sets `export const prer
 ## Database
 - Env: `DUCKIES_DATABASE_URL` (never `DATABASE_URL`), `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `WAIVER_SIGNING_PRIVATE_KEY`; optional `EMAIL_ADMIN_NOTIFY`, `OPENAI_API_KEY`, `GRANOLA_AI_MODEL`. See `.env.example`.
 - Schema changes: edit `prisma/schema.prisma` → `pnpm db:migration <name>` (create-only) → review/extend the SQL → `pnpm db:migrate` locally → commit. Never `prisma db push`.
-- Apply to remote DBs *before* pushing code that needs the migration: `pnpm db:migrate:staging` / `pnpm db:migrate:production` (direct URLs from `STAGING_DATABASE_URL` / `PRODUCTION_DATABASE_URL` in local `.env`); `pnpm db:status:*` is read-only.
+- `pnpm build` (what Vercel runs) applies pending migrations itself on the `staging` and `main` branches only, via `scripts/vercel-migrate.ts`, using the unpooled `STAGING_DATABASE_URL` / `PRODUCTION_DATABASE_URL` set as Vercel environment variables (Preview scoped to `staging`, Production). It never runs migrations locally or on any other branch — `vercel.json`'s `ignoreCommand` keeps other branches from building at all.
+- `pnpm db:migrate:staging` / `pnpm db:migrate:production` (direct URLs from `STAGING_DATABASE_URL` / `PRODUCTION_DATABASE_URL` in local `.env`) remain available to pre-apply or check a migration by hand; `pnpm db:status:*` is read-only.
 
 ## Git & deploy
 - Feature branches → PR into `staging` (staging preview); `staging` → `main` release PR (production, www.sunsetduckies.com). Vercel builds from Git.
