@@ -14,9 +14,10 @@ const email = Astro.locals.session!.user.email;
 const access = await trainingAccess(email);
 const today = clubToday();
 const chosen = z.iso.date().safeParse(Astro.url.searchParams.get("date"));
+const chosenType = z.enum(["sunset", "sunrise"]).safeParse(Astro.url.searchParams.get("sessionType"));
 let board, organiser = null;
 if (access) try {
-  board = await trainingBoard(chosen.success && chosen.data <= today ? chosen.data : today, email, access);
+  board = await trainingBoard(chosen.success && chosen.data <= today ? chosen.data : today, chosenType.success ? chosenType.data : "sunset", email, access);
   if (access === "organiser") {
     const [rules, coaches, people] = await Promise.all([pointRules(), readCoaches(), readParentProfiles()]);
     organiser = { rules, canEditRules: canManagePoints(email), coaches, people: people.filter(person => person.name.trim()).map(person => ({ email: person.email, name: person.name })) };
