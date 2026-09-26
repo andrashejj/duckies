@@ -197,7 +197,7 @@ function Pass({ kid, termLabel, reload, report }: { kid: FamilyKid; termLabel: s
       <details className="family-points">
         <summary className="cursor-pointer text-sm font-semibold">★ {kid.points.total} club points</summary>
         <p className="mt-3 text-sm">Training {kid.points.training} · Granola {kid.points.granola} · Cup {kid.points.cup}</p>
-        {kid.points.activities.length ? <ul className="mt-3 space-y-3 text-sm">{kid.points.activities.map(activity => <li key={`${activity.kind}:${activity.sourceId}`}><span className="font-bold">+{activity.points} · {activityLabel(activity)}</span><span className="block text-xs">{clubDayLabel(activity.date)}</span></li>)}</ul> : <p className="mt-3 text-sm">Points will appear after training check-in, a paid granola order shared with this duckie, or a scored Cup run.</p>}
+        {kid.points.activities.length ? <ul className="mt-3 space-y-3 text-sm">{kid.points.activities.map(activity => <li key={`${activity.kind}:${activity.sourceId}`}><span className="font-bold">+{activity.points} · {activityLabel(activity)}</span><span className="block text-xs">{clubDayLabel(activity.date)}</span></li>)}</ul> : <p className="mt-3 text-sm">Points will appear after training check-in, a granola order shared with this duckie, or a scored Cup run.</p>}
       </details>
       {kid.age !== null && kid.age < RECOMMENDED_AGE && (
         <p className="mx-5 mb-4 rounded-xl border-2 border-alert px-4 py-3 text-[0.85rem] font-semibold leading-[1.5] text-alert">

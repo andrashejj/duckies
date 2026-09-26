@@ -31,5 +31,5 @@ export function clubDayShort(date: string) {
 }
 export function activityLabel(activity: PointActivity) {
   return activity.kind === "training" ? `${activity.sessionType === "sunrise" ? "Sunrise" : "Sunset"} Duckies attended`
-    : activity.kind === "cup" ? "Cup participation" : `${activity.units} granola ${activity.units === 1 ? "bag" : "bags"} · paid family order`;
+    : activity.kind === "cup" ? "Cup participation" : `${activity.units} granola ${activity.units === 1 ? "bag" : "bags"} · family order`;
 }
