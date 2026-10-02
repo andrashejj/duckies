@@ -28,7 +28,7 @@ export const cupContentPlan: BlogPost = {
     { title: "Noah and Lara", accent: "coral", body: "Our kids, who surf and learn along the way. Each films their own selfie: what they like about surfing and what they’ve learned. A parent checks the video before it goes up." },
     { title: "Tamas", accent: "teal", body: "A dad in the club. Selfie: why they spend their time and money on this, and what they see in the kids." },
     { title: "Dori", accent: "sun", body: "The inventor of the granola. Selfie or short chat with Estelle: where the recipe came from and why granola." },
-    { title: "Abiguelle", accent: "pink", body: "Helps bake the granola. Estelle films the baking, start to finish, with Abiguelle saying what they’re doing as she goes." },
+    { title: "Abiguelle", accent: "pink", body: "Helps bake the granola. Estelle films the baking, start to finish, with Abiguelle saying what they’re doing as they go." },
     { title: "Estelle", accent: "lilac", body: "Our intern. Selfie: why they came to Mauritius to work with the club, and what the first weeks were like." },
     { title: "Andras", accent: "coral", body: "The techie behind the website and the members app. Selfie: why a surf club needs one, and what it does for the families." },
   ],
