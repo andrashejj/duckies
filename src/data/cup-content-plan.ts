@@ -17,9 +17,9 @@ export const cupContentPlan: BlogPost = {
     { value: "1 phone", label: "and people from the club" },
   ],
   cover: {
-    src: "/media/logbook/cup-content-plan-cover.webp",
-    alt: "Illustration of a phone filming hands mixing granola, with a tray and a three-scene storyboard on the table.",
-    caption: "A phone, a bowl of granola and a story to follow through to Cup day. Original illustration.",
+    src: "/media/logbook/cup-content-plan-photo.webp",
+    alt: "Photorealistic scene of a phone filming hands mixing granola, with a tray and a three-scene storyboard on the table.",
+    caption: "A phone, a bowl of granola and a story to follow through to Cup day. AI-generated cover scene.",
   },
   intro: [],
   sections: [],

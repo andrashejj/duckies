@@ -16,9 +16,9 @@ export const cupEventPlan: BlogPost = {
     { value: "4 colours", label: "red · yellow · blue · green" },
   ],
   cover: {
-    src: "/media/logbook/cup-event-plan-cover.webp",
-    alt: "Illustration of a beach judging table, BBQ, speaker and four rashies in red, yellow, blue and green.",
-    caption: "Cup-day preparation: the judging table, the BBQ and four colours ready for the water. Original illustration.",
+    src: "/media/logbook/cup-event-plan-photo.webp",
+    alt: "Photorealistic scene of a beach judging table, BBQ, speaker and four rashies in red, yellow, blue and green.",
+    caption: "Cup-day preparation: the judging table, the BBQ and four colours ready for the water. AI-generated cover scene.",
   },
   intro: [],
   sections: [],
