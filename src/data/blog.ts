@@ -1,5 +1,7 @@
 import type { ShareConfig } from "../lib/share-media";
 import { site } from "./site";
+import { cupContentPlan } from "./cup-content-plan";
+import type { ContentPlan } from "../lib/content-plan";
 
 // The club logbook. Each post's media lives in a Nextcloud public share;
 // at build time we enumerate the share (src/lib/share-media.ts) and hotlink
@@ -49,6 +51,7 @@ export interface BlogPost {
   facts: { value: string; label: string }[];
   intro: string[];
   sections: BlogPostSection[];
+  contentPlan?: ContentPlan;
   outro: string;
   heroImage?: string;
   cover?: BlogIllustration;
@@ -73,6 +76,7 @@ export const blog = {
   tagline:
     "Field notes from the club — trips, comps, and the days that didn't fit the Monday/Friday rhythm.",
   posts: [
+    cupContentPlan,
     {
       slug: "new-semester-2026",
       title: "We're back:",

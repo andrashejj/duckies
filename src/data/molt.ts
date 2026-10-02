@@ -1,3 +1,6 @@
+import { cupContentSchedule } from "./cup-content-schedule";
+import { formatDay } from "../lib/plan";
+
 // Project Molt: the copy behind the branding workspace pages
 // (/branding-plan/*). Milestones and tasks live in plan-tasks.ts and the
 // database; this file holds the parts that do not change week to week.
@@ -9,7 +12,7 @@ export const molt = {
     "Sunset Duckies is making its first product: a granola baked in Tamarin, on sale at Cup Vol. 02 on Friday 16 October. By 28 February we decide whether it is worth doing again, and whether another club could do the same.",
   dates: [
     { code: "NOW", label: "Lock the recipe" },
-    { code: "17.10", label: "Cup + first batch" },
+    { code: "16.10", label: "Cup + first batch" },
     { code: "28.02", label: "Rollout decision" },
   ],
 };
@@ -26,7 +29,7 @@ export const sections = [
 
 export const deliverables = [
   { href: "/branding-plan/business-case", label: "Recipe & business case", text: "The granola sheet: ingredients, cost per bag, price and the monthly result. Save the version worth testing." },
-  { href: "/branding-plan/marketing", label: "Marketing plan", text: "One WhatsApp message and one Instagram post a week until the Cup." },
+  { href: "/branding-plan/marketing", label: "Marketing plan", text: "One video every day from 2–18 October, 30 seconds maximum. The story, daily tasks and filming sequences." },
   { href: "/product-ideas", label: "Product candidates", text: "The four concepts and the nine tests they were compared on. Granola advanced." },
 ] as const;
 
@@ -93,17 +96,22 @@ export const after = [
 
 // ---------- Marketing ----------
 export const marketingIntro =
-  "One message a week until the Cup. WhatsApp carries logistics and the tastings for club families. Instagram builds up to the reveal and shows nothing of the product before the day. Photo permission before any kid appears anywhere.";
+  "One short video every day from 2–18 October, no longer than 30 seconds. Follow the kids preparing for the Cup, the people making granola, and four short episodes from Estelle’s internship: meeting Abiguelle and learning from local community hosts. The public storyboard and this schedule use the same daily plan, with production work mapped to the board. Adapt existing drafts and reconcile overlapping scheduled posts with the daily videos. The thank-you stays on 17 October and the report on the 18th. Task completion stays on the board.";
 
-export const commsPlan = [
-  { when: "Fri 18 Sep", whatsapp: "Save the date: Cup Vol. 02 on Friday 16 October. “We are also cooking something for the day.”", instagram: "Account live. First post: save the date, with a photo from Cup Vol. 01." },
-  { when: "Fri 25 Sep", whatsapp: "Registration open. Ask for volunteers: judges, beach marshals, food, the stall.", instagram: "Cup registration post. Photo permissions in hand before any kid appears." },
-  { when: "Fri 2 Oct", whatsapp: "Founding families taste the locked recipe at Friday training. Collect quotes for the label and the maker story.", instagram: "Teaser 1: something is in the oven. Test-bake shots, no name, no pack." },
-  { when: "Fri 9 Oct", whatsapp: "A limited first batch will be revealed at the Cup. Draft heat list.", instagram: "Teaser 2: the maker story. Who bakes it, what goes in, why." },
-  { when: "Mon 12 – Thu 15 Oct", whatsapp: "Final schedule, heats, arrival time, what to bring. Reminder on Thursday 15.", instagram: "Countdown: schedule post, packaging sneak peek, “first batch reveal at the Cup”." },
-  { when: "Fri 16 Oct", whatsapp: "Photo of the stall. “Grab your bag, or pre-order here.”", instagram: "Stories live from the beach. Reveal post from the stall with the price and how to get one." },
-  { when: "Sat 17 – Sun 18 Oct", whatsapp: "Results, thank you, pre-order form for batch two.", instagram: "Results and thank-you post. How to order the next batch." },
-];
+const familyMessages: Record<string, string> = {
+  "oct-02": "Save the date and Cup-page link; share the plan with families helping to film.",
+  "oct-09": "Confirm registration closure and any action families need to take.",
+  "oct-15": "Final reminder: arrival, programme, what to bring and confirmed parent instructions.",
+  "oct-16": "Only useful on-the-day changes and confirmed stall information.",
+  "oct-17": "Confirmed results, thanks and a clearly labelled next-batch interest or order route.",
+};
+
+export const commsPlan = cupContentSchedule.days.map(day => ({
+  when: formatDay(day.date),
+  whatsapp: familyMessages[day.id] ?? "No scheduled message unless details change.",
+  instagram: `${day.format}. ${day.outcome}`,
+  tasks: { label: `${day.tasks.length} tasks and filming details`, href: `/blog/granola-cup-october-content-plan#${day.id}` },
+}));
 
 // ---------- Worksheets ----------
 export const worksheets = [

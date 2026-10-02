@@ -4,6 +4,7 @@ import { blog } from "../../data/blog";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LogbookIllustration from "../../components/LogbookIllustration.astro";
 import LogbookGif from "../../components/LogbookGif.astro";
+import ContentPlan from "../../components/ContentPlan.astro";
 import Lightbox from "../../components/Lightbox.astro";
 import Cta from "../../components/ui/Cta.astro";
 import Kicker from "../../components/ui/Kicker.astro";
@@ -59,19 +60,19 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
   <!-- ===================== HERO ===================== -->
   <article>
     <section class="mx-auto max-w-7xl px-4 py-[clamp(2.5rem,6vw,5rem)] sm:px-6 lg:px-10">
-      <div class="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+      <div class:list={["grid items-center gap-10", !post.contentPlan && "lg:grid-cols-[0.85fr_1.15fr]"]}>
         <div>
           <Kicker as="a" href="/blog" class="no-underline">← The Logbook</Kicker>
           <p class="mt-7 font-mono text-xs uppercase tracking-widest">{post.kicker}</p>
-          <h1 class="mt-5 font-display text-[clamp(2.4rem,5.2vw,4.7rem)] font-[650] leading-[0.98] tracking-[-0.045em]">
+          <h1 class:list={["mt-5 font-display font-[650] leading-[0.98] tracking-[-0.045em]", post.contentPlan ? "text-[clamp(2.2rem,4vw,3.5rem)]" : "text-[clamp(2.4rem,5.2vw,4.7rem)]"]}>
             {post.title}
             <span class="mt-[0.12em] block font-accent italic text-accent-text">{post.titleAccent}</span>
           </h1>
-          <p class={`mt-6 ${bodyCopy}`}>{post.excerpt}</p>
+          <p class={`mt-6 max-w-3xl ${bodyCopy}`}>{post.excerpt}</p>
           <p class="mt-6 font-mono text-xs leading-6 uppercase tracking-wider">{post.dateLabel} · {post.location}</p>
           {hasRoll && <Cta variant="secondary" href="#gallery" class="mt-6">↓ The day, in photos</Cta>}
         </div>
-        {post.cover ? <LogbookIllustration image={post.cover} eager class="rotate-[1deg]" /> : heroImage && <img src={heroImage} alt={`${post.title} ${post.titleAccent}`} width="1536" height="1024" class="rounded-xl" />}
+        {!post.contentPlan && (post.cover ? <LogbookIllustration image={post.cover} eager class="rotate-[1deg]" /> : heroImage && <img src={heroImage} alt={`${post.title} ${post.titleAccent}`} width="1536" height="1024" class="rounded-xl" />)}
       </div>
     </section>
 
@@ -95,6 +96,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
     <!-- ===================== STORY ===================== -->
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
+      {post.contentPlan ? <ContentPlan plan={post.contentPlan} /> : <>
       <div class="max-w-3xl" data-reveal>
         {post.intro.map((paragraph, i) => (
           <p class:list={[bodyCopy, i === 0 ? "text-lg leading-8 sm:text-xl sm:leading-9" : "mt-5"]}>
@@ -116,6 +118,8 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
           </Fragment>
         ))}
       </div>
+
+      </>}
 
       {post.gif && <LogbookGif gif={post.gif} />}
       <div class="mt-12 max-w-3xl" data-reveal>
@@ -199,7 +203,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
     {hasRoll && <Lightbox id="post-lightbox" label="Photo viewer" />}
 
-    {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos and clips by club parents and the club drone. {post.media && "The full album holds the club’s original photos and videos."}</p>}
+    {post.cover && !post.contentPlan && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos and clips by club parents and the club drone. {post.media && "The full album holds the club’s original photos and videos."}</p>}
 
     <!-- ===================== CTA ===================== -->
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">
