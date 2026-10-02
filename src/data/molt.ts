@@ -101,6 +101,7 @@ export const selfieVideos = [
   { who: "Estelle", angle: "Why she came from Switzerland to help" },
   { who: "Tamas", angle: "Why he started and keeps building this" },
   { who: "Dori", angle: "What she sees in the kids and families" },
+  { who: "Interviews", angle: "Estelle with Abiguelle and the community hosts: same walking selfie, they answer why" },
 ];
 
 // ---------- Worksheets ----------

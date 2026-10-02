@@ -10,7 +10,7 @@ export const cupContentPlan: BlogPost = {
   location: "Tamarin, Mauritius",
   excerpt: "Quick and easy: a selfie video while walking, in the Duckies shirt, where each of us says why we do this. One take, 30 to 45 seconds, no editing.",
   facts: [
-    { value: "5 people", label: "Noah, Lara, Estelle, Tamas, Dori" },
+    { value: "5 + interviews", label: "Noah, Lara, Estelle, Tamas, Dori, plus Estelle’s interviews" },
     { value: "1 take", label: "walking and talking" },
     { value: "30–45 sec", label: "no script, no edit" },
     { value: "1 phone", label: "arm’s length" },
@@ -30,6 +30,7 @@ export const cupContentPlan: BlogPost = {
     { title: "Estelle", accent: "sun", body: "Why she came from Switzerland to help." },
     { title: "Tamas", accent: "pink", body: "Why he started and keeps building this." },
     { title: "Dori", accent: "lilac", body: "What she sees in the kids and families." },
+    { title: "Interviews", accent: "coral", body: "Estelle with Abiguelle and the community hosts: the same walking selfie, but the other person answers why." },
   ],
   outro: "End with “see you at the Cup” or “join us”. Cup Vol. 02 is on Friday 16 October at Tamarin Bay.",
   cta: {
