@@ -2,15 +2,15 @@
 import BrandingLayout from "../../layouts/BrandingLayout.astro";
 import PlanTable from "../../components/plan/PlanTable.astro";
 import Cta from "../../components/ui/Cta.astro";
-import { commsPlan, marketingIntro } from "../../data/molt";
+import { selfieVideos, marketingIntro } from "../../data/molt";
 export const prerender = false;
 if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
 ---
 
-<BrandingLayout title="Marketing plan" description="The two-week content plan for granola and Cup Vol. 02, with daily tasks aligned to the branding board." kicker="Project Molt / Deliverables" heading="Marketing plan">
+<BrandingLayout title="Marketing plan" description="Quick walking-selfie videos in the Duckies shirt: why we do this." kicker="Project Molt / Deliverables" heading="Marketing plan">
   <p slot="lead">{marketingIntro}</p>
   <section data-reveal>
-    <Cta href="/blog/granola-cup-october-content-plan" class="mb-8">Read the story, shot lists and draft captions</Cta>
-    <PlanTable columns={["When", "WhatsApp · parents group", "Instagram", "Daily tasks"]} rows={commsPlan.map(item => [item.when, item.whatsapp, item.instagram, item.tasks])} class="mt-0" />
+    <Cta href="/blog/granola-cup-october-content-plan" class="mb-8">How to film it</Cta>
+    <PlanTable columns={["Who", "Why we do this: their angle"]} rows={selfieVideos.map(v => [v.who, v.angle])} class="mt-0" />
   </section>
 </BrandingLayout>

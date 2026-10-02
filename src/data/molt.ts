@@ -1,6 +1,3 @@
-import { cupContentSchedule } from "./cup-content-schedule";
-import { formatDay } from "../lib/plan";
-
 // Project Molt: the copy behind the branding workspace pages
 // (/branding-plan/*). Milestones and tasks live in plan-tasks.ts and the
 // database; this file holds the parts that do not change week to week.
@@ -29,7 +26,7 @@ export const sections = [
 
 export const deliverables = [
   { href: "/branding-plan/business-case", label: "Recipe & business case", text: "The granola sheet: ingredients, cost per bag, price and the monthly result. Save the version worth testing." },
-  { href: "/branding-plan/marketing", label: "Marketing plan", text: "One video every day from 2–18 October, 30 seconds maximum. The story, daily tasks and filming sequences." },
+  { href: "/branding-plan/marketing", label: "Marketing plan", text: "Five walking-selfie videos in the Duckies shirt: why we do this." },
   { href: "/product-ideas", label: "Product candidates", text: "The four concepts and the nine tests they were compared on. Granola advanced." },
 ] as const;
 
@@ -96,22 +93,15 @@ export const after = [
 
 // ---------- Marketing ----------
 export const marketingIntro =
-  "One short video every day from 2–18 October, no longer than 30 seconds. Follow the kids preparing for the Cup, the people making granola, and four short episodes from Estelle’s internship: meeting Abiguelle and learning from local community hosts. The public storyboard and this schedule use the same daily plan, with production work mapped to the board. Adapt existing drafts and reconcile overlapping scheduled posts with the daily videos. The thank-you stays on 17 October and the report on the 18th. Task completion stays on the board.";
+  "Keep it quick: phone-selfie videos filmed while walking, in the Duckies shirt, no script and no editing. Noah, Lara, Estelle, Tamas and Dori each answer one question: why do we do this?";
 
-const familyMessages: Record<string, string> = {
-  "oct-02": "Save the date and Cup-page link; share the plan with families helping to film.",
-  "oct-09": "Confirm registration closure and any action families need to take.",
-  "oct-15": "Final reminder: arrival, programme, what to bring and confirmed parent instructions.",
-  "oct-16": "Only useful on-the-day changes and confirmed stall information.",
-  "oct-17": "Confirmed results, thanks and a clearly labelled next-batch interest or order route.",
-};
-
-export const commsPlan = cupContentSchedule.days.map(day => ({
-  when: formatDay(day.date),
-  whatsapp: familyMessages[day.id] ?? "No scheduled message unless details change.",
-  instagram: `${day.format}. ${day.outcome}`,
-  tasks: { label: `${day.tasks.length} tasks and filming details`, href: `/blog/granola-cup-october-content-plan#${day.id}` },
-}));
+export const selfieVideos = [
+  { who: "Noah", angle: "What the surf club gives the kids" },
+  { who: "Lara", angle: "What it is like from the water or beach side" },
+  { who: "Estelle", angle: "Why she came from Switzerland to help" },
+  { who: "Tamas", angle: "Why he started and keeps building this" },
+  { who: "Dori", angle: "What she sees in the kids and families" },
+];
 
 // ---------- Worksheets ----------
 export const worksheets = [

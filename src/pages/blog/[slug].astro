@@ -4,7 +4,6 @@ import { blog } from "../../data/blog";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LogbookIllustration from "../../components/LogbookIllustration.astro";
 import LogbookGif from "../../components/LogbookGif.astro";
-import ContentPlan from "../../components/ContentPlan.astro";
 import EventPlan from "../../components/EventPlan.astro";
 import Lightbox from "../../components/Lightbox.astro";
 import Cta from "../../components/ui/Cta.astro";
@@ -52,7 +51,7 @@ const clips = [
   })),
 ];
 const hasRoll = Boolean(post.media || post.roll);
-const hasPlan = Boolean(post.contentPlan || post.eventPlan);
+const hasPlan = Boolean(post.eventPlan);
 
 const heroImage = post.cover?.src ?? post.heroImage ?? photos[0]?.full;
 const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
@@ -98,7 +97,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
     <!-- ===================== STORY ===================== -->
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
-      {post.contentPlan ? <ContentPlan plan={post.contentPlan} /> : post.eventPlan ? <EventPlan plan={post.eventPlan} /> : <>
+      {post.eventPlan ? <EventPlan plan={post.eventPlan} /> : <>
       <div class="max-w-3xl" data-reveal>
         {post.intro.map((paragraph, i) => (
           <p class:list={[bodyCopy, i === 0 ? "text-lg leading-8 sm:text-xl sm:leading-9" : "mt-5"]}>

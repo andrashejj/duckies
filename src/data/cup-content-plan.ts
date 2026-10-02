@@ -1,30 +1,37 @@
 import type { BlogPost } from "./blog";
-import { cupContentSchedule } from "./cup-content-schedule";
 
 export const cupContentPlan: BlogPost = {
   slug: "granola-cup-october-content-plan",
-  title: "Granola and the Cup",
-  titleAccent: "our two week content plan",
+  title: "Why we do this",
+  titleAccent: "walking selfie videos",
   kicker: "Project Molt · October 2026",
   dateLabel: "2 October 2026",
   dateISO: "2026-10-02",
   location: "Tamarin, Mauritius",
-  excerpt: "One short video every day, from 2 to 18 October. The Cup, the granola, and four glimpses of Estelle’s internship: conversations with Abiguelle and everyday life with local communities. Each video is 30 seconds or less.",
+  excerpt: "Quick and easy: a selfie video while walking, in the Duckies shirt, where each of us says why we do this. One take, 30 to 45 seconds, no editing.",
   facts: [
-    { value: "16 Oct", label: "Cup Vol. 02 · Tamarin Bay" },
-    { value: "17 videos", label: "one every day · 2–18 Oct" },
-    { value: "30 sec max", label: "one moment, one question" },
-    { value: "1 phone", label: "and people from the club" },
+    { value: "5 people", label: "Noah, Lara, Estelle, Tamas, Dori" },
+    { value: "1 take", label: "walking and talking" },
+    { value: "30–45 sec", label: "no script, no edit" },
+    { value: "1 phone", label: "arm’s length" },
   ],
   cover: {
     src: "/media/logbook/cup-content-plan-photo.webp",
     alt: "Photorealistic scene of a phone filming hands mixing granola, with a tray and a three-scene storyboard on the table.",
-    caption: "A phone, a bowl of granola and a story to follow through to Cup day. AI-generated cover scene.",
+    caption: "A phone and a story. AI-generated cover scene.",
   },
-  intro: [],
-  sections: [],
-  contentPlan: cupContentSchedule,
-  outro: "Start with the 2 October video. Capture one real moment, keep the finished edit under 30 seconds and save spare footage for the next day.",
+  intro: [
+    "Every video asks one question: why do we do this? Wear the shirt, hold the phone at arm’s length, walk, and answer in your own words.",
+    "Start with “Hi, I’m ___, and we do Sunset Duckies because…” and keep going. Two takes at most, keep the better one, and post it as it is.",
+  ],
+  sections: [
+    { title: "Noah", accent: "coral", body: "What the surf club gives the kids." },
+    { title: "Lara", accent: "teal", body: "What it is like from the water or beach side." },
+    { title: "Estelle", accent: "sun", body: "Why she came from Switzerland to help." },
+    { title: "Tamas", accent: "pink", body: "Why he started and keeps building this." },
+    { title: "Dori", accent: "lilac", body: "What she sees in the kids and families." },
+  ],
+  outro: "End with “see you at the Cup” or “join us”. Cup Vol. 02 is on Friday 16 October at Tamarin Bay.",
   cta: {
     kicker: "Friday 16 October",
     title: "Join us at",

@@ -2,7 +2,6 @@ import type { ShareConfig } from "../lib/share-media";
 import { site } from "./site";
 import { cupContentPlan } from "./cup-content-plan";
 import { cupEventPlan } from "./cup-event-plan";
-import type { ContentPlan } from "../lib/content-plan";
 import type { EventPlan } from "../lib/event-plan";
 
 // The club logbook. Each post's media lives in a Nextcloud public share;
@@ -53,7 +52,6 @@ export interface BlogPost {
   facts: { value: string; label: string }[];
   intro: string[];
   sections: BlogPostSection[];
-  contentPlan?: ContentPlan;
   eventPlan?: EventPlan;
   outro: string;
   heroImage?: string;
