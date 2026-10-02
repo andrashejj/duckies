@@ -26,7 +26,7 @@ export const sections = [
 
 export const deliverables = [
   { href: "/branding-plan/business-case", label: "Recipe & business case", text: "The granola sheet: ingredients, cost per bag, price and the monthly result. Save the version worth testing." },
-  { href: "/branding-plan/marketing", label: "Marketing plan", text: "Five walking-selfie videos in the Duckies shirt: why we do this." },
+  { href: "/branding-plan/marketing", label: "Marketing plan", text: "Seven short phone videos: why each of us does this, plus the baking." },
   { href: "/product-ideas", label: "Product candidates", text: "The four concepts and the nine tests they were compared on. Granola advanced." },
 ] as const;
 
@@ -93,15 +93,16 @@ export const after = [
 
 // ---------- Marketing ----------
 export const marketingIntro =
-  "Keep it quick: phone-selfie videos filmed while walking, in the Duckies shirt, no script and no editing. Noah, Lara, Estelle, Tamas and Dori each answer one question: why do we do this?";
+  "Seven short phone videos before the Cup. Each person films their own selfie while walking, Estelle trims the clips, Andras posts them. The baking video is filmed by Estelle.";
 
 export const selfieVideos = [
-  { who: "Noah", angle: "What the surf club gives the kids" },
-  { who: "Lara", angle: "What it is like from the water or beach side" },
-  { who: "Estelle", angle: "Why she came from Switzerland to help" },
-  { who: "Tamas", angle: "Why he started and keeps building this" },
-  { who: "Dori", angle: "What she sees in the kids and families" },
-  { who: "Interviews", angle: "Estelle with Abiguelle and the community hosts: same walking selfie, they answer why" },
+  { who: "Noah", role: "Club kid", video: "Selfie: what they like about surfing and what they have learned", filmedBy: "Themselves, parent checks before posting" },
+  { who: "Lara", role: "Club kid", video: "Selfie: what they like about surfing and what they have learned", filmedBy: "Themselves, parent checks before posting" },
+  { who: "Tamas", role: "Dad", video: "Selfie: why they back the club", filmedBy: "Themselves" },
+  { who: "Dori", role: "Inventor of the granola", video: "Where the recipe came from", filmedBy: "Themselves, or Estelle asks the questions" },
+  { who: "Abiguelle", role: "Helps bake the granola", video: "The baking, start to finish", filmedBy: "Estelle" },
+  { who: "Estelle", role: "Intern", video: "Selfie: why they came to Mauritius to help", filmedBy: "Themselves" },
+  { who: "Andras", role: "Techie", video: "Selfie: why the club has a website and app", filmedBy: "Themselves" },
 ];
 
 // ---------- Worksheets ----------

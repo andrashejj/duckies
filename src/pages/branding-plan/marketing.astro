@@ -7,10 +7,10 @@ export const prerender = false;
 if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
 ---
 
-<BrandingLayout title="Marketing plan" description="Quick walking-selfie videos in the Duckies shirt: why we do this." kicker="Project Molt / Deliverables" heading="Marketing plan">
+<BrandingLayout title="Marketing plan" description="Seven short phone videos: who is in them, what they say and who films." kicker="Project Molt / Deliverables" heading="Marketing plan">
   <p slot="lead">{marketingIntro}</p>
   <section data-reveal>
     <Cta href="/blog/granola-cup-october-content-plan" class="mb-8">How to film it</Cta>
-    <PlanTable columns={["Who", "Why we do this: their angle"]} rows={selfieVideos.map(v => [v.who, v.angle])} class="mt-0" />
+    <PlanTable columns={["Who", "Role", "Video", "Filmed by"]} rows={selfieVideos.map(v => [v.who, v.role, v.video, v.filmedBy])} class="mt-0" />
   </section>
 </BrandingLayout>

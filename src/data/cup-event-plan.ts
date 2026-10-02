@@ -106,8 +106,8 @@ export const cupEventPlan: BlogPost = {
     kicker: "Friday 16 October",
     title: "Everything comes together at",
     titleAccent: "Tamarin Bay",
-    body: "The Cup page carries the family-facing programme. The walking selfie videos cover the story; this checklist covers the people and equipment behind the day.",
+    body: "The Cup page carries the family-facing programme. The short videos cover the story; this checklist covers the people and equipment behind the day.",
     primary: { label: "See the Cup details", href: "/sunset-duckies-cup-vol-2" },
-    secondary: { label: "See the walking selfie videos", href: "/blog/granola-cup-october-content-plan" },
+    secondary: { label: "See the short videos", href: "/blog/granola-cup-october-content-plan" },
   },
 };
