@@ -1,0 +1,74 @@
+---
+import type { EventPlan } from "../lib/event-plan";
+import Kicker from "./ui/Kicker.astro";
+import SectionTitle from "./ui/SectionTitle.astro";
+import { bodyCopy } from "../lib/ui";
+interface Props { plan: EventPlan }
+const { plan } = Astro.props;
+const tones = ["bg-sticker-sun", "bg-sticker-coral", "bg-sticker-teal"];
+---
+
+<div data-event-plan>
+  <Kicker>TL;DR · what we need</Kicker>
+  <SectionTitle class="mt-5">Six things to <span class="font-accent italic text-accent-text">get ready.</span></SectionTitle>
+  <p class={`mt-5 max-w-3xl ${bodyCopy}`}>{plan.summary}</p>
+  <ol class="mt-7 list-none space-y-3 p-0" aria-label="Event essentials">
+    {plan.areas.map((area, index) => (
+      <li>
+        <a href={`#${area.id}`} data-open-event-area={area.id} class={`flex w-full items-start gap-4 border-2 border-edge p-5 text-fg no-underline shadow-sticker-sm focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-accent ${tones[index % tones.length]}`}>
+          <span class="shrink-0 font-mono text-sm">{String(index + 1).padStart(2, "0")}</span>
+          <div class="min-w-0 flex-1"><h3 class="font-display text-xl font-bold">{area.title}</h3><p class="mt-2 text-sm leading-6">{area.need}</p></div>
+          <span aria-hidden="true">↓</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+
+  <section class="mt-12" aria-labelledby="event-deadlines">
+    <h2 id="event-deadlines" class="font-display text-2xl font-bold">The checkpoints</h2>
+    <ol class="mt-5 list-none divide-y divide-line border-y border-line p-0">
+      {plan.deadlines.map(item => <li class="flex gap-5 py-4"><span class="w-16 shrink-0 font-mono text-xs leading-6">{item.date}</span><p class="text-sm leading-6">{item.task}</p></li>)}
+    </ol>
+    <p class="mt-5 max-w-3xl text-sm leading-7 text-fg-muted">{plan.coordination}</p>
+  </section>
+
+  <section class="mt-12" aria-labelledby="event-tasks">
+    <h2 id="event-tasks" class="font-display text-2xl font-bold">Open a section. Confirm the kit and the people.</h2>
+    <div class="mt-6 divide-y-2 divide-edge border-y-2 border-edge">
+      {plan.areas.map(area => (
+        <details id={area.id} data-event-area class="group scroll-mt-28">
+          <summary class="flex cursor-pointer list-none items-center gap-4 py-6 focus-visible:outline-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+            <h3 class="flex-1 font-display text-xl font-bold sm:text-2xl">{area.title}</h3>
+            <span class="font-mono text-xs">{area.tasks.length} tasks</span>
+            <span aria-hidden="true" class="text-2xl group-open:hidden">+</span><span aria-hidden="true" class="hidden text-2xl group-open:block">−</span>
+          </summary>
+          <div class="space-y-6 pb-8">
+            <p class={`max-w-3xl ${bodyCopy}`}><strong>Decide first:</strong> {area.decision}</p>
+            <div class="border-2 border-edge bg-surface p-5">
+              <h4 class="font-mono text-xs uppercase tracking-widest">Kit checklist</h4>
+              <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">{area.kit.map(item => <li>{item}</li>)}</ul>
+            </div>
+            <ol class="list-none divide-y divide-line border-y border-line p-0">
+              {area.tasks.map((task, index) => (
+                <li class="flex gap-4 py-4">
+                  <span aria-hidden="true" class="flex h-7 w-7 shrink-0 items-center justify-center border border-edge font-mono text-xs">{index + 1}</span>
+                  <div class="min-w-0"><p class="text-sm leading-6">{task.text}</p><p class="mt-2 font-mono text-[0.65rem] uppercase leading-5 tracking-wide text-fg-muted">By {task.date} · {task.owner}</p></div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </details>
+      ))}
+    </div>
+  </section>
+</div>
+
+<script>
+  for (const plan of document.querySelectorAll<HTMLElement>("[data-event-plan]")) {
+    const areas = Array.from(plan.querySelectorAll<HTMLDetailsElement>("[data-event-area]"));
+    const openArea = (id: string) => { const area = areas.find(area => area.id === id); if (area) area.open = true; };
+    plan.querySelectorAll<HTMLAnchorElement>("[data-open-event-area]").forEach(link => link.addEventListener("click", () => openArea(link.dataset.openEventArea!)));
+    openArea(window.location.hash.slice(1));
+    window.addEventListener("hashchange", () => openArea(window.location.hash.slice(1)));
+  }
+</script>
