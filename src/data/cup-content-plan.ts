@@ -17,9 +17,9 @@ export const cupContentPlan: BlogPost = {
     { value: "1 phone", label: "and people from the club" },
   ],
   cover: {
-    src: "/media/logbook/cup-vol-2-cover.webp",
-    alt: "The Sunset Duckies crew behind their colourful surfboards on Tamarin beach at sunset.",
-    caption: "The same crew, from training and the kitchen to Cup day.",
+    src: "/media/logbook/cup-content-plan-cover.webp",
+    alt: "Illustration of a phone filming hands mixing granola, with a tray and a three-scene storyboard on the table.",
+    caption: "A phone, a bowl of granola and a story to follow through to Cup day. Original illustration.",
   },
   intro: [],
   sections: [],

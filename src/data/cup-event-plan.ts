@@ -16,9 +16,9 @@ export const cupEventPlan: BlogPost = {
     { value: "4 colours", label: "red · yellow · blue · green" },
   ],
   cover: {
-    src: "/media/logbook/cup-vol-2-cover.webp",
-    alt: "The Sunset Duckies crew and their surfboards on Tamarin beach.",
-    caption: "A little planning on land makes the afternoon work for everyone.",
+    src: "/media/logbook/cup-event-plan-cover.webp",
+    alt: "Illustration of a beach judging table, BBQ, speaker and four rashies in red, yellow, blue and green.",
+    caption: "Cup-day preparation: the judging table, the BBQ and four colours ready for the water. Original illustration.",
   },
   intro: [],
   sections: [],
