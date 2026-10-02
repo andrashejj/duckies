@@ -22,7 +22,7 @@ export const cupContentPlan: BlogPost = {
   },
   intro: [
     "Most of these are selfie videos: you hold the phone at arm’s length, walk, and say in your own words why you’re part of Sunset Duckies. Start with “Hi, I’m ___ and I…”, do two takes at most, keep the better one.",
-    "Estelle, our intern, collects the clips, trims them and keeps them under 45 seconds. Andras posts them. The baking video is the exception: Estelle films it while Abiguelle bakes.",
+    "Estelle, our intern, collects the clips and runs each one through an AI video editor that cuts the pauses, adds captions and trims it to under 45 seconds. Estelle checks the result before Andras posts it. If the AI edit looks wrong, we post the raw clip instead. The baking video is the exception: Estelle films it while Abiguelle bakes.",
   ],
   sections: [
     { title: "Noah and Lara", accent: "coral", body: "Our kids, who surf and learn along the way. Each films their own selfie: what they like about surfing and what they’ve learned. A parent checks the video before it goes up." },

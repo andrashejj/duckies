@@ -93,7 +93,7 @@ export const after = [
 
 // ---------- Marketing ----------
 export const marketingIntro =
-  "Seven short phone videos before the Cup. Each person films their own selfie while walking, Estelle trims the clips, Andras posts them. The baking video is filmed by Estelle.";
+  "Seven short phone videos before the Cup. Each person films their own selfie while walking, Estelle runs each clip through an AI video editor (cut pauses, captions, trim) and checks it, Andras posts it. If the AI edit looks wrong, post the raw clip. The baking video is filmed by Estelle.";
 
 export const selfieVideos = [
   { who: "Noah", role: "Club kid", video: "Selfie: what they like about surfing and what they have learned", filmedBy: "Themselves, parent checks before posting" },
