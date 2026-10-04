@@ -40,8 +40,8 @@ export async function readPlanBody(request: Request) {
 }
 
 type MilestoneRow = { id: string; code: string; title: string; date_label: string; due_on: string; deliverable: string; owner_id: string | null; links: PlanMilestone["links"]; sort: number };
-type TaskRow = { id: string; milestone_id: string; text: string; owner_id: string | null; due_on: string | null; status: TaskStatus; sort: number; version: number; updated_at: Date };
-const taskFromRow = (row: TaskRow): PlanTask => ({ id: row.id, milestoneId: row.milestone_id, text: row.text, ownerId: row.owner_id, dueOn: row.due_on, status: row.status, sort: row.sort, version: row.version, updatedAt: row.updated_at.toISOString() });
+export type TaskRow = { id: string; milestone_id: string; text: string; owner_id: string | null; due_on: string | null; status: TaskStatus; sort: number; version: number; updated_at: Date };
+export const taskFromRow = (row: TaskRow): PlanTask => ({ id: row.id, milestoneId: row.milestone_id, text: row.text, ownerId: row.owner_id, dueOn: row.due_on, status: row.status, sort: row.sort, version: row.version, updatedAt: row.updated_at.toISOString() });
 
 async function readPlan(client: pg.PoolClient | pg.Pool): Promise<Omit<PlanData, "canEdit">> {
   // Dates come back as text so calendar days never shift with the server timezone.
