@@ -126,7 +126,7 @@ export default function PlanTaskDiscussion({ taskId, embedded = false, onTaskCha
         </>}
         <p className="mt-4 mb-0 text-fg-muted">{discussion.ownerName}{discussion.task.dueOn && ` · Due ${formatDay(discussion.task.dueOn)}`}</p>
       </section>
-      <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+      <div className="grid min-w-0 gap-8">
         <section aria-labelledby="task-activity-title" className="min-w-0">
           <h2 id="task-activity-title" className={subheading}>Activity</h2>
           {!entries.length && <p className="mt-4 max-w-[60ch] text-fg-muted">No comments yet. Add a quote, ask a question or share what happened.</p>}
@@ -148,7 +148,7 @@ export default function PlanTaskDiscussion({ taskId, embedded = false, onTaskCha
             </li>)}
           </ol>
         </section>
-        <section aria-labelledby="task-message-title" className="order-first min-w-0 border-b border-line pb-6 lg:order-last lg:border-b-0 lg:pb-0">
+        <section aria-labelledby="task-message-title" className="min-w-0 border-t border-line pt-6">
           <h2 id="task-message-title" className={subheading}>Add to this task</h2>
           {discussion.canEdit ? <form onSubmit={submit} className="mt-5">
             <fieldset disabled={saving} className="m-0 grid min-w-0 gap-4 border-0 p-0 disabled:opacity-60">
