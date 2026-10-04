@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type SubmitEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
 import { byDue, formatDay, nextMilestone, personName, progress, statusLabels, taskStatuses, urgency, type PlanData, type PlanMilestone, type PlanTask, type TaskStatus, type Urgency } from "../../lib/plan";
+import PlanTaskDiscussion from "./PlanTaskDiscussion";
 import { monoTag, outlineButton } from "../../lib/plan-ui";
 
 // Two views of the Project Molt plan tables. Board: one swimlane per milestone
@@ -19,6 +20,7 @@ const control = "min-h-9 rounded-none border border-line bg-canvas px-2 py-1 fon
 const today = () => new Date().toISOString().slice(0, 10);
 
 export default function PlanBoard({ initialView = "board" }: { initialView?: View }) {
+  const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [plan, setPlan] = useState<PlanData | null>(null);
   const [view, setView] = useState<View>(initialView);
   const [owner, setOwner] = useState<OwnerFilter>("all");
@@ -153,7 +155,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                   <h3 className="m-0 font-display text-[clamp(1.3rem,2vw,1.7rem)] font-[650] leading-[1.1] tracking-[-0.03em] text-fg">{milestone.title}</h3>
                   <p className="mt-2 mb-0 max-w-[760px] border-l-2 border-accent pl-3 text-[0.88rem] leading-[1.5] text-fg-muted"><span className={`${monoTag} mr-2 text-accent-text`}>Done when</span>{milestone.deliverable}</p>
                   <ul className="m-0 mt-4 list-none p-0">
-                    {tasks.map(task => <TaskRow key={task.id} task={task} plan={plan} now={now} busy={busy.has(task.id)} onPatch={patch => void patchTask(task, patch)} />)}
+                    {tasks.map(task => <TaskRow key={task.id} task={task} plan={plan} now={now} busy={busy.has(task.id)} onPatch={patch => void patchTask(task, patch)} onOpen={() => setSelectedTask(task.id)} />)}
                   </ul>
                   {milestone.links.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{milestone.links.map(link => <a key={link.file} href={link.file} target="_blank" rel="noreferrer" className={outlineButton}>{link.label} ↗</a>)}</div>}
                 </div>
@@ -211,19 +213,20 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                           <ul className="m-0 flex list-none flex-col gap-2 p-3">
                             {cards.map(task => (
                               <li key={task.id} draggable={plan.canEdit && !busy.has(task.id)} onDragStart={e => { setDragging(task.id); e.dataTransfer.effectAllowed = "move"; }} onDragEnd={() => { setDragging(null); setDropTarget(null); }}
-                                className={`border border-line bg-surface p-3 ${plan.canEdit ? "cursor-grab active:cursor-grabbing" : ""} ${dragging === task.id ? "opacity-40" : ""} ${busy.has(task.id) ? "opacity-60" : ""}`}>
-                                <p className={`m-0 text-[0.88rem] leading-[1.55] ${status === "done" ? "text-fg-muted line-through decoration-fg/40" : "text-fg"}`}>{task.text}</p>
-                                {status === "review" && <p className={`mt-2 mb-0 ${monoTag} text-caution`}>Waiting for Dori</p>}
-                                <div className="mt-3 flex flex-wrap items-center gap-2">
+                                className={`relative isolate border border-line bg-surface p-3 hover:border-accent ${plan.canEdit ? "cursor-grab active:cursor-grabbing" : ""} ${dragging === task.id ? "opacity-40" : ""} ${busy.has(task.id) ? "opacity-60" : ""}`}>
+                                <TaskOpener task={task} draggable={plan.canEdit && !busy.has(task.id)} onOpen={() => setSelectedTask(task.id)} />
+                                <p className={`pointer-events-none relative m-0 text-[0.88rem] leading-[1.55] ${status === "done" ? "text-fg-muted line-through decoration-fg/40" : "text-fg"}`}>{task.text}</p>
+                                {status === "review" && <p className={`pointer-events-none relative mt-2 mb-0 ${monoTag} text-caution`}>Waiting for Dori</p>}
+                                <div className="pointer-events-none relative mt-3 flex flex-wrap items-center gap-2">
                                   <OwnerControl task={task} plan={plan} busy={busy.has(task.id)} onChange={ownerId => void patchTask(task, { ownerId })} />
                                   <DueTag task={task} now={now} />
                                   {plan.canEdit && (
-                                    <select value={task.status} disabled={busy.has(task.id)} onChange={e => void patchTask(task, { status: e.target.value as TaskStatus })} className={`${control} ml-auto`} aria-label="Status">
+                                    <select value={task.status} disabled={busy.has(task.id)} onChange={e => void patchTask(task, { status: e.target.value as TaskStatus })} className={`${control} pointer-events-auto ml-auto`} aria-label="Status">
                                       {taskStatuses.map(option => <option key={option} value={option}>{statusLabels[option]}</option>)}
                                     </select>
                                   )}
                                 </div>
-                                <a href={`/branding-plan/tasks/${task.id}`} draggable={false} className="mt-3 inline-block min-h-11 py-3 text-sm text-accent-text underline underline-offset-4">Comments &amp; files</a>
+                                <TaskActivity task={task} />
                               </li>
                             ))}
                             {cards.length === 0 && <li className={`px-1 py-4 text-center ${monoTag} text-fg-muted/70`}>—</li>}
@@ -238,6 +241,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
           </div>
         </>
       )}
+      {selectedTask && <TaskDialog taskId={selectedTask} onClose={() => setSelectedTask(null)} onTaskChange={replaceTask} />}
     </div>
   );
 }
@@ -251,19 +255,20 @@ function DueTag({ task, now }: { task: PlanTask; now: string }) {
 function OwnerControl({ task, plan, busy, onChange }: { task: PlanTask; plan: PlanData; busy: boolean; onChange: (ownerId: string | null) => void }) {
   if (!plan.canEdit) return <span className={`${monoTag} border border-line px-2 py-1 text-fg-muted`}>{personName(plan.people, task.ownerId)}</span>;
   return (
-    <select value={task.ownerId ?? ""} disabled={busy} onChange={e => onChange(e.target.value || null)} className={control} aria-label="Owner">
+    <select value={task.ownerId ?? ""} disabled={busy} onChange={e => onChange(e.target.value || null)} className={`${control} pointer-events-auto relative`} aria-label="Owner">
       <option value="">Unassigned</option>
       {plan.people.map(person => <option key={person.id} value={person.id}>{person.name}</option>)}
     </select>
   );
 }
 
-function TaskRow({ task, plan, now, busy, onPatch }: { task: PlanTask; plan: PlanData; now: string; busy: boolean; onPatch: (patch: { status?: TaskStatus; ownerId?: string | null }) => void }) {
+function TaskRow({ task, plan, now, busy, onPatch, onOpen }: { task: PlanTask; plan: PlanData; now: string; busy: boolean; onOpen: () => void; onPatch: (patch: { status?: TaskStatus; ownerId?: string | null }) => void }) {
   return (
-    <li className="grid gap-x-4 gap-y-2 border-t border-line py-3 first:border-t-0 md:grid-cols-[minmax(0,1fr)_auto]">
-      <div className="flex gap-3">
+    <li className="relative isolate grid gap-x-4 gap-y-2 border-t border-line py-3 first:border-t-0 md:grid-cols-[minmax(0,1fr)_auto]">
+      <TaskOpener task={task} onOpen={onOpen} />
+      <div className="pointer-events-none relative flex flex-wrap gap-3">
         {plan.canEdit ? (
-          <div role="group" aria-label="Status" className="flex h-fit flex-none border border-line">
+          <div role="group" aria-label="Status" className="pointer-events-auto flex h-fit flex-none border border-line">
             {taskStatuses.map(status => (
               <button key={status} type="button" disabled={busy} aria-pressed={task.status === status} onClick={() => task.status !== status && onPatch({ status })} title={statusLabels[status]}
                 className={`min-h-8 min-w-8 px-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-50 ${task.status === status ? (status === "done" ? "bg-fg text-canvas" : status === "doing" ? "bg-accent text-accent-fg" : status === "review" ? "bg-caution text-canvas" : "bg-line text-fg") : "text-fg-muted hover:text-fg"}`}>
@@ -274,11 +279,42 @@ function TaskRow({ task, plan, now, busy, onPatch }: { task: PlanTask; plan: Pla
         ) : <span className={`${monoTag} h-fit flex-none border px-2 py-1 ${statusTone[task.status]}`}>{statusLabels[task.status]}</span>}
         <p className={`m-0 text-[0.88rem] leading-[1.6] ${task.status === "done" ? "text-fg-muted line-through decoration-fg/40" : "text-fg/85"}`}>{task.text}</p>
       </div>
-      <div className="flex items-center gap-2 md:justify-end">
+      <div className="pointer-events-none relative flex items-center gap-2 md:justify-end">
         <DueTag task={task} now={now} />
         <OwnerControl task={task} plan={plan} busy={busy} onChange={ownerId => onPatch({ ownerId })} />
       </div>
-      <a href={`/branding-plan/tasks/${task.id}`} className="min-h-11 py-2 text-sm text-accent-text underline underline-offset-4 md:col-span-2">Comments &amp; files</a>
+      <TaskActivity task={task} />
     </li>
   );
+}
+
+function TaskOpener({ task, onOpen, draggable = false }: { task: PlanTask; onOpen: () => void; draggable?: boolean }) {
+  return <button type="button" draggable={draggable} onClick={onOpen} aria-label={`Open task: ${task.text}`} className="absolute inset-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />;
+}
+
+function TaskActivity({ task }: { task: PlanTask }) {
+  if (!task.messageCount && !task.attachmentCount) return null;
+  return <p className="pointer-events-none relative mt-3 mb-0 text-sm text-accent-text md:col-span-2">
+    {task.messageCount} {task.messageCount === 1 ? "comment" : "comments"}
+    {task.attachmentCount > 0 && ` · ${task.attachmentCount} ${task.attachmentCount === 1 ? "file" : "files"}`}
+  </p>;
+}
+
+function TaskDialog({ taskId, onClose, onTaskChange }: { taskId: string; onClose: () => void; onTaskChange: (task: PlanTask) => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const element = dialog.current!;
+    const previousOverflow = document.body.style.overflow;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    element.showModal();
+    document.body.style.overflow = "hidden";
+    return () => { element.close(); document.body.style.overflow = previousOverflow; opener?.focus({ preventScroll: true }); };
+  }, []);
+  return <dialog ref={dialog} aria-labelledby="task-details-title" onClose={onClose} className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-5xl overflow-y-auto border border-line bg-canvas p-5 text-fg shadow-[7px_7px_0_0_var(--edge)] backdrop:bg-fg/60 sm:p-8">
+    <div className="mb-4 flex items-center justify-between gap-4">
+      <h2 id="task-details-title" className={`${monoTag} m-0 text-fg-muted`}>Task details</h2>
+      <button type="button" onClick={() => dialog.current?.close()} className={outlineButton}>Close</button>
+    </div>
+    <PlanTaskDiscussion taskId={taskId} embedded onTaskChange={onTaskChange} />
+  </dialog>;
 }
