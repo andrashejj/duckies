@@ -1,5 +1,51 @@
 @import "tailwindcss";
 
+/* Named pages keep A5 sizing local to the exercise-card printout. */
+@page exercise-card {
+  size: A5 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  html:has([data-workout-page]),
+  body:has([data-workout-page]) {
+    background: white !important;
+    color: var(--color-ink-950);
+    color-scheme: light !important;
+    overflow: visible !important;
+  }
+  body:has([data-workout-page])::before,
+  body:has([data-workout-page]) > .skip-link,
+  body:has([data-workout-page]) > div > header,
+  body:has([data-workout-page]) > div > footer {
+    display: none !important;
+  }
+  body:has([data-workout-page]) > div {
+    min-height: 0;
+    overflow: visible !important;
+  }
+  [data-workout-page] {
+    --fg: var(--color-ink-950);
+    --fg-muted: var(--color-ink-700);
+    --surface: white;
+    --edge: var(--color-ink-950);
+    --line: var(--color-ink-700);
+  }
+  [data-workout-section][hidden] {
+    display: none !important;
+  }
+  [data-exercise-card] {
+    page: exercise-card;
+    box-sizing: border-box;
+    width: 128mm;
+    height: 189mm;
+    break-inside: avoid;
+    break-after: page;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
 /* Dark mode follows data-theme on <html>, set before paint by the inline script
    in BaseLayout (stored choice, else the system preference). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

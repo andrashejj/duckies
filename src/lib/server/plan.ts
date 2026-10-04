@@ -6,6 +6,7 @@ import type { PlanData, PlanMilestone, PlanPerson, PlanTask, TaskStatus } from "
 import { getBrandingAccess } from "./branding";
 import { getDatabase } from "./db";
 import { json, sameOrigin } from "./http";
+import { queueTaskNotification, sendQueuedTaskNotification } from "./plan-notifications";
 
 export class PlanError extends Error { constructor(message: string, public status = 400) { super(message); } }
 export const planRoute = (handler: APIRoute): APIRoute => async context => {
@@ -90,9 +91,12 @@ async function seedPlan() {
 
 export async function updateTask(id: string, patch: { text?: string; status?: TaskStatus; ownerId?: string | null }, expectedVersion: number, actor: string): Promise<PlanTask> {
   const client = await getDatabase().connect();
+  let notification: string | null = null;
+  let saved!: PlanTask;
   try {
     await client.query("BEGIN");
     if (patch.ownerId && !(await client.query("SELECT 1 FROM plan_person WHERE id=$1", [patch.ownerId])).rowCount) throw new PlanError("Unknown owner.", 400);
+    const before = (await client.query<TaskRow>("SELECT * FROM plan_task WHERE id=$1 FOR UPDATE", [id])).rows[0];
     const result = await client.query<TaskRow>(`UPDATE plan_task SET status=COALESCE($3,status),owner_id=CASE WHEN $4 THEN $5 ELSE owner_id END,
       text=COALESCE($7,text),version=version+1,updated_at=now(),updated_by=$6 WHERE id=$1 AND version=$2
       RETURNING id,milestone_id,text,owner_id,due_on::text,status,sort,version,updated_at`,
@@ -108,13 +112,25 @@ export async function updateTask(id: string, patch: { text?: string; status?: Ta
     const counts = await client.query(`SELECT ${taskActivityColumns} FROM plan_task t WHERE t.id=$1`, [id]);
     const task = taskFromRow({ ...result.rows[0], ...counts.rows[0] });
     if (patch.status !== undefined || patch.ownerId !== undefined) await client.query("INSERT INTO plan_task_event(task_id,status,owner_id,actor) VALUES($1,$2,$3,$4)", [task.id, task.status, task.ownerId, actor]);
+    const changes: string[] = [];
+    if (before.text !== task.text) changes.push(`Description changed.\nPrevious description: ${before.text}`);
+    if (before.status !== task.status) changes.push(`Status changed: ${before.status} → ${task.status}.`);
+    if (before.owner_id !== task.ownerId) {
+      const previous = before.owner_id ? (await client.query("SELECT name FROM plan_person WHERE id=$1", [before.owner_id])).rows[0]?.name : "Unassigned";
+      changes.push(`Owner changed from ${previous ?? "Unassigned"}.`);
+    }
+    if (changes.length) notification = await queueTaskNotification(client, task.id, actor, "changed", changes.join("\n"));
     await client.query("COMMIT");
-    return task;
+    saved = task;
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
+  await sendQueuedTaskNotification(notification);
+  return saved;
 }
 
 export async function createTask(input: { milestoneId: string; text: string; ownerId: string | null; dueOn: string | null }, actor: string): Promise<PlanTask> {
   const client = await getDatabase().connect();
+  let notification: string | null = null;
+  let saved!: PlanTask;
   try {
     await client.query("BEGIN");
     if (!(await client.query("SELECT 1 FROM plan_milestone WHERE id=$1", [input.milestoneId])).rowCount) throw new PlanError("Unknown milestone.", 400);
@@ -125,9 +141,12 @@ export async function createTask(input: { milestoneId: string; text: string; own
       RETURNING id,milestone_id,text,owner_id,due_on::text,status,sort,version,updated_at`, [id, input.milestoneId, input.text, input.ownerId, input.dueOn, actor]);
     const task = taskFromRow(result.rows[0]);
     await client.query("INSERT INTO plan_task_event(task_id,status,owner_id,actor) VALUES($1,$2,$3,$4)", [task.id, task.status, task.ownerId, actor]);
+    notification = await queueTaskNotification(client, task.id, actor, "created", "");
     await client.query("COMMIT");
-    return task;
+    saved = task;
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
+  await sendQueuedTaskNotification(notification);
+  return saved;
 }
 
 // ---------- Server-rendered pages (overview, plan, onsite) ----------

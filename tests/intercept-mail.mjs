@@ -7,9 +7,15 @@ if (process.env.RESEND_API_KEY !== "duckies-test-email-intercepted" || !/^\/duck
   throw new Error("Email interception is restricted to the Duckies test database.");
 }
 const originalFetch = globalThis.fetch;
+const failedOnce = new Set();
 globalThis.fetch = async (input, init) => {
   if (String(input) === "https://api.resend.com/emails") {
     const mail = JSON.parse(init.body);
+    const key = new Headers(init.headers).get("Idempotency-Key");
+    if (key && mail.text.includes("TASK_MAIL_FAIL_ONCE") && !failedOnce.has(key)) {
+      failedOnce.add(key);
+      return Response.json({ error: "Transient test failure" }, { status: 503 });
+    }
     if (mail.to.includes("delivery-failure@example.com")) return Response.json({ error: "Test delivery failure" }, { status: 503 });
     mkdirSync(dirname(process.env.DUCKIES_TEST_MAIL_FILE), { recursive: true });
     appendFileSync(process.env.DUCKIES_TEST_MAIL_FILE, JSON.stringify(mail) + "\n", { mode: 0o600 });
