@@ -1,5 +1,7 @@
 # Sunset Duckies deployment
 
+Task emails require the additive `20261004180112_plan_task_notifications` migration, `PLAN_TASK_EMAILS_ENABLED=true` and a random `CRON_SECRET` in Production. Leave the flag unset/false in Preview and Development. `vercel.json` schedules the protected retry endpoint every five minutes; check Vercel cron availability on the project's plan. Immediate delivery is awaited after the task transaction commits; failure leaves the email queued without failing the saved task. Verify the four recipients and provider acceptance for a real requested task, not a dummy message to the team. Inspect `sent_at`, `provider_id`, `attempts` and `last_error` in `plan_task_notification`; rows still unsent after 23 hours need manual provider review before resending. Include this table in backups. Public exercise cards at `/training-materials/full-body-cards` must be deployed before sending a task that links to them.
+
 Deploy the club, members area, reservation shop, and admin panel as one Vercel Astro app. They share Better Auth sessions and one PostgreSQL database.
 
 1. Provision a dedicated PostgreSQL database and set `DUCKIES_DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and `EMAIL_FROM` in the target environment. `BETTER_AUTH_URL` must be the exact HTTPS origin. Add `EMAIL_ADMIN_NOTIFY` for shop alerts.

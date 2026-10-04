@@ -13,6 +13,8 @@ process.env.BETTER_AUTH_SECRET = "duckies-local-tests-only-not-a-production-secr
 process.env.RESEND_API_KEY = "duckies-test-email-intercepted";
 process.env.EMAIL_FROM = "Duckies Tests <test@example.com>";
 process.env.EMAIL_ADMIN_NOTIFY = "organiser@example.com";
+process.env.PLAN_TASK_EMAILS_ENABLED = "true";
+process.env.CRON_SECRET = "duckies-test-cron-only";
 process.env.DUCKIES_TEST_MAIL_FILE = resolve("test-results/mail.jsonl");
 
 export default defineConfig({

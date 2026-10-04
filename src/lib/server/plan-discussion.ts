@@ -4,6 +4,7 @@ import { MAX_TASK_FILES, MAX_TASK_FILE_BYTES, taskMessageSchema, type TaskDiscus
 import { BRANDING_OWNER } from "../branding";
 import { getDatabase } from "./db";
 import { PlanError, taskFromRow, taskActivityColumns, type TaskRow } from "./plan";
+import { queueTaskNotification, sendQueuedTaskNotification } from "./plan-notifications";
 
 // File bytes are excluded from discussion responses. Downloads recheck access.
 const nameForActor = "COALESCE(p.name, a.name, u.name, 'Club editor')";
@@ -76,6 +77,8 @@ async function lockEditor(db: pg.PoolClient, actor: string) {
 
 export async function addTaskMessage(taskId: string, input: Awaited<ReturnType<typeof readTaskMessage>>, actor: string) {
   const db = await getDatabase().connect();
+  let notification: string | null = null;
+  let messageId!: string;
   try {
     await db.query("BEGIN");
     await lockEditor(db, actor);
@@ -87,10 +90,13 @@ export async function addTaskMessage(taskId: string, input: Awaited<ReturnType<t
     const id = randomUUID();
     await db.query("INSERT INTO plan_task_message(id,task_id,author,kind,body) VALUES($1,$2,$3,$4,$5)", [id, taskId, actor, input.kind, input.body]);
     for (const file of input.files) await db.query("INSERT INTO plan_task_attachment(id,message_id,filename,bytes) VALUES($1,$2,$3,$4)", [randomUUID(), id, file.filename, file.bytes]);
+    notification = await queueTaskNotification(db, taskId, actor, "commented", [input.body, input.files.length ? `Attachments: ${input.files.map(file => file.filename).join(", ")} (open the task to download)` : ""].filter(Boolean).join("\n\n"));
     await db.query("COMMIT");
-    return id;
+    messageId = id;
   } catch (error) { await db.query("ROLLBACK"); throw error; }
   finally { db.release(); }
+  await sendQueuedTaskNotification(notification);
+  return messageId;
 }
 
 export async function downloadTaskAttachment(taskId: string, attachmentId: string) {

@@ -14,6 +14,7 @@ Landing site for a volunteer-run, member-funded surf club for kids in Tamarin, M
 
 - `/`
 - `/training-materials`
+- `/training-materials/full-body-cards` — 51 public A5 exercise cards from Dan the HIIT Man’s linked workout; print all cards or one section. The four Tabata cards repeat as a round. Exercise data, exact work-start timestamps and frame timestamps live in `src/data/full-body-workout.ts`; attributed stills live in `public/media/training/full-body/`. The named print page is A5 portrait, with one card per sheet; use two pages per sheet for A4.
 - `/login` — shared email-code sign-in for members and customers
 - `/members` — member-only club lineup
 - `/members/profile` — your family, registrations and fees
@@ -200,6 +201,8 @@ Members can choose **Share publicly** on their own posts or photos in their pers
 The public page and its token-scoped image are no-store/noindex and check source ownership, archive entitlement and moderation on every read. **Stop sharing** invalidates both immediately for subsequent requests; creating a replacement uses a new link. Saved copies and previews on other services cannot be recalled. Former members can publish only items from their frozen personal archive. Their public caption is independent of later private edits, and removed or rejected source photos/posts stop serving publicly. Apply `20260921150000_public_profile_shares` before deploying this feature. Browser coverage: `tests/public-shares.spec.ts`.
 
 ## Branding task discussions
+
+Task notifications email Dora, Tamas, Estelle and Andras when a task is created, its description/status/owner changes, or a comment/file is added. Emails include the editor, current owner, due date, change details and a private task link. Unchanged values and rejected edits do not send notifications. Set `PLAN_TASK_EMAILS_ENABLED=true` in Production only. Notifications are saved atomically in `plan_task_notification`, sent after commit, and retried every five minutes through the `CRON_SECRET`-protected `/api/cron/plan-notifications` route. No old tasks are backfilled. Failed messages older than 23 hours stay recorded for manual delivery review before resending, to avoid duplicating emails outside Resend's idempotency window. Attachments stay behind task access checks and are not emailed.
 
 On `/branding-plan/board`, click any task card (also available in the timeline). Details open over the board, keeping your filters and position. Cards show comment and file counts. Approved branding editors, including Estelle, can edit the description or post a comment and attach up to three files totalling 3 MB per message. A file can be posted without a message. Larger files can be shared by pasting their existing sharing link into a comment. Comments and updates share one conversation. Description edits use version checks to prevent overwrites and appear in the conversation. Each entry shows its author and time alongside task status/owner history. Comments do not change task status; use the board's status menu to move work to review.
 

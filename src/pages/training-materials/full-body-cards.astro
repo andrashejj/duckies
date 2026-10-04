@@ -1,0 +1,113 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Cta from "../../components/ui/Cta.astro";
+import SectionTitle from "../../components/ui/SectionTitle.astro";
+import { exerciseCards, workoutSections, workoutVideo, videoTime } from "../../data/full-body-workout";
+import { stickerCardClass, field } from "../../lib/ui";
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title="Full-body exercise cards | Sunset Duckies"
+  description="Printable A5 exercise cards for Dan the HIIT Man’s 40-minute no-equipment workout. One image, the move, and its timings."
+  image="/media/training/full-body/main-01.webp"
+  imageAlt="Dan demonstrating the squat twist."
+  imageWidth={1280}
+  imageHeight={720}
+  page="materials"
+>
+  <div data-workout-page class="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-10 print:m-0 print:max-w-none print:p-0">
+    <header class="mb-7 print:hidden">
+      <a href="/training-materials" class="inline-block py-2 font-semibold text-fg-muted underline underline-offset-4 hover:text-fg">← Training materials</a>
+      <SectionTitle as="h1" class="mt-3 max-w-3xl">Full-body exercise cards.</SectionTitle>
+      <p class="mt-4 max-w-2xl leading-relaxed text-fg-muted">
+        One image, the move, and its timings. Follow <a href={workoutVideo.url} target="_blank" rel="noreferrer" class="font-semibold underline underline-offset-4">{workoutVideo.creator}’s 40-minute workout</a> from warm-up to cool-down. No equipment; a mat is optional.
+      </p>
+
+      <div class="mt-5 flex flex-wrap items-end gap-4">
+        <div class="w-full sm:w-64">
+          <label for="workout-section" class="mb-2 block font-semibold">Cards to show & print</label>
+          <select id="workout-section" class={field}>
+            <option value="all">All 51 cards</option>
+            {workoutSections.map(section => <option value={section.id}>{section.title}</option>)}
+          </select>
+        </div>
+        <Cta id="print-workout">Print A5 cards</Cta>
+      </div>
+      <p id="workout-count" aria-live="polite" class="mt-5 font-semibold">51 cards · one card per A5 page</p>
+      <details class="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
+        <summary class="w-fit cursor-pointer py-2 font-semibold underline underline-offset-4">Print settings</summary>
+        <p>Choose A5 portrait, 100% scale, and turn off headers and footers in the print dialog. To use A4 paper, choose two pages per sheet. You can also save as PDF.</p>
+      </details>
+      <noscript><p class="mt-3">Use your browser’s Print command to print all cards. Section selection needs JavaScript.</p></noscript>
+    </header>
+
+    {workoutSections.map(section => (
+      <section data-workout-section={section.id} aria-labelledby={`heading-${section.id}`} class="mb-12 last:mb-0 print:m-0">
+        <div class="mb-5 flex flex-wrap items-baseline justify-between gap-3 print:hidden">
+          <SectionTitle as="h2" size="sm" class="scroll-mt-24" id={`heading-${section.id}`}>{section.title}</SectionTitle>
+          <p class="text-sm text-fg-muted">{section.timing}</p>
+        </div>
+        {section.id === "cool-down" && <p class="mb-5 text-sm text-fg-muted print:hidden">These movements are unnamed in the video; the cards use descriptive titles.</p>}
+        <div class="grid items-stretch gap-7 md:grid-cols-2 xl:grid-cols-3 print:block">
+          {exerciseCards.filter(card => card.section === section.id).map(card => (
+            <article id={card.id} data-exercise-card class={stickerCardClass({ hover: false }, "flex flex-col overflow-hidden p-5 print:rounded-none print:border print:p-[6mm] print:shadow-none")}>
+              <div class="flex items-center justify-between gap-3 font-mono text-[0.65rem] uppercase tracking-[0.08em] text-fg-muted">
+                <span>Sunset Duckies · {section.title}</span>
+                <span class="shrink-0 font-semibold tabular-nums text-fg">{String(exerciseCards.indexOf(card) + 1).padStart(2, "0")} / 51</span>
+              </div>
+              <h3 class="mb-5 mt-5 min-h-[2.2em] text-balance font-display text-[1.8rem] font-bold leading-[1.08] tracking-[-0.03em] print:my-[5mm] print:min-h-[23mm] print:text-[25pt]">{card.title}</h3>
+              <img
+                src={`/media/training/full-body/${card.id}.webp`}
+                alt={`${workoutVideo.creator} demonstrating ${card.title.toLowerCase()}.`}
+                width="1280"
+                height="720"
+                loading="eager"
+                decoding="async"
+                class="aspect-video w-full rounded-xl border border-edge object-contain print:rounded-none"
+              />
+              <dl class="mt-5 grid grid-cols-2 gap-4 border-b border-line pb-5 print:mt-[6mm] print:pb-[5mm]">
+                <div>
+                  <dt class="font-mono text-xs uppercase tracking-[0.1em] text-fg-muted">{section.id === "cool-down" ? "Move / hold" : "Work"}</dt>
+                  <dd class="mt-1 font-display text-5xl font-bold tabular-nums tracking-[-0.03em] print:text-[38pt]">{card.work}<span class="ml-1 text-2xl">s</span></dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-xs uppercase tracking-[0.1em] text-fg-muted">{card.rest ? "Rest after" : "Then"}</dt>
+                  <dd class="mt-1 font-display font-bold tabular-nums tracking-[-0.03em]">
+                    {card.rest ? <span class="text-5xl print:text-[38pt]">{card.rest}<span class="ml-1 text-2xl">s</span></span> : <span class="block pt-2 text-2xl">{card.id === "cool-down-06" ? "Finished" : "Next move"}</span>}
+                  </dd>
+                </div>
+              </dl>
+              {card.note && <p class="mt-3 text-sm font-semibold leading-snug print:text-[10pt]">{card.note}</p>}
+              <div class="mt-auto pt-5 print:pt-[4mm]">
+                <a href={`${workoutVideo.url}&t=${card.start}s`} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4 hover:text-accent-text print:min-h-0 print:text-[10pt]">
+                  Watch at {videoTime(card.start)}{card.rounds === 2 && ` · round 2 at ${videoTime(card.start + 120)}`}
+                </a>
+                <p class="mt-1 text-[0.65rem] leading-relaxed text-fg-muted print:text-[8pt]">Video & still: {workoutVideo.creator} · <span class="hidden print:inline">youtu.be/{workoutVideo.id}</span><span class="print:hidden">YouTube</span></p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<script>
+  const selector = document.querySelector<HTMLSelectElement>("#workout-section");
+  const count = document.querySelector("#workout-count");
+  selector?.addEventListener("change", () => {
+    let total = 0;
+    document.querySelectorAll<HTMLElement>("[data-workout-section]").forEach(section => {
+      section.hidden = selector.value !== "all" && section.dataset.workoutSection !== selector.value;
+      if (!section.hidden) total += section.querySelectorAll("[data-exercise-card]").length;
+    });
+    if (count) count.textContent = `${total} cards · one card per A5 page`;
+  });
+  document.querySelector("#print-workout")?.addEventListener("click", async () => {
+    await document.fonts.ready;
+    await Promise.all(Array.from(document.querySelectorAll<HTMLImageElement>("[data-exercise-card] img"), image => image.decode().catch(() => {})));
+    window.print();
+  });
+</script>
