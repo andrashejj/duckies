@@ -12,7 +12,7 @@ export const statusLabels: Record<TaskStatus, string> = { todo: "To do", doing: 
 
 export type PlanPerson = { id: string; name: string; email: string | null; sort: number };
 export type PlanLink = { label: string; file: string };
-export type PlanTask = { id: string; milestoneId: string; text: string; ownerId: string | null; dueOn: string | null; status: TaskStatus; sort: number; version: number; updatedAt: string };
+export type PlanTask = { id: string; milestoneId: string; text: string; ownerId: string | null; dueOn: string | null; status: TaskStatus; sort: number; version: number; updatedAt: string; messageCount: number; attachmentCount: number };
 export type PlanMilestone = {
   id: string; code: string; title: string; dateLabel: string; dueOn: string;
   deliverable: string; ownerId: string | null; links: PlanLink[]; sort: number; tasks: PlanTask[];
@@ -21,14 +21,16 @@ export type PlanData = { people: PlanPerson[]; milestones: PlanMilestone[]; canE
 
 export const planIdPattern = /^[a-z][a-z0-9-]{1,40}$/;
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a YYYY-MM-DD date.");
+const taskText = z.string().trim().min(3, "Say what the task is.").max(400, "Keep a task under 400 characters.").refine(text => !text.includes("\0"), "Remove invalid characters.");
 export const taskPatchSchema = z.object({
+  text: taskText.optional(),
   status: z.enum(taskStatuses).optional(),
   ownerId: z.string().regex(planIdPattern).nullable().optional(),
   version: z.number().int().positive(),
-}).refine(patch => patch.status !== undefined || patch.ownerId !== undefined, { message: "Nothing to change." });
+}).refine(patch => patch.text !== undefined || patch.status !== undefined || patch.ownerId !== undefined, { message: "Nothing to change." });
 export const taskCreateSchema = z.object({
   milestoneId: z.string().regex(planIdPattern),
-  text: z.string().trim().min(3, "Say what the task is.").max(400, "Keep a task under 400 characters."),
+  text: taskText,
   ownerId: z.string().regex(planIdPattern).nullable(),
   dueOn: isoDate.nullable(),
 });
