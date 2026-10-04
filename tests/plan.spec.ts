@@ -8,6 +8,7 @@ const seededTasks=planMilestones.reduce((n,m)=>n+m.tasks.length,0);
 
 test.beforeEach(async()=>{
   await db.query('TRUNCATE club_member_archive,plan_task_event, plan_task, plan_milestone, plan_person, branding_access_event, branding_access, club_member, "user", "session", account, verification, "rateLimit" CASCADE');
+  await db.query("DELETE FROM shop_request_limit WHERE key LIKE 'plan-message:%'");
   await db.query("INSERT INTO club_member(email,role) VALUES ('organiser@example.com','organiser'),('parent@example.com','member')");
   await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('organiser@example.com','Editor','approved',true,now()),('parent@example.com','Reader','approved',false,now())");
 });
@@ -122,4 +123,126 @@ test("a pre-approved person can sign in with the code and edit straight away",as
   expect(plan.canEdit).toBe(true);
   const r=await request.patch('/api/plan/tasks/recipe-2',{headers:{origin},data:{status:'doing',version:1}});
   expect(r.status()).toBe(200);expect((await r.json()).task.ownerId).toBe('estelle');
+});
+
+const discussionURL = '/api/plan/tasks/recipe-1/discussion';
+const quoteFile = { name: 'Kostomize quote.txt', mimeType: 'text/plain', buffer: Buffer.from('100 stickers at Rs 18 each') };
+
+test('task discussions and downloads require current branding access; only editors can contribute', async ({ request }) => {
+  expect((await request.get(discussionURL)).status()).toBe(401);
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'comment', body: 'Hello' } })).status()).toBe(401);
+  await signIn(request, 'organiser@example.com');
+  await request.get('/api/plan');
+  expect((await request.post(discussionURL, { headers: { origin: 'https://elsewhere.example' }, multipart: { kind: 'comment', body: 'Hello' } })).status()).toBe(403);
+  const saved = await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'update', body: 'Kostomize quoted Rs 18 per sticker.', files: quoteFile, author: 'someone-else@example.com' } });
+  expect(saved.status()).toBe(201);
+  const result = await request.get(discussionURL);
+  expect(result.headers()['cache-control']).toContain('no-store');
+  const discussion = await result.json();
+  expect(discussion.messages).toHaveLength(1);
+  expect(discussion.messages[0]).toMatchObject({ kind: 'update', authorName: 'Editor', body: 'Kostomize quoted Rs 18 per sticker.' });
+  expect((await db.query('SELECT author FROM plan_task_message')).rows[0].author).toBe('organiser@example.com');
+  const file = discussion.messages[0].attachments[0];
+  expect(file).toMatchObject({ filename: quoteFile.name, size: quoteFile.buffer.length });
+  expect(file.bytes).toBeUndefined();
+  const download = `/api/plan/tasks/recipe-1/attachments/${file.id}`;
+  const response = await request.get(download);
+  expect(await response.body()).toEqual(quoteFile.buffer);
+  expect(response.headers()['content-disposition']).toContain('attachment;');
+  expect(response.headers()['content-type']).toBe('application/octet-stream');
+  expect(response.headers()['x-content-type-options']).toBe('nosniff');
+  expect(response.headers()['cache-control']).toContain('no-store');
+  expect((await request.get(`/api/plan/tasks/recipe-2/attachments/${file.id}`)).status()).toBe(404);
+  await signIn(request, 'parent@example.com');
+  expect((await request.get(discussionURL)).status()).toBe(200);
+  expect((await request.get(download)).status()).toBe(200);
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'comment', body: 'Reader cannot post' } })).status()).toBe(403);
+  await db.query("UPDATE branding_access SET status='revoked' WHERE email='parent@example.com'");
+  expect((await request.get(discussionURL)).status()).toBe(403);
+  expect((await request.get(download)).status()).toBe(403);
+  const page = await request.get('/branding-plan/tasks/recipe-1', { maxRedirects: 0 });
+  expect(page.status()).toBe(302);
+  expect(page.headers().location).toBe('/branding-plan');
+});
+
+test('discussion validation rejects empty, malformed and oversized uploads without partial saves', async ({ request }) => {
+  await signIn(request, 'organiser@example.com');
+  await request.get('/api/plan');
+  for (const data of [{ kind: 'comment', body: '  ' }, { kind: 'unknown', body: 'Hello' }, { kind: 'update', body: 'x'.repeat(4001) }]) {
+    expect((await request.post(discussionURL, { headers: { origin }, multipart: data })).status()).toBe(400);
+  }
+  expect((await request.post(discussionURL, { headers: { origin }, data: { kind: 'comment', body: 'Hello' } })).status()).toBe(415);
+  expect((await request.post(discussionURL, { headers: { origin, 'content-type': 'multipart/form-data; boundary=bad' }, data: 'not multipart' })).status()).toBe(400);
+  const oversized = { ...quoteFile, buffer: Buffer.alloc(3 * 1024 * 1024 + 1) };
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'comment', body: 'Quote', files: oversized } })).status()).toBe(413);
+  const tooMany = new FormData(); tooMany.set('kind', 'comment');
+  for (let i = 0; i < 4; i++) tooMany.append('files', new File(['quote'], `quote-${i}.txt`));
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: tooMany })).status()).toBe(400);
+  expect((await request.post(discussionURL.replace('recipe-1', 'missing'), { headers: { origin }, multipart: { kind: 'comment', body: 'Hello', files: quoteFile } })).status()).toBe(404);
+  expect((await db.query('SELECT count(*)::int AS n FROM plan_task_message')).rows[0].n).toBe(0);
+  expect((await db.query('SELECT count(*)::int AS n FROM plan_task_attachment')).rows[0].n).toBe(0);
+  const file = { name: 'design.html', mimeType: 'text/html', buffer: Buffer.from('<script>alert(1)</script>') };
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'comment', files: file } })).status()).toBe(201);
+  const d = await (await request.get(discussionURL)).json();
+  const attachment = await request.get(`/api/plan/tasks/recipe-1/attachments/${d.messages[0].attachments[0].id}`);
+  expect(attachment.headers()['content-type']).toBe('application/octet-stream');
+  expect(attachment.headers()['content-disposition']).toContain('attachment;');
+});
+
+test('concurrent messages preserve task status and history and editor revocation stops writes', async ({ request }) => {
+  await signIn(request, 'organiser@example.com');
+  await request.get('/api/plan');
+  await request.patch('/api/plan/tasks/recipe-1', { headers: { origin }, data: { status: 'review', version: 1 } });
+  const results = await Promise.all(['First question', 'Second question'].map(body => request.post(discussionURL, { headers: { origin }, multipart: { kind: 'comment', body } })));
+  expect(results.map(r => r.status())).toEqual([201, 201]);
+  const discussion = await (await request.get(discussionURL)).json();
+  expect(discussion.messages).toHaveLength(2);
+  expect(discussion.task).toMatchObject({ status: 'review', version: 2, ownerId: 'estelle' });
+  expect(discussion.events).toHaveLength(1);
+  expect(discussion.events[0]).toMatchObject({ status: 'review', ownerName: 'Estelle', authorName: 'Editor' });
+  await db.query("UPDATE branding_access SET can_edit=false WHERE email='organiser@example.com'");
+  expect((await request.post(discussionURL, { headers: { origin }, multipart: { kind: 'update', body: 'Cannot save' } })).status()).toBe(403);
+  expect((await db.query('SELECT count(*)::int AS n FROM plan_task_message')).rows[0].n).toBe(2);
+});
+
+test('Estelle can open a board task, post a comment and an attachment, and read them after reload', async ({ page }) => {
+  await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('niki.este.2022@ksz.edu-zg.ch','Estelle','approved',true,now())");
+  await signIn(page.request, 'niki.este.2022@ksz.edu-zg.ch');
+  await page.goto('/branding-plan/board');
+  await page.getByRole('link', { name: 'Comments & files', exact: true }).first().click();
+  await expect(page).toHaveURL(/branding-plan\/tasks\/design-1/);
+  await expect(page.getByText('No comments or updates yet.', { exact: false })).toBeVisible();
+  await page.getByLabel('Message', { exact: true }).fill('Can we use this sticker size? <script>alert(1)</script>');
+  await page.getByLabel('Attachments', { exact: true }).setInputFiles(quoteFile);
+  await page.route('**/api/plan/tasks/design-1/discussion', async route => {
+    if (route.request().method() === 'POST') return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Please try again.' }) });
+    return route.continue();
+  });
+  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Please try again.');
+  await expect(page.getByLabel('Message', { exact: true })).toHaveValue('Can we use this sticker size? <script>alert(1)</script>');
+  await expect(page.getByRole('button', { name: `Remove ${quoteFile.name}` })).toBeVisible();
+  await page.unroute('**/api/plan/tasks/design-1/discussion');
+  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await expect(page.getByRole('status')).toHaveText('Comment added.');
+  await page.getByLabel('Message type').selectOption('update');
+  await page.getByLabel('Message', { exact: true }).fill('Called Kostomize. The quote is Rs 18 per sticker.');
+  await page.getByRole('button', { name: 'Post update', exact: true }).click();
+  await expect(page.getByRole('status')).toHaveText('Progress update added.');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
+  await expect(page.getByText('Can we use this sticker size? <script>alert(1)</script>', { exact: true })).toBeVisible();
+  await expect(page.getByText('Called Kostomize. The quote is Rs 18 per sticker.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: `Download ${quoteFile.name}`, exact: false })).toBeVisible();
+  await page.evaluate(async () => { window.scrollTo(0, 0); await document.fonts.ready; });
+  await page.screenshot({ path: 'test-results/task-discussion-desktop.png', fullPage: true, animations: 'disabled' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: 'test-results/task-discussion-mobile-dark.png', fullPage: true, animations: 'disabled' });
+  await signIn(page.request, 'parent@example.com');
+  await page.reload();
+  await expect(page.getByText('You have viewing access.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Post comment', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: `Download ${quoteFile.name}`, exact: false })).toBeVisible();
 });

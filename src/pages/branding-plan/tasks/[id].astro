@@ -1,0 +1,13 @@
+---
+import BrandingLayout from "../../../layouts/BrandingLayout.astro";
+import PlanTaskDiscussion from "../../../components/react/PlanTaskDiscussion";
+import { planIdPattern } from "../../../lib/plan";
+export const prerender = false;
+if (!Astro.locals.branding?.canView) return Astro.redirect("/branding-plan");
+const id = Astro.params.id ?? "";
+if (!planIdPattern.test(id)) return new Response("Task not found.", { status: 404 });
+---
+<BrandingLayout title="Task discussion" description="Comments, progress updates and private files for a branding task." kicker="Project Molt / Board" heading="Task notes.">
+  <p slot="lead">Questions, quotes, artwork and progress, right here with the task. Everyone with branding access can follow along; editors can add to it.</p>
+  <PlanTaskDiscussion client:load taskId={id} />
+</BrandingLayout>
