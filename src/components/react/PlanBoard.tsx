@@ -223,6 +223,7 @@ export default function PlanBoard({ initialView = "board" }: { initialView?: Vie
                                     </select>
                                   )}
                                 </div>
+                                <a href={`/branding-plan/tasks/${task.id}`} draggable={false} className="mt-3 inline-block min-h-11 py-3 text-sm text-accent-text underline underline-offset-4">Comments &amp; files</a>
                               </li>
                             ))}
                             {cards.length === 0 && <li className={`px-1 py-4 text-center ${monoTag} text-fg-muted/70`}>—</li>}
@@ -277,6 +278,7 @@ function TaskRow({ task, plan, now, busy, onPatch }: { task: PlanTask; plan: Pla
         <DueTag task={task} now={now} />
         <OwnerControl task={task} plan={plan} busy={busy} onChange={ownerId => onPatch({ ownerId })} />
       </div>
+      <a href={`/branding-plan/tasks/${task.id}`} className="min-h-11 py-2 text-sm text-accent-text underline underline-offset-4 md:col-span-2">Comments &amp; files</a>
     </li>
   );
 }

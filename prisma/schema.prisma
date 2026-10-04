@@ -605,6 +605,7 @@ model PlanTask {
   plan_milestone  PlanMilestone    @relation(fields: [milestone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   plan_person     PlanPerson?      @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   plan_task_event PlanTaskEvent[]
+  messages        PlanTaskMessage[]
 
   @@index([milestone_id, sort], map: "plan_task_milestone_idx")
   @@index([owner_id, status], map: "plan_task_owner_idx")
@@ -622,6 +623,31 @@ model PlanTaskEvent {
   plan_task  PlanTask @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("plan_task_event")
+}
+
+model PlanTaskMessage {
+  id          String   @id
+  task_id     String
+  author      String
+  kind        String
+  body        String
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  task        PlanTask @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  attachments PlanTaskAttachment[]
+
+  @@index([task_id, created_at, id], map: "plan_task_message_timeline_idx")
+  @@map("plan_task_message")
+}
+
+model PlanTaskAttachment {
+  id         String @id
+  message_id String
+  filename   String
+  bytes      Bytes
+  message    PlanTaskMessage @relation(fields: [message_id], references: [id], onDelete: Cascade)
+
+  @@index([message_id], map: "plan_task_attachment_message_idx")
+  @@map("plan_task_attachment")
 }
 
 model RateLimit {
