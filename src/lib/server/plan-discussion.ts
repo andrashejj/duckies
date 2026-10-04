@@ -3,7 +3,7 @@ import type pg from "pg";
 import { MAX_TASK_FILES, MAX_TASK_FILE_BYTES, taskMessageSchema, type TaskDiscussion, type TaskMessage, type TaskHistoryEvent } from "../plan-discussion";
 import { BRANDING_OWNER } from "../branding";
 import { getDatabase } from "./db";
-import { PlanError, taskFromRow, type TaskRow } from "./plan";
+import { PlanError, taskFromRow, taskActivityColumns, type TaskRow } from "./plan";
 
 // File bytes are excluded from discussion responses. Downloads recheck access.
 const nameForActor = "COALESCE(p.name, a.name, u.name, 'Club editor')";
@@ -12,7 +12,7 @@ const actorJoins = (column: string) => `LEFT JOIN plan_person p ON p.email=${col
 
 export async function readTaskDiscussion(id: string): Promise<Omit<TaskDiscussion, "canEdit">> {
   const db = getDatabase();
-  const task = await db.query<TaskRow & { owner_name: string; milestone_title: string }>(`SELECT t.id,t.milestone_id,t.text,t.owner_id,t.due_on::text,t.status,t.sort,t.version,t.updated_at,
+  const task = await db.query<TaskRow & { owner_name: string; milestone_title: string }>(`SELECT t.id,t.milestone_id,t.text,t.owner_id,t.due_on::text,t.status,t.sort,t.version,t.updated_at,${taskActivityColumns},
     COALESCE(p.name,'Unassigned') AS owner_name,m.title AS milestone_title
     FROM plan_task t JOIN plan_milestone m ON m.id=t.milestone_id LEFT JOIN plan_person p ON p.id=t.owner_id WHERE t.id=$1`, [id]);
   if (!task.rowCount) throw new PlanError("Task not found.", 404);
@@ -46,7 +46,7 @@ export async function readTaskMessage(request: Request) {
   let form: FormData;
   try { form = await new Response(Buffer.concat(chunks), { headers: { "Content-Type": contentType } }).formData(); }
   catch { throw new PlanError("The upload could not be read. Choose your files again."); }
-  const parsed = taskMessageSchema.safeParse({ kind: form.get("kind"), body: form.get("body") ?? "" });
+  const parsed = taskMessageSchema.safeParse({ kind: form.get("kind") ?? "comment", body: form.get("body") ?? "" });
   if (!parsed.success) throw new PlanError(parsed.error.issues[0]?.message ?? "Invalid message.");
   const uploads = form.getAll("files");
   if (uploads.length > MAX_TASK_FILES) throw new PlanError("Attach up to three files per message.");

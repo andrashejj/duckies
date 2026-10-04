@@ -209,9 +209,12 @@ test('Estelle can open a board task, post a comment and an attachment, and read 
   await db.query("INSERT INTO branding_access(email,name,status,can_edit,verified_at) VALUES ('niki.este.2022@ksz.edu-zg.ch','Estelle','approved',true,now())");
   await signIn(page.request, 'niki.este.2022@ksz.edu-zg.ch');
   await page.goto('/branding-plan/board');
-  await page.getByRole('link', { name: 'Comments & files', exact: true }).first().click();
-  await expect(page).toHaveURL(/branding-plan\/tasks\/design-1/);
-  await expect(page.getByText('No comments or updates yet.', { exact: false })).toBeVisible();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByLabel('Filter by owner').selectOption('estelle');
+  await page.getByRole('button', { name: /^Open task:/ }).first().click();
+  await expect(page).toHaveURL(/branding-plan\/board/);
+  await expect(page.getByRole('dialog', { name: 'Task details' })).toBeVisible();
+  await expect(page.getByText('No comments yet.', { exact: false })).toBeVisible();
   await page.getByLabel('Message', { exact: true }).fill('Can we use this sticker size? <script>alert(1)</script>');
   await page.getByLabel('Attachments', { exact: true }).setInputFiles(quoteFile);
   await page.route('**/api/plan/tasks/design-1/discussion', async route => {
@@ -225,24 +228,96 @@ test('Estelle can open a board task, post a comment and an attachment, and read 
   await page.unroute('**/api/plan/tasks/design-1/discussion');
   await page.getByRole('button', { name: 'Post comment', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Comment added.');
-  await page.getByLabel('Message type').selectOption('update');
+  await expect(page.getByLabel('Message type')).toHaveCount(0);
   await page.getByLabel('Message', { exact: true }).fill('Called Kostomize. The quote is Rs 18 per sticker.');
-  await page.getByRole('button', { name: 'Post update', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Progress update added.');
+  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await expect(page.getByRole('status')).toHaveText('Comment added.');
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(page.getByLabel('Filter by owner')).toHaveValue('estelle');
+  await expect(page.getByText('2 comments · 1 file', { exact: true })).toBeVisible();
   await page.reload();
+  await page.getByRole('button', { name: /^Open task:/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
   await expect(page.getByText('Can we use this sticker size? <script>alert(1)</script>', { exact: true })).toBeVisible();
   await expect(page.getByText('Called Kostomize. The quote is Rs 18 per sticker.', { exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: `Download ${quoteFile.name}`, exact: false })).toBeVisible();
   await page.evaluate(async () => { window.scrollTo(0, 0); await document.fonts.ready; });
-  await page.screenshot({ path: 'test-results/task-discussion-desktop.png', fullPage: true, animations: 'disabled' });
+  await page.screenshot({ path: 'test-results/task-discussion-desktop.png', fullPage: false, animations: 'disabled' });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: 'test-results/task-discussion-mobile-dark.png', fullPage: true, animations: 'disabled' });
+  await page.screenshot({ path: 'test-results/task-discussion-mobile-dark.png', fullPage: false, animations: 'disabled' });
   await signIn(page.request, 'parent@example.com');
-  await page.reload();
+  await page.goto('/branding-plan/tasks/design-1');
+  await expect(page.getByRole('button', { name: 'Edit description' })).toHaveCount(0);
   await expect(page.getByText('You have viewing access.', { exact: false })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Post comment', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: `Download ${quoteFile.name}`, exact: false })).toBeVisible();
+});
+
+
+test('description edits are validated, versioned, audited and restricted to editors', async ({ request }) => {
+  await signIn(request, 'organiser@example.com');
+  await request.get('/api/plan');
+  const endpoint = '/api/plan/tasks/design-1';
+  for (const text of ['  ', 'xx', 'x'.repeat(401), 'bad\0text']) {
+    expect((await request.patch(endpoint, { headers: { origin }, data: { text, version: 1 } })).status()).toBe(400);
+  }
+  const response = await request.patch(endpoint, { headers: { origin }, data: { text: 'Order 100 bags in the agreed size.', version: 1 } });
+  expect(response.status()).toBe(200);
+  expect((await response.json()).task).toMatchObject({ text: 'Order 100 bags in the agreed size.', version: 2, status: 'todo', ownerId: 'estelle', messageCount: 1, attachmentCount: 0 });
+  expect((await request.patch(endpoint, { headers: { origin }, data: { text: 'Stale description', version: 1 } })).status()).toBe(409);
+  const discussion = await (await request.get(`${endpoint}/discussion`)).json();
+  expect(discussion.messages).toHaveLength(1);
+  expect(discussion.messages[0]).toMatchObject({ body: 'Description updated:\nOrder 100 bags in the agreed size.', authorName: 'Editor' });
+  // Counts include legacy updates and files, and survive a later status change.
+  await request.post(`${endpoint}/discussion`, { headers: { origin }, multipart: { kind: 'update', body: 'Supplier called.', files: quoteFile } });
+  const moved = await request.patch(endpoint, { headers: { origin }, data: { status: 'doing', version: 2 } });
+  expect((await moved.json()).task).toMatchObject({ messageCount: 2, attachmentCount: 1 });
+  const plan = await (await request.get('/api/plan')).json();
+  expect(plan.milestones[0].tasks[0]).toMatchObject({ messageCount: 2, attachmentCount: 1 });
+  await signIn(request, 'parent@example.com');
+  expect((await request.patch(endpoint, { headers: { origin }, data: { text: 'Reader edit', version: 3 } })).status()).toBe(403);
+});
+
+test('card details preserve filters and reconcile concurrent description edits without losing the draft', async ({ page }) => {
+  await signIn(page.request, 'organiser@example.com');
+  await page.goto('/branding-plan/board');
+  await page.getByLabel('Filter by owner').selectOption('estelle');
+  const opener = page.getByRole('button', { name: /^Open task:/ }).first();
+  await opener.focus();
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Edit description' }).click();
+  await page.getByLabel('Description', { exact: true }).fill('Ask Kostomize for a quote for 100 stickers.');
+  const patch = await page.request.patch('/api/plan/tasks/design-1', { headers: { origin }, data: { text: 'Ask for a paper bag printing quote.', version: 1 } });
+  expect(patch.status()).toBe(200);
+  await page.getByRole('button', { name: 'Save description' }).click();
+  await expect(page.getByRole('alert')).toContainText('Someone changed this task.');
+  await expect(page.getByLabel('Description', { exact: true })).toHaveValue('Ask Kostomize for a quote for 100 stickers.');
+  await expect(dialog.getByText('Ask for a paper bag printing quote.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save description' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Keep my draft' }).click();
+  await page.getByRole('button', { name: 'Save description' }).click();
+  await expect(page.getByRole('status')).toHaveText('Description saved.');
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(opener).toBeFocused();
+  await expect(page.getByLabel('Filter by owner')).toHaveValue('estelle');
+  const card = page.getByRole('listitem').filter({ has: page.getByRole('button', { name: 'Open task: Ask Kostomize for a quote for 100 stickers.', exact: true }) });
+  await expect(card).toContainText('2 comments');
+  await card.getByLabel('Status', { exact: true }).selectOption('doing');
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Design · Doing', exact: true })).toContainText('2 comments');
+  await page.getByRole('tab', { name: 'Timeline', exact: true }).click();
+  await page.getByRole('button', { name: 'Open task: Ask Kostomize for a quote for 100 stickers.', exact: true }).click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Ask Kostomize for a quote for 100 stickers.', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tab', { name: 'Timeline', exact: true })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('tab', { name: 'Board', exact: true }).click();
+  await page.getByRole('button', { name: 'Open task: Ask Kostomize for a quote for 100 stickers.', exact: true }).dragTo(page.getByRole('region', { name: 'Design · Review', exact: true }), { sourcePosition: { x: 12, y: 12 }, targetPosition: { x: 12, y: 30 } });
+  await expect(page.getByRole('region', { name: 'Design · Review', exact: true })).toContainText('Ask Kostomize for a quote for 100 stickers.');
+  await expect(dialog).toHaveCount(0);
 });

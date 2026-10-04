@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import type pg from "pg";
 import { planMilestones, planPeople } from "../../data/plan-tasks";
 import type { PlanData, PlanMilestone, PlanPerson, PlanTask, TaskStatus } from "../plan";
@@ -40,14 +40,18 @@ export async function readPlanBody(request: Request) {
 }
 
 type MilestoneRow = { id: string; code: string; title: string; date_label: string; due_on: string; deliverable: string; owner_id: string | null; links: PlanMilestone["links"]; sort: number };
-export type TaskRow = { id: string; milestone_id: string; text: string; owner_id: string | null; due_on: string | null; status: TaskStatus; sort: number; version: number; updated_at: Date };
-export const taskFromRow = (row: TaskRow): PlanTask => ({ id: row.id, milestoneId: row.milestone_id, text: row.text, ownerId: row.owner_id, dueOn: row.due_on, status: row.status, sort: row.sort, version: row.version, updatedAt: row.updated_at.toISOString() });
+export type TaskRow = { id: string; milestone_id: string; text: string; owner_id: string | null; due_on: string | null; status: TaskStatus; sort: number; version: number; updated_at: Date; message_count?: number; attachment_count?: number };
+export const taskFromRow = (row: TaskRow): PlanTask => ({ id: row.id, milestoneId: row.milestone_id, text: row.text, ownerId: row.owner_id, dueOn: row.due_on, status: row.status, sort: row.sort, version: row.version, updatedAt: row.updated_at.toISOString(), messageCount: row.message_count ?? 0, attachmentCount: row.attachment_count ?? 0 });
+
+// Shared by board reads and mutation responses, so changing status never erases activity badges.
+export const taskActivityColumns = `(SELECT count(*)::int FROM plan_task_message WHERE task_id=t.id) AS message_count,
+  (SELECT count(*)::int FROM plan_task_attachment f JOIN plan_task_message m ON m.id=f.message_id WHERE m.task_id=t.id) AS attachment_count`;
 
 async function readPlan(client: pg.PoolClient | pg.Pool): Promise<Omit<PlanData, "canEdit">> {
   // Dates come back as text so calendar days never shift with the server timezone.
   const people = await client.query<PlanPerson>("SELECT id,name,email,sort FROM plan_person ORDER BY sort,id");
   const milestones = await client.query<MilestoneRow>("SELECT id,code,title,date_label,due_on::text,deliverable,owner_id,links,sort FROM plan_milestone ORDER BY sort,id");
-  const tasks = await client.query<TaskRow>("SELECT id,milestone_id,text,owner_id,due_on::text,status,sort,version,updated_at FROM plan_task ORDER BY sort,created_at,id");
+  const tasks = await client.query<TaskRow>(`SELECT t.id,t.milestone_id,t.text,t.owner_id,t.due_on::text,t.status,t.sort,t.version,t.updated_at,${taskActivityColumns} FROM plan_task t ORDER BY t.sort,t.created_at,t.id`);
   return {
     people: people.rows,
     milestones: milestones.rows.map(row => ({
@@ -84,21 +88,26 @@ async function seedPlan() {
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
 }
 
-export async function updateTask(id: string, patch: { status?: TaskStatus; ownerId?: string | null }, expectedVersion: number, actor: string): Promise<PlanTask> {
+export async function updateTask(id: string, patch: { text?: string; status?: TaskStatus; ownerId?: string | null }, expectedVersion: number, actor: string): Promise<PlanTask> {
   const client = await getDatabase().connect();
   try {
     await client.query("BEGIN");
     if (patch.ownerId && !(await client.query("SELECT 1 FROM plan_person WHERE id=$1", [patch.ownerId])).rowCount) throw new PlanError("Unknown owner.", 400);
     const result = await client.query<TaskRow>(`UPDATE plan_task SET status=COALESCE($3,status),owner_id=CASE WHEN $4 THEN $5 ELSE owner_id END,
-      version=version+1,updated_at=now(),updated_by=$6 WHERE id=$1 AND version=$2
+      text=COALESCE($7,text),version=version+1,updated_at=now(),updated_by=$6 WHERE id=$1 AND version=$2
       RETURNING id,milestone_id,text,owner_id,due_on::text,status,sort,version,updated_at`,
-      [id, expectedVersion, patch.status ?? null, patch.ownerId !== undefined, patch.ownerId ?? null, actor]);
+      [id, expectedVersion, patch.status ?? null, patch.ownerId !== undefined, patch.ownerId ?? null, actor, patch.text ?? null]);
     if (!result.rowCount) {
       const exists = (await client.query("SELECT 1 FROM plan_task WHERE id=$1", [id])).rowCount;
       throw new PlanError(exists ? "This task changed in another window. Reload the board and try again." : "Task not found.", exists ? 409 : 404);
     }
-    const task = taskFromRow(result.rows[0]);
-    await client.query("INSERT INTO plan_task_event(task_id,status,owner_id,actor) VALUES($1,$2,$3,$4)", [task.id, task.status, task.ownerId, actor]);
+    if (patch.text !== undefined) {
+      await client.query("INSERT INTO plan_task_message(id,task_id,author,kind,body) VALUES($1,$2,$3,'comment',$4)",
+        [randomUUID(), id, actor, `Description updated:\n${patch.text}`]);
+    }
+    const counts = await client.query(`SELECT ${taskActivityColumns} FROM plan_task t WHERE t.id=$1`, [id]);
+    const task = taskFromRow({ ...result.rows[0], ...counts.rows[0] });
+    if (patch.status !== undefined || patch.ownerId !== undefined) await client.query("INSERT INTO plan_task_event(task_id,status,owner_id,actor) VALUES($1,$2,$3,$4)", [task.id, task.status, task.ownerId, actor]);
     await client.query("COMMIT");
     return task;
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
@@ -126,7 +135,7 @@ const seedAsPlan = (): Omit<PlanData, "canEdit"> => ({
   people: planPeople.map((person, sort) => ({ ...person, sort })),
   milestones: planMilestones.map((m, sort) => ({
     id: m.id, code: m.code, title: m.title, dateLabel: m.dateLabel, dueOn: m.dueOn, deliverable: m.deliverable, ownerId: m.owner, links: m.links ?? [], sort,
-    tasks: m.tasks.map((task, index) => ({ id: `${m.id}-${index + 1}`, milestoneId: m.id, text: task.text, ownerId: task.owner, dueOn: task.due, status: "todo" as const, sort: index, version: 1, updatedAt: "" })),
+    tasks: m.tasks.map((task, index) => ({ id: `${m.id}-${index + 1}`, milestoneId: m.id, text: task.text, ownerId: task.owner, dueOn: task.due, status: "todo" as const, sort: index, version: 1, updatedAt: "", messageCount: 0, attachmentCount: 0 })),
   })),
 });
 /** The plan for a server-rendered page; the seed stands in (flagged `live: false`) when the database is unreachable. */

@@ -1,19 +1,20 @@
 import { useEffect, useState, type SubmitEvent } from "react";
-import { formatDay, statusLabels } from "../../lib/plan";
+import { formatDay, statusLabels, type PlanTask } from "../../lib/plan";
 import { MAX_TASK_FILES, MAX_TASK_FILE_BYTES, type TaskDiscussion } from "../../lib/plan-discussion";
 import { bButton, bField, bSecondary, monoTag, subheading } from "../../lib/plan-ui";
 
 const fileSize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.ceil(size / 1024))} KB` : `${(size / (1024 * 1024)).toFixed(1)} MB`;
 const timestamp = (value: string) => new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
-export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
+export default function PlanTaskDiscussion({ taskId, embedded = false, onTaskChange }: { taskId: string; embedded?: boolean; onTaskChange?: (task: PlanTask) => void }) {
   const [discussion, setDiscussion] = useState<TaskDiscussion | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [body, setBody] = useState("");
-  const [kind, setKind] = useState<"comment" | "update">("comment");
+  const [draft, setDraft] = useState<{ text: string; version: number } | null>(null);
+  const [conflict, setConflict] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const endpoint = `/api/plan/tasks/${taskId}/discussion`;
 
@@ -27,6 +28,8 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
         throw new Error(data.error || "Could not load the discussion.");
       }
       setDiscussion(data);
+      onTaskChange?.(data.task);
+      return data as TaskDiscussion;
     } catch (e) {
       if (!signal?.aborted) setError(e instanceof Error ? e.message : "Could not load the discussion. Try refreshing.");
     } finally { if (!signal?.aborted) setLoading(false); }
@@ -50,7 +53,7 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
     if (saving) return;
     setError(""); setNotice(""); setSaving(true);
     const form = new FormData();
-    form.set("kind", kind); form.set("body", body);
+    form.set("body", body);
     for (const file of files) form.append("files", file);
     try {
       const response = await fetch(endpoint, { method: "POST", body: form });
@@ -59,9 +62,33 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
         if ([401, 403].includes(response.status)) setDiscussion(current => current && { ...current, canEdit: false });
         throw new Error(data.error || "Could not save your message. Your draft is still here.");
       }
-      setBody(""); setFiles([]); setNotice(kind === "update" ? "Progress update added." : "Comment added.");
+      setBody(""); setFiles([]); setNotice("Comment added.");
       await load();
     } catch (e) { setError(e instanceof Error ? e.message : "Could not save your message. Your draft is still here."); }
+    finally { setSaving(false); }
+  }
+
+  async function saveDescription(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!draft || saving || conflict) return;
+    setSaving(true); setError(""); setNotice("");
+    try {
+      const response = await fetch(`/api/plan/tasks/${taskId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft) });
+      const data = await response.json();
+      if (response.status === 409) {
+        setConflict(true);
+        await load();
+        throw new Error("Someone changed this task. Your draft is safe. Refresh, compare with the saved description, then choose which text to use.");
+      }
+      if (!response.ok) {
+        if ([401, 403].includes(response.status)) setDiscussion(current => current && { ...current, canEdit: false });
+        throw new Error(data.error || "Could not save the description. Your draft is still here.");
+      }
+      onTaskChange?.(data.task);
+      setDiscussion(current => current && { ...current, task: data.task });
+      setDraft(null); setNotice("Description saved.");
+      await load();
+    } catch (e) { setError(e instanceof Error ? e.message : "Could not save the description. Your draft is still here."); }
     finally { setSaving(false); }
   }
 
@@ -72,7 +99,7 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
 
   return <div className="text-fg">
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-      <a href="/branding-plan/board" className={bSecondary}>Back to board</a>
+      {!embedded && <a href="/branding-plan/board" className={bSecondary}>Back to board</a>}
       <button type="button" disabled={loading || saving} onClick={() => void load()} className={bSecondary}>{loading ? "Loading…" : "Refresh discussion"}</button>
     </div>
     {error && <p role="alert" className="my-4 break-words text-alert">{error}</p>}
@@ -81,18 +108,33 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
     {discussion && <>
       <section aria-label="Task details" className="mb-8 border-y border-line py-6">
         <p className={`m-0 mb-3 ${monoTag} text-accent-text`}>{discussion.milestoneTitle} · {statusLabels[discussion.task.status]}</p>
-        <h2 className={`${subheading} max-w-[70ch] break-words`}>{discussion.task.text}</h2>
+        {draft && discussion.canEdit ? <form onSubmit={saveDescription} className="grid gap-3">
+          <label htmlFor="task-description" className="text-sm text-fg-muted">Description</label>
+          <textarea id="task-description" value={draft.text} onChange={event => setDraft({ ...draft, text: event.target.value })} required minLength={3} maxLength={400} rows={4} disabled={saving} className={`${bField} resize-y text-base font-normal`} />
+          {conflict && <div className="border-l-2 border-caution pl-4">
+            <p className="text-sm text-fg-muted">Currently saved:</p>
+            <p className="whitespace-pre-wrap break-words text-base font-normal">{discussion.task.text}</p>
+            <button type="button" disabled={loading || saving} className={bSecondary} onClick={() => { setDraft({ ...draft, version: discussion.task.version }); setConflict(false); setError(""); }}>Keep my draft</button>
+          </div>}
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" disabled={saving || conflict || draft.text.trim().length < 3} className={bButton}>Save description</button>
+            <button type="button" disabled={saving} className={bSecondary} onClick={() => { setDraft(null); setConflict(false); setError(""); }}>{conflict ? "Use saved description" : "Cancel"}</button>
+          </div>
+        </form> : <>
+          <p className="m-0 max-w-[70ch] whitespace-pre-wrap break-words text-base font-normal leading-relaxed">{discussion.task.text}</p>
+          {discussion.canEdit && <button type="button" className="mt-2 min-h-11 text-sm text-accent-text underline underline-offset-4" onClick={() => { setDraft({ text: discussion.task.text, version: discussion.task.version }); setConflict(false); }}>Edit description</button>}
+        </>}
         <p className="mt-4 mb-0 text-fg-muted">{discussion.ownerName}{discussion.task.dueOn && ` · Due ${formatDay(discussion.task.dueOn)}`}</p>
       </section>
       <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section aria-labelledby="task-activity-title" className="min-w-0">
           <h2 id="task-activity-title" className={subheading}>Activity</h2>
-          {!entries.length && <p className="mt-4 max-w-[60ch] text-fg-muted">No comments or updates yet. Add a quote, ask a question or share what happened.</p>}
+          {!entries.length && <p className="mt-4 max-w-[60ch] text-fg-muted">No comments yet. Add a quote, ask a question or share what happened.</p>}
           <ol className="m-0 mt-5 list-none divide-y divide-line p-0">
             {entries.map(entry => <li key={entry.key} className="min-w-0 py-5 first:pt-0">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="font-semibold">{entry.authorName}</span>
-                <span className={`${monoTag} text-fg-muted`}>{entry.type === "event" ? "Task changed" : entry.kind === "update" ? "Progress update" : "Comment"}</span>
+                {entry.type === "event" && <span className={`${monoTag} text-fg-muted`}>Task changed</span>}
                 <time dateTime={entry.createdAt} className="text-sm text-fg-muted">{timestamp(entry.createdAt)}</time>
               </div>
               {entry.type === "event" ? <p className="mt-2 mb-0 text-fg-muted">{statusLabels[entry.status]} · {entry.ownerName}</p> : <>
@@ -110,11 +152,6 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
           <h2 id="task-message-title" className={subheading}>Add to this task</h2>
           {discussion.canEdit ? <form onSubmit={submit} className="mt-5">
             <fieldset disabled={saving} className="m-0 grid min-w-0 gap-4 border-0 p-0 disabled:opacity-60">
-              <label className="grid gap-2">Message type
-                <select value={kind} onChange={event => setKind(event.target.value as "comment" | "update")} className={bField}>
-                  <option value="comment">Comment</option><option value="update">Progress update</option>
-                </select>
-              </label>
               <label htmlFor="task-message-body" className="grid gap-2">Message</label>
                 <textarea id="task-message-body" value={body} onChange={event => setBody(event.target.value)} maxLength={4000} rows={5} className={`${bField} resize-y`} placeholder="A question, a supplier quote, or what you’ve done…" />
               <label className="grid min-w-0 gap-2">Attachments
@@ -125,9 +162,9 @@ export default function PlanTaskDiscussion({ taskId }: { taskId: string }) {
                 <span className="min-w-0 flex-1 break-all">{file.name} ({fileSize(file.size)})</span>
                 <button type="button" onClick={() => setFiles(current => current.filter((_, i) => i !== index))} className="min-h-11 shrink-0 px-2 text-accent-text underline underline-offset-4" aria-label={`Remove ${file.name}`}>Remove</button>
               </li>)}</ul>}
-              <button type="submit" disabled={!body.trim() && !files.length} className={`${bButton} justify-self-start`}>{saving ? "Saving…" : kind === "update" ? "Post update" : "Post comment"}</button>
+              <button type="submit" disabled={!body.trim() && !files.length} className={`${bButton} justify-self-start`}>{saving ? "Saving…" : "Post comment"}</button>
             </fieldset>
-          </form> : <p className="mt-4 text-fg-muted">You have viewing access. Ask Andras for edit access to add comments, updates and files.</p>}
+          </form> : <p className="mt-4 text-fg-muted">You have viewing access. Ask Andras for edit access to edit descriptions and add comments and files.</p>}
         </section>
       </div>
     </>}
