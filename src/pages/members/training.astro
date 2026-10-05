@@ -28,6 +28,7 @@ else Astro.response.status = 403;
 <BaseLayout title="Training · Sunset Duckies" variant="journal">
   <section class="club-home">
     <header class="social-page-header"><div><h1>Training</h1><p>Monday & Friday · 4–6pm · Tamarin Bay</p></div><span class="social-private">Members only</span></header>
+    <a href="/training-materials" class="mb-6 inline-flex min-h-11 items-center font-semibold underline underline-offset-4">Training materials · videos & exercise cards →</a>
     {board ? <ClubTraining client:load initial={board} organiser={organiser} /> : <p role="alert" class="social-error">{access ? "Training is temporarily unavailable. Please reload to try again." : "Training is for club members."}</p>}
   </section>
 </BaseLayout>

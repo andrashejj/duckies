@@ -1,6 +1,7 @@
 ---
 import PhotoIcon from './PhotoIcon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import ClubMenu from './ClubMenu.astro';
 const session = Astro.locals.session;
 const active = !!session?.member;
 const memories = active || !!session?.archivedAt;
@@ -13,7 +14,7 @@ const cupPage = path === '/members/cup';
 const trainingPage = path === '/members/training';
 const familyPage = path.startsWith('/account') || path === '/members/profile' || path.startsWith('/orders') || path.startsWith('/shop');
 const nav = [
-  ...(active ? [{ href: '/members', label: 'My Feed', icon: 'home' as const, current: !photos && !familyPage && !membersPage && !cupPage && !trainingPage }] : []),
+  ...(active ? [{ href: '/members', label: 'My Feed', icon: 'home' as const, current: path === '/members' || path.startsWith('/members/posts/') }] : []),
   ...(memories ? [{ href: active ? '/gallery' : '/members/me', label: active ? 'Club Gallery' : 'Memories', icon: 'camera' as const, current: photos }] : []),
   ...(active ? [{ href: '/members/lineup', label: 'Members', icon: 'users' as const, current: membersPage }] : []),
   ...(training ? [{ href: '/members/training', label: 'Training', icon: 'wave' as const, current: trainingPage }] : []),
@@ -26,11 +27,12 @@ const nav = [
   <nav aria-label="Member navigation" class="journal-desktop-nav">
     {nav.map(item => <a href={item.href} aria-current={item.current ? 'page' : undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}
   </nav>
+  <div class="mt-4"><ClubMenu /></div>
   <div class="journal-sidebar-bottom"><ThemeToggle variant="performance" class="rounded-full border-0"/></div>
 </aside>
 <header class="journal-mobile-header">
   <a href="/" class="journal-wordmark" aria-label="Sunset Duckies website"><img src="/brand/sunset-duckies-logo-small.webp" alt="" width="48" height="48" /><span>Sunset ★ Duckies</span></a>
-  <ThemeToggle variant="performance" class="rounded-full border-0"/>
+  <div class="flex items-center gap-1"><ClubMenu /><ThemeToggle variant="performance" class="rounded-full border-0"/></div>
 </header>
 <nav aria-label="Mobile member navigation" class="journal-mobile-nav">{nav.map(item => <a href={item.href} aria-current={item.current ? 'page' : undefined}><PhotoIcon name={item.icon}/><span>{item.label}</span></a>)}</nav>
 

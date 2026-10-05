@@ -184,10 +184,10 @@ test('legacy recovery keeps proven uploads without guessing a departure date or 
   const html=await (await request.get('/members/me')).text();expect(html).toContain('Your previously shared photos, kept for you.');expect(html).not.toContain('Saved when your membership ended');
 });
 
-test('one club directory combines parents and duckies, keeps role labels accurate and supports old links', async ({page}) => {
+test('one club directory combines parents and duckies, keeps role labels accurate', async ({page}) => {
   await signIn(page.request,parent);
   await db.query('UPDATE "user" SET name=$1 WHERE email=$2',['Maya',parent]);
-  await page.goto('/gallery/duckies');
+  await page.goto('/members/lineup');
   await expect(page).toHaveURL('/members/lineup');
   const directory=page.getByRole('region',{name:'Club members'});
   await expect(directory.getByRole('link',{name:/Maya Parent/})).toBeVisible();

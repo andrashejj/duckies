@@ -193,7 +193,7 @@ test("the roster tells a family who joined the club apart from a cup-only entry"
   await signDraft("cup", payload("Nina Visitor", "nina@example.com", "+230 5900 9900"));
   expect((await db.query("SELECT k.name, c.plan FROM club_cup_entry c JOIN club_kid k ON k.id=c.kid_id ORDER BY k.name")).rows)
     .toEqual([{ name: "Kai Joiner", plan: "club" }, { name: "Nina Visitor", plan: "cup" }]);
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   const joining = page.locator(".duckie-profile").filter({ hasText: "Kai Joiner" });
   await joining.locator(".duckie-summary").click();
   await expect(joining).toContainText("Club registration on file, semester unpaid");
@@ -245,7 +245,7 @@ test("every cup entrant is payment pending until the fee is paid, and a wildcard
   expect(lineup).not.toMatch(/paid|pending|waived|payment/);
 
   await page.context().addCookies((await request.storageState()).cookies);
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   const row = (name: string) => page.locator(".duckie-profile").filter({ hasText: name }).locator(".duckie-summary");
   await expect(row("Kai Joiner")).toContainText("Cup 02");
   await expect(row("Kai Joiner")).not.toContainText("Cup 02 ·");
@@ -389,7 +389,7 @@ test("a club family signs in, sees only its own kids and registers them; sign-in
   expect(zoe).toMatchObject({ memberPaid: true, approvedGuardians: [guardian], cup: { member: true, contactName: "Test Guardian", contactPhone: guardianPhone } });
   expect((await db.query("SELECT count(*)::int AS n FROM club_cup_entry")).rows[0].n).toBe(1);
   // The organiser sees the approval in the overview and can revoke it; the guardian's session dies with it.
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   await page.locator(".duckie-summary").filter({ hasText: "Zoë T." }).click();
   const open = page.locator(".duckie-profile[open]");
   await expect(open.getByText("Member · registered and current semester paid", { exact: true })).toBeVisible();

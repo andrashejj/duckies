@@ -3,7 +3,6 @@ import "../styles/global.css";
 import "../styles/photo-journal.css";
 import PublicShareDialog from "../components/PublicShareDialog.astro";
 import PhotoNavigation from "../components/PhotoNavigation.astro";
-import WorkspaceHeader from "../components/WorkspaceHeader.astro";
 import ClubNavigation from "../components/ClubNavigation.astro";
 import Chip from "../components/ui/Chip.astro";
 import Kicker from "../components/ui/Kicker.astro";
@@ -15,19 +14,17 @@ import { site } from "../data/site";
 
 interface Props {
   workspace?: "member" | "admin";
-  section?: string;
   title?: string;
   description?: string;
   image?: string;
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
-  page?: "home" | "materials";
   variant?: "default" | "performance" | "journal";
 }
 
 const {
-  workspace, section,
+  workspace,
   title = site.name,
   description = site.description,
   image = site.ogImage.path,
@@ -37,7 +34,7 @@ const {
   variant = "default",
 } = Astro.props;
 
-const journal = variant === "journal" || workspace === "member";
+const journal = variant === "journal" || !!workspace;
 const performance = variant === "performance";
 const siteOrigin = Astro.site ?? new URL(site.url);
 const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
@@ -90,7 +87,7 @@ const absoluteImage = new URL(image, siteOrigin).toString();
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="relative z-[1] min-h-screen overflow-x-clip">
       {/* Phones drop the translucent blur for an opaque header on its own compositor layer: the glass effect flickers as the address bar resizes. */}
-      {journal ? <PhotoNavigation /> : workspace ? <WorkspaceHeader mode={workspace} section={section} /> : <header class:list={[
+      {journal ? <PhotoNavigation /> : <header class:list={[
         "sticky top-0 z-50 border-b-2 backdrop-blur-xl max-sm:transform-gpu max-sm:backface-hidden max-sm:backdrop-blur-none max-sm:will-change-transform",
         performance ? "border-line bg-canvas/92 max-sm:bg-canvas" : "border-edge bg-surface/92 max-sm:bg-surface",
       ]}>
