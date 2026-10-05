@@ -5,7 +5,7 @@ import SectionTitle from "./ui/SectionTitle.astro";
 import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterToolbar, textButton } from "../lib/members-ui";
 ---
 
-<section id="our-duckies" data-members hidden class="relative scroll-mt-28 bg-canvas py-6 motion-safe:animate-crew-arrive sm:py-10">
+<section data-members hidden class="relative bg-canvas py-6 motion-safe:animate-crew-arrive sm:py-10">
   <div class="mx-auto max-w-7xl px-6 lg:px-10">
     <div class="flex flex-wrap items-start justify-between gap-6">
       <div>
@@ -240,10 +240,8 @@ import { duckiesRoster, memberForm, memberStatus, rosterAdd, rosterHead, rosterT
       if (version !== generation) return;
       const snapshot = JSON.stringify(data);
       if (snapshot !== lastRoster) { render(data); lastRoster = snapshot; }
-      const wasHidden = section.hidden;
       section.hidden = false;
       loadError.hidden = true;
-      if (wasHidden && window.location.hash === "#our-duckies") section.scrollIntoView();
     } catch {
       if (version !== generation) return;
       clearRoster();

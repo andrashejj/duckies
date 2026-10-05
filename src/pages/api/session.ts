@@ -1,4 +1,4 @@
-import { getSession } from "../../lib/session";
+import { clubHome, getSession } from "../../lib/session";
 import { safeRoute } from "../../lib/registration/http";
 import { json } from "../../lib/server/http";
 export const prerender = false;
@@ -7,5 +7,5 @@ export const GET = safeRoute(async ({ request }) => {
   const session = await getSession(request);
   const admin = session?.user.role === "ADMIN";
   return json({ signedIn: !!session, member: !!session?.member, family: !!session?.family, archived: !!session?.archivedAt, admin, coach: !!session?.coach,
-    home: !session ? "/login" : admin ? "/admin/kids" : session.member ? "/members" : session.archivedAt ? "/members/me" : session.family ? "/members/profile" : session.coach ? "/members/training" : "/account" });
+    home: clubHome(session) });
 });

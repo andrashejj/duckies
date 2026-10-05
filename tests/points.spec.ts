@@ -66,7 +66,7 @@ test("organisers call the roll, members only read it and only Andras sets point 
 test("mobile organiser calls today's roll one by one, corrects a past training and keeps a failed save off the roll", async ({ page }) => {
   await page.context().addCookies((await ownerRequest.storageState()).cookies);
   await page.setViewportSize({width:390,height:844});
-  await page.goto("/admin/training");
+  await page.goto("/members/training");
   await expect(page).toHaveURL(/\/members\/training\?date=|\/members\/training$/);
   await expect(page.getByRole("navigation",{name:"Mobile member navigation"}).getByRole("link",{name:"Training",exact:true})).toHaveAttribute("aria-current","page");
   const rollCall = page.getByRole("region",{name:"Roll call"});

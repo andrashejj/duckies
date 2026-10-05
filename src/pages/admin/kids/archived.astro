@@ -10,7 +10,7 @@ const { rows } = await getDatabase().query(`SELECT k.id,k.name,k.archived_at,
   (SELECT coalesce(json_agg(json_build_object('status',p.status,'note',p.note,'amount',p.amount_mur,'term',p.term) ORDER BY p.recorded_at DESC),'[]') FROM club_payment_event p WHERE p.kid_id=k.id) AS payments
   FROM club_kid k WHERE k.archived_at IS NOT NULL ORDER BY archived_at DESC`);
 ---
-<AdminLayout title="Archived kids" section="kids">
+<AdminLayout title="Archived kids">
   <SectionTitle as="h1">Archived kids</SectionTitle>
   <p class={`mt-4 ${bodyCopy}`}>Signed records and payment history are retained when a child leaves the active list.</p>
   <a class="member-text-button" href="/admin/kids">Back to the active kids list</a>

@@ -14,7 +14,7 @@ try { profile = await familyProfile({ email, name: session.user.name }); }
 catch (error) { Astro.response.status = 503; console.error("[members/profile] load failed:", error); }
 const events = upcomingEvents({ term: profile?.term ?? null });
 ---
-<BaseLayout title={`My family · ${site.name}`} description="Your parents, duckies and private club records." workspace="member" section="family">
+<BaseLayout title={`My family · ${site.name}`} description="Your parents, duckies and private club records." workspace="member">
   <section class="family-page">
     <header class="social-page-header">
       <div><h1>My family</h1><p>Your people and their club records. Only shared with your family and organisers.</p></div>

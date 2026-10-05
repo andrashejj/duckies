@@ -1,0 +1,62 @@
+---
+import SignOutButton from './react/SignOutButton';
+import PhotoIcon from './PhotoIcon.astro';
+const session = Astro.locals.session;
+const path = Astro.url.pathname;
+const admin = session?.user.role === 'ADMIN';
+const current = (href: string) => path === href || (href !== '/admin' && path.startsWith(`${href}/`));
+const link = 'flex min-h-11 items-center rounded-lg px-3 py-2 text-sm hover:bg-highlight hover:text-highlight-fg aria-[current=page]:bg-highlight aria-[current=page]:text-highlight-fg aria-[current=page]:font-bold';
+const resources = [
+  { href: '/training-materials', label: 'Training materials' },
+  ...(session?.canShop ? [{ href: '/shop', label: 'Club shop' }] : []),
+  { href: '/account/orders', label: 'Family orders' },
+  { href: '/account/profile', label: 'My profile' },
+  { href: '/cup/judge', label: 'Cup judging' },
+  { href: '/branding-plan', label: 'Branding workspace' },
+];
+const administration = [
+  { href: '/admin/kids', label: 'Duckies' },
+  { href: '/admin/parents', label: 'Parents' },
+  { href: '/admin/cup', label: 'Cup day' },
+  { href: '/admin/gallery', label: 'Manage photos' },
+  { href: '/admin', label: 'Shop overview' },
+  { href: '/admin/orders', label: 'Reservations' },
+  { href: '/admin/drops', label: 'Drops' },
+  { href: '/admin/products', label: 'Products' },
+  { href: '/admin/customers', label: 'Customers' },
+];
+---
+<details class="group relative" data-club-menu>
+  <summary class:list={['flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 text-sm font-semibold hover:bg-highlight hover:text-highlight-fg [&::-webkit-details-marker]:hidden', path.startsWith('/admin') && 'bg-highlight text-highlight-fg']}>
+    Club menu <PhotoIcon name="next" class="h-4 w-4 rotate-90 transition-transform group-open:-rotate-90 motion-reduce:transition-none" />
+  </summary>
+  <div class="fixed inset-x-3 top-16 z-40 max-h-[calc(100dvh-9rem)] overflow-y-auto overscroll-contain rounded-xl border-2 border-edge bg-surface p-3 shadow-sticker-md min-[769px]:inset-x-auto min-[769px]:left-[188px] min-[769px]:top-6 min-[769px]:w-[28rem] min-[769px]:max-h-[calc(100dvh-3rem)] min-[1101px]:left-[232px]">
+    <div class:list={['grid gap-3', admin && 'grid-cols-2']}>
+      <nav aria-label="Club resources" class="grid content-start">
+        <p class="px-3 py-2 text-sm font-bold text-fg-muted">Around the club</p>
+        {resources.map(item => <a href={item.href} class={link} aria-current={current(item.href) ? 'page' : undefined}>{item.label}</a>)}
+      </nav>
+      {admin && <nav aria-label="Admin navigation" class="grid content-start border-l border-line pl-3">
+        <p class="px-3 py-2 text-sm font-bold text-fg-muted">Club admin</p>
+        {administration.map(item => <a href={item.href} class={link} aria-current={current(item.href) ? 'page' : undefined}>{item.label}</a>)}
+      </nav>}
+    </div>
+    <div class="mt-3 grid border-t border-line pt-3">
+      <a href="/" class={link}>Club website</a>
+      <SignOutButton client:load className={`${link} w-full text-left`} />
+    </div>
+  </div>
+</details>
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('[data-club-menu]').forEach(menu => {
+    document.addEventListener('click', event => {
+      if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+    });
+    menu.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  });
+</script>

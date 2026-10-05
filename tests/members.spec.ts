@@ -190,7 +190,7 @@ test("30-kid roster stays compact, filters contacts and keeps open drafts", asyn
   }));
   await page.route(/\/api\/kids(?:\?.*)?$/, route => route.fulfill({ json: roster }));
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".duckie-row")).toHaveCount(30);
   await expect(page.locator(".duckie-profile[open]")).toHaveCount(0);
   expect((await page.locator(".duckie-row").first().boundingBox())!.height).toBeLessThan(85);

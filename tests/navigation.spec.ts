@@ -5,7 +5,7 @@ import { signIn } from "./auth-helpers";
 const db = new pg.Pool({ connectionString: process.env.DUCKIES_DATABASE_URL });
 const origin = "http://127.0.0.1:4329";
 test.beforeEach(async () => {
-  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
+  await db.query('TRUNCATE club_member_archive,club_parent_profile,club_kid,club_member,club_coach,"user","session",account,verification,"rateLimit",shop_request_limit CASCADE');
   await db.query("INSERT INTO club_member(email,role) VALUES('parent@example.com','member'),('organiser@example.com','organiser')");
 });
 test.afterAll(async () => { await db.end(); });
@@ -102,28 +102,98 @@ test("signed-in members find their own profile from the public header and save i
   expect(errors).toEqual([]);
 });
 
-test("admin has a top menu, legacy roster bookmarks redirect, and sign-out resets the public menu", async ({ page, request }) => {
+test("admins enter the club and reach every admin tool through the shared menu", async ({ page, request }) => {
   await signIn(page.request, "organiser@example.com");
+  for (const path of ['/coach', '/admin/training', '/gallery/duckies']) {
+    expect((await page.request.get(path, { maxRedirects: 0 })).status(), path).toBe(404);
+  }
+  await page.goto('/#our-duckies');
+  await expect(page.locator('[data-session-entry]')).toHaveAttribute('href', '/members');
+  await expect(page).toHaveURL('/#our-duckies');
   await page.goto("/login");
-  await expect(page).toHaveURL(/\/admin\/kids$/);
-  const nav = page.getByRole("navigation", { name: "Admin navigation" });
+  await expect(page).toHaveURL(/\/members$/);
+  const menu = page.locator('[data-club-menu]:visible');
+  await menu.locator('summary').click();
+  let nav = menu.getByRole("navigation", { name: "Admin navigation" });
+  await expect(nav.getByRole('link')).toHaveCount(9);
+  for (const href of await nav.getByRole('link').evaluateAll(links => links.map(link => link.getAttribute('href')!))) {
+    expect((await page.request.get(href)).status(), href).toBe(200);
+  }
+  await nav.getByRole('link', { name: 'Duckies', exact: true }).click();
+  await menu.locator('summary').click();
+  nav = menu.getByRole("navigation", { name: "Admin navigation" });
   await expect(nav.getByRole("link", { name: "Duckies", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(nav.getByRole("link", { name: "Parents", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "My profile", exact: true })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "My profile", exact: true })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: "test-results/admin-navigation-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
+  await menu.locator('summary').click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "test-results/admin-navigation-mobile.png", fullPage: true });
-  await page.goto("/#our-duckies");
+  await nav.getByRole('link', { name: 'Customers', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/customers$/);
+  await expect(page.getByRole('navigation', { name: 'Mobile member navigation' }).locator('[aria-current]')).toHaveCount(0);
+  await page.goto("/admin/kids");
   await expect(page).toHaveURL(/\/admin\/kids$/);
-  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await menu.locator('summary').click();
+  await menu.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(origin + "/");
   await expect(page.locator("[data-session-entry]")).toHaveAttribute("href", "/login");
   expect((await request.get("/api/session")).headers()["cache-control"]).toContain("no-store");
   for (const path of ["/admin/kids", "/account/profile", "/members"]) {
     expect((await request.get(path, { maxRedirects: 0 })).status()).toBe(302);
   }
+});
+
+test('club resources work on phones and desktops, admin tools stay private, and training bookmarks survive sign-in', async ({ page }) => {
+  await signIn(page.request, 'parent@example.com');
+  await page.goto('/login?next=/members/training');
+  await expect(page).toHaveURL(/\/members\/training$/);
+  await expect(page.getByRole('link', { name: 'Training materials · videos & exercise cards →' })).toBeVisible();
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    const menu = page.locator('[data-club-menu]:visible');
+    await menu.locator('summary').click();
+    await expect(menu.getByRole('navigation', { name: 'Admin navigation' })).toHaveCount(0);
+    for (const label of ['Training materials', 'Club shop', 'Family orders', 'My profile', 'Cup judging', 'Branding workspace']) {
+      await expect(menu.getByRole('link', { name: label, exact: true })).toBeVisible();
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/club-menu-${width}.png` });
+    await menu.locator('summary').press('Escape');
+    await expect(menu).not.toHaveAttribute('open', '');
+    await expect(menu.locator('summary')).toBeFocused();
+  }
+  const menu = page.locator('[data-club-menu]:visible');
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await menu.locator('summary').click();
+  await page.screenshot({ path: 'test-results/club-menu-dark.png' });
+  for (const href of await menu.getByRole('link').evaluateAll(links => links.map(link => link.getAttribute('href')!))) {
+    expect((await page.request.get(href)).status(), href).toBe(200);
+  }
+  await menu.getByRole('link', { name: 'Training materials', exact: true }).click();
+  await expect(page).toHaveURL(/\/training-materials$/);
+  await expect(page.getByRole('link', { name: 'Open exercise cards' })).toBeVisible();
+  await page.locator('[data-session-entry]').click();
+  await expect(page).toHaveURL(/\/members$/);
+});
+
+test('coaches have training and materials without member or admin links', async ({ page }) => {
+  await db.query("INSERT INTO club_coach(email,name,created_by) VALUES('navigation-coach@example.com','Trainer','organiser@example.com') ON CONFLICT(email) DO NOTHING");
+  await signIn(page.request, 'navigation-coach@example.com');
+  await page.goto('/');
+  await expect(page.locator('[data-session-entry]')).toHaveAttribute('href', '/members/training');
+  await page.locator('[data-session-entry]').click();
+  const nav = page.getByRole('navigation', { name: 'Member navigation', exact: true });
+  await expect(nav.getByRole('link')).toHaveText(['Training', 'Account']);
+  const menu = page.locator('[data-club-menu]:visible');
+  await menu.locator('summary').click();
+  await expect(menu.getByRole('link', { name: 'Training materials' })).toBeVisible();
+  await expect(menu.getByRole('link', { name: 'Club shop' })).toHaveCount(0);
+  await expect(menu.getByRole('navigation', { name: 'Admin navigation' })).toHaveCount(0);
+  expect((await page.request.get('/admin/kids')).status()).toBe(403);
+  expect((await page.request.get('/members/lineup')).status()).toBe(403);
 });
 
 test("session changes refresh public navigation and ordinary members cannot enter admin", async ({ page }) => {
