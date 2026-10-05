@@ -26,7 +26,7 @@ test("registration portraits appear for guardians and organisers without becomin
   const image = await readFile('src/assets/gallery/standing-tall.webp');
   expect((await admin.put(`/api/kids/${mine}/photo`, { headers: { origin, 'content-type': 'image/webp' }, data: image })).status()).toBe(200);
   await signIn(page.request, parent);
-  await page.goto('/gallery/duckies');
+  await page.goto('/members/lineup');
   const portrait = page.getByAltText("Lara Test's profile photo");
   await expect(portrait).toBeVisible();
   await portrait.evaluate(image => (image as HTMLImageElement).decode());

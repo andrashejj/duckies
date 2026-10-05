@@ -13,3 +13,6 @@ export async function getSession(request: Request) {
 
 export type SharedSession = Awaited<ReturnType<typeof getSession>>;
 export function isAdmin(session: SharedSession) { return session?.user.role === "ADMIN"; }
+export function clubHome(session: SharedSession) {
+  return !session ? "/login" : session.member ? "/members" : session.archivedAt ? "/members/me" : session.family ? "/members/profile" : session.coach ? "/members/training" : "/account/profile";
+}

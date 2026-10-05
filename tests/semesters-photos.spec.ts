@@ -399,7 +399,7 @@ test("mobile owner creates a semester, records payment and uploads an avatar", a
   await page.setViewportSize({ width: 390, height: 844 });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   await expect(page.locator("[data-members]")).toBeVisible();
   await page.getByText("Add a semester", { exact: true }).click();
   for (const [label, value] of [

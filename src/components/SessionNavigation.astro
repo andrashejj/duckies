@@ -12,12 +12,10 @@ import { ctaClass } from "../lib/ui";
       if (!response.ok) return;
       const session = await response.json();
       if (version !== generation || !entry) return;
-      // The public entrance always opens the club; admin keeps its own workspace.
-      const home = !session.signedIn ? "/login" : session.member ? "/members" : session.archived ? "/members/me" : session.family ? "/members/profile" : "/account";
+      const home = session.home;
       entry.href = home;
       entry.setAttribute("aria-label", session.signedIn ? "Club · member area" : "Club · sign in");
       document.querySelectorAll<HTMLAnchorElement>("[data-account-link]").forEach(link => { link.href = home; });
-      if (location.pathname === "/" && location.hash === "#our-duckies") location.replace(session.signedIn ? (session.admin ? "/admin/kids" : "/members") : "/login?next=/members");
     } catch { /* /account remains a working entrance if the session lookup fails. */ }
   }
   window.addEventListener("pageshow", () => void refresh());

@@ -615,7 +615,7 @@ test("mobile guardian completes, signs and downloads; organiser sees acknowledge
     ),
   ).toBe(true);
   await signIn(page.request, owner);
-  await page.goto("/#our-duckies", { waitUntil: "domcontentloaded" });
+  await page.goto("/admin/kids", { waitUntil: "domcontentloaded" });
   await page.locator(".duckie-summary").click();
   await expect(
     page.getByText("NO CONSENT — exclude or blur", { exact: true }),
@@ -842,7 +842,7 @@ test("younger children can sign up with parent guidance and a private organiser 
   // Organisers see the age flag without opening the row, can filter for it,
   // and get the readiness warning when they open the child's details.
   await signIn(page.request, organiser);
-  await page.goto("/#our-duckies");
+  await page.goto("/admin/kids");
   const row = page.locator(".duckie-row").filter({ hasText: "Test Surfer" });
   await expect(row.locator("summary")).toContainText("Under 7 · discuss readiness");
   await page.getByLabel("Show", { exact: true }).selectOption("younger");
@@ -881,7 +881,7 @@ test("administrative birth-date corrections preserve the signature and update ag
   expect((await (await request.get("/api/cup/lineup")).json()).surfers[0].age).toBe(6);
   expect((await readEntrants())[0].age).toBe(6);
   await signIn(page.request, organiser);
-  await page.goto("/#our-duckies");
+  await page.goto("/admin/kids");
   const row = page.locator(".duckie-row").filter({ hasText: "Test Surfer" });
   await row.locator("summary").click();
   await expect(row.getByText(/Club corrected 2018-11-07 to 2019-11-07/)).toBeVisible();

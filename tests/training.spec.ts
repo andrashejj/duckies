@@ -139,7 +139,7 @@ test("a coach calls the roll one by one on a phone and the leaderboard moves wit
 test("whole-crew taps queue up without losing a mark, the rest go away together and a failed save rolls back", async ({ page }) => {
   await makeCoach();
   await signIn(page.request, coach);
-  await page.goto(`/coach?date=${previous}`);
+  await page.goto(`/members/training?date=${previous}`);
   await expect(page).toHaveURL(new RegExp(`/members/training\\?date=${previous}$`));
   const roll = page.getByRole("region", { name: "Roll call" });
   await expect(roll.getByLabel("Training date", { exact: true })).toHaveValue(previous);
