@@ -9,7 +9,7 @@ export const molt = {
     "Sunset Duckies is making its first product: a granola baked in Tamarin, on sale at Cup Vol. 02 on Friday 16 October. By 28 February we decide whether it is worth doing again, and whether another club could do the same.",
   dates: [
     { code: "NOW", label: "Lock the recipe" },
-    { code: "17.10", label: "Cup + first batch" },
+    { code: "16.10", label: "Cup + first batch" },
     { code: "28.02", label: "Rollout decision" },
   ],
 };
@@ -26,7 +26,7 @@ export const sections = [
 
 export const deliverables = [
   { href: "/branding-plan/business-case", label: "Recipe & business case", text: "The granola sheet: ingredients, cost per bag, price and the monthly result. Save the version worth testing." },
-  { href: "/branding-plan/marketing", label: "Marketing plan", text: "One WhatsApp message and one Instagram post a week until the Cup." },
+  { href: "/branding-plan/marketing", label: "Marketing plan", text: "Seven short phone videos: why each of us does this, plus the baking." },
   { href: "/product-ideas", label: "Product candidates", text: "The four concepts and the nine tests they were compared on. Granola advanced." },
 ] as const;
 
@@ -93,16 +93,16 @@ export const after = [
 
 // ---------- Marketing ----------
 export const marketingIntro =
-  "One message a week until the Cup. WhatsApp carries logistics and the tastings for club families. Instagram builds up to the reveal and shows nothing of the product before the day. Photo permission before any kid appears anywhere.";
+  "Seven short phone videos before the Cup. Each person films their own selfie while walking, Estelle runs each clip through an AI video editor (cut pauses, captions, trim) and checks it, Andras posts it. If the AI edit looks wrong, post the raw clip. The baking video is filmed by Estelle.";
 
-export const commsPlan = [
-  { when: "Fri 18 Sep", whatsapp: "Save the date: Cup Vol. 02 on Friday 16 October. “We are also cooking something for the day.”", instagram: "Account live. First post: save the date, with a photo from Cup Vol. 01." },
-  { when: "Fri 25 Sep", whatsapp: "Registration open. Ask for volunteers: judges, beach marshals, food, the stall.", instagram: "Cup registration post. Photo permissions in hand before any kid appears." },
-  { when: "Fri 2 Oct", whatsapp: "Founding families taste the locked recipe at Friday training. Collect quotes for the label and the maker story.", instagram: "Teaser 1: something is in the oven. Test-bake shots, no name, no pack." },
-  { when: "Fri 9 Oct", whatsapp: "A limited first batch will be revealed at the Cup. Draft heat list.", instagram: "Teaser 2: the maker story. Who bakes it, what goes in, why." },
-  { when: "Mon 12 – Thu 15 Oct", whatsapp: "Final schedule, heats, arrival time, what to bring. Reminder on Thursday 15.", instagram: "Countdown: schedule post, packaging sneak peek, “first batch reveal at the Cup”." },
-  { when: "Fri 16 Oct", whatsapp: "Photo of the stall. “Grab your bag, or pre-order here.”", instagram: "Stories live from the beach. Reveal post from the stall with the price and how to get one." },
-  { when: "Sat 17 – Sun 18 Oct", whatsapp: "Results, thank you, pre-order form for batch two.", instagram: "Results and thank-you post. How to order the next batch." },
+export const selfieVideos = [
+  { who: "Noah", role: "Club kid", video: "Selfie: what they like about surfing and what they have learned", filmedBy: "Themselves, parent checks before posting" },
+  { who: "Lara", role: "Club kid", video: "Selfie: what they like about surfing and what they have learned", filmedBy: "Themselves, parent checks before posting" },
+  { who: "Tamas", role: "Dad", video: "Selfie: why they back the club", filmedBy: "Themselves" },
+  { who: "Dori", role: "Inventor of the granola", video: "Where the recipe came from", filmedBy: "Themselves, or Estelle asks the questions" },
+  { who: "Abiguelle", role: "Helps bake the granola", video: "The baking, start to finish", filmedBy: "Estelle" },
+  { who: "Estelle", role: "Intern", video: "Selfie: why they came to Mauritius to help", filmedBy: "Themselves" },
+  { who: "Andras", role: "Techie", video: "Selfie: why the club has a website and app", filmedBy: "Themselves" },
 ];
 
 // ---------- Worksheets ----------
