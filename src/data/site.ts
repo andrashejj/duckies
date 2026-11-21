@@ -22,7 +22,7 @@ export const site = {
     feeLabelLong: "Rs 3,000 for one child or Rs 5,000 for a family, per semester",
     bringYourOwn: ["surfboard", "wetsuit or rashie"],
     fundingNote:
-      "Dues cover regular training — one or two sessions a week — and nothing else. Bring your own board and wetsuit; the Cup and other events are ticketed separately.",
+      "Volunteers run the club and our weekly sessions. Families pool their membership fees to pay for things we use together, like boats for trips to Le Morne, professional surf instructors for bigger waves and T-shirts for the Cup.",
   },
   whatsappUrl:
     "https://chat.whatsapp.com/Gmym4Kglwtw2b8mA2ETIdj?mode=gi_t",

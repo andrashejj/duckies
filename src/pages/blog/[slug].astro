@@ -69,7 +69,10 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
           </h1>
           <p class={`mt-6 ${bodyCopy}`}>{post.excerpt}</p>
           <p class="mt-6 font-mono text-xs leading-6 uppercase tracking-wider">{post.dateLabel} · {post.location}</p>
-          {hasRoll && <Cta variant="secondary" href="#gallery" class="mt-6">↓ The day, in photos</Cta>}
+          <div class="mt-6 flex flex-wrap gap-3">
+            <Cta href="#story">Read the story</Cta>
+            {hasRoll && <Cta variant="secondary" href="#gallery">View photos</Cta>}
+          </div>
         </div>
         {post.cover ? <LogbookIllustration image={post.cover} eager class="rotate-[1deg]" /> : heroImage && <img src={heroImage} alt={`${post.title} ${post.titleAccent}`} width="1536" height="1024" class="rounded-xl" />}
       </div>
@@ -94,8 +97,8 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
     </section>
 
     <!-- ===================== STORY ===================== -->
-    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
-      <div class="max-w-3xl" data-reveal>
+    <section id="story" class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
+      <div class="max-w-3xl">
         {post.intro.map((paragraph, i) => (
           <p class:list={[bodyCopy, i === 0 ? "text-lg leading-8 sm:text-xl sm:leading-9" : "mt-5"]}>
             {i === 0 ? <span class="font-accent text-3xl italic text-accent-text">{paragraph.slice(0, 1)}</span> : null}{i === 0 ? paragraph.slice(1) : paragraph}
@@ -118,9 +121,9 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
       </div>
 
       {post.gif && <LogbookGif gif={post.gif} />}
-      <div class="mt-12 max-w-3xl" data-reveal>
+      {post.outro && <div class="mt-12 max-w-3xl" data-reveal>
         <p class={`text-lg leading-8 ${bodyCopy}`}>{post.outro}</p>
-      </div>
+      </div>}
     </section>
 
     <!-- ===================== CLIPS ===================== -->
@@ -201,7 +204,30 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
 
     {post.cover && <p class="mx-auto max-w-7xl px-4 pb-8 font-mono text-[0.65rem] leading-[1.7] opacity-65 sm:px-6 lg:px-10">Photos and clips by club parents and the club drone. {post.media && "The full album holds the club’s original photos and videos."}</p>}
 
-    <!-- ===================== CTA ===================== -->
+    {post.cta.photo ? (
+      <section id="plans" aria-labelledby="plans-title" class="mx-auto max-w-6xl scroll-mt-24 px-5 pb-16 sm:px-8 lg:pb-24">
+        <div class="grid items-start gap-8 border-t-2 border-edge pt-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:pt-12">
+          <header>
+            <p class="flex items-center gap-3 font-mono text-sm tracking-[0.16em] text-fg before:h-1 before:w-9 before:bg-accent">{post.cta.kicker}</p>
+            <h2 id="plans-title" class="my-5 font-display text-[clamp(2.75rem,6vw,5.5rem)] font-semibold leading-[0.94] tracking-[-0.045em]">
+              {post.cta.title} <span class="block font-accent italic text-accent-text">{post.cta.titleAccent}</span>
+            </h2>
+            <figure class="mt-7 max-w-sm -rotate-1 border border-edge bg-surface p-2 shadow-sticker-sm">
+              <img class="aspect-[3/2] w-full object-cover" src={post.cta.photo.src} srcset={`${post.cta.photo.src.replace('.webp','-small.webp')} 768w, ${post.cta.photo.src} 1536w`} sizes="(max-width: 400px) 90vw, 384px" width="1536" height="1024" loading="lazy" alt={post.cta.photo.alt} />
+              <figcaption class="px-1 pt-2 font-mono text-[0.7rem] text-fg-muted">{post.cta.photo.caption}</figcaption>
+            </figure>
+          </header>
+          <div class="max-w-[62ch] space-y-4 text-pretty text-base leading-relaxed text-fg sm:text-lg">
+            {[post.cta.body].flat().map((paragraph) => <p>{paragraph}</p>)}
+            <div class="mt-7 border-l-4 border-accent pl-5">
+              <p>{post.cta.invitation}</p>
+              <Cta size="sm" class="mt-4" href={post.cta.primary.href} target={post.cta.primary.external ? "_blank" : undefined} rel={post.cta.primary.external ? "noreferrer" : undefined}>{post.cta.primary.label}</Cta>
+            </div>
+            <p class="pt-3 font-accent text-3xl italic">{post.cta.signoff}</p>
+          </div>
+        </div>
+      </section>
+    ) : (
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 lg:px-10">
       <StickerCard tone="coral" class="p-8 md:p-12" data-reveal>
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -210,7 +236,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
             <SectionTitle class="mt-4">
               {post.cta.title} <Underline>{post.cta.titleAccent}</Underline>
             </SectionTitle>
-            <p class={`mt-4 max-w-2xl ${bodyCopy}`}>{post.cta.body}</p>
+            {[post.cta.body].flat().map((paragraph) => <p class={`mt-4 max-w-2xl ${bodyCopy}`}>{paragraph}</p>)}
           </div>
           <div class="flex flex-col gap-3">
             <Cta href={post.cta.primary.href} target={post.cta.primary.external ? "_blank" : undefined} rel={post.cta.primary.external ? "noreferrer" : undefined}>
@@ -221,6 +247,7 @@ const ogImage = heroImage ?? "/media/tamarin-shore.jpg";
         </div>
       </StickerCard>
     </section>
+    )}
   </article>
 </BaseLayout>
 
