@@ -53,7 +53,7 @@ export interface BlogPost {
   intro: string[];
   sections: BlogPostSection[];
   eventPlan?: EventPlan;
-  outro: string;
+  outro?: string;
   heroImage?: string;
   cover?: BlogIllustration;
   storyImage?: BlogIllustration;
@@ -63,7 +63,10 @@ export interface BlogPost {
     kicker: string;
     title: string;
     titleAccent: string;
-    body: string;
+    body: string | string[];
+    photo?: BlogIllustration;
+    invitation?: string;
+    signoff?: string;
     primary: { label: string; href: string; external?: boolean };
     secondary?: { label: string; href: string };
   };
@@ -79,6 +82,80 @@ export const blog = {
   posts: [
     cupEventPlan,
     cupContentPlan,
+    {
+      slug: "h2-2026-wrap-up",
+      title: "H2 2026:",
+      titleAccent: "look at those duckies go",
+      kicker: "Club wrap-up · H2 2026",
+      dateLabel: "November 2026",
+      dateISO: "2026-11-21",
+      location: "Tamarin, Mauritius",
+      excerpt:
+        "Sunrise boat trips, the Duckies Cup and our usual Mondays and Fridays in Tamarin. My favourite part has been watching the kids and their parents get better together.",
+      facts: [
+        { value: "Tamarin Bay", label: "our regular spot" },
+        { value: "Le Morne", label: "surf trips" },
+        { value: "Sunrise Duckies", label: "early mornings on the boat" },
+        { value: "Mon + Fri", label: "parents and kids in the water" },
+      ],
+      intro: [
+        "Most Mondays and Fridays in Tamarin start with me doing my mobility exercises on the sand. The kids join in, then everyone goes looking for their board. The little duckies head for the beach break with their parents. The more advanced ones paddle out to Dal, the wave out on the reef.",
+        "There’s plenty to learn right there at the beach break. When you’re little and you spot a wave you want, it’s easy to miss the surfer already riding it. That’s where having your mum or dad in the water with you helps. They can point out who’s coming through and help you leave them room. Knowing when to let a wave go is part of learning to surf safely here.",
+        "This was the first semester it felt like we’d really found our rhythm. I’m there as a parent too, lending a hand and giving the little duckies and their parents a shout when they catch one. One of the nicest things about teaching your own kid is that you see first hand how they become better - and fast. Thanks to all the parents who keep getting in.",
+        "We also took the bigger kids to Le Morne this semester. The crews from La Gaulette took us out by boat, and we had specialist surf instructors with us for those sessions. Manawa, Little Reef, One Eye, Anker, Passage Ambulante. Those are all waves at Le Morne, and getting the bigger duckies out to see them took a bit more than turning up at the beach with a board. Lot of courage in these kids, I'm super impressed.",
+        "Thank you to the boat crews, the instructors and everyone who helped organise those special sessions.",
+      ],
+      sections: [
+        {
+          title: "A heat with your mates",
+          accent: "sun",
+          body: "The Cup was a flat day this year, but we made the most of it, with plenty of competition activities on land and everyone having so much fun. Plus everyone was a winner - granola, stickers, posters, tshirt, and much more. Thank you to everyone who volunteered to put it on and helped make the day so special.",
+        },
+        {
+          title: "Chipping in",
+          accent: "lilac",
+          body: "This was our first year putting money together to pay for the things we shared. We used everything families chipped in this semester. About two thirds went on the Cup shirts, stickers, poster and granola. The other third paid for boats and specialist surf coaches for our trips to Le Morne. If chipping in is a stretch for your family, come talk to me privately. We’ll sort it out.",
+        },
+      ],
+      cover: {
+        src: "/media/logbook/semester-cover.webp",
+        alt: "The Sunset Duckies crew with their boards on Tamarin beach at dusk.",
+        caption: "The crew at Tamarin. From the club photo archive, May 2026.",
+      },
+      roll: {
+        title: "From the club",
+        titleAccent: "photo archive",
+        photos: [
+          { slug: "warm-up-circle", alt: "The Duckies warming up in a circle under the big tree." },
+          { slug: "cup-grey-goose-heat", alt: "Two parents sharing a wave in the grey goose heat at Cup Vol. 01." },
+          { slug: "little-reef-paddle-out", alt: "Duckies paddling out over Little Reef at first light." },
+        ],
+        clips: [
+          { slug: "little-reef-kids-on-wave", title: "From the archive: the kids at Little Reef" },
+          { slug: "three-on-a-wave", title: "Three on one wave" },
+        ],
+      },
+      cta: {
+        kicker: "2027",
+        title: "Plans for",
+        titleAccent: "next year",
+        photo: {
+          src: "/media/logbook/semester-water.webp",
+          alt: "A parent wades into the water with a board while the kids surf behind.",
+          caption: "Tamarin, March 2026 · Photo by Bron",
+        },
+        body: [
+          "Next year I’d love to see more Mauritian kids paddling out with the expat kids on Mondays and Fridays. To welcome more families, we need a few more volunteers in the water who can coach us parents while we teach our own kids.",
+          "I think about the crews from La Gaulette who took our bigger duckies out this year. Give it ten years and maybe one of those same duckies will be taking a younger kid out to Little Reef for the first time.",
+          "Our time here is borrowed. My family might be in Mauritius for another year or two, and I’d love to spend that time running the club alongside a local surf instructor who wants to take it over. Sunset Duckies will always be a nonprofit run by volunteers.",
+          "If you’ve got roots here and want to give back, the commitment is to show up every Monday and Friday, plan the sessions and help parents figure out what their kids are ready for next. I’d be there to help as you take the lead.",
+          "I’d love for families to be able to count on those two afternoons long after we leave. And yes, I hope one day we’ll get to cheer on a duckie from our beach break surfing for Mauritius on the world stage.",
+        ],
+        invitation: "If you can see yourself leading the club, come find me at our usual spot in Tamarin Bay at 6pm after training on Monday or Friday.",
+        signoff: "Sunset… Duckies!",
+        primary: { label: "Find us on WhatsApp", href: site.whatsappUrl, external: true },
+      },
+    },
     {
       slug: "new-semester-2026",
       title: "We're back:",
